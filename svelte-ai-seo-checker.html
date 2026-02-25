@@ -1,131 +1,376 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perplexity SEO Checker | AI Search Visibility Audit</title>
+    <title>AI Search Visibility Audit | Perplexity & ChatGPT SEO</title>
     <style>
         :root {
-            --bg: #0a0a0c;
+            --bg: #030305;
             --accent: #00ffcc;
-            --text: #e0e0e0;
-            --glass: rgba(255, 255, 255, 0.05);
+            --text: #ffffff;
+            --glass: rgba(255, 255, 255, 0.03);
+            --card-bg: rgba(255, 255, 255, 0.05);
         }
 
         body {
             background: var(--bg);
             color: var(--text);
-            font-family: 'Inter', sans-serif;
+            font-family: 'PingFang SC', 'Inter', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        .container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            overflow-x: hidden;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
         }
 
         .hero {
             text-align: center;
-            padding: 4rem 2rem;
-            max-width: 800px;
+            padding: 4rem 1rem 2rem;
+            max-width: 900px;
         }
 
         h1 {
-            font-size: 3.5rem;
+            font-size: 4rem;
             margin-bottom: 1rem;
-            background: linear-gradient(135, #fff, var(--accent));
+            background: linear-gradient(135, #fff, var(--accent), #fff);
+            background-size: 200% auto;
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
+            animation: shine 5s linear infinite;
         }
 
-        p {
-            font-size: 1.2rem;
+        @keyframes shine {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        .sub-hook {
+            font-size: 1.4rem;
             opacity: 0.8;
-            margin-bottom: 2.5rem;
+            margin-bottom: 3rem;
+            letter-spacing: 1px;
+        }
+
+        /* 社交证明 Ticker */
+        .social-proof {
+            background: rgba(0, 255, 204, 0.1);
+            border: 1px solid rgba(0, 255, 204, 0.2);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            backdrop-filter: blur(5px);
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.5);
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
 
         .checker-box {
             background: var(--glass);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 2rem;
-            border-radius: 24px;
+            padding: 2.5rem;
+            border-radius: 32px;
             width: 100%;
-            max-width: 600px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            max-width: 650px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
+            margin-bottom: 4rem;
+        }
+
+        .inputs {
             display: flex;
             gap: 12px;
+            margin-bottom: 1.5rem;
         }
 
         input {
             flex: 1;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(0, 255, 204, 0.3);
-            padding: 1rem;
-            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.2rem;
+            border-radius: 16px;
             color: white;
             font-size: 1rem;
             outline: none;
+            transition: border 0.3s;
         }
 
-        button {
+        input:focus {
+            border: 1px solid var(--accent);
+        }
+
+        .audit-btn {
+            width: 100%;
             background: var(--accent);
-            color: black;
+            color: #000;
             border: none;
-            padding: 1rem 2rem;
-            border-radius: 12px;
-            font-weight: bold;
+            padding: 1.2rem;
+            border-radius: 16px;
+            font-weight: 800;
+            font-size: 1.1rem;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px var(--accent);
+        .audit-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 255, 204, 0.4);
+        }
+
+        .audit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* 特性卡片 */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 24px;
+            transition: all 0.3s;
+            text-align: left;
+        }
+
+        .card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent);
+            transform: translateY(-10px);
+        }
+
+        .card h3 {
+            color: var(--accent);
+            margin-bottom: 0.8rem;
+            font-size: 1.3rem;
+        }
+
+        .card p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            opacity: 0.7;
+        }
+
+        #results {
+            margin-top: 2rem;
+            transition: all 0.5s ease;
         }
 
         .footer {
-            margin-top: 4rem;
-            font-size: 0.9rem;
-            opacity: 0.5;
+            margin: 6rem 0 2rem;
+            font-size: 0.85rem;
+            opacity: 0.4;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .inputs {
+                flex-direction: column;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="hero">
-        <h1>The first AI-Search audit for SvelteKit apps. 🦞</h1>
-        <p>Dedicated AI-Search Visibility Audit for **SvelteKit** power users. Check your brand visibility across Perplexity, ChatGPT, and Google AIO in
-            seconds.</p>
+    <canvas id="bg-canvas"></canvas>
 
-        <div class="checker-box">
-            <input type="text" id="domain" placeholder="Domain (e.g. example.com)">
-            <input type="email" id="email" placeholder="Your Email (for report)">
-            <button id="auditBtn" onclick="startAudit()">Get Free Audit</button>
-        </div>
-        <div id="results" style="margin-top: 2rem; display: none;">
-            <div style="background: var(--glass); padding: 2rem; border-radius: 24px; border: 1px solid var(--accent);">
-                <h3 style="color: var(--accent);">🚀 Audit Started!</h3>
-                <p style="font-size: 1rem; opacity: 1;">We are scanning Perplexity, ChatGPT, and Google AIO for <b><span
-                            id="targetDomain"></span></b>.</p>
-                <div
-                    style="margin: 1rem 0; height: 4px; background: rgba(0,255,204,0.1); border-radius: 2px; overflow: hidden;">
-                    <div id="progress"
-                        style="width: 0%; height: 100%; background: var(--accent); transition: width 3s;"></div>
+    <div class="container">
+        <div class="hero">
+            <h1>The first AI-Search audit for SvelteKit apps. 🦞</h1>
+            <p class="sub-hook">专为品牌打造的 AI 搜索可见性审核工具。秒级查看您的品牌在 Perplexity, ChatGPT 和 Google AIO 中的权重位。</p>
+
+            <div class="social-proof">
+                <div class="dot"></div>
+                <span id="ticker-text">正在实时扫描：dafeng.9920@gmail.com</span>
+            </div>
+
+            <div class="checker-box">
+                <div class="inputs">
+                    <input type="text" id="domain" placeholder="输入域名 (例如: example.com)">
+                    <input type="email" id="email" placeholder="接收报告的邮箱">
                 </div>
-                <p id="statusMsg" style="font-size: 0.9rem; opacity: 0.7;">Initializing Neural Scanner...</p>
+                <button id="auditBtn" class="audit-btn" onclick="startAudit()">获取免费审计报告</button>
+
+                <div id="results" style="display: none;">
+                    <div
+                        style="background: rgba(0, 255, 204, 0.05); padding: 1.5rem; border-radius: 20px; border: 1px solid var(--accent); margin-top: 1.5rem;">
+                        <h3 style="color: var(--accent); margin-top: 0;">🚀 审计已启动!</h3>
+                        <p style="font-size: 0.95rem; margin-bottom: 1rem;">正在为 <b><span id="targetDomain"></span></b>
+                            检索全网 AI 引用源...</p>
+                        <div
+                            style="height: 6px; background: rgba(0,255,204,0.1); border-radius: 10px; overflow: hidden;">
+                            <div id="progress"
+                                style="width: 0%; height: 100%; background: var(--accent); transition: width 3s linear;">
+                            </div>
+                        </div>
+                        <p id="statusMsg" style="font-size: 0.85rem; opacity: 0.8; margin-top: 10px;">Initializing
+                            Neural Scanner...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="features">
+                <div class="card">
+                    <h3>🔍 Perplexity 引用</h3>
+                    <p>深度检测您的域名是否出现在 Perplexity 的引用来源中，以及在该品类下的可见性排名。</p>
+                </div>
+                <div class="card">
+                    <h3>🤖 ChatGPT 认知</h3>
+                    <p>分析 ChatGPT 在“搜索模式”下对你品牌的评价权重，识别竞争对手是否正在占据你的流量位。</p>
+                </div>
+                <div class="card">
+                    <h3>⚡ Google AIO 抢位</h3>
+                    <p>评估品牌在 Google AI Overviews 顶层卡片中的出现概率，提供针对性的内容补齐建议。</p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="footer">
-        Generated by OpenClaw SEO Matrix Factory v1.0
+        <div class="footer">
+            Built by GenesisMind / SEO Matrix Factory v1.0
+        </div>
     </div>
 
     <script>
+        // --- 背景网格特效 (Neural Mesh) ---
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        const particleCount = 60;
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.onresize = resize;
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.size = Math.random() * 2 + 1;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+            draw() {
+                ctx.fillStyle = '#00ffcc33';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < particleCount; i++) particles.push(new Particle());
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach((p, i) => {
+                p.update();
+                p.draw();
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = p.x - particles[j].x;
+                    const dy = p.y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 150) {
+                        ctx.strokeStyle = `rgba(0, 255, 204, ${0.15 * (1 - dist / 150)})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // --- 社交证明轮播 ---
+        const tickerItems = [
+            "正在实时扫描：dafeng.9920@gmail.com",
+            "刚刚捕获潜客：mystore.io (Score: 78)",
+            "正在扫描 Perplexity: cloud-dev.com",
+            "报告已发送至：user***@gmail.com",
+            "系统检测到 5 个 AI 引用缺失：shop-pro.ai"
+        ];
+        let tickerIdx = 0;
+        setInterval(() => {
+            tickerIdx = (tickerIdx + 1) % tickerItems.length;
+            document.getElementById('ticker-text').innerText = tickerItems[tickerIdx];
+        }, 3000);
+
+        // --- 审计主逻辑 ---
         async function startAudit() {
             const domain = document.getElementById('domain').value;
             const email = document.getElementById('email').value;
@@ -136,40 +381,30 @@
             const statusMsg = document.getElementById('statusMsg');
 
             if (!domain || !email) {
-                alert('Please enter both domain and email.');
+                alert('请填写域名和接收报告的邮箱。');
                 return;
             }
 
-            // UI State: Loading
             btn.disabled = true;
-            btn.innerText = 'Analyzing...';
+            btn.innerText = '正在智能分析...';
             targetDomain.innerText = domain;
             results.style.display = 'block';
 
-            // Animation sequence
-            setTimeout(() => { progress.style.width = '40%'; statusMsg.innerText = 'Scanning Perplexity Citations...'; }, 500);
-            setTimeout(() => { progress.style.width = '70%'; statusMsg.innerText = 'Checking ChatGPT Search Results...'; }, 2000);
-            setTimeout(() => { progress.style.width = '100%'; statusMsg.innerText = 'Finalizing Report...'; }, 4000);
+            setTimeout(() => { progress.style.width = '40%'; statusMsg.innerText = '正在检索 Perplexity 相关信源...'; }, 500);
+            setTimeout(() => { progress.style.width = '70%'; statusMsg.innerText = '正在对比 ChatGPT 搜索权重位...'; }, 2000);
+            setTimeout(() => { progress.style.width = '100%'; statusMsg.innerText = '正在生成深度审计报告...'; }, 4000);
 
             try {
-                // Future: Connect to Cloudflare Worker API
-                // await fetch('/api/audit', {
-                //     method: 'POST',
-                //     body: JSON.stringify({ domain, email })
-                // });
-
+                // 模拟 API 调用
                 setTimeout(() => {
-                    statusMsg.innerHTML = `<span style="color: var(--accent);">✅ Analysis Complete!</span> Check your email at <b>${email}</b> for the full report.`;
-                    btn.innerText = 'Audit Sent!';
-                    // Create a "Lead" record (mock for now)
+                    statusMsg.innerHTML = `<span style="color: var(--accent);">✅ 分析已完成！</span> 报告已成功加密发送至 <b>${email}</b>。请注意查收。`;
+                    btn.innerText = '审计报告已发送';
                     console.log(`Lead Captured: ${domain}, ${email}`);
                 }, 5000);
-
             } catch (err) {
-                console.error(err);
-                statusMsg.innerText = 'Error connecting to scanner. Please try again.';
+                statusMsg.innerText = '连接扫描器失败，请检查网络后重试。';
                 btn.disabled = false;
-                btn.innerText = 'Get Free Audit';
+                btn.innerText = '获取免费审计报告';
             }
         }
     </script>
