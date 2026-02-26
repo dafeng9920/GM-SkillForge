@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -17,7 +17,7 @@
         body {
             background: var(--bg);
             color: var(--text);
-            font-family: 'PingFang SC', 'Inter', sans-serif;
+            font-family: 'Inter', 'PingFang SC', sans-serif;
             margin: 0;
             overflow-x: hidden;
             min-height: 100vh;
@@ -72,7 +72,7 @@
             letter-spacing: 1px;
         }
 
-        /* 社交证明 Ticker */
+        /* Social Proof Ticker */
         .social-proof {
             background: rgba(0, 255, 204, 0.1);
             border: 1px solid rgba(0, 255, 204, 0.2);
@@ -172,7 +172,7 @@
             transform: none;
         }
 
-        /* 特性卡片 */
+        /* Feature Cards */
         .features {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -241,27 +241,28 @@
 
     <div class="container">
         <div class="hero">
-            <h1>Is your Next.js app invisible to Perplexity? 🦞</h1>
-            <p class="sub-hook">专为品牌打造的 AI 搜索可见性审核工具。秒级查看您的品牌在 Perplexity, ChatGPT 和 Google AIO 中的权重位。</p>
+            <h1>Is your brand invisible to AI Search? 🦞</h1>
+            <p class="sub-hook">AI Search Visibility Audit Tool built for brands. Check your authority in Perplexity,
+                ChatGPT, and Google AIO in seconds.</p>
 
             <div class="social-proof">
                 <div class="dot"></div>
-                <span id="ticker-text">正在实时扫描：dafeng.9920@gmail.com</span>
+                <span id="ticker-text">Live Scanning: dafeng.9920@gmail.com</span>
             </div>
 
             <div class="checker-box">
                 <div class="inputs">
-                    <input type="text" id="domain" placeholder="输入域名 (例如: example.com)">
-                    <input type="email" id="email" placeholder="接收报告的邮箱">
+                    <input type="text" id="domain" placeholder="Enter domain (e.g., example.com)">
+                    <input type="email" id="email" placeholder="Email for audit report">
                 </div>
-                <button id="auditBtn" class="audit-btn" onclick="startAudit()">获取免费审计报告</button>
+                <button id="auditBtn" class="audit-btn" onclick="startAudit()">Get Free Audit Report</button>
 
                 <div id="results" style="display: none;">
                     <div
                         style="background: rgba(0, 255, 204, 0.05); padding: 1.5rem; border-radius: 20px; border: 1px solid var(--accent); margin-top: 1.5rem;">
-                        <h3 style="color: var(--accent); margin-top: 0;">🚀 审计已启动!</h3>
-                        <p style="font-size: 0.95rem; margin-bottom: 1rem;">正在为 <b><span id="targetDomain"></span></b>
-                            检索全网 AI 引用源...</p>
+                        <h3 style="color: var(--accent); margin-top: 0;">🚀 Audit Started!</h3>
+                        <p style="font-size: 0.95rem; margin-bottom: 1rem;">Retrieving AI citations from the web for
+                            <b><span id="targetDomain"></span></b>...</p>
                         <div
                             style="height: 6px; background: rgba(0,255,204,0.1); border-radius: 10px; overflow: hidden;">
                             <div id="progress"
@@ -276,16 +277,19 @@
 
             <div class="features">
                 <div class="card">
-                    <h3>🔍 Perplexity 引用</h3>
-                    <p>深度检测您的域名是否出现在 Perplexity 的引用来源中，以及在该品类下的可见性排名。</p>
+                    <h3>🔍 Perplexity Citations</h3>
+                    <p>Identify if your brand appears in Perplexity's sources and analyze your visibility ranking among
+                        competitors.</p>
                 </div>
                 <div class="card">
-                    <h3>🤖 ChatGPT 认知</h3>
-                    <p>分析 ChatGPT 在“搜索模式”下对你品牌的评价权重，识别竞争对手是否正在占据你的流量位。</p>
+                    <h3>🤖 ChatGPT Awareness</h3>
+                    <p>Analyze how ChatGPT evaluates your brand in "Search Mode" and identify content gaps that limit
+                        visibility.</p>
                 </div>
                 <div class="card">
-                    <h3>⚡ Google AIO 抢位</h3>
-                    <p>评估品牌在 Google AI Overviews 顶层卡片中的出现概率，提供针对性的内容补齐建议。</p>
+                    <h3>⚡ Google AIO Stealth</h3>
+                    <p>Estimate the probability of appearing in Google AI Overviews and get actionable tips to capture
+                        the top AI card.</p>
                 </div>
             </div>
         </div>
@@ -296,7 +300,6 @@
     </div>
 
     <script>
-        // --- 背景网格特效 (Neural Mesh) ---
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -356,13 +359,12 @@
         }
         animate();
 
-        // --- 社交证明轮播 ---
         const tickerItems = [
-            "正在实时扫描：dafeng.9920@gmail.com",
-            "刚刚捕获潜客：mystore.io (Score: 78)",
-            "正在扫描 Perplexity: cloud-dev.com",
-            "报告已发送至：user***@gmail.com",
-            "系统检测到 5 个 AI 引用缺失：shop-pro.ai"
+            "Live Scanning: tech-startup.io",
+            "Newly captured lead: mystore.com (Score: 82)",
+            "Scanning Perplexity: cloud-dev.net",
+            "Report dispatched to: user***@gmail.com",
+            "Detected 5 missing AI citations: fintech-pro.ai"
         ];
         let tickerIdx = 0;
         setInterval(() => {
@@ -370,7 +372,6 @@
             document.getElementById('ticker-text').innerText = tickerItems[tickerIdx];
         }, 3000);
 
-        // --- 审计主逻辑 ---
         async function startAudit() {
             const domain = document.getElementById('domain').value;
             const email = document.getElementById('email').value;
@@ -381,40 +382,38 @@
             const statusMsg = document.getElementById('statusMsg');
 
             if (!domain || !email) {
-                alert('请填写域名和接收报告的邮箱。');
+                alert('Please fill in the domain and email.');
                 return;
             }
 
             btn.disabled = true;
-            btn.innerText = '正在智能分析...';
+            btn.innerText = 'Analyzing...';
             targetDomain.innerText = domain;
             results.style.display = 'block';
 
-            setTimeout(() => { progress.style.width = '40%'; statusMsg.innerText = '正在检索 Perplexity 相关信源...'; }, 500);
-            setTimeout(() => { progress.style.width = '70%'; statusMsg.innerText = '正在对比 ChatGPT 搜索权重位...'; }, 2000);
-            setTimeout(() => { progress.style.width = '100%'; statusMsg.innerText = '正在生成深度审计报告...'; }, 4000);
+            setTimeout(() => { progress.style.width = '40%'; statusMsg.innerText = 'Retrieving Perplexity citations...'; }, 500);
+            setTimeout(() => { progress.style.width = '70%'; statusMsg.innerText = 'Comparing ChatGPT search authority...'; }, 2000);
+            setTimeout(() => { progress.style.width = '100%'; statusMsg.innerText = 'Generating deep audit report...'; }, 4000);
 
             try {
-                // --- 核心逻辑：将数据同步到 Cloudflare 后端 ---
                 const response = await fetch('/api/audit', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ domain, email, framework: '{{framework_id}}' })
+                    body: JSON.stringify({ domain, email, framework: 'Global_V1' })
                 });
 
                 if (!response.ok) throw new Error('API Error');
 
                 setTimeout(() => {
-                    statusMsg.innerHTML = `<span style="color: var(--accent);">✅ 分析已完成！</span> 深度报告正通过 Neural 网关发送至 <b>${email}</b>。请注意查收。`;
-                    btn.innerText = '审计报告已下发';
+                    statusMsg.innerHTML = `<span style="color: var(--accent);">✅ Analysis Complete!</span> Your report is being sent via Neural Gateway to <b>${email}</b>.`;
+                    btn.innerText = 'Audit Dispatched';
                     console.log(`Success: Lead captured for ${domain}`);
                 }, 5000);
             } catch (err) {
                 console.error('Audit sync failed:', err);
-                // 降级处理：即使 API 报错也显示成功（保证用户体验），但在控制台记录
                 setTimeout(() => {
-                    statusMsg.innerHTML = `<span style="color: var(--accent);">✅ 队列已加入！</span> 虽然 Neural 节点繁忙，但您的审计任务已进入队列，报告将发送至 <b>${email}</b>。`;
-                    btn.innerText = '任务已排队';
+                    statusMsg.innerHTML = `<span style="color: var(--accent);">✅ Task Queued!</span> Neural nodes are busy, but your audit is in line and will be sent to <b>${email}</b>.`;
+                    btn.innerText = 'Queued';
                 }, 5000);
             }
         }
