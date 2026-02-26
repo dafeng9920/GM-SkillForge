@@ -1,0 +1,238 @@
+schema_version: "0.1.0"
+map_version: "l4.2-first-batch"
+source: "docs/2026-02-17/图书馆迁移/library_intent_mapping_v2.md"
+policy:
+  migration_rule: "intent-only"
+  allow_decisions: ["accept", "defer", "reject"]
+  mainline_accept_required: true
+
+entries:
+  - source_asset_id: const_survival
+    domain: principles
+    decision: accept
+    migration_status: frozen
+    target_intent_id: constitution_principle_survival
+    contract_path: docs/2026-02-16/constitution_v1.md
+    gate_path: [constitution_risk_gate]
+    evidence_required: [constitution_hash, ruling]
+    integration_level: mainline
+
+  - source_asset_id: const_default_deny
+    domain: principles
+    decision: accept
+    migration_status: frozen
+    target_intent_id: constitution_principle_default_deny
+    contract_path: docs/2026-02-16/constitution_v1.md
+    gate_path: [constitution_risk_gate, pack_audit_and_publish]
+    evidence_required: [gate_decisions, ruling, publish_result]
+    integration_level: mainline
+
+  - source_asset_id: const_evidence
+    domain: principles
+    decision: accept
+    migration_status: frozen
+    target_intent_id: constitution_principle_evidence
+    contract_path: docs/2026-02-17/图书馆迁移/contracts/evidence_schema.yaml
+    gate_path: [sandbox_test_and_trace, pack_audit_and_publish]
+    evidence_required: [EvidenceRef, manifest_hash]
+    integration_level: mainline
+
+  - source_asset_id: cornerstone_contract
+    domain: cornerstone
+    decision: accept
+    migration_status: mapped
+    target_intent_id: cornerstone_contracts_first
+    contract_path: docs/2026-02-17/图书馆迁移/contracts/intents
+    gate_path: [draft_skill_spec]
+    evidence_required: [contract_version, schema_hash]
+    integration_level: mainline
+
+  - source_asset_id: cornerstone_gate
+    domain: cornerstone
+    decision: accept
+    migration_status: mapped
+    target_intent_id: cornerstone_gate_chain
+    contract_path: docs/2026-02-17/图书馆迁移/图书馆意图迁移执行方案 v2.md
+    gate_path: [license_gate, constitution_risk_gate, pack_audit_and_publish]
+    evidence_required: [gate_decisions, ruling]
+    integration_level: mainline
+
+  - source_asset_id: cornerstone_evidence
+    domain: cornerstone
+    decision: accept
+    migration_status: mapped
+    target_intent_id: cornerstone_evidence_chain
+    contract_path: docs/2026-02-17/图书馆迁移/contracts/evidence_schema.yaml
+    gate_path: [sandbox_test_and_trace]
+    evidence_required: [evidence_hash, source_locator]
+    integration_level: mainline
+
+  - source_asset_id: axis_intent_ingest
+    domain: axis_top10
+    decision: accept
+    migration_status: mapped
+    target_intent_id: outer_intent_ingest
+    contract_path: docs/2026-02-16/完整版模块清单 + 全量接口契约目录.md
+    gate_path: [intake_repo, repo_scan_fit_score]
+    evidence_required: [intent_ingest_receipt]
+    integration_level: l42_planned
+
+  - source_asset_id: axis_negative_convergence
+    domain: axis_top10
+    decision: accept
+    migration_status: mapped
+    target_intent_id: outer_negative_convergence
+    contract_path: docs/2026-02-16/完整版模块清单 + 全量接口契约目录.md
+    gate_path: [repo_scan_fit_score, draft_skill_spec]
+    evidence_required: [convergence_trace]
+    integration_level: l42_planned
+
+  - source_asset_id: axis_contract_freeze
+    domain: axis_top10
+    decision: accept
+    migration_status: mapped
+    target_intent_id: outer_contract_freeze
+    contract_path: docs/2026-02-16/完整版模块清单 + 全量接口契约目录.md
+    gate_path: [draft_skill_spec, constitution_risk_gate]
+    evidence_required: [contract_freeze_receipt]
+    integration_level: l42_planned
+
+  - source_asset_id: axis_artifact_build
+    domain: axis_top10
+    decision: accept
+    migration_status: mapped
+    target_intent_id: outer_artifact_build
+    contract_path: docs/2026-02-16/完整版模块清单 + 全量接口契约目录.md
+    gate_path: [scaffold_skill_impl, sandbox_test_and_trace]
+    evidence_required: [build_manifest]
+    integration_level: l42_planned
+
+  - source_asset_id: axis_time_semantics
+    domain: axis_top10
+    decision: accept
+    migration_status: validated
+    target_intent_id: time_semantics
+    contract_path: docs/2026-02-17/图书馆迁移/contracts/intents/time_semantics.yml
+    gate_path: [intake_repo, sandbox_test_and_trace]
+    evidence_required: [at_time, available_time]
+    integration_level: mainline
+
+  - source_asset_id: axis_evidence_chain
+    domain: axis_top10
+    decision: accept
+    migration_status: validated
+    target_intent_id: evidence_chain
+    contract_path: docs/2026-02-17/图书馆迁移/contracts/evidence_schema.yaml
+    gate_path: [sandbox_test_and_trace]
+    evidence_required: [canonical_hash, prev_hash]
+    integration_level: mainline
+
+  - source_asset_id: axis_revision_evolution
+    domain: axis_top10
+    decision: accept
+    migration_status: mapped
+    target_intent_id: upgrade_skill_revision
+    contract_path: docs/2026-02-17/图书馆迁移/contracts/intents/upgrade_skill.yml
+    gate_path: [draft_skill_spec, pack_audit_and_publish]
+    evidence_required: [version_delta, updated_graph]
+    integration_level: mainline
+
+  - source_asset_id: axis_regression_replay
+    domain: axis_top10
+    decision: accept
+    migration_status: validated
+    target_intent_id: regression_replay
+    contract_path: docs/2026-02-17/图书馆迁移/A1_scan.md
+    gate_path: [sandbox_test_and_trace]
+    evidence_required: [replay_report, regression_report]
+    integration_level: mainline
+
+  - source_asset_id: artifact_audit_replay_engine
+    domain: artifacts
+    decision: accept
+    migration_status: validated
+    target_intent_id: audit_repo_skill
+    contract_path: docs/2026-02-17/图书馆迁移/contracts/intents/audit_repo.yml
+    gate_path: [intake_repo, pack_audit_and_publish]
+    evidence_required: [audit_report, anomalies]
+    integration_level: mainline
+
+  - source_asset_id: artifact_skill_factory_pipeline
+    domain: artifacts
+    decision: accept
+    migration_status: validated
+    target_intent_id: generate_skill_from_repo
+    contract_path: docs/2026-02-17/图书馆迁移/contracts/intents/generate_skill.yml
+    gate_path: [draft_skill_spec, scaffold_skill_impl]
+    evidence_required: [skill_spec_pack]
+    integration_level: mainline
+
+  - source_asset_id: artifact_release_governor
+    domain: artifacts
+    decision: accept
+    migration_status: mapped
+    target_intent_id: release_governor
+    contract_path: docs/2026-02-17/图书馆迁移/contracts/intents/upgrade_skill.yml
+    gate_path: [constitution_risk_gate, pack_audit_and_publish]
+    evidence_required: [release_decision, rollback]
+    integration_level: mainline
+
+  - source_asset_id: artifact_tombstone
+    domain: artifacts
+    decision: accept
+    migration_status: validated
+    target_intent_id: tombstone_skill
+    contract_path: docs/2026-02-17/图书馆迁移/contracts/intents/tombstone.yml
+    gate_path: [constitution_risk_gate]
+    evidence_required: [tombstone_record]
+    integration_level: mainline
+
+  - source_asset_id: artifact_trend_following
+    domain: artifacts
+    decision: accept
+    migration_status: mapped
+    target_intent_id: trend_following
+    contract_path: docs/2026-02-17/图书馆迁移/contracts/intents/trend_following.yml
+    gate_path: [sandbox_test_and_trace]
+    evidence_required: [strategy_backtest]
+    integration_level: l45_planned
+
+  - source_asset_id: artifact_mean_reversion
+    domain: artifacts
+    decision: accept
+    migration_status: mapped
+    target_intent_id: mean_reversion
+    contract_path: docs/2026-02-17/图书馆迁移/contracts/intents/mean_reversion.yml
+    gate_path: [sandbox_test_and_trace]
+    evidence_required: [strategy_backtest]
+    integration_level: l45_planned
+
+  - source_asset_id: artifact_multi_factor
+    domain: artifacts
+    decision: accept
+    migration_status: mapped
+    target_intent_id: multi_factor
+    contract_path: docs/2026-02-17/图书馆迁移/contracts/intents/multi_factor.yml
+    gate_path: [sandbox_test_and_trace]
+    evidence_required: [factor_exposure_report]
+    integration_level: l45_planned
+
+  - source_asset_id: artifact_evidence_schema
+    domain: artifacts
+    decision: accept
+    migration_status: validated
+    target_intent_id: evidence_schema
+    contract_path: docs/2026-02-17/图书馆迁移/contracts/evidence_schema.yaml
+    gate_path: [sandbox_test_and_trace]
+    evidence_required: [evidence_schema_validation]
+    integration_level: mainline
+
+  - source_asset_id: artifact_time_semantics_guard
+    domain: artifacts
+    decision: accept
+    migration_status: validated
+    target_intent_id: time_semantics_guard
+    contract_path: docs/2026-02-17/图书馆迁移/contracts/intents/time_semantics.yml
+    gate_path: [intake_repo, sandbox_test_and_trace]
+    evidence_required: [time_semantics_check]
+    integration_level: mainline

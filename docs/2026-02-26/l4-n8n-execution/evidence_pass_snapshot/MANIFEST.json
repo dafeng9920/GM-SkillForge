@@ -1,0 +1,236 @@
+{
+  "generated_at_utc": "2026-02-26T15:10:28Z",
+  "source_dir": "d:\\GM-SkillForge\\docs\\2026-02-26\\l4-n8n-execution\\verification",
+  "snapshot_dir": "d:\\GM-SkillForge\\docs\\2026-02-26\\l4-n8n-execution\\evidence_pass_snapshot",
+  "required_files": [
+    "L4-01_execution_report.yaml",
+    "L4-01_gate_decision.json",
+    "L4-01_compliance_attestation.json",
+    "L4-02_execution_report.yaml",
+    "L4-02_gate_decision.json",
+    "L4-02_compliance_attestation.json",
+    "L4-03_execution_report.yaml",
+    "L4-03_gate_decision.json",
+    "L4-03_compliance_attestation.json",
+    "L4-04_execution_report.yaml",
+    "L4-04_gate_decision.json",
+    "L4-04_compliance_attestation.json",
+    "L4-05_execution_report.yaml",
+    "L4-05_gate_decision.json",
+    "L4-05_compliance_attestation.json",
+    "L4-06_execution_report.yaml",
+    "L4-06_gate_decision.json",
+    "L4-06_compliance_attestation.json",
+    "L4-07_execution_report.yaml",
+    "L4-07_gate_decision.json",
+    "L4-07_compliance_attestation.json",
+    "L4-08_execution_report.yaml",
+    "L4-08_gate_decision.json",
+    "L4-08_compliance_attestation.json",
+    "final_gate_decision.json"
+  ],
+  "missing_count": 0,
+  "missing_files": [],
+  "files": [
+    {
+      "file": "L4-01_execution_report.yaml",
+      "path": "d:\\GM-SkillForge\\docs\\2026-02-26\\l4-n8n-execution\\evidence_pass_snapshot\\L4-01_execution_report.yaml",
+      "sha256": "c5fe0649aadf79548ecbf35505521e729a2b02ba62ece31c4b6f707ae1e52c91",
+      "size_bytes": 17174,
+      "last_write_time_utc": "2026-02-26T13:24:13Z",
+      "missing": false
+    },
+    {
+      "file": "L4-01_gate_decision.json",
+      "path": "d:\\GM-SkillForge\\docs\\2026-02-26\\l4-n8n-execution\\evidence_pass_snapshot\\L4-01_gate_decision.json",
+      "sha256": "df1d373d73dcf8db0680908e11ee9e71e89a635296be84fbbc11a6e0cf20e155",
+      "size_bytes": 6987,
+      "last_write_time_utc": "2026-02-26T13:24:43Z",
+      "missing": false
+    },
+    {
+      "file": "L4-01_compliance_attestation.json",
+      "path": "d:\\GM-SkillForge\\docs\\2026-02-26\\l4-n8n-execution\\evidence_pass_snapshot\\L4-01_compliance_attestation.json",
+      "sha256": "f14236b73b234f32cc3c9ab6799b753d7377ea7d902c396834eea94b54265a0a",
+      "size_bytes": 7463,
+      "last_write_time_utc": "2026-02-26T13:25:34Z",
+      "missing": false
+    },
+    {
+      "file": "L4-02_execution_report.yaml",
+      "path": "d:\\GM-SkillForge\\docs\\2026-02-26\\l4-n8n-execution\\evidence_pass_snapshot\\L4-02_execution_report.yaml",
+      "sha256": "33363eeec8b06f41b97ba82cedf5af707ca4f1b2473168971580995b3645e5f9",
+      "size_bytes": 14608,
+      "last_write_time_utc": "2026-02-26T13:32:28Z",
+      "missing": false
+    },
+    {
+      "file": "L4-02_gate_decision.json",
+      "path": "d:\\GM-SkillForge\\docs\\2026-02-26\\l4-n8n-execution\\evidence_pass_snapshot\\L4-02_gate_decision.json",
+      "sha256": "39a34f7f9069084571dd315472a9c86a91c2fe5b2e842509e91a48307f808cb9",
+      "size_bytes": 6223,
+      "last_write_time_utc": "2026-02-26T13:32:45Z",
+      "missing": false
+    },
+    {
+      "file": "L4-02_compliance_attestation.json",
+      "path": "d:\\GM-SkillForge\\docs\\2026-02-26\\l4-n8n-execution\\evidence_pass_snapshot\\L4-02_compliance_attestation.json",
+      "sha256": "e7e70357a7380fc8f167c8da817a385a0cf03e539397fc799d8b83a1b430b49b",
+      "size_bytes": 9820,
+      "last_write_time_utc": "2026-02-26T13:33:10Z",
+      "missing": false
+    },
+    {
+      "file": "L4-03_execution_report.yaml",
+      "path": "d:\\GM-SkillForge\\docs\\2026-02-26\\l4-n8n-execution\\evidence_pass_snapshot\\L4-03_execution_report.yaml",
+      "sha256": "8bf8141df8dc54794e8cbd72ab3f81e23649d4cc2877472b247d889ce63f43aa",
+      "size_bytes": 6245,
+      "last_write_time_utc": "2026-02-26T13:41:06Z",
+      "missing": false
+    },
+    {
+      "file": "L4-03_gate_decision.json",
+      "path": "d:\\GM-SkillForge\\docs\\2026-02-26\\l4-n8n-execution\\evidence_pass_snapshot\\L4-03_gate_decision.json",
+      "sha256": "57d726c80a7797905a62e7cb6bd5284577b0f54ffb4a611e7b8ab58fd164e2fe",
+      "size_bytes": 2300,
+      "last_write_time_utc": "2026-02-26T13:41:28Z",
+      "missing": false
+    },
+    {
+      "file": "L4-03_compliance_attestation.json",
+      "path": "d:\\GM-SkillForge\\docs\\2026-02-26\\l4-n8n-execution\\evidence_pass_snapshot\\L4-03_compliance_attestation.json",
+      "sha256": "04c61173b469ade9137b6d78318f80159218c0c15a7893b9804727196129c89f",
+      "size_bytes": 2821,
+      "last_write_time_utc": "2026-02-26T13:41:52Z",
+      "missing": false
+    },
+    {
+      "file": "L4-04_execution_report.yaml",
+      "path": "d:\\GM-SkillForge\\docs\\2026-02-26\\l4-n8n-execution\\evidence_pass_snapshot\\L4-04_execution_report.yaml",
+      "sha256": "e0dc8bbc3d3f1f33cde5ce5eb66f35c155f1b4e2aba91d110f6eb99ff62c2979",
+      "size_bytes": 10646,
+      "last_write_time_utc": "2026-02-26T14:20:17Z",
+      "missing": false
+    },
+    {
+      "file": "L4-04_gate_decision.json",
+      "path": "d:\\GM-SkillForge\\docs\\2026-02-26\\l4-n8n-execution\\evidence_pass_snapshot\\L4-04_gate_decision.json",
+      "sha256": "3a5b2ee3aa5afe7452e5e879fba17194678897fab36bc4e31ca6f0c0f2322d27",
+      "size_bytes": 5398,
+      "last_write_time_utc": "2026-02-26T14:20:34Z",
+      "missing": false
+    },
+    {
+      "file": "L4-04_compliance_attestation.json",
+      "path": "d:\\GM-SkillForge\\docs\\2026-02-26\\l4-n8n-execution\\evidence_pass_snapshot\\L4-04_compliance_attestation.json",
+      "sha256": "643bc2b58154b743c2c54ab746a2f59f199976a741a51647bc524977aba2f4a5",
+      "size_bytes": 5985,
+      "last_write_time_utc": "2026-02-26T14:20:53Z",
+      "missing": false
+    },
+    {
+      "file": "L4-05_execution_report.yaml",
+      "path": "d:\\GM-SkillForge\\docs\\2026-02-26\\l4-n8n-execution\\evidence_pass_snapshot\\L4-05_execution_report.yaml",
+      "sha256": "3faf75b6e04a9d9959ad776833a46e932fffdd7c79e7db0c5752b615c8a65732",
+      "size_bytes": 13148,
+      "last_write_time_utc": "2026-02-26T14:31:25Z",
+      "missing": false
+    },
+    {
+      "file": "L4-05_gate_decision.json",
+      "path": "d:\\GM-SkillForge\\docs\\2026-02-26\\l4-n8n-execution\\evidence_pass_snapshot\\L4-05_gate_decision.json",
+      "sha256": "406c432e4b698e832993ba0e50cb0926f09270786b9406992305871475dddcab",
+      "size_bytes": 7299,
+      "last_write_time_utc": "2026-02-26T14:31:40Z",
+      "missing": false
+    },
+    {
+      "file": "L4-05_compliance_attestation.json",
+      "path": "d:\\GM-SkillForge\\docs\\2026-02-26\\l4-n8n-execution\\evidence_pass_snapshot\\L4-05_compliance_attestation.json",
+      "sha256": "cc0c291d61d071fb1ee13d651776e2b2ef89691831c1252905f261df32a9a20d",
+      "size_bytes": 9728,
+      "last_write_time_utc": "2026-02-26T14:32:10Z",
+      "missing": false
+    },
+    {
+      "file": "L4-06_execution_report.yaml",
+      "path": "d:\\GM-SkillForge\\docs\\2026-02-26\\l4-n8n-execution\\evidence_pass_snapshot\\L4-06_execution_report.yaml",
+      "sha256": "9bc02c4415fcc2f87d765f420e82ba99e6be17a040c2b0378eff1ebec43c3f30",
+      "size_bytes": 14159,
+      "last_write_time_utc": "2026-02-26T15:00:17Z",
+      "missing": false
+    },
+    {
+      "file": "L4-06_gate_decision.json",
+      "path": "d:\\GM-SkillForge\\docs\\2026-02-26\\l4-n8n-execution\\evidence_pass_snapshot\\L4-06_gate_decision.json",
+      "sha256": "661a5c76daad4f5ded8ca632251987003d795149ce3a850dff88977f7780030f",
+      "size_bytes": 9414,
+      "last_write_time_utc": "2026-02-26T15:00:45Z",
+      "missing": false
+    },
+    {
+      "file": "L4-06_compliance_attestation.json",
+      "path": "d:\\GM-SkillForge\\docs\\2026-02-26\\l4-n8n-execution\\evidence_pass_snapshot\\L4-06_compliance_attestation.json",
+      "sha256": "d07c006ec3870d697208e1692bd1d79090937f7f4f266c39298ed982c3d7ced7",
+      "size_bytes": 5900,
+      "last_write_time_utc": "2026-02-26T15:07:44Z",
+      "missing": false
+    },
+    {
+      "file": "L4-07_execution_report.yaml",
+      "path": "d:\\GM-SkillForge\\docs\\2026-02-26\\l4-n8n-execution\\evidence_pass_snapshot\\L4-07_execution_report.yaml",
+      "sha256": "329486e1302370cf383177bc696c0ee90ab1864611efad81ce5379f78b91edf3",
+      "size_bytes": 5245,
+      "last_write_time_utc": "2026-02-26T15:02:33Z",
+      "missing": false
+    },
+    {
+      "file": "L4-07_gate_decision.json",
+      "path": "d:\\GM-SkillForge\\docs\\2026-02-26\\l4-n8n-execution\\evidence_pass_snapshot\\L4-07_gate_decision.json",
+      "sha256": "80eee362c3f5bc43c3e2bd7249e968f8d85756d939795ab31c3e9d64c7590911",
+      "size_bytes": 6149,
+      "last_write_time_utc": "2026-02-26T15:02:51Z",
+      "missing": false
+    },
+    {
+      "file": "L4-07_compliance_attestation.json",
+      "path": "d:\\GM-SkillForge\\docs\\2026-02-26\\l4-n8n-execution\\evidence_pass_snapshot\\L4-07_compliance_attestation.json",
+      "sha256": "6b2b005f00a304e23f927cdd3d6a7b09f55c374fef223d7ee32e7bed8a85db2e",
+      "size_bytes": 7673,
+      "last_write_time_utc": "2026-02-26T15:03:11Z",
+      "missing": false
+    },
+    {
+      "file": "L4-08_execution_report.yaml",
+      "path": "d:\\GM-SkillForge\\docs\\2026-02-26\\l4-n8n-execution\\evidence_pass_snapshot\\L4-08_execution_report.yaml",
+      "sha256": "46212dc42ac3648ec63c67d22b78546f3d0d95ca5d332d9f6f5ffc76457bdfee",
+      "size_bytes": 1674,
+      "last_write_time_utc": "2026-02-26T15:08:44Z",
+      "missing": false
+    },
+    {
+      "file": "L4-08_gate_decision.json",
+      "path": "d:\\GM-SkillForge\\docs\\2026-02-26\\l4-n8n-execution\\evidence_pass_snapshot\\L4-08_gate_decision.json",
+      "sha256": "938fe41f1e58423a51483964b86587a85a703b90922a034509b4ae4cd5c00e78",
+      "size_bytes": 1591,
+      "last_write_time_utc": "2026-02-26T15:08:44Z",
+      "missing": false
+    },
+    {
+      "file": "L4-08_compliance_attestation.json",
+      "path": "d:\\GM-SkillForge\\docs\\2026-02-26\\l4-n8n-execution\\evidence_pass_snapshot\\L4-08_compliance_attestation.json",
+      "sha256": "4de516c927c042323a538091862f77ac6594ba49639fa205177314857ca38be8",
+      "size_bytes": 582,
+      "last_write_time_utc": "2026-02-26T15:08:44Z",
+      "missing": false
+    },
+    {
+      "file": "final_gate_decision.json",
+      "path": "d:\\GM-SkillForge\\docs\\2026-02-26\\l4-n8n-execution\\evidence_pass_snapshot\\final_gate_decision.json",
+      "sha256": "b81de6f89cd91b4236dfa8373737674f854cc2233345a6af124fcd15194a1433",
+      "size_bytes": 1880,
+      "last_write_time_utc": "2026-02-26T15:08:44Z",
+      "missing": false
+    }
+  ]
+}

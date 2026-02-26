@@ -1,0 +1,45 @@
+name: library-intent-mainline-mapper-skill
+description: 把图书馆迁移的 accept 意图接入主链并做覆盖率校验。
+version: v1.0.0
+frozen_at: 2026-02-26
+owner: platform-governance
+tags:
+  - l4
+  - migration
+  - intent-map
+  - contracts
+  - coverage
+default_prompt: |
+  读取 library_intent_mapping_v2.md，把 accept 条目写入 intent_map.yml，
+  运行覆盖率与合同解析校验，并更新 E2E 执行报告为 EXECUTED。
+
+capabilities:
+  - parse_mapping_accept_entries
+  - generate_intent_map
+  - run_coverage_validation
+  - update_execution_report
+
+input_schema:
+  mapping_doc:
+    type: string
+    required: true
+    description: library_intent_mapping_v2.md 路径
+  target_intent_map:
+    type: string
+    required: true
+    description: intent_map.yml 路径
+  validation_script:
+    type: string
+    required: true
+    description: 覆盖率校验脚本路径
+
+output_schema:
+  intent_map:
+    type: string
+    description: 更新后的 intent_map.yml
+  e2e_report:
+    type: string
+    description: 真实执行版 E2E 报告路径
+  validation_summary:
+    type: object
+    description: 覆盖率和缺失项统计

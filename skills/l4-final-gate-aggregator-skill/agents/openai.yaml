@@ -1,0 +1,51 @@
+name: l4-final-gate-aggregator-skill
+description: 聚合 L4 三件套并输出最终裁决（L4-08 + final_gate_decision）。
+version: v1.0.0
+frozen_at: 2026-02-26
+owner: platform-governance
+tags:
+  - l4
+  - final-gate
+  - adjudication
+  - verification
+  - compliance
+default_prompt: |
+  汇总 L4-01~L4-07 三件套并生成 L4-08 裁决。
+  规则：
+  - 缺任一三件套 => DENY
+  - 任一 compliance != PASS => REQUIRES_CHANGES
+  - 全绿 => ALLOW
+
+capabilities:
+  - aggregate_triplet_records
+  - enforce_l4_decision_rules
+  - generate_l4_08_outputs
+  - generate_final_gate_decision
+
+input_schema:
+  verification_dir:
+    type: string
+    required: true
+    description: L4 验证目录路径
+  task_range:
+    type: array
+    required: true
+    description: 要汇总的任务范围
+  rules:
+    type: object
+    required: true
+    description: 裁决规则集合
+
+output_schema:
+  l4_08_execution_report:
+    type: string
+    description: L4-08_execution_report.yaml 路径
+  l4_08_gate_decision:
+    type: string
+    description: L4-08_gate_decision.json 路径
+  l4_08_compliance_attestation:
+    type: string
+    description: L4-08_compliance_attestation.json 路径
+  final_gate_decision:
+    type: string
+    description: final_gate_decision.json 路径

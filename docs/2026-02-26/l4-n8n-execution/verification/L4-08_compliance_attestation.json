@@ -1,0 +1,24 @@
+{
+  "task_id": "L4-08",
+  "attester": "Kior-C",
+  "timestamp": "2026-02-26T15:08:44Z",
+  "decision": "PASS",
+  "attestation_scope": "Decision rule integrity and evidence traceability for L4-08 aggregation",
+  "checks": [
+    {
+      "id": "CHK-1",
+      "name": "Rule application deterministic",
+      "status": "PASS"
+    },
+    {
+      "id": "CHK-2",
+      "name": "Evidence trace list present",
+      "status": "PASS"
+    },
+    {
+      "id": "CHK-3",
+      "name": "Final decision written to final_gate_decision.json",
+      "status": "PASS"
+    }
+  ]
+}

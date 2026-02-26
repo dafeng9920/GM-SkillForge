@@ -1,0 +1,45 @@
+name: l4-evidence-freeze-skill
+description: 生成 L4 封板快照与冻结清单（MANIFEST/BOARD_FREEZE/ZIP）。
+version: v1.0.0
+frozen_at: 2026-02-26
+owner: platform-governance
+tags:
+  - l4
+  - freeze
+  - evidence
+  - manifest
+  - board
+default_prompt: |
+  从 L4 verification 目录生成证据快照与封板冻结资产。
+  输出 MANIFEST.json、BOARD_FREEZE.json 和 evidence_pass_snapshot.zip。
+
+capabilities:
+  - evidence_snapshot_copy
+  - manifest_hash_generation
+  - board_freeze_generation
+  - archive_packaging
+
+input_schema:
+  source_verification_dir:
+    type: string
+    required: true
+    description: L4 verification 目录
+  snapshot_dir:
+    type: string
+    required: true
+    description: 冻结快照目录
+  include_files:
+    type: array
+    required: true
+    description: 纳入冻结的文件规则
+
+output_schema:
+  manifest:
+    type: string
+    description: MANIFEST.json 路径
+  board_freeze:
+    type: string
+    description: BOARD_FREEZE.json 路径
+  archive:
+    type: string
+    description: zip 归档路径

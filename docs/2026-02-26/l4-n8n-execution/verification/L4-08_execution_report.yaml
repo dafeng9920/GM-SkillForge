@@ -1,0 +1,57 @@
+job_id: "L4-N8N-MVP-20260226-001"
+task_id: "L4-08"
+executed_at: "2026-02-26T15:08:44Z"
+executor: "Codex"
+scope: "Aggregate L4-01~L4-07 triplets and issue final ruling"
+rules:
+  - "Missing any triplet => DENY"
+  - "Any compliance != PASS => REQUIRES_CHANGES"
+  - "All green => ALLOW"
+task_summary:
+  - task_id: "L4-01"
+    execution_report: true
+    gate_decision_file: true
+    compliance_attestation: true
+    gate_decision_value: "ALLOW"
+    compliance_value: "PASS"
+  - task_id: "L4-02"
+    execution_report: true
+    gate_decision_file: true
+    compliance_attestation: true
+    gate_decision_value: "ALLOW"
+    compliance_value: "PASS"
+  - task_id: "L4-03"
+    execution_report: true
+    gate_decision_file: true
+    compliance_attestation: true
+    gate_decision_value: "ALLOW"
+    compliance_value: "PASS"
+  - task_id: "L4-04"
+    execution_report: true
+    gate_decision_file: true
+    compliance_attestation: true
+    gate_decision_value: "ALLOW"
+    compliance_value: "PASS"
+  - task_id: "L4-05"
+    execution_report: true
+    gate_decision_file: true
+    compliance_attestation: true
+    gate_decision_value: "ALLOW"
+    compliance_value: "PASS"
+  - task_id: "L4-06"
+    execution_report: true
+    gate_decision_file: true
+    compliance_attestation: true
+    gate_decision_value: "ALLOW"
+    compliance_value: "PASS"
+  - task_id: "L4-07"
+    execution_report: true
+    gate_decision_file: true
+    compliance_attestation: true
+    gate_decision_value: "ALLOW"
+    compliance_value: "PASS"
+result:
+  decision: "ALLOW"
+  rule_triggered: "all_green"
+  missing_triplet_count: 0
+  non_pass_compliance_count: 0

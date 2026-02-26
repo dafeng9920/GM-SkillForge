@@ -1,0 +1,11 @@
+{
+  "board_id": "L4-N8N-MVP-20260226-001-FREEZE",
+  "level": "L4.2",
+  "decision": "ALLOW",
+  "frozen_at_utc": "2026-02-26T15:10:28Z",
+  "source_verification_dir": "d:\\GM-SkillForge\\docs\\2026-02-26\\l4-n8n-execution\\verification",
+  "snapshot_dir": "d:\\GM-SkillForge\\docs\\2026-02-26\\l4-n8n-execution\\evidence_pass_snapshot",
+  "manifest": "d:\\GM-SkillForge\\docs\\2026-02-26\\l4-n8n-execution\\evidence_pass_snapshot\\MANIFEST.json",
+  "zip": "d:\\GM-SkillForge\\docs\\2026-02-26\\l4-n8n-execution\\evidence_pass_snapshot.zip",
+  "owner": "Codex (Orchestrator)"
+}

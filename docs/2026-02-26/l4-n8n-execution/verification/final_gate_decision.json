@@ -1,0 +1,80 @@
+{
+  "job_id": "L4-N8N-MVP-20260226-001",
+  "timestamp": "2026-02-26T15:08:44Z",
+  "decision": "ALLOW",
+  "rule_triggered": "all_green",
+  "required_changes": [],
+  "blocking_items": [],
+  "tasks": [
+    {
+      "task_id": "L4-01",
+      "files": {
+        "execution_report": true,
+        "gate_decision": true,
+        "compliance_attestation": true
+      },
+      "gate_decision": "ALLOW",
+      "compliance": "PASS"
+    },
+    {
+      "task_id": "L4-02",
+      "files": {
+        "execution_report": true,
+        "gate_decision": true,
+        "compliance_attestation": true
+      },
+      "gate_decision": "ALLOW",
+      "compliance": "PASS"
+    },
+    {
+      "task_id": "L4-03",
+      "files": {
+        "execution_report": true,
+        "gate_decision": true,
+        "compliance_attestation": true
+      },
+      "gate_decision": "ALLOW",
+      "compliance": "PASS"
+    },
+    {
+      "task_id": "L4-04",
+      "files": {
+        "execution_report": true,
+        "gate_decision": true,
+        "compliance_attestation": true
+      },
+      "gate_decision": "ALLOW",
+      "compliance": "PASS"
+    },
+    {
+      "task_id": "L4-05",
+      "files": {
+        "execution_report": true,
+        "gate_decision": true,
+        "compliance_attestation": true
+      },
+      "gate_decision": "ALLOW",
+      "compliance": "PASS"
+    },
+    {
+      "task_id": "L4-06",
+      "files": {
+        "execution_report": true,
+        "gate_decision": true,
+        "compliance_attestation": true
+      },
+      "gate_decision": "ALLOW",
+      "compliance": "PASS"
+    },
+    {
+      "task_id": "L4-07",
+      "files": {
+        "execution_report": true,
+        "gate_decision": true,
+        "compliance_attestation": true
+      },
+      "gate_decision": "ALLOW",
+      "compliance": "PASS"
+    }
+  ]
+}
