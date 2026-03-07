@@ -1,0 +1,94 @@
+{
+  "constraint_version": "task_execution_constraints_v1",
+  "effective_date": "2026-03-07",
+  "constraint_id": "TASK-EXEC-CONSTRAINTS-TG1-20260307",
+  "issued_by": "Antigravity-1",
+  "environment": "LOCAL-ANTIGRAVITY + CLOUD-ROOT",
+  "governance_scope": "ALL_SUBSEQUENT_TASKS",
+  "constraints": {
+    "mandatory_skill": {
+      "skill_id": "cloud-lobster-closed-loop-skill",
+      "skill_path": "skills/cloud-lobster-closed-loop-skill/",
+      "enforcement": "STRICT",
+      "rationale": "确保所有云端任务执行遵循闭环治理流程"
+    },
+    "prohibited_bypasses": {
+      "task_contract_bypass": {
+        "status": "PROHIBITED",
+        "description": "禁止绕过 task_contract.json 执行任务",
+        "penalty": "IMMEDIATE_TASK_BLOCK + GOVERNANCE_VIOLATION_LOG"
+      },
+      "receipt_verification_bypass": {
+        "status": "PROHIBITED",
+        "description": "禁止绕过 verify_execution_receipt 验证",
+        "penalty": "IMMEDIATE_TASK_BLOCK + GOVERNANCE_VIOLATION_LOG"
+      },
+      "direct_command_execution": {
+        "status": "PROHIBITED",
+        "description": "禁止在无合同约束情况下直接执行命令",
+        "penalty": "IMMEDIATE_TASK_BLOCK + GOVERNANCE_VIOLATION_LOG"
+      }
+    },
+    "required_workflow": {
+      "step_1_contract_generation": {
+        "required": true,
+        "output": ".tmp/openclaw-dispatch/<task_id>/task_contract.json",
+        "schema": "schemas/openclaw_cloud_task_contract.schema.json",
+        "must_include": [
+          "command_allowlist",
+          "required_artifacts",
+          "constraints.fail_closed=true"
+        ]
+      },
+      "step_2_execution": {
+        "required": true,
+        "executor": "Antigravity-3 (Lobster) / CLOUD-ROOT",
+        "constraint": "仅允许执行 command_allowlist 内的命令"
+      },
+      "step_3_artifact_generation": {
+        "required": true,
+        "outputs": [
+          "execution_receipt.json",
+          "stdout.log",
+          "stderr.log",
+          "audit_event.json"
+        ],
+        "location": ".tmp/openclaw-dispatch/<task_id>/"
+      },
+      "step_4_verification": {
+        "required": true,
+        "verifier": "Kior-C / LOCAL-ANTIGRAVITY",
+        "script": "scripts/verify_execution_receipt.py",
+        "output": "review_decision (ALLOW/DENY)"
+      },
+      "step_5_final_gate": {
+        "required": true,
+        "gatekeeper": "Antigravity-1 / LOCAL-ANTIGRAVITY",
+        "condition": "review_decision=ALLOW 且 blocking_evidence=[] 且 required_changes=[]",
+        "output": "final_gate (ALLOW/DENY)"
+      }
+    }
+  },
+  "closed_loop_references": {
+    "prompt_pack": "skills/cloud-lobster-closed-loop-skill/references/prompt-pack.md",
+    "skill_spec": "skills/cloud-lobster-closed-loop-skill/SKILL.md",
+    "schema": "schemas/openclaw_cloud_task_contract.schema.json"
+  },
+  "compliance_monitoring": {
+    "active": true,
+    "monitor": "Antigravity-1",
+    "frequency": "PER_TASK",
+    "violation_logging": "docs/compliance_reviews/"
+  },
+  "acceptance_criteria": {
+    "deployment_accepted": true,
+    "evidence_frozen": true,
+    "governance_chain_active": true,
+    "constraints_enforced": true
+  },
+  "signature": {
+    "signed_by": "Antigravity-1",
+    "signed_at": "2026-03-07T00:00:00Z",
+    "signature_type": "GOVERNANCE_CONSTRAINT"
+  }
+}

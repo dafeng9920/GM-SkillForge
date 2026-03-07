@@ -1,0 +1,60 @@
+[Unit]
+Description=GM-SkillForge Cloud Root Dispatch Queue
+Documentation=https://github.com/genesismind-bot/GM-SkillForge
+After=network.target network-online.target cloud-root-contract-generator.service
+Wants=network-online.target
+Requires=cloud-root-contract-generator.service
+StartLimitBurst=5
+StartLimitIntervalSec=300
+
+[Service]
+Type=simple
+User=cloud-root
+Group=cloud-root
+WorkingDirectory=/opt/gm-skillforge
+Environment="PATH=/usr/local/bin:/usr/bin:/bin"
+Environment="PYTHONUNBUFFERED=1"
+Environment="GM_ENVIRONMENT=CLOUD-ROOT"
+Environment="LOG_LEVEL=INFO"
+Environment="QUEUE_MAX_SIZE=1000"
+Environment="QUEUE_WORKER_COUNT=4"
+Environment="QUEUE_POLL_INTERVAL_SEC=5"
+Environment="RETRY_MAX_ATTEMPTS=5"
+Environment="RETRY_BACKOFF_SEC=30"
+
+# Main service command
+ExecStart=/usr/bin/python3 -m skillforge.orchestration.dispatch_queue \
+    --port 8082 \
+    --host 0.0.0.0 \
+    --queue-dir /var/lib/gm-skillforge/queue \
+    --worker-count 4 \
+    --log-dir /var/log/gm-skillforge
+
+# Health check
+ExecStartPost=/usr/bin/bash -c 'sleep 5 && curl -f http://localhost:8082/health || exit 1'
+
+# Restart policy with exponential backoff
+Restart=on-failure
+RestartSec=30
+TimeoutStartSec=60
+TimeoutStopSec=30
+
+# Resource limits
+MemoryMax=1G
+CPUQuota=100%
+TasksMax=200
+
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/gm-skillforge /var/log/gm-skillforge /run/gm-skillforge /tmp
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=gm-dispatch-queue
+
+[Install]
+WantedBy=multi-user.target

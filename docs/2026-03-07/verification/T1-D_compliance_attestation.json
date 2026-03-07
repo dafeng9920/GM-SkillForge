@@ -1,0 +1,97 @@
+{
+  "task_id": "T1-D",
+  "task_name": "API Perimeter Hardening Backlog Pack",
+  "compliance_officer": "Antigravity-1",
+  "reviewer": "Kior-C",
+  "executor": "vs--cc3",
+  "attestation_date": "2026-03-06T16:00:00Z",
+
+  "compliance_check": {
+    "status": "ALLOW",
+    "checks": {
+      "backlog_not_packaged_as_fixed": {
+        "status": "PASS",
+        "description": "All 24 items marked as status='pending', none claimed as fixed",
+        "verification": "grep -o '\"status\"[^,}]*' reports/api_perimeter_hardening_backlog_pack.json | sort | uniq -c → 24 \"status\": \"pending\""
+      },
+      "true_incomplete_status_preserved": {
+        "status": "PASS",
+        "description": "Vulnerabilities clearly documented as NOT fixed",
+        "verification": "Report uses '已识别' (identified), not '已修复' (fixed); Acceptance criteria shown as [ ] unchecked"
+      },
+      "traceable_evidence_refs": {
+        "status": "PASS",
+        "description": "Evidence references are verifiable",
+        "verification": "skillforge/src/api/l4_api.py:134 contains allow_origins=['*']; 20+ root scripts exist"
+      }
+    }
+  },
+
+  "review_check": {
+    "status": "ALLOW",
+    "reasons": [
+      "backlog 真正可执行 - 每个 item 都包含完整执行信息",
+      "完整覆盖三个子域，无遗漏",
+      "无空泛描述 - 所有项目都有 owner 和风险等级"
+    ]
+  },
+
+  "deliverables": {
+    "backlog_pack_json": {
+      "path": "reports/api_perimeter_hardening_backlog_pack.json",
+      "status": "EXISTS",
+      "item_count": 24,
+      "immediate_fix": 8,
+      "subsequent_governance": 16
+    },
+    "backlog_pack_md": {
+      "path": "reports/api_perimeter_hardening_backlog_pack.md",
+      "status": "EXISTS"
+    },
+    "execution_report": {
+      "path": "reports/T1-D_execution_report.md",
+      "status": "EXISTS"
+    }
+  },
+
+  "coverage_verification": {
+    "requirements_completeness": {
+      "status": "COVERED",
+      "security_requirements_missing": 5,
+      "api_design_requirements_missing": 4,
+      "operational_requirements_missing": 4
+    },
+    "api_auth_gap": {
+      "status": "COVERED",
+      "endpoints_analyzed": 5,
+      "solutions_provided": "short/medium/long-term"
+    },
+    "one_shot_scripts_cleanup": {
+      "status": "COVERED",
+      "scripts_identified": 11,
+      "cleanup_plan": "4-step execution plan"
+    }
+  },
+
+  "final_attestation": {
+    "overall_status": "ALLOW",
+    "compliance_result": "PASS",
+    "review_result": "ALLOW",
+    "ready_for_orchestrator": true,
+    "notes": [
+      "T1-D successfully completed by vs--cc3",
+      "Backlog pack contains 24 actionable items with clear ownership",
+      "No false claims of vulnerabilities being fixed",
+      "All evidence references are traceable and verified",
+      "Three subdomains (requirements, auth gap, scripts cleanup) fully covered"
+    ]
+  },
+
+  "evidence_refs": {
+    "backlog_pack": "reports/api_perimeter_hardening_backlog_pack.json",
+    "execution_report": "reports/T1-D_execution_report.md",
+    "readable_backlog": "reports/api_perimeter_hardening_backlog_pack.md",
+    "cors_vulnerability": "skillforge/src/api/l4_api.py:134",
+    "root_scripts": "ls -1 *.py | wc -l → 20+"
+  }
+}

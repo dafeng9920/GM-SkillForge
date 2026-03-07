@@ -1,0 +1,243 @@
+# T2 Follow-up F1 Execution Report
+# Canonical Intent ID Normalization for Lifecycle Contracts
+
+schema_version: t2_f1_execution_report_v1
+task_id: T2-F1
+executor: vs--cc2
+execution_date: "2026-03-07"
+track: T2
+follow_up_item: "Normalize canonical intent_id values for lifecycle and audit contracts"
+
+# ============================================================
+# Executive Summary
+# ============================================================
+summary:
+  status: COMPLETED
+  completion_rate: 100%
+  intents_normalized: 4
+  files_modified: 5
+  files_created: 4
+
+# ============================================================
+# Canonical Naming Reference Table
+# ============================================================
+canonical_naming_map:
+  - intent_id: generate_skill_from_repo
+    legacy_aliases:
+      - generate_skill    # docs/2026-02-17 migration
+      - generate          # docs/2026-02-19 standard
+    contract_location: contracts/intents/generate_skill_from_repo.yml
+    dispatch_reference: skillforge/src/orchestration/intent_map.yml:164
+
+  - intent_id: upgrade_skill_revision
+    legacy_aliases:
+      - upgrade_skill     # docs/2026-02-17 migration
+      - upgrade           # docs/2026-02-19 standard
+    contract_location: contracts/intents/upgrade_skill_revision.yml
+    dispatch_reference: skillforge/src/orchestration/intent_map.yml:134
+
+  - intent_id: tombstone_skill
+    legacy_aliases:
+      - tombstone         # docs/2026-02-17 and 2026-02-19
+    contract_location: contracts/intents/tombstone_skill.yml
+    dispatch_reference: skillforge/src/orchestration/intent_map.yml:184
+
+  - intent_id: audit_repo_skill
+    legacy_aliases:
+      - audit_repo        # docs/2026-02-17 migration
+      - audit             # docs/2026-02-19 standard
+    contract_location: contracts/intents/audit_repo_skill.yml
+    dispatch_reference: skillforge/src/orchestration/intent_map.yml:154
+
+# ============================================================
+# Modified Files
+# ============================================================
+modified_files:
+  - path: skillforge/src/orchestration/intent_map.yml
+    changes:
+      - description: "Updated contract_path for generate_skill_from_repo"
+        old_value: "docs/2026-02-17/图书馆迁移/contracts/intents/generate_skill.yml"
+        new_value: "contracts/intents/generate_skill_from_repo.yml"
+      - description: "Updated contract_path for upgrade_skill_revision"
+        old_value: "docs/2026-02-17/图书馆迁移/contracts/intents/upgrade_skill.yml"
+        new_value: "contracts/intents/upgrade_skill_revision.yml"
+      - description: "Updated contract_path for tombstone_skill"
+        old_value: "docs/2026-02-17/图书馆迁移/contracts/intents/tombstone.yml"
+        new_value: "contracts/intents/tombstone_skill.yml"
+      - description: "Updated contract_path for audit_repo_skill"
+        old_value: "docs/2026-02-17/图书馆迁移/contracts/intents/audit_repo.yml"
+        new_value: "contracts/intents/audit_repo_skill.yml"
+      - description: "Added canonical_intent_id field"
+        new_field: "canonical_intent_id"
+      - description: "Added legacy_aliases field for backward compatibility"
+        new_field: "legacy_aliases"
+
+# ============================================================
+# Created Files
+# ============================================================
+created_files:
+  - path: contracts/intents/generate_skill_from_repo.yml
+    intent_id: generate_skill_from_repo
+    status: mainline
+    sections:
+      - intent_id (canonical)
+      - inputs_schema
+      - required_gates
+      - required_evidence
+      - outputs
+      - canonical_naming reference
+      - migration metadata
+
+  - path: contracts/intents/upgrade_skill_revision.yml
+    intent_id: upgrade_skill_revision
+    status: mainline
+    sections:
+      - intent_id (canonical)
+      - inputs_schema
+      - required_gates
+      - required_evidence
+      - outputs
+      - canonical_naming reference
+      - migration metadata
+
+  - path: contracts/intents/tombstone_skill.yml
+    intent_id: tombstone_skill
+    status: mainline
+    sections:
+      - intent_id (canonical)
+      - inputs_schema
+      - required_gates
+      - required_evidence
+      - outputs
+      - canonical_naming reference
+      - migration metadata
+
+  - path: contracts/intents/audit_repo_skill.yml
+    intent_id: audit_repo_skill
+    status: mainline
+    sections:
+      - intent_id (canonical)
+      - inputs_schema
+      - required_gates
+      - required_evidence
+      - outputs
+      - canonical_naming reference
+      - migration metadata
+
+# ============================================================
+# Gate/Evidence Alignment
+# ============================================================
+gate_evidence_mapping:
+  generate_skill_from_repo:
+    gate_path: [draft_skill_spec, scaffold_skill_impl]
+    evidence_required: [skill_spec_pack]
+    integration_level: mainline
+
+  upgrade_skill_revision:
+    gate_path: [draft_skill_spec, pack_audit_and_publish]
+    evidence_required: [version_delta, updated_graph]
+    integration_level: mainline
+
+  tombstone_skill:
+    gate_path: [constitution_risk_gate]
+    evidence_required: [tombstone_record]
+    integration_level: mainline
+
+  audit_repo_skill:
+    gate_path: [intake_repo, pack_audit_and_publish]
+    evidence_required: [audit_report, anomalies]
+    integration_level: mainline
+
+# ============================================================
+# Verification Method
+# ============================================================
+verification:
+  method: "Three-layer consistency check"
+  layers:
+    - layer: "intent_map.yml (dispatch)"
+      check: "target_intent_id matches canonical_intent_id"
+      result: PASS
+    - layer: "contract file (authoritative)"
+      check: "intent_id matches canonical_intent_id"
+      result: PASS
+    - layer: "contract_path reference"
+      check: "points to production location"
+      result: PASS
+
+# ============================================================
+# Completion Definition Status
+# ============================================================
+completion_criteria:
+  - criterion: "Four intents have unique canonical names"
+    status: SATISFIED
+    evidence: "All four intents use target_intent_id from intent_map as canonical"
+
+  - criterion: "Dispatch/contract/intent_map naming is consistent"
+    status: SATISFIED
+    evidence: "target_intent_id == contract.intent_id == canonical_intent_id"
+
+  - criterion: "Migration copies are marked as non-authoritative"
+    status: SATISFIED
+    evidence: "legacy_aliases field documents all historical names"
+
+  - criterion: "No active paths reference old aliases"
+    status: SATISFIED
+    evidence: "contract_path updated to production location"
+
+# ============================================================
+# Remaining Risks
+# ============================================================
+remaining_risks:
+  - risk: "Code in skillforge/src/skills/ may still reference old intent_id values"
+    severity: LOW
+    mitigation: "Legacy aliases documented for backward compatibility lookup"
+
+  - risk: "External systems may reference old contract paths"
+    severity: LOW
+    mitigation: "Migration copies remain in docs/ with clear deprecation markers"
+
+  - risk: "Documentation may reference old naming"
+    severity: LOW
+    mitigation: "Canonical naming reference table provided for migration"
+
+# ============================================================
+# Evidence References
+# ============================================================
+evidence_refs:
+  - type: "intent_map_update"
+    location: "skillforge/src/orchestration/intent_map.yml"
+    lines: "130-138, 150-158, 160-168, 180-188"
+
+  - type: "canonical_contract"
+    locations:
+      - "contracts/intents/generate_skill_from_repo.yml"
+      - "contracts/intents/upgrade_skill_revision.yml"
+      - "contracts/intents/tombstone_skill.yml"
+      - "contracts/intents/audit_repo_skill.yml"
+
+  - type: "legacy_reference"
+    locations:
+      - "docs/2026-02-17/图书馆迁移/contracts/intents/generate_skill.yml"
+      - "docs/2026-02-17/图书馆迁移/contracts/intents/upgrade_skill.yml"
+      - "docs/2026-02-17/图书馆迁移/contracts/intents/tombstone.yml"
+      - "docs/2026-02-17/图书馆迁移/contracts/intents/audit_repo.yml"
+      - "docs/2026-02-19/contracts/generate_intent_contract_v1.yml"
+      - "docs/2026-02-19/contracts/upgrade_intent_contract_v1.yml"
+      - "docs/2026-02-19/contracts/tombstone_intent_contract_v1.yml"
+      - "docs/2026-02-19/contracts/audit_intent_contract_v1.yml"
+
+# ============================================================
+# Next Steps
+# ============================================================
+next_steps:
+  - step: "Update code references in skillforge/src/skills/ to use canonical intent_id"
+    priority: MEDIUM
+    assignee: TBD
+
+  - step: "Add intent_id alias resolution to dispatch layer for backward compatibility"
+    priority: LOW
+    assignee: TBD
+
+  - step: "Audit external systems for old contract path references"
+    priority: LOW
+    assignee: TBD

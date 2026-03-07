@@ -1,0 +1,17 @@
+{
+  "task_id": "T2-D",
+  "compliance_officer": "Antigravity-2",
+  "attestation_date": "2026-03-07",
+  "decision": "PASS",
+  "checks": [
+    "所有 selective intents 都按调度要求分类，没有伪造完成态。",
+    "判断只基于 fit / contribution / value 与现仓落点。",
+    "未使用 full-copy 话术，也未把 missing 项强行塞入主线。"
+  ],
+  "evidence_refs": [
+    "docs/2026-03-06/NEW_GM_INTENT_MIGRATION_SCORING.md:20-21",
+    "docs/2026-03-06/NEW_GM_INTENT_MIGRATION_SCORING.md:38-47",
+    "docs/2026-03-06/NEW_GM_INTENT_PARITY_MATRIX_v1.md:33-42"
+  ],
+  "attestation_statement": "T2-D 遵守高价值优先、选择性迁移、低拟合后置的调度规则，没有出现超范围迁移。"
+}

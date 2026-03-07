@@ -1,0 +1,196 @@
+# GM-SkillForge CLOUD-ROOT Monitoring Configuration
+# Version: 1.0.0
+# Environment: CLOUD-ROOT
+
+monitoring:
+  environment: CLOUD-ROOT
+  check_interval_sec: 30
+  alert_cooldown_sec: 300
+
+services:
+  contract_generator:
+    name: Contract Generator
+    port: 8081
+    health_path: /health
+    process_name: contract_generator
+    log_file: /var/log/gm-skillforge/contract-generator.log
+    alert_on:
+      - service_down
+      - health_check_failed
+      - log_errors
+      - high_memory
+      - high_cpu
+    thresholds:
+      memory_mb: 512
+      cpu_percent: 50
+      error_rate: 0.05
+
+  dispatch_queue:
+    name: Dispatch Queue
+    port: 8082
+    health_path: /health
+    process_name: dispatch_queue
+    log_file: /var/log/gm-skillforge/dispatch-queue.log
+    alert_on:
+      - service_down
+      - health_check_failed
+      - queue_full
+      - log_errors
+      - high_memory
+    thresholds:
+      memory_mb: 1024
+      cpu_percent: 80
+      queue_depth: 900
+      error_rate: 0.05
+
+  mandatory_gate:
+    name: Mandatory Gate
+    process_name: cloud_lobster_mandatory_gate
+    log_file: /var/log/gm-skillforge/mandatory-gate.log
+    alert_on:
+      - gate_failure
+      - compliance_violation
+      - bypass_attempt
+    critical: true  # Gate failures are critical
+
+  receipt_verifier:
+    name: Receipt Verifier
+    process_name: receipt_verifier
+    log_file: /var/log/gm-skillforge/receipt-verifier.log
+    alert_on:
+      - service_down
+      - verification_failure
+      - log_errors
+    thresholds:
+      memory_mb: 256
+      error_rate: 0.1
+
+  audit_archive:
+    name: Audit Archive
+    process_name: audit_archiver
+    log_file: /var/log/gm-skillforge/audit-archive.log
+    alert_on:
+      - service_down
+      - archive_failure
+      - disk_space_low
+    thresholds:
+      memory_mb: 512
+      disk_free_percent: 10
+
+retry_policy:
+  max_attempts: 5
+  initial_backoff_sec: 10
+  max_backoff_sec: 300
+  backoff_multiplier: 2.0
+  retry_on:
+    - connection_timeout
+    - service_unavailable
+    - rate_limited
+    - transient_error
+
+alerting:
+  enabled: true
+  channels:
+    webhook:
+      enabled: true
+      url: ${ALERT_WEBHOOK_URL}
+      method: POST
+      headers:
+        Content-Type: application/json
+        X-GM-SkillForge-Environment: CLOUD-ROOT
+
+    email:
+      enabled: true
+      smtp_server: ${SMTP_SERVER}
+      smtp_port: 587
+      username: ${SMTP_USERNAME}
+      from: cloud-root@gm-skillforge.internal
+      to:
+        - ops@gm-skillforge.internal
+
+    log:
+      enabled: true
+      file: /var/log/gm-skillforge/monitoring-alerts.log
+
+  alert_templates:
+    service_down:
+      severity: critical
+      message: "Service {service_name} is down on {hostname}"
+      runbook: "docs/runbooks/{service_name}_recovery.md"
+
+    health_check_failed:
+      severity: warning
+      message: "Health check failed for {service_name}: {reason}"
+      runbook: "docs/runbooks/{service_name}_health.md"
+
+    gate_failure:
+      severity: critical
+      message: "Mandatory gate failure on {hostname}: {error_code}"
+      runbook: "docs/runbooks/gate_failure.md"
+      immediate: true
+
+    compliance_violation:
+      severity: critical
+      message: "Compliance violation detected: {violation_type}"
+      runbook: "docs/runbooks/compliance_violation.md"
+      immediate: true
+
+    bypass_attempt:
+      severity: critical
+      message: "BYPASS ATTEMPT DETECTED: {task_id}"
+      runbook: "docs/runbooks/security_incident.md"
+      immediate: true
+
+    queue_full:
+      severity: warning
+      message: "Dispatch queue is {queue_depth}/{max_size} full"
+      runbook: "docs/runbooks/queue_scaling.md"
+
+    archive_failure:
+      severity: warning
+      message: "Audit archive failure: {reason}"
+      runbook: "docs/runbooks/archive_recovery.md"
+
+    disk_space_low:
+      severity: critical
+      message: "Disk space low: {free_gb}GB free ({percent}%)"
+      runbook: "docs/runbooks/disk_cleanup.md"
+
+health_checks:
+  disk_space:
+    enabled: true
+    path: /var/lib/gm-skillforge
+    min_free_gb: 10
+    min_free_percent: 15
+
+  system_load:
+    enabled: true
+    max_load_1min: 10.0
+    max_load_5min: 8.0
+
+  memory:
+    enabled: true
+    max_percent: 90
+
+  processes:
+    enabled: true
+    required:
+      - contract_generator
+      - dispatch_queue
+      - receipt_verifier
+      - audit_archiver
+
+logging:
+  level: INFO
+  format: json
+  outputs:
+    - type: file
+      path: /var/log/gm-skillforge/monitoring.log
+      max_size_mb: 100
+      retention_days: 30
+
+    - type: journal
+      identifier: gm-monitoring
+
+    - type: stdout
+      when: development

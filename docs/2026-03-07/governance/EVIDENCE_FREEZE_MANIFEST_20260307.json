@@ -1,0 +1,68 @@
+{
+  "freeze_version": "evidence_freeze_v1",
+  "freeze_date": "2026-03-07",
+  "freeze_id": "EVIDENCE-FREEZE-TG1-20260307",
+  "frozen_by": "Antigravity-1",
+  "environment": "LOCAL-ANTIGRAVITY",
+  "freeze_scope": {
+    "task_id": "tg1-official-20260305-1417",
+    "baseline_id": "AG2-SOVEREIGNTY-ROOT-2026-03-05",
+    "deployment_type": "OFFICIAL-CLOUD-ROOT"
+  },
+  "frozen_artifacts": {
+    "contract_layer": {
+      "task_contract": {
+        "path": ".tmp/openclaw-dispatch/tg1-official-20260305-1417/task_contract.json",
+        "sha256": "8d21d3cd387201a4f19769dbf086e97fefbe8d961c703c00f36587313b226002",
+        "size_bytes": 1439,
+        "status": "FROZEN"
+      }
+    },
+    "execution_layer": {
+      "execution_receipt": {
+        "path": ".tmp/openclaw-dispatch/tg1-official-20260305-1417/execution_receipt.json",
+        "sha256": "dcaaecf8f8ccc4c1c71195b8618dc08406ed3ab6ac1aca732a91b036529cd4c7",
+        "size_bytes": 959,
+        "status": "FROZEN"
+      },
+      "audit_event": {
+        "path": ".tmp/openclaw-dispatch/tg1-official-20260305-1417/audit_event.json",
+        "sha256": "e30ce248de388bb222e72a0851bd609d32b96aa16a35171749f07aa46d8340bb",
+        "size_bytes": 934,
+        "status": "FROZEN"
+      }
+    },
+    "logs_layer": {
+      "stdout_log": {
+        "path": ".tmp/openclaw-dispatch/tg1-official-20260305-1417/stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size_bytes": 0,
+        "status": "FROZEN"
+      },
+      "stderr_log": {
+        "path": ".tmp/openclaw-dispatch/tg1-official-20260305-1417/stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size_bytes": 0,
+        "status": "FROZEN"
+      }
+    }
+  },
+  "governance_records": {
+    "review_decision": "docs/2026-03-05/verification/tg1_official_20260305_review_decision.json",
+    "final_gate": "docs/2026-03-05/verification/tg1_official_20260305_final_gate.json",
+    "archive_index": "docs/2026-03-05/verification/ARCHIVE_INDEX_2026-03-05.json",
+    "verification_map": "docs/2026-03-04/verification/VERIFICATION_MAP.md"
+  },
+  "freeze_assertions": {
+    "all_artifacts_present": true,
+    "all_verifications_pass": true,
+    "fail_closed_chain_active": true,
+    "compliance_attestation_complete": true
+  },
+  "thaw_conditions": [
+    "G1 连续14天 nightly recheck 全部 PASS (4/14 completed)",
+    "Final Closure Report 签发",
+    "CLOSE 决策文件归档"
+  ],
+  "current_thaw_status": "FROZEN - 满足解冻条件前不可变更"
+}

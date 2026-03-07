@@ -1,0 +1,67 @@
+task_id: T2-B
+executor: vs--cc2
+execution_date: 2026-03-07
+status: COMPLETED
+
+objective: |
+  建立 skill lifecycle intent migration baseline，核对
+  generate_skill_from_repo / upgrade_skill_revision / tombstone_skill
+  与当前 scripts/docs/components 的映射关系与缺口。
+
+scope:
+  - 只做 lifecycle intent 映射
+  - 缺失步骤必须显式变成 backlog
+  - 不把旧文档合同直接视作主线完成态
+
+parity_results:
+  - intent_id: generate_skill_from_repo
+    parity: partially_present
+    current_locus:
+      - skillforge/src/orchestration/intent_map.yml
+      - docs/2026-02-17/图书馆迁移/contracts/intents/generate_skill.yml
+    owner_path: skillforge/src/orchestration + future contracts/intents/
+    gaps:
+      - contract intent_id 仍为 generate_skill，未与调度口径统一
+      - required_gates 仍使用旧 gate 命名，不完全对齐当前 8-gate 主链
+      - 合同仍位于 docs 侧，不是主线 contracts/intents 正式资产
+
+  - intent_id: upgrade_skill_revision
+    parity: partially_present
+    current_locus:
+      - skillforge/src/orchestration/intent_map.yml
+      - docs/2026-02-17/图书馆迁移/contracts/intents/upgrade_skill.yml
+    owner_path: skillforge/src/orchestration + revision governance path
+    gaps:
+      - contract intent_id 为 upgrade_skill，未与 dispatch target 对齐
+      - gate 名称仍带旧 compose/run/trace 语义，未完全收束到当前主线 gate contracts
+      - 缺少与 current verification flow 绑定的 execution evidence
+
+  - intent_id: tombstone_skill
+    parity: partially_present
+    current_locus:
+      - skillforge/src/orchestration/intent_map.yml
+      - docs/2026-02-17/图书馆迁移/contracts/intents/tombstone.yml
+      - audit/templates/tombstone_template.json
+    owner_path: tombstone governance + audit storage
+    gaps:
+      - contract intent_id 为 tombstone，未与 dispatch target 对齐
+      - 合同 gate 仍沿用 tombstone_write_gate / audit_chain_append / tombstone_publish 等旧命名
+      - 缺少与 mainline retrieval blocking 的回归证明
+
+evidence_refs:
+  - skillforge/src/orchestration/intent_map.yml:134-186
+  - docs/2026-02-17/图书馆迁移/contracts/intents/generate_skill.yml:10-175
+  - docs/2026-02-17/图书馆迁移/contracts/intents/upgrade_skill.yml:9-165
+  - docs/2026-02-17/图书馆迁移/contracts/intents/tombstone.yml:10-156
+  - docs/2026-03-06/NEW_GM_INTENT_PARITY_MATRIX_v1.md:28-31
+  - docs/2026-03-06/NEW_GM_INTENT_MIGRATION_SCORING.md:33-36
+
+backlog_items:
+  - normalize contract filenames and intent_id values to dispatch IDs
+  - migrate lifecycle contracts from docs/ subtree into production contracts/ tree
+  - align lifecycle gate lists to current 8-gate mainline vocabulary
+
+acceptance_check:
+  lifecycle_intents_mapped: true
+  missing_steps_backlogged: true
+  owner_path_present: true

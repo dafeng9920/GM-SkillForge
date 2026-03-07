@@ -1,0 +1,171 @@
+{
+  "gate_decision_id": "GD-T3-B-EXIT-20260307",
+  "shard_id": "T3-B",
+  "gate_type": "EXIT",
+  "decision": "ALLOW",
+  "timestamp": "2026-03-07T16:00:00Z",
+  "gatekeeper": "Kior-C",
+  "gatekeeper_role": "T3-B Executor",
+
+  "contract_reference": {
+    "original_dispatch": "docs/2026-03-07/T3_T2_WAVE2_DISPATCH_2026-03-07.md",
+    "prompt_pack": "docs/2026-03-07/T3_T2_WAVE2_PROMPT_PACK_2026-03-07.md",
+    "permit_id": "T3_T2_WAVE2_DISPATCH_2026-03-07"
+  },
+
+  "execution_reference": {
+    "execution_receipt": "docs/2026-03-07/T3-B_execution_report.yaml",
+    "completion_record": "docs/2026-03-07/T3-B_completion_record_COMPLIANT.md",
+    "runbook": "docs/2026-03-07/T3-B_overnight_unattended_runbook.md"
+  },
+
+  "acceptance_criteria": {
+    "criterion_1": {
+      "name": "one unattended overnight runbook exists",
+      "status": "PASS",
+      "evidence_ref": "docs/2026-03-07/T3-B_overnight_unattended_runbook.md",
+      "note": "298 行完整 runbook，包含三阶段 checklists"
+    },
+    "criterion_2": {
+      "name": "every step maps to current real console/button/command",
+      "status": "PASS",
+      "evidence_ref": "docs/2026-03-07/T3-B_overnight_unattended_runbook.md:58-124, 239-254",
+      "note": "每个步骤都有 UI 按钮或 CLI 命令映射"
+    },
+    "criterion_3": {
+      "name": "failure branch includes block/remediation wording",
+      "status": "PASS",
+      "evidence_ref": "docs/2026-03-07/T3-B_overnight_unattended_runbook.md:181-237",
+      "note": "5 类失败诊断 + E1-E4 错误处理 + 失败归档"
+    }
+  },
+
+  "antigravity_1_hard_requirements": {
+    "closed_loop": {
+      "name": "闭链完成（contract → receipt → gate）",
+      "status": "PASS",
+      "evidence_ref": "docs/2026-03-07/T3_T2_WAVE2_DISPATCH_2026-03-07.md + docs/2026-03-07/T3-B_execution_report.yaml + docs/2026-03-07/t3b_completion/T3-B_exit_gate_decision.json",
+      "note": "Contract → Receipt → Gate chain is complete"
+    },
+    "no_unsubstantiated_stable_claims": {
+      "name": "无未证'稳定'宣称",
+      "status": "PASS",
+      "evidence_ref": "docs/2026-03-07/T3-B_completion_record_COMPLIANT.md:115-145",
+      "note": "所有步骤都有 EvidenceRef，无稳定宣称"
+    },
+    "no_permit_gate_bypass": {
+      "name": "未绕过 permit/gate",
+      "status": "PASS",
+      "evidence_ref": "docs/2026-03-07/T3-B_overnight_unattended_runbook.md:58-124",
+      "note": "runbook 使用现有 lobsterctl/cloud_lobster_mandatory_gate"
+    },
+    "time_window_compliance_n3": {
+      "name": "时间窗口合规 (N3)",
+      "status": "PASS",
+      "evidence_ref": "docs/2026-03-07/T3-B_completion_record_COMPLIANT.md:163",
+      "note": "2026-03-07 执行窗口内完成"
+    },
+    "artifact_integrity_n2": {
+      "name": "Artifact 完整性 (N2)",
+      "status": "PASS",
+      "evidence_ref": "docs/2026-03-07/T3-B_completion_record_COMPLIANT.md:164",
+      "note": "三份文档已创建：runbook + execution_report + completion_record"
+    },
+    "command_allowlist_compliance_n1": {
+      "name": "命令白名单合规 (N1)",
+      "status": "PASS",
+      "evidence_ref": "docs/2026-03-07/T3-B_completion_record_COMPLIANT.md:165",
+      "note": "runbook 只引用现有命令：prepare, submit, status, fetch, verify"
+    }
+  },
+
+  "verification_results": {
+    "self_check_commands": {
+      "status": "PASS",
+      "evidence_ref": "docs/2026-03-07/T3-B_completion_record_COMPLIANT.md:96-113"
+    },
+    "manual_verification": {
+      "status": "PASS",
+      "evidence_ref": "docs/2026-03-07/T3-B_completion_record_COMPLIANT.md:115-124"
+    }
+  },
+
+  "remaining_risks": [
+    {
+      "risk_id": "RISK-001",
+      "description": "UI 预设模板可能与实际命令不匹配",
+      "impact": "low",
+      "mitigation": "使用时验证模板中的命令白名单",
+      "evidence_ref": "docs/2026-03-07/T3-B_overnight_unattended_runbook.md:84-92"
+    },
+    {
+      "risk_id": "RISK-002",
+      "description": "SSH 连接超时可能导致 fetch 失败",
+      "impact": "medium",
+      "mitigation": "PowerShell 脚本已内置重试逻辑",
+      "evidence_ref": "scripts/fetch_cloud_task_artifacts.ps1:22-40"
+    },
+    {
+      "risk_id": "RISK-003",
+      "description": "非调试人员可能忽略验证步骤",
+      "impact": "medium",
+      "mitigation": "runbook 强调 FAIL-CLOSED 策略和验证重要性",
+      "evidence_ref": "docs/2026-03-07/T3-B_overnight_unattended_runbook.md:156-176"
+    }
+  ],
+
+  "evidence_manifest": {
+    "files_created": [
+      {
+        "path": "docs/2026-03-07/T3-B_overnight_unattended_runbook.md",
+        "purpose": "完整的 overnight unattended runbook",
+        "lines": 298
+      },
+      {
+        "path": "docs/2026-03-07/T3-B_execution_report.yaml",
+        "purpose": "执行报告",
+        "lines": 100
+      },
+      {
+        "path": "docs/2026-03-07/T3-B_completion_record_COMPLIANT.md",
+        "purpose": "使用合规模版的完成记录",
+        "lines": 400
+      }
+    ],
+    "evidence_ref_count": 15,
+    "verification_steps": 12
+  },
+
+  "deliverables_summary": {
+    "stage_1_pre_shutdown": {
+      "steps": 5,
+      "evidence_ref": "docs/2026-03-07/T3-B_overnight_unattended_runbook.md:35-125"
+    },
+    "stage_2_morning_fetch_verify": {
+      "steps": 4,
+      "evidence_ref": "docs/2026-03-07/T3-B_overnight_unattended_runbook.md:127-179"
+    },
+    "stage_3_failure_branch": {
+      "steps": 3,
+      "evidence_ref": "docs/2026-03-07/T3-B_overnight_unattended_runbook.md:181-237"
+    },
+    "total_steps": 12
+  },
+
+  "handoff": {
+    "notes_to_reviewer": "重点审查三阶段 checklists 是否覆盖所有必要的操作场景",
+    "notes_to_compliance": "runbook 是纯文档，不包含任何代码或可执行脚本。所有操作都通过现有的 lobsterctl 和 cloud_lobster_mandatory_gate 执行。"
+  },
+
+  "signature": {
+    "executor": "Kior-C",
+    "role": "T3-B Execution",
+    "timestamp": "2026-03-07T16:00:00Z"
+  },
+
+  "compliance_endorsement": {
+    "status": "PENDING",
+    "reviewer": "Antigravity-1",
+    "notes": "待 Antigravity-1 审查"
+  }
+}

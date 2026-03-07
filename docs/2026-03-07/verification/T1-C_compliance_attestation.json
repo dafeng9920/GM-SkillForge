@@ -1,0 +1,193 @@
+{
+  "attestation_version": "v3.0-POST_REMEDIATION",
+  "task_id": "T1-C",
+  "task_name": "Skill Registry Discoverability Baseline",
+  "compliance_officer": "Antigravity-2",
+  "review_date": "2026-03-07T00:00:00Z",
+  "attestation_status": "PASS",
+
+  "remediation_summary": {
+    "status": "ALL_ISSUES_RESOLVED",
+    "remediated_by": "Antigravity-1",
+    "remediation_date": "2026-03-07",
+    "issues_fixed": [
+      "Registry entries count: 55 → 56 (verified correct)",
+      "Scanned skills count: 54 → 55 (verified correct)",
+      "Deleted agents skills count: 6 → 7 (verified correct)",
+      "Legacy agents count: 6 → 7 (verified correct)",
+      "Tier registry composition: '35 repo + 6 agents' → '34 repo + 7 agents' (verified correct)",
+      "Alignment status: 'ALIGNED' → 'MISALIGNED' (correctly reflects baseline state)",
+      "Missing entry added: lobster_intelligence_harvester (verified in tier_registry)"
+    ]
+  },
+
+  "verification_results": {
+    "numeric_accuracy": {
+      "skills_directory_count": {
+        "claimed": 55,
+        "verified": 55,
+        "method": "ls -1 d:/GM-SkillForge/skills/ | grep -E '.*-skill$' | wc -l",
+        "status": "PASS"
+      },
+      "main_registry_total": {
+        "claimed": 56,
+        "verified": 56,
+        "method": "cat d:/GM-SkillForge/registry/skills.jsonl | grep -c '\"skill_id\"'",
+        "status": "PASS"
+      },
+      "scanned_skills": {
+        "claimed": 55,
+        "verified": 55,
+        "method": "cat d:/GM-SkillForge/registry/skills.jsonl | grep -v PLACEHOLDER | grep -c '\"skill_id\"'",
+        "status": "PASS"
+      },
+      "deleted_agents_skills": {
+        "claimed": 7,
+        "verified": 7,
+        "method": "grep -c '.agents/skills/' d:/GM-SkillForge/configs/skill_tier_registry.json",
+        "status": "PASS"
+      },
+      "repo_source_entries": {
+        "claimed": 34,
+        "verified": 34,
+        "method": "grep '\"source\"[[:space:]]*:[[:space:]]*\"repo\"' d:/GM-SkillForge/configs/skill_tier_registry.json | wc -l",
+        "status": "PASS"
+      },
+      "agents_source_entries": {
+        "claimed": 7,
+        "verified": 7,
+        "method": "grep '\"source\"[[:space:]]*:[[:space:]]*\"agents\"' d:/GM-SkillForge/configs/skill_tier_registry.json | wc -l",
+        "status": "PASS"
+      },
+      "tier_registry_total": {
+        "claimed": 41,
+        "verified": 41,
+        "calculation": "34 repo + 7 agents = 41",
+        "status": "PASS"
+      }
+    },
+
+    "baseline_vs_solved_claims": {
+      "status": "PASS",
+      "findings": [
+        {
+          "location": "T1-C_execution_report.yaml line 36",
+          "text": "registry/skills.jsonl has 56 entries (1 placeholder + 55 scanned) - MISALIGNED",
+          "verdict": "CORRECT - Clearly identifies baseline state as misaligned"
+        },
+        {
+          "location": "T1-C_execution_report.yaml lines 112-113",
+          "text": "registry/skills.jsonl has 56 entries (1 placeholder + 55 scanned) vs 55 actual skill directories - MISALIGNED by 1 entry",
+          "verdict": "CORRECT - Accurately describes the discrepancy without claiming remediation"
+        },
+        {
+          "location": "T1-C_execution_report.yaml line 265",
+          "text": "status: 'MISALIGNED - 1 more entry than actual directories'",
+          "verdict": "CORRECT - Evidence reference correctly states misalignment"
+        },
+        {
+          "location": "T1-C_execution_report.yaml lines 244-250",
+          "text": "deferred section: 'NOT in scope for T1-C: actual deletion/merge of skills'",
+          "verdict": "CORRECT - Explicitly excludes remediation from scope"
+        },
+        {
+          "location": "T1-C_registry_baseline.json line 202",
+          "text": "\"status\": \"MISALIGNED\"",
+          "verdict": "CORRECT - Machine-readable baseline reflects actual state"
+        }
+      ],
+      "verdict": "PASS - Report correctly presents baseline discovery task without false claims of problems solved"
+    },
+
+    "evidence_ref_validity": {
+      "status": "PASS",
+      "verified_references": [
+        {
+          "ref": "skills_directory_scan",
+          "path": "d:/GM-SkillForge/skills/",
+          "status": "VALID"
+        },
+        {
+          "ref": "main_registry",
+          "path": "d:/GM-SkillForge/registry/skills.jsonl",
+          "status": "VALID"
+        },
+        {
+          "ref": "tier_registry",
+          "path": "d:/GM-SkillForge/configs/skill_tier_registry.json",
+          "status": "VALID"
+        },
+        {
+          "ref": "dispatch_registry",
+          "path": "d:/GM-SkillForge/configs/dispatch_skill_registry.json",
+          "status": "VALID"
+        }
+      ],
+      "verdict": "PASS - All evidence references point to existing, accessible files"
+    },
+
+    "missing_entry_verification": {
+      "status": "PASS",
+      "previously_missing": "lobster_intelligence_harvester",
+      "verification": {
+        "in_tier_registry": true,
+        "source_type": "agents",
+        "path": ".agents/skills/lobster_intelligence_harvester/SKILL.md",
+        "filesystem_status": "DELETED",
+        "in_deleted_list": true,
+        "line_numbers": ["YAML: 101-104", "JSON: 164", "YAML: 285"]
+      },
+      "verdict": "PASS - lobster_intelligence_harvester now correctly included in deleted_agents_skills"
+    },
+
+    "appendonly_traceability": {
+      "status": "CONDITIONAL_PASS",
+      "strengths": [
+        "Generated_at timestamps present in both YAML and JSON baseline",
+        "Machine-readable baseline (T1-C_registry_baseline.json) is structured and parseable",
+        "Deleted entries are explicitly listed with old paths for cross-reference"
+      ],
+      "limitations": [
+        "Evidence refs still reference 'git status shows deleted...' without specific commit SHAs",
+        "Future baselines should include commit hashes for permanent traceability"
+      ],
+      "verdict": "CONDITIONAL_PASS - Acceptable for baseline task, but commit SHA references should be added in future iterations"
+    }
+  },
+
+  "compliance_checklist": {
+    "baseline_inventory_not_solved_claims": {
+      "status": "PASS",
+      "evidence": "Report explicitly states MISALIGNED status and excludes remediation from scope"
+    },
+    "numeric_accuracy": {
+      "status": "PASS",
+      "all_counts_verified": true
+    },
+    "evidence_refs_valid": {
+      "status": "PASS",
+      "all_paths_accessible": true
+    },
+    "complete_deleted_entries": {
+      "status": "PASS",
+      "all_7_agents_listed": true
+    }
+  },
+
+  "final_verdict": {
+    "status": "PASS",
+    "summary": "All identified compliance issues have been remediated. T1-C correctly presents a baseline inventory discovery task with accurate numeric data and proper scope delineation.",
+    "blocking_issues": [],
+    "conditions": [
+      "Commit SHA references for deleted entries should be added in future baseline tasks for improved traceability"
+    ],
+    "approval": "T1-C is approved for use in consolidation planning"
+  },
+
+  "signoff": {
+    "compliance_officer": "Antigravity-2",
+    "timestamp": "2026-03-07T00:00:00Z",
+    "signature": "PASS - All remediation items verified. Baseline approved.",
+    "next_reviewer": "Kior-C (Technical Reviewer)"
+  }
+}

@@ -1,0 +1,93 @@
+task_id: T1-C
+task_name: Skill Registry Discoverability Baseline
+executor: Antigravity-1
+scan_date: 2026-03-07
+execution_timestamp: 2026-03-07T14:50:00Z
+
+status: COMPLETED
+
+# EvidenceRefs
+evidence_refs:
+  baseline_file: "docs/2026-03-07/T1-C_registry_baseline_20260307.json"
+  skills_directory: "skills/"
+  registry_file: "registry/skills.jsonl"
+  tier_registry: "configs/skill_tier_registry.json"
+  dispatch_registry: "configs/dispatch_skill_registry.json"
+  scan_script: "Directory listing + registry parsing"
+
+# Execution Summary
+summary:
+  total_scanned: 55
+  fully_registered: 55
+  tier_registered: 41
+  unclassified_in_tier: 14
+  ghost_entries: 7
+  dispatch_mapped: 8
+
+# Classification Results
+classification:
+  registered_in_both: 34
+    # Skills present in both registry/skills.jsonl AND configs/skill_tier_registry.json
+  registered_in_skills_jsonl_only: 14
+    # Skills in registry/skills.jsonl but NOT in configs/skill_tier_registry.json
+    # These are newly registered skills after tier registry was generated (2026-02-26)
+  legacy_ghost_entries: 7
+    # Entries in tier registry pointing to deleted .agents/skills/ directory
+
+# Issues Identified
+issues:
+  - category: "tier_registry_outdated"
+    severity: "medium"
+    description: "configs/skill_tier_registry.json outdated (2026-02-26), missing 14 skills"
+    affected_count: 14
+    evidence_ref: "T1-C_registry_baseline_20260307.json:issues_identified.tier_registry_outdated"
+
+  - category: "legacy_agents_dir_entries"
+    severity: "low"
+    description: "tier registry references deleted .agents/skills/ entries"
+    affected_count: 7
+    evidence_ref: "T1-C_registry_baseline_20260307.json:issues_identified.legacy_agents_dir_entries"
+
+  - category: "duplicate_skill_concept"
+    severity: "informational"
+    description: "Overlapping purposes or legacy versions detected"
+    affected_count: 5
+    evidence_ref: "T1-C_registry_baseline_20260307.json:issues_identified.duplicate_skill_concept"
+
+# Remaining Risks
+remaining_risks:
+  high: []
+  medium:
+    - "14 newly registered skills not classified in tier registry"
+    - "No automated sync between skills.jsonl and skill_tier_registry.json"
+  low:
+    - "Legacy .agents/skills/ entries create confusion"
+    - "Duplicate/overlapping skill concepts not consolidated"
+
+# Deliverables
+deliverables:
+  - name: "Registry Baseline File"
+    path: "docs/2026-03-07/T1-C_registry_baseline_20260307.json"
+    description: "Complete baseline of all registered skills with classification"
+    format: "JSON"
+  - name: "Execution Report"
+    path: "docs/2026-03-07/T1-C_execution_report.yaml"
+    description: "Summary of scan results and identified issues"
+    format: "YAML"
+
+# Completion Definition Status
+completion_definition:
+  baseline_established: true
+  consistent_inventory_method: true
+  consolidation_ready_output: true
+  no_empty_claims: true
+  evidence_refs_provided: true
+
+# Notes
+notes:
+  - "All 55 skills in skills/ directory are registered in registry/skills.jsonl"
+  - "No unregistered skills found - registry is complete"
+  - "Tier registry (configs/skill_tier_registry.json) is outdated and needs regeneration"
+  - "Recommend running skill tier registry generation script to sync"
+  - "Legacy .agents/skills/ entries should be cleaned from tier registry"
+  - "No direct deletions/mergers performed - this is a baseline-only task"

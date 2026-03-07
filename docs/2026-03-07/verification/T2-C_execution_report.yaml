@@ -1,0 +1,65 @@
+task_id: T2-C
+executor: vs--cc1
+execution_date: 2026-03-07
+status: COMPLETED
+
+objective: |
+  核对 audit_repo_skill 与 time_semantics 的迁移语义，
+  并确认其与当前 evidence chain、date-directory、verification flow 的对齐状态。
+
+scope:
+  - repository audit semantics
+  - time semantics and at_time discipline
+  - 当前 verification/date-directory 对齐
+
+parity_results:
+  - intent_id: audit_repo_skill
+    parity: partially_present
+    alignment:
+      evidence_chain: aligned
+      date_directory_flow: aligned
+      canonical_contract_naming: misaligned
+    current_locus:
+      - skillforge/src/orchestration/intent_map.yml
+      - docs/2026-02-17/图书馆迁移/contracts/intents/audit_repo.yml
+      - skillforge/src/contracts/api/n8n_boundary_v1.yaml
+      - skillforge/src/api/routes/n8n_orchestration.py
+    exact_gaps:
+      - contract intent_id is audit_repo, not audit_repo_skill
+      - contract still lives in docs/ migration area
+      - needs explicit audit_repo_skill parity execution sample in current verification flow
+
+  - intent_id: time_semantics
+    parity: already_present
+    alignment:
+      evidence_chain: aligned
+      date_directory_flow: aligned
+      canonical_contract_naming: aligned
+    current_locus:
+      - skillforge/src/orchestration/intent_map.yml
+      - docs/2026-02-17/图书馆迁移/contracts/intents/time_semantics.yml
+      - skillforge/src/adapters/external_skill_rag_adapter.py
+      - docs/VERIFICATION_MAP.md
+    exact_gaps:
+      - add at_time replay regression artifact for current archive flow
+
+time_semantics_notes:
+  - 仓库已采用 docs/YYYY-MM-DD/verification 目录口径，满足 date-directory archive flow
+  - time_semantics contract 明确 event_time / available_time / decision_time
+  - adapter layer 对 at_time 缺失与漂移值采用 fail-closed
+
+evidence_refs:
+  - docs/2026-03-06/NEW_GM_INTENT_PARITY_MATRIX_v1.md:28-32
+  - docs/2026-03-06/NEW_GM_INTENT_MIGRATION_SCORING.md:33-37
+  - skillforge/src/orchestration/intent_map.yml:110-115
+  - skillforge/src/orchestration/intent_map.yml:154-159
+  - docs/2026-02-17/图书馆迁移/contracts/intents/audit_repo.yml:10-135
+  - docs/2026-02-17/图书馆迁移/contracts/intents/time_semantics.yml:10-183
+  - skillforge/src/contracts/api/n8n_boundary_v1.yaml:19-20
+  - skillforge/src/api/routes/n8n_orchestration.py:12
+  - docs/VERIFICATION_MAP.md
+
+acceptance_check:
+  audit_semantics_mapped_to_evidence_chain: true
+  time_semantics_aligned_to_date_directory_flow: true
+  exact_gaps_documented: true

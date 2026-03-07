@@ -1,0 +1,21 @@
+{
+  "task_id": "T2-B",
+  "reviewer": "Kior-C",
+  "review_date": "2026-03-07",
+  "decision": "ALLOW",
+  "scope": "skill lifecycle intent migration",
+  "reasons": [
+    "三个 lifecycle intents 都已映射到 current docs/components。",
+    "命名与 gate vocabulary mismatch 被准确识别为 migration gap。",
+    "owner path 与 backlog 都已明确，不存在假 closure。"
+  ],
+  "evidence_refs": [
+    "skillforge/src/orchestration/intent_map.yml:134-186",
+    "docs/2026-02-17/图书馆迁移/contracts/intents/generate_skill.yml:10-175",
+    "docs/2026-02-17/图书馆迁移/contracts/intents/upgrade_skill.yml:9-165",
+    "docs/2026-02-17/图书馆迁移/contracts/intents/tombstone.yml:10-156"
+  ],
+  "residual_risks": [
+    "如果后续不统一 canonical intent_id，调度、合同、验证三层会继续分叉。"
+  ]
+}

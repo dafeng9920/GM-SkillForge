@@ -1,0 +1,23 @@
+{
+  "schema_version": "t2_remediation_final_gate_v1",
+  "gate_id": "T2-REMEDIATION-FINAL-GATE-20260307",
+  "gate_date": "2026-03-07",
+  "orchestrator": "Codex",
+  "decision": "ALLOW",
+  "track": "T2-REMEDIATION",
+  "scope": [
+    "F1-R",
+    "F2-C",
+    "F3-R5"
+  ],
+  "reason": "All remediation shards now have the required independent records. The failed F1 and F3 follow-up branches were repaired to an acceptable state, and F2 now has a valid independent compliance attestation.",
+  "follow_up_required": true,
+  "follow_up_items": [
+    "Normalize archive date placement for F3-R5 execution artifacts if strict same-day grouping is desired.",
+    "Handle non-F1 migration-doc paths in intent_map.yml under separate scope, not under this remediation closure."
+  ],
+  "artifacts": [
+    "docs/2026-03-07/verification/T2_remediation_final_review_decision.json",
+    "docs/2026-03-07/T2_REMEDIATION_F1R_F2C_F3R5_任务回传.md"
+  ]
+}

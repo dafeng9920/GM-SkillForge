@@ -1,0 +1,58 @@
+services:
+  openclaw-db:
+    image: postgres:15-alpine
+    container_name: openclaw_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: clawuser
+      POSTGRES_PASSWORD: clawpassword
+      POSTGRES_DB: openclaw
+    volumes:
+      - openclaw_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U clawuser -d openclaw"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  openclaw-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        OPENCLAW_VERSION: "${OPENCLAW_VERSION:-2026.2.26}"
+    image: openclaw-agent:secure-2026.03
+    container_name: openclaw_core
+    restart: unless-stopped
+    depends_on:
+      openclaw-db:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://clawuser:clawpassword@openclaw-db:5432/openclaw
+      NODE_ENV: production
+      HOME: /home/node
+      OPENCLAW_HOME: /home/node/.openclaw
+      OPENAI_API_KEY: ${OPENAI_API_KEY:?OPENAI_API_KEY is required}
+      OPENAI_API_BASE: ${OPENAI_API_BASE:?OPENAI_API_BASE is required}
+      DISCORD_TOKEN: ${DISCORD_TOKEN:?DISCORD_TOKEN is required}
+      OPENCLAW_GATEWAY_TOKEN: ${OPENCLAW_GATEWAY_TOKEN:?OPENCLAW_GATEWAY_TOKEN is required}
+      ZAI_API_KEY: ${ZAI_API_KEY:-}
+      OPENCLAW_CONFIG_PATH: /home/node/.openclaw/openclaw.json
+    ports:
+      - "127.0.0.1:18789:18789"
+    user: "0:0"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: false
+    volumes:
+      - ./data:/home/node/.openclaw:rw
+      - ./data/logs:/tmp/openclaw:rw
+    working_dir: /home/node
+    command: ["openclaw", "gateway", "run", "--port", "18789", "--bind", "loopback", "--allow-unconfigured"]
+
+volumes:
+  openclaw_pgdata:

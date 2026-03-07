@@ -1,0 +1,71 @@
+task_id: T2-A
+executor: Antigravity-1
+execution_date: 2026-03-07
+status: COMPLETED
+
+objective: |
+  建立 constitutional intent parity pack，核对
+  constitution_principle_survival /
+  constitution_principle_default_deny /
+  constitution_principle_evidence
+  在当前仓库中的实现落点与缺口。
+
+scope:
+  - 只做意图语义 parity，不复制旧实现代码
+  - 明确 already_present / partially_present / missing
+  - 记录实现落点与 gap 类型（code gap / doc gap）
+
+source_baseline:
+  - docs/2026-03-07/AI_LEGION_TASK_DISPATCH_2026-03-07.md
+  - docs/2026-03-06/NEW_GM_INTENT_PARITY_MATRIX_v1.md
+  - docs/2026-03-06/NEW_GM_INTENT_MIGRATION_SCORING.md
+
+parity_results:
+  - intent_id: constitution_principle_survival
+    parity: already_present
+    implementation_locus:
+      - docs/2026-02-16/constitution_v1.md
+      - skillforge/src/orchestration/intent_map.yml
+    gap_type: none
+    notes:
+      - 宪法主文本明确要求 fail-closed 与系统最高约束
+      - intent_map 已冻结到 mainline
+
+  - intent_id: constitution_principle_default_deny
+    parity: already_present
+    implementation_locus:
+      - docs/2026-02-16/constitution_v1.md
+      - skillforge/src/orchestration/intent_map.yml
+      - core/gate_engine.py
+    gap_type: doc_gap
+    notes:
+      - 主语义已存在：遇到 DENY/REQUIRES_CHANGES 即中止
+      - 缺少单独的 parity regression 记录
+
+  - intent_id: constitution_principle_evidence
+    parity: already_present
+    implementation_locus:
+      - docs/2026-02-16/constitution_v1.md
+      - skillforge/src/orchestration/intent_map.yml
+      - core/pack_and_permit.py
+    gap_type: doc_gap
+    notes:
+      - Evidence -> Replay -> Gate Verdict 语义已存在
+      - evidence-first 已进入 pack_and_permit 数据结构
+
+evidence_refs:
+  - docs/2026-02-16/constitution_v1.md:7-18
+  - docs/2026-02-16/constitution_v1.md:34-45
+  - skillforge/src/orchestration/intent_map.yml:14-37
+  - core/gate_engine.py:63-95
+  - core/pack_and_permit.py:46-60
+  - docs/2026-03-06/NEW_GM_INTENT_PARITY_MATRIX_v1.md:25-27
+
+acceptance_check:
+  each_principle_mapped: true
+  missing_semantics_explicit: true
+  allowed_status_values_only: true
+
+remaining_gaps:
+  - add dedicated parity regression record for default-deny stop behavior
+  - add dedicated parity regression record for evidence-first publish chain

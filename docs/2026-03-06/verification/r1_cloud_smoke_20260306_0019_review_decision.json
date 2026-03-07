@@ -1,0 +1,31 @@
+{
+  "review_id": "r1_cloud_smoke_20260306_0019_review_20260306",
+  "task_id": "r1-cloud-smoke-20260306-0019",
+  "baseline_id": "AG2-FIXED-CALIBER-TG1-20260304",
+  "review_type": "R1_CLOUD_SMOKE_DUAL_GATE_REVIEW",
+  "reviewed_at": "2026-03-05T16:38:04Z",
+  "reviewer": {
+    "type": "Kior-C",
+    "environment": "LOCAL-ANTIGRAVITY",
+    "verification_tool": "scripts/verify_and_gate.py"
+  },
+  "decision": {
+    "outcome": "ALLOW",
+    "rationale": "R1 cloud smoke task passed dual gate verification (Gate1=PASS, Gate2=ALLOW).",
+    "confidence": "HIGH"
+  },
+  "checks": {
+    "receipt_verification": "PASS",
+    "cloud_lobster_mandatory_gate": "ALLOW",
+    "overall": "PASS"
+  },
+  "evidence_refs": {
+    "dual_gate_verification": "docs/2026-03-06/verification/r1-cloud-smoke-20260306-0019_dual_gate_verification.json",
+    "execution_receipt": ".tmp/openclaw-dispatch/r1-cloud-smoke-20260306-0019/execution_receipt.json",
+    "task_contract": ".tmp/openclaw-dispatch/r1-cloud-smoke-20260306-0019/task_contract.json",
+    "stdout_log": ".tmp/openclaw-dispatch/r1-cloud-smoke-20260306-0019/stdout.log",
+    "stderr_log": ".tmp/openclaw-dispatch/r1-cloud-smoke-20260306-0019/stderr.log",
+    "audit_event": ".tmp/openclaw-dispatch/r1-cloud-smoke-20260306-0019/audit_event.json"
+  },
+  "required_changes": []
+}

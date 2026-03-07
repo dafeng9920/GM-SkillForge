@@ -1,0 +1,28 @@
+{
+  "record_type": "skill_admission",
+  "skill_name": "cloud-lobster-closed-loop-skill",
+  "skill_path": "skills/cloud-lobster-closed-loop-skill",
+  "admission_decision": "ALLOW",
+  "execution_environment": "LOCAL-ANTIGRAVITY",
+  "reviewed_at_utc": "2026-03-05T07:00:00Z",
+  "compliance_checks": {
+    "quick_validate": "PASS",
+    "contract_generator_smoke_test": "PASS",
+    "verify_and_gate_smoke_test": "PASS",
+    "fail_closed_policy_enforced": true
+  },
+  "artifacts": {
+    "skill_md": "skills/cloud-lobster-closed-loop-skill/SKILL.md",
+    "agents_yaml": "skills/cloud-lobster-closed-loop-skill/agents/openai.yaml",
+    "contract_script": "skills/cloud-lobster-closed-loop-skill/scripts/create_cloud_task_contract.py",
+    "gate_script": "skills/cloud-lobster-closed-loop-skill/scripts/verify_and_gate.py",
+    "prompt_pack": "skills/cloud-lobster-closed-loop-skill/references/prompt-pack.md"
+  },
+  "smoke_outputs": {
+    "contract_file": ".tmp/openclaw-dispatch/tg1-skilltest-20260306-001/task_contract.json",
+    "handoff_file": ".tmp/openclaw-dispatch/tg1-skilltest-20260306-001/handoff_note.md",
+    "review_file": "docs/2026-03-06/verification/tg1-official-20260305-1417_review_decision.json",
+    "final_gate_file": "docs/2026-03-06/verification/tg1-official-20260305-1417_final_gate.json"
+  }
+}
+

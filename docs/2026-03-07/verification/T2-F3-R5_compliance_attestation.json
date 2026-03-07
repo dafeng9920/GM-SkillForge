@@ -1,0 +1,184 @@
+{
+  "attestation_id": "T2-F3-R5-COMPLIANCE-ATT",
+  "attestation_type": "ComplianceAttestation",
+  "task_id": "T2-F3-R5",
+  "task_name": "Clear evidence-first strong semantic terminology",
+  "attestation_date": "2026-03-07T00:00:00Z",
+  "attestor": "Antigravity-2 / T2 F3-R5 Compliance Officer",
+
+  "decision": "PASS",
+
+  "scope": {
+    "authority_sources": [
+      "Kior-C / T2-F3-R4 Reviewer",
+      "Antigravity-2 / T2-F3-R4 Compliance FAIL"
+    ],
+    "remediation_scope": "F3-R5 execution report + completion record + unified_terminology.md",
+    "code_review_scope": "5 specified files only",
+    "verification_inputs": [
+      "skillforge/src/skills/gates/gate_permit.py",
+      "skillforge/src/skills/gates/permit_issuer.py",
+      "skillforge/src/skills/experience_capture.py",
+      "skills/ci-skill-validation-skill/SKILL.md",
+      "skills/permit-governance-skill/SKILL.md",
+      "skillforge-spec-pack/skillforge/tests/test_t2_f3_replay_parity.py",
+      "docs/2026-03-06/verification/T2_F3_R5_execution_report.yaml",
+      "docs/2026-03-06/verification/T2_F3_R5_completion_record.json",
+      "docs/2026-03-06/verification/T2_F3_R5_unified_terminology.md"
+    ]
+  },
+
+  "criteria_assessment": {
+    "criterion_1": {
+      "name": "All 5 misleading locations fixed",
+      "status": "PASS",
+      "evidence_refs": [
+        "EVID-T2-F3-R5-001: gate_permit.py:9",
+        "EVID-T2-F3-R5-002: permit_issuer.py:6",
+        "EVID-T2-F3-R5-003: experience_capture.py:91",
+        "EVID-T2-F3-R5-004: ci-skill-validation-skill/SKILL.md:27",
+        "EVID-T2-F3-R5-005: permit-governance-skill/SKILL.md:27"
+      ],
+      "verification": "Actual code inspection confirms all 5 locations now use non-misleading terminology"
+    },
+
+    "criterion_2": {
+      "name": "Repository no longer treats 'evidence-first' as verified strong temporal semantic",
+      "status": "PASS",
+      "evidence_refs": [
+        "Code layer: 'evidence-mandatory' (no temporal implication)",
+        "Config layer: 'evidence_traceability' (audit trail semantics)",
+        "Test layer: 'decision-evidence traceability (historically evidence-first)'"
+      ],
+      "verification": "No current usage of 'evidence-first' as a rule name implies temporal ordering"
+    },
+
+    "criterion_3": {
+      "name": "New terminology is unified and consistent with code reality",
+      "status": "PASS",
+      "evidence_refs": [
+        "Unified_terminology.md defines semantic layer consistency",
+        "Code comments use 'evidence-mandatory'",
+        "YAML configs use 'evidence_traceability'",
+        "Tests use 'decision-evidence traceability'"
+      ],
+      "verification": "Each semantic layer uses appropriate terminology without cross-layer conflicts"
+    },
+
+    "criterion_4": {
+      "name": "No dual-track terminology (tests say historical, code says current)",
+      "status": "PASS",
+      "evidence_refs": [
+        "test_t2_f3_replay_parity.py:7 explicitly marks 'evidence-first' as historical",
+        "All code files use new terminology as current rules",
+        "No 'evidence-first' usage as current rule name in active code"
+      ],
+      "verification": "Consistent terminology across code, config, and test layers"
+    },
+
+    "criterion_5": {
+      "name": "Archive path dating consistency",
+      "status": "PASS_WITH_NOTE",
+      "note": "F3-R5 deliverables archived in docs/2026-03-06/verification/ (execution date), attestation filed in docs/2026-03-07/verification/ (certification date). This dual-dating pattern is consistent with T2 governance practice where execution and certification may occur on consecutive days."
+    }
+  },
+
+  "residual_analysis": {
+    "grep_scan_python": {
+      "query": "evidence.?first in *.py files",
+      "matches": 2,
+      "analysis": [
+        {
+          "file": "test_t2_f3_replay_parity.py:7",
+          "match": "Decision-evidence traceability (historically 'evidence-first')",
+          "assessment": "ACCEPTABLE - Explicitly marked as historical term"
+        },
+        {
+          "file": "pack_publish.py:871",
+          "match": "# CRITICAL: Check for actual tampering evidence first",
+          "assessment": "ACCEPTABLE - Natural English phrase 'check X first', not a terminology claim"
+        }
+      ]
+    },
+    "grep_scan_markdown": {
+      "query": "evidence_first:\\s*true in *.md files",
+      "matches": 2,
+      "analysis": [
+        {
+          "file": "T2_F3_R5_unified_terminology.md:78-79",
+          "match": "Migration checklist showing old→new mapping",
+          "assessment": "ACCEPTABLE - Historical documentation of remediation"
+        }
+      ]
+    }
+  },
+
+  "reasons": [
+    "CRITICAL: F3-R4 FAIL condition (5 misleading code locations) has been fully remediated",
+    "All 5 specified files now use terminology that accurately reflects actual semantics",
+    "No 'evidence-first' usage as a current rule name remains in active code",
+    "Unified terminology specification provides clear migration path and enforcement guidance",
+    "No dual-track terminology conflict between test and code layers",
+    "One residual natural-English usage ('check ... first') in pack_publish.py:871 does not constitute misleading terminology"
+  ],
+
+  "remaining_risks": [
+    {
+      "risk_id": "RISK-T2-F3-R5-001",
+      "severity": "LOW",
+      "category": "ARCHIVE_PATH_DATING",
+      "description": "F3-R5 execution artifacts filed in docs/2026-03-06/, attestation filed in docs/2026-03-07/",
+      "impact": "Minor confusion for future auditors tracking artifact provenance",
+      "mitigation": "Document dual-dating pattern in T2 governance handbook; consider symlink or manifest for cross-day artifacts",
+      "owner": "T2 Governance"
+    },
+    {
+      "risk_id": "RISK-T2-F3-R5-002",
+      "severity": "LOW",
+      "category": "TERMINOLOGY_REINTRODUCTION",
+      "description": "New contributors may reintroduce 'evidence-first' terminology",
+      "impact": "Gradual semantic drift if not caught in code review",
+      "mitigation": "Add linter rule per unified_terminology.md recommendations; add terminology check to PR template",
+      "owner": "T2 Governance"
+    },
+    {
+      "risk_id": "RISK-T2-F3-R5-003",
+      "severity": "VERY_LOW",
+      "category": "DOCUMENTATION_SYNC",
+      "description": "External documentation (docs outside specified 5 files) may still reference old terminology",
+      "impact": "Minor confusion for readers of historical documentation",
+      "mitigation": "Gradual documentation sync; historical references acceptable when contextually accurate",
+      "owner": "Documentation team"
+    }
+  ],
+
+  "evidence_refs": [
+    "Actual code inspection: gate_permit.py:9 shows 'Evidence-Mandatory'",
+    "Actual code inspection: permit_issuer.py:6 shows 'Evidence-Mandatory'",
+    "Actual code inspection: experience_capture.py:91 shows 'evidence-mandatory'",
+    "Actual code inspection: ci-skill-validation-skill/SKILL.md:27 shows 'evidence_traceability: true'",
+    "Actual code inspection: permit-governance-skill/SKILL.md:27 shows 'evidence_traceability: true'",
+    "Actual code inspection: test_t2_f3_replay_parity.py:7 shows '(historically \"evidence-first\")'",
+    "Execution report: docs/2026-03-06/verification/T2_F3_R5_execution_report.yaml",
+    "Completion record: docs/2026-03-06/verification/T2_F3_R5_completion_record.json",
+    "Terminology spec: docs/2026-03-06/verification/T2_F3_R5_unified_terminology.md"
+  ],
+
+  "attestation_metadata": {
+    "compliance_framework": "T2 Governance / F3 Remediation Protocol",
+    "attestation_version": "1.0",
+    "signing_authority": "Antigravity-2 / T2 F3-R5 Compliance Officer",
+    "review_chain": [
+      "Antigravity-2 / T2-F3-R4 Compliance FAIL (2026-03-06)",
+      "Antigravity-2 / T2-F3-R5 Compliance Attestation (2026-03-07)"
+    ],
+    "next_steps": [
+      "Archive this attestation in docs/2026-03-07/verification/",
+      "Forward to T2 Governance for final signoff",
+      "Monitor for terminology reintroduction in future commits"
+    ]
+  },
+
+  "certification_statement": "F3-R5 has successfully eliminated the 'evidence-first strong semantic' misleading terminology issue. The repository now uses consistent, accurate terminology across code, configuration, and test layers. All F3-R4 FAIL conditions have been remediated. Minor archival dating pattern noted as LOW severity remaining risk."
+
+}

@@ -1,0 +1,96 @@
+{
+  "governance_index_version": "daily_governance_index_v1",
+  "index_date": "2026-03-07",
+  "governed_by": "Antigravity-1",
+  "environment": "LOCAL-ANTIGRAVITY",
+  "governance_status": {
+    "evidence_freeze": "COMPLETE",
+    "deployment_acceptance": "APPROVED",
+    "closed_loop_enforced": "ACTIVE"
+  },
+  "governance_actions": [
+    {
+      "action": "deployment_acceptance",
+      "task_id": "tg1-official-20260305-1417",
+      "status": "APPROVED",
+      "file": "docs/2026-03-07/governance/TGI_OFFICIAL_DEPLOYMENT_ACCEPTANCE_20260305.json"
+    },
+    {
+      "action": "evidence_freeze",
+      "freeze_id": "EVIDENCE-FREEZE-TG1-20260307",
+      "status": "COMPLETE",
+      "file": "docs/2026-03-07/governance/EVIDENCE_FREEZE_MANIFEST_20260307.json",
+      "confirmation": "所有工件 SHA256 哈希已验证并冻结"
+    },
+    {
+      "action": "constraints_publish",
+      "constraint_id": "TASK-EXEC-CONSTRAINTS-TG1-20260307",
+      "status": "ACTIVE",
+      "file": "docs/2026-03-07/governance/TASK_EXECUTION_CONSTRAINTS_20260307.json"
+    }
+  ],
+  "evidence_freeze_confirmation": {
+    "freeze_id": "EVIDENCE-FREEZE-TG1-20260307",
+    "freeze_date": "2026-03-07",
+    "frozen_by": "Antigravity-1",
+    "status": "COMPLETE",
+    "artifacts_verified": 5,
+    "artifacts_hashed": 5,
+    "verification_details": {
+      "task_contract": {
+        "sha256": "8d21d3cd387201a4f19769dbf086e97fefbe8d961c703c00f36587313b226002",
+        "status": "VERIFIED"
+      },
+      "execution_receipt": {
+        "sha256": "dcaaecf8f8ccc4c1c71195b8618dc08406ed3ab6ac1aca732a91b036529cd4c7",
+        "status": "VERIFIED"
+      },
+      "audit_event": {
+        "sha256": "e30ce248de388bb222e72a0851bd609d32b96aa16a35171749f07aa46d8340bb",
+        "status": "VERIFIED"
+      },
+      "stdout_log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "status": "VERIFIED"
+      },
+      "stderr_log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "status": "VERIFIED"
+      }
+    }
+  },
+  "mandatory_closed_loop_skill": {
+    "skill_id": "cloud-lobster-closed-loop-skill",
+    "skill_path": "skills/cloud-lobster-closed-loop-skill/",
+    "enforcement": "STRICT",
+    "effective_immediately": true,
+    "applies_to": "ALL_SUBSEQUENT_TASKS"
+  },
+  "prohibited_bypasses": {
+    "task_contract_bypass": "PROHIBITED",
+    "receipt_verification_bypass": "PROHIBITED",
+    "direct_command_execution": "PROHIBITED"
+  },
+  "governance_chain": {
+    "executor": "Antigravity-3 (Lobster) / CLOUD-ROOT",
+    "verifier": "Kior-C / LOCAL-ANTIGRAVITY",
+    "gatekeeper": "Antigravity-1 / LOCAL-ANTIGRAVITY"
+  },
+  "compliance_attestation": {
+    "all_artifacts_present": true,
+    "all_hashes_verified": true,
+    "all_verifications_pass": true,
+    "fail_closed_chain_active": true,
+    "constraints_enforced": true
+  },
+  "next_governance_actions": [
+    "继续 G1 nightly recheck (剩余 10 天)",
+    "所有新任务必须使用 cloud-lobster-closed-loop-skill",
+    "违禁绕过将记录到 docs/compliance_reviews/"
+  ],
+  "signature": {
+    "signed_by": "Antigravity-1",
+    "signed_at": "2026-03-07T00:00:00Z",
+    "signature_type": "GOVERNANCE_COMPLETE_FREEZE_CONFIRMATION"
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "evidence_references": {
+    "EVID-T2-F3-R5-001": {
+      "location": "skillforge/src/skills/gates/gate_permit.py:9",
+      "file": "gate_permit.py",
+      "line": 9,
+      "modification": {
+        "old": "- Evidence-First: 每次校验生成 EvidenceRef",
+        "new": "- Evidence-Mandatory: 每次校验生成 EvidenceRef"
+      },
+      "semantic_layer": "code_comment",
+      "rationale": "Evidence-Mandatory accurately reflects the requirement without temporal ordering bias"
+    },
+    "EVID-T2-F3-R5-002": {
+      "location": "skillforge/src/skills/gates/permit_issuer.py:6",
+      "file": "permit_issuer.py",
+      "line": 6,
+      "modification": {
+        "old": "- Evidence-First: 每次签发尝试都生成 EvidenceRef",
+        "new": "- Evidence-Mandatory: 每次签发尝试都生成 EvidenceRef"
+      },
+      "semantic_layer": "code_comment",
+      "rationale": "Evidence-Mandatory accurately reflects the requirement for issuance attempts"
+    },
+    "EVID-T2-F3-R5-003": {
+      "location": "skillforge/src/skills/experience_capture.py:91",
+      "file": "experience_capture.py",
+      "line": 91,
+      "modification": {
+        "old": "# Strong evidence-first rule.",
+        "new": "# Strong evidence-mandatory rule."
+      },
+      "semantic_layer": "code_comment",
+      "rationale": "evidence-mandatory captures the requirement without suggesting evidence precedes decision"
+    },
+    "EVID-T2-F3-R5-004": {
+      "location": "skills/ci-skill-validation-skill/SKILL.md:27",
+      "file": "SKILL.md",
+      "line": 27,
+      "modification": {
+        "old": "evidence_first: true",
+        "new": "evidence_traceability: true"
+      },
+      "semantic_layer": "yaml_config",
+      "rationale": "evidence_traceability accurately describes audit trail requirement"
+    },
+    "EVID-T2-F3-R5-005": {
+      "location": "skills/permit-governance-skill/SKILL.md:27",
+      "file": "SKILL.md",
+      "line": 27,
+      "modification": {
+        "old": "evidence_first: true",
+        "new": "evidence_traceability: true"
+      },
+      "semantic_layer": "yaml_config",
+      "rationale": "evidence_traceability accurately describes audit trail requirement"
+    }
+  },
+  "unified_terminology_mapping": {
+    "code_comments": {
+      "old_term": "evidence-first",
+      "new_term": "evidence-mandatory",
+      "usage": "Python docstrings and inline comments"
+    },
+    "yaml_config": {
+      "old_term": "evidence_first",
+      "new_term": "evidence_traceability",
+      "usage": "SKILL.md YAML configuration blocks"
+    },
+    "historical_note": {
+      "term": "evidence-first",
+      "status": "DEPRECATED - historical reference only",
+      "restriction": "NOT to be used as current rule name"
+    }
+  }
+}

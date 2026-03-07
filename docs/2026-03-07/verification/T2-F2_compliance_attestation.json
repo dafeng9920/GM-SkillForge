@@ -1,0 +1,211 @@
+{
+  "schema_version": "t2_f2_compliance_attestation_v1",
+  "task_id": "T2-F2",
+  "compliance_officer": "Antigravity-2",
+  "attestation_date": "2026-03-07",
+  "attestation_status": "PASS",
+
+  "review_inputs": {
+    "completion_record": "docs/2026-03-07/T2-F2_completion_record.md",
+    "execution_report": "docs/2026-03-07/verification/T2-F2_execution_report.yaml",
+    "review_decision": "docs/2026-03-07/verification/T2-F2_review_decision.json",
+    "contracts": [
+      "contracts/intents/outer_intent_ingest.yml",
+      "contracts/intents/outer_contract_freeze.yml"
+    ],
+    "intent_map": "skillforge/src/orchestration/intent_map.yml",
+    "gate_contracts": [
+      "skillforge/src/contracts/gates/intake_repo.yaml",
+      "skillforge/src/contracts/gates/repo_scan.yaml",
+      "skillforge/src/contracts/gates/draft_spec.yaml",
+      "skillforge/src/contracts/gates/risk_check.yaml"
+    ]
+  },
+
+  "compliance_checklist": {
+    "role_independence": {
+      "status": "PASS",
+      "executor": "Antigravity-1",
+      "compliance_officer": "Antigravity-2",
+      "different_entities": true,
+      "evidence": "T2-F2_review_decision.json handoff_to_compliance section explicitly assigns compliance_officer to Antigravity-2, separate from executor Antigravity-1",
+      "verdict": "Executor and Compliance Officer are different entities - independence requirement satisfied"
+    },
+
+    "no_old_gm_os_full_copy": {
+      "status": "PASS",
+      "evidence_provided": true,
+      "explicit_statement_in_execution_report": "Line 118: 'No full-copy old GM OS implementation introduced'",
+      "explicit_statement_in_completion_record": "Line 118: 'No full-copy old GM OS implementation introduced'",
+      "files_modified": 1,
+      "files_created": 2,
+      "modified_files": [
+        "skillforge/src/orchestration/intent_map.yml (integration level promotion only)"
+      ],
+      "created_files": [
+        "contracts/intents/outer_intent_ingest.yml (contract definition only)",
+        "contracts/intents/outer_contract_freeze.yml (contract definition only)"
+      ],
+      "implementation_code_introduced": 0,
+      "verdict": "No old GM OS full-copy implementation was introduced. Only contract definitions and integration status were changed."
+    },
+
+    "mainline_promotion_has_contract": {
+      "status": "PASS",
+      "promoted_intents": [
+        {
+          "intent_id": "outer_intent_ingest",
+          "previous_level": "l42_planned",
+          "current_level": "mainline",
+          "contract_path": "contracts/intents/outer_intent_ingest.yml",
+          "contract_exists": true,
+          "contract_complete": true
+        },
+        {
+          "intent_id": "outer_contract_freeze",
+          "previous_level": "l42_planned",
+          "current_level": "mainline",
+          "contract_path": "contracts/intents/outer_contract_freeze.yml",
+          "contract_exists": true,
+          "contract_complete": true
+        }
+      ],
+      "verification": "Both contract files exist at production locations with complete sections (intent_id, inputs_schema, required_gates, required_evidence, outputs, canonical_naming, migration metadata, gate_path)",
+      "verdict": "Both promoted intents have real contract files at production locations - no empty placeholders"
+    },
+
+    "gate_path_evidence_alignment": {
+      "status": "PASS",
+      "outer_intent_ingest": {
+        "gate_path": ["intake_repo", "repo_scan_fit_score"],
+        "evidence_required": ["intent_ingest_receipt", "scan_report", "fit_score", "component_id"],
+        "gate_contracts_verified": {
+          "intake_repo": {
+            "location": "skillforge/src/contracts/gates/intake_repo.yaml",
+            "exists": true,
+            "produces": "IntakeManifest",
+            "evidence_aligned": true
+          },
+          "repo_scan_fit_score": {
+            "location": "skillforge/src/contracts/gates/repo_scan.yaml",
+            "exists": true,
+            "produces": "ScanReport",
+            "evidence_aligned": true
+          }
+        }
+      },
+      "outer_contract_freeze": {
+        "gate_path": ["draft_skill_spec", "constitution_risk_gate"],
+        "evidence_required": ["draft_spec", "risk_assessment", "contract_freeze_receipt", "constitution_hash"],
+        "gate_contracts_verified": {
+          "draft_skill_spec": {
+            "location": "skillforge/src/contracts/gates/draft_spec.yaml",
+            "exists": true,
+            "produces": "SkillSpec",
+            "evidence_aligned": true
+          },
+          "constitution_risk_gate": {
+            "location": "skillforge/src/contracts/gates/risk_check.yaml",
+            "exists": true,
+            "produces": "RiskAssessment",
+            "evidence_aligned": true
+          }
+        }
+      },
+      "verdict": "All gates referenced in promoted intents exist in mainline gate contracts directory. Evidence types align with gate outputs."
+    },
+
+    "constitution_alignment": {
+      "status": "PASS",
+      "outer_contract_freeze_constitution_section": {
+        "exists": true,
+        "location": "contracts/intents/outer_contract_freeze.yml lines 128-139",
+        "ssot_reference": "docs/2026-02-16/constitution_v1.md",
+        "fail_closed": true,
+        "red_lines": [
+          "Must NOT allow override_governance flag",
+          "Must NOT modify Constitution definitions",
+          "Risk score >= 0.7 triggers automatic REJECT"
+        ]
+      },
+      "constitution_risk_gate_verification": {
+        "gate_location": "skillforge/src/contracts/gates/risk_check.yaml",
+        "implements_fail_closed": true,
+        "description": "Implements FAIL-CLOSED semantics: any detected risk MUST trigger REJECTED",
+        "red_lines_in_gate": [
+          "Must NOT allow specs with 'override_governance' flag",
+          "Must NOT modify Constitution definitions"
+        ]
+      },
+      "alignment_verification": "The constitution_alignment section in outer_contract_freeze.yml contract matches the semantics defined in constitution_risk_gate contract",
+      "verdict": "Constitution alignment is properly established with FAIL-CLOSED gate enforcement"
+    }
+  },
+
+  "intent_map_promotion_verification": {
+    "outer_intent_ingest": {
+      "lines": "70-82",
+      "changes_verified": {
+        "integration_level": "l42_planned -> mainline",
+        "migration_status": "mapped -> mainline",
+        "contract_path": "docs/2026-02-16/... -> contracts/intents/outer_intent_ingest.yml",
+        "canonical_intent_id_added": "outer_intent_ingest",
+        "legacy_aliases_added": ["axis_intent_ingest"],
+        "promoted_at": "2026-03-07",
+        "promotion_task": "T2-F2"
+      },
+      "status": "PASS"
+    },
+    "outer_contract_freeze": {
+      "lines": "94-106",
+      "changes_verified": {
+        "integration_level": "l42_planned -> mainline",
+        "migration_status": "mapped -> mainline",
+        "contract_path": "docs/2026-02-16/... -> contracts/intents/outer_contract_freeze.yml",
+        "canonical_intent_id_added": "outer_contract_freeze",
+        "legacy_aliases_added": ["axis_contract_freeze"],
+        "promoted_at": "2026-03-07",
+        "promotion_task": "T2-F2"
+      },
+      "status": "PASS"
+    }
+  },
+
+  "evidence_refs": [
+    "docs/2026-03-07/T2-F2_completion_record.md",
+    "docs/2026-03-07/verification/T2-F2_execution_report.yaml",
+    "docs/2026-03-07/verification/T2-F2_review_decision.json",
+    "contracts/intents/outer_intent_ingest.yml",
+    "contracts/intents/outer_contract_freeze.yml",
+    "skillforge/src/orchestration/intent_map.yml:70-82",
+    "skillforge/src/orchestration/intent_map.yml:94-106",
+    "skillforge/src/contracts/gates/intake_repo.yaml",
+    "skillforge/src/contracts/gates/repo_scan.yaml",
+    "skillforge/src/contracts/gates/draft_spec.yaml",
+    "skillforge/src/contracts/gates/risk_check.yaml"
+  ],
+
+  "reasons": [
+    "Compliance Officer (Antigravity-2) is independent from Executor (Antigravity-1)",
+    "No old GM OS full-copy implementation was introduced - only contract definitions and integration level changes",
+    "Both promoted intents have real, complete contract files at production locations",
+    "All gate paths reference existing mainline gates with verified contracts",
+    "Evidence requirements align with gate output types",
+    "Constitution alignment is properly established with FAIL-CLOSED semantics for outer_contract_freeze",
+    "Migration follows contracts-first + gate + evidence architecture"
+  ],
+
+  "final_verdict": {
+    "status": "PASS",
+    "summary": "T2-F2 selective mainline promotion for outer_intent_ingest and outer_contract_freeze is fully compliant. All compliance requirements are satisfied: role independence, no implementation code introduced, real contract bindings, gate alignment, and constitution enforcement.",
+    "blocking_issues": [],
+    "conditions": []
+  },
+
+  "signoff": {
+    "compliance_officer": "Antigravity-2",
+    "attestation_status": "PASS",
+    "timestamp": "2026-03-07T00:00:00Z",
+    "signature": "T2-F2 compliance verified and approved. Both intents may proceed to mainline integration."
+  }
+}

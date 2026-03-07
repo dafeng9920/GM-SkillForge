@@ -1,0 +1,47 @@
+{
+  "governance_version": "deployment_acceptance_v1",
+  "acceptance_date": "2026-03-05",
+  "task_id": "tg1-official-20260305-1417",
+  "baseline_id": "AG2-SOVEREIGNTY-ROOT-2026-03-05",
+  "environment": "CLOUD-ROOT",
+  "governed_by": "Antigravity-1",
+  "acceptance_status": "APPROVED",
+  "acceptance_chain": {
+    "step_1_contract_verification": {
+      "status": "PASS",
+      "verifier": "Kior-C",
+      "verified_at": "2026-03-05T14:30:00Z",
+      "evidence": "docs/2026-03-05/verification/tg1_official_20260305_review_decision.json"
+    },
+    "step_2_final_gate": {
+      "status": "PASS",
+      "decision": "ALLOW",
+      "issued_at": "2026-03-05T14:30:00Z",
+      "evidence": "docs/2026-03-05/verification/tg1_official_20260305_final_gate.json"
+    },
+    "step_3_evidence_freeze": {
+      "status": "FROZEN",
+      "frozen_at": "2026-03-07T00:00:00Z",
+      "artifacts": {
+        "task_contract": ".tmp/openclaw-dispatch/tg1-official-20260305-1417/task_contract.json",
+        "execution_receipt": ".tmp/openclaw-dispatch/tg1-official-20260305-1417/execution_receipt.json",
+        "stdout_log": ".tmp/openclaw-dispatch/tg1-official-20260305-1417/stdout.log",
+        "stderr_log": ".tmp/openclaw-dispatch/tg1-official-20260305-1417/stderr.log",
+        "audit_event": ".tmp/openclaw-dispatch/tg1-official-20260305-1417/audit_event.json"
+      },
+      "archive_index": "docs/2026-03-05/verification/ARCHIVE_INDEX_2026-03-05.json"
+    }
+  },
+  "verification_summary": {
+    "task_id_consistency": "PASS",
+    "allowlist_compliance": "PASS (8/8 commands)",
+    "receipt_completeness": "PASS",
+    "compliance_gate": "PASS (redline_check: PASS)"
+  },
+  "deployment_verdict": "Official Cloud-Root deployment verified and hardened with full security audit pass",
+  "constraints_applied": {
+    "fail_closed_policy": "ACTIVE",
+    "command_allowlist_enforced": true,
+    "four_piece_artifacts_required": true
+  }
+}

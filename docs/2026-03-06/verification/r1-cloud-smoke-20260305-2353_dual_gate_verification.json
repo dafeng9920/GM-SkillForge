@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0.0",
+  "report_type": "dual_gate_verification",
+  "generated_at": "2026-03-05T16:03:49+00:00Z",
+  "task_id": "r1-cloud-smoke-20260305-2353",
+  "dual_gate_decision": {
+    "overall": "PASS",
+    "reason": "All gates passed"
+  },
+  "gates": {
+    "receipt_verification": {
+      "task_id": "r1-cloud-smoke-20260305-2353",
+      "timestamp": "2026-03-05T16:03:49+00:00Z",
+      "status": "PASS",
+      "exit_code": 0,
+      "stdout": "PASS\n- task_id: r1-cloud-smoke-20260305-2353\n- executed_commands: 6\n- acceptance_items: 4",
+      "stderr": ""
+    },
+    "cloud_lobster_mandatory_gate": {
+      "task_id": "r1-cloud-smoke-20260305-2353",
+      "timestamp": "2026-03-05T16:03:49+00:00Z",
+      "status": "ALLOW",
+      "exit_code": 0,
+      "stdout": "[CLOUD-LOBSTER-CLOSED-LOOP ENFORCEMENT]\nTask ID: r1-cloud-smoke-20260305-2353\nAction: verify\nRequired Skill: cloud-lobster-closed-loop-skill\nEnforcing policy...\n\n[✅ ALLOW] Task complies with cloud-lobster-closed-loop-skill\n[📋 Task r1-cloud-smoke-20260305-2353 may proceed to verify]",
+      "stderr": ""
+    }
+  },
+  "summary": {
+    "total_gates": 2,
+    "passed": 2,
+    "failed": 0
+  }
+}

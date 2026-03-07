@@ -1,0 +1,19 @@
+{
+  "task_id": "T2-A",
+  "compliance_officer": "Antigravity-2",
+  "attestation_date": "2026-03-07",
+  "decision": "PASS",
+  "checks": [
+    "未把宪法原则 parity 冒充成新增功能实现。",
+    "实现落点均附 EvidenceRef，可复核。",
+    "保持 fail-closed 与 evidence-first 口径，没有放宽红线。"
+  ],
+  "evidence_refs": [
+    "docs/2026-02-16/constitution_v1.md:7-18",
+    "docs/2026-02-16/constitution_v1.md:34-45",
+    "skillforge/src/orchestration/intent_map.yml:14-37",
+    "core/gate_engine.py:94-95",
+    "core/pack_and_permit.py:277"
+  ],
+  "attestation_statement": "T2-A 仅完成宪法原则 parity 归档与缺口显化，未发生范围漂移，也未通过文档措辞制造假闭环。"
+}

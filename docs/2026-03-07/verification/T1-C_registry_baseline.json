@@ -1,0 +1,243 @@
+{
+  "metadata": {
+    "generated_at": "2026-03-06T14:50:00Z",
+    "generated_by": "Antigravity-1 (T1-C Executor)",
+    "baseline_version": "v0.1.0",
+    "scan_sources": [
+      "registry/skills.jsonl",
+      "skills/ directory",
+      "configs/skill_tier_registry.json",
+      "configs/dispatch_skill_registry.json"
+    ]
+  },
+  "summary": {
+    "total_skills_in_directory": 55,
+    "total_entries_in_main_registry": 56,
+    "total_entries_in_tier_registry": 41,
+    "dispatch_level_skills": 8,
+    "skills_needing_tier_registration": 7,
+    "deleted_agents_skills": 7,
+    "classification": {
+      "registered": 48,
+      "unregistered": 7,
+      "legacy_agents": 7,
+      "placeholder": 1
+    }
+  },
+  "skills_directory": {
+    "source": "skills/",
+    "count": 55,
+    "entries": [
+      "ai-response-improvement-skill",
+      "ai-search-scanner-skill",
+      "budget-guard-skill",
+      "ci-skill-validation-skill",
+      "cloud-closed-loop-archive-skill",
+      "cloud-lobster-closed-loop-skill",
+      "decision-schema-normalizer-skill",
+      "dispatch-broadcast-builder-skill",
+      "dispatch-taskbook-generator-skill",
+      "drill-evidence-collector-skill",
+      "evidence-chain-verify-skill",
+      "evidence-freeze-board-skill",
+      "evidence-freeze-manifest-skill",
+      "example-data-processing-skill",
+      "execution-guard-a-proposal-skill",
+      "execution-guard-b-compliance-skill",
+      "execution-guard-b-execution-skill",
+      "experience-template-retriever-skill",
+      "failure-explainer-skill",
+      "final-gate-adjudicator-skill",
+      "final-gate-recheck-skill",
+      "gm-baseline-e2e-smoketest-skill",
+      "governance-orchestrator-skill",
+      "governance-protocol-skill",
+      "l3-killer-gate-runner-skill",
+      "l4-evidence-freeze-skill",
+      "l4-final-gate-aggregator-skill",
+      "library-intent-mainline-mapper-skill",
+      "lobster-intelligence-harvester-skill",
+      "loop-detector-skill",
+      "master-signoff-skill",
+      "multi-entry-consistency-checker-skill",
+      "n8n-workflow-automation-skill",
+      "openclaw-cloud-bridge-skill",
+      "openclaw-runtime-recovery-skill",
+      "p0-final-adjudicator-skill",
+      "p1-closing-freeze-skill",
+      "p2-final-gate-aggregate-skill",
+      "permit-governance-skill",
+      "policy-lock-check-skill",
+      "protocol-gate-ci-checker-skill",
+      "release-gate-skill",
+      "rollback-drill-skill",
+      "rollback-tombstone-skill",
+      "seed-gate-validator-skill",
+      "t2-integrity-regression-guard-skill",
+      "task-pack-writer-skill",
+      "three-hash-permit-guard-skill",
+      "trend-sniffer-skill",
+      "trinity-dispatch-orchestrator-skill",
+      "triple-record-validator-skill",
+      "v0-seal-adjudicator-skill",
+      "verification-pack-normalizer-skill",
+      "wave-gate-orchestrator-skill",
+      "wave-recheck-generator-skill"
+    ]
+  },
+  "classification": {
+    "registered_in_tier_registry": [
+      "ai-response-improvement-skill",
+      "ai-search-scanner-skill",
+      "budget-guard-skill",
+      "ci-skill-validation-skill",
+      "cloud-closed-loop-archive-skill",
+      "cloud-lobster-closed-loop-skill",
+      "decision-schema-normalizer-skill",
+      "dispatch-broadcast-builder-skill",
+      "dispatch-taskbook-generator-skill",
+      "drill-evidence-collector-skill",
+      "evidence-chain-verify-skill",
+      "evidence-freeze-board-skill",
+      "evidence-freeze-manifest-skill",
+      "example-data-processing-skill",
+      "execution-guard-a-proposal-skill",
+      "execution-guard-b-execution-skill",
+      "experience-template-retriever-skill",
+      "final-gate-adjudicator-skill",
+      "governance-orchestrator-skill",
+      "l3-killer-gate-runner-skill",
+      "library-intent-mainline-mapper-skill",
+      "lobster-intelligence-harvester-skill",
+      "loop-detector-skill",
+      "master-signoff-skill",
+      "multi-entry-consistency-checker-skill",
+      "n8n-workflow-automation-skill",
+      "openclaw-cloud-bridge-skill",
+      "openclaw-runtime-recovery-skill",
+      "p0-final-adjudicator-skill",
+      "p1-closing-freeze-skill",
+      "p2-final-gate-aggregate-skill",
+      "permit-governance-skill",
+      "policy-lock-check-skill",
+      "protocol-gate-ci-checker-skill",
+      "release-gate-skill",
+      "rollback-drill-skill",
+      "rollback-tombstone-skill",
+      "seed-gate-validator-skill",
+      "t2-integrity-regression-guard-skill",
+      "task-pack-writer-skill",
+      "three-hash-permit-guard-skill",
+      "trend-sniffer-skill",
+      "trinity-dispatch-orchestrator-skill",
+      "triple-record-validator-skill",
+      "v0-seal-adjudicator-skill",
+      "verification-pack-normalizer-skill",
+      "wave-gate-orchestrator-skill",
+      "wave-recheck-generator-skill"
+    ],
+    "unregistered_in_tier_registry": [
+      "execution-guard-b-compliance-skill",
+      "failure-explainer-skill",
+      "final-gate-recheck-skill",
+      "gm-baseline-e2e-smoketest-skill",
+      "governance-protocol-skill",
+      "l4-evidence-freeze-skill",
+      "l4-final-gate-aggregator-skill"
+    ],
+    "dispatch_level": [
+      "drill-evidence-collector-skill",
+      "experience-template-retriever-skill",
+      "governance-orchestrator-skill",
+      "governance-protocol-skill",
+      "master-signoff-skill",
+      "seed-gate-validator-skill",
+      "task-pack-writer-skill",
+      "trinity-dispatch-orchestrator-skill"
+    ],
+    "deleted_agents_skills": [
+      "ai_search_scanner",
+      "execution_guard_a_proposal",
+      "execution_guard_b_compliance",
+      "governance_protocol",
+      "intelligence_factory",
+      "lobster_intelligence_harvester",
+      "trend_sniffer"
+    ],
+    "potential_duplicates": [
+      {
+        "note": "Overlap between skills/ and .agents/skills/ naming conventions",
+        "agents_format": ["ai_search_scanner", "execution_guard_a_proposal", "execution_guard_b_compliance", "governance_protocol", "trend_sniffer"],
+        "skills_format": ["ai-search-scanner-skill", "execution-guard-a-proposal-skill", "execution-guard-b-compliance-skill", "governance-protocol-skill", "trend-sniffer-skill"]
+      }
+    ]
+  },
+  "tier_distribution": {
+    "note": "Counts from skill_tier_registry.json reflect both skills/ (repo) and .agents/skills/ (agents) sources before .agents/ cleanup",
+    "core": 8,
+    "support": 26,
+    "experimental": 7,
+    "core_skills": [
+      "drill-evidence-collector-skill",
+      "experience-template-retriever-skill",
+      "governance-orchestrator-skill",
+      "master-signoff-skill",
+      "seed-gate-validator-skill",
+      "task-pack-writer-skill",
+      "trinity-dispatch-orchestrator-skill",
+      "governance-protocol-skill (was .agents/skills/)"
+    ],
+    "experimental_skills": [
+      "evidence-chain-verify-skill",
+      "execution-guard-a-proposal-skill",
+      "execution-guard-b-execution-skill",
+      "p1-closing-freeze-skill",
+      "p2-final-gate-aggregate-skill",
+      "policy-lock-check-skill",
+      "rollback-drill-skill"
+    ]
+  },
+  "registry_discrepancies": {
+    "main_registry_vs_directory": {
+      "status": "MISALIGNED",
+      "details": "registry/skills.jsonl has 56 entries (1 placeholder + 55 scanned) but skills/ directory has 55 actual skill directories",
+      "possible_causes": [
+        "Stale entry referencing deleted .agents/skills/",
+        "Placeholder entry inflating count",
+        "Registry drift from filesystem state"
+      ]
+    },
+    "tier_registry_stale": {
+      "status": "NEEDS_UPDATE",
+      "details": "skill_tier_registry.json references 7 deleted .agents/skills/ entries and is missing 7 skills from skills/ directory (7 of 55 skills are unregistered)",
+      "missing_skills": [
+        "execution-guard-b-compliance-skill",
+        "failure-explainer-skill",
+        "final-gate-recheck-skill",
+        "gm-baseline-e2e-smoketest-skill",
+        "governance-protocol-skill",
+        "l4-evidence-freeze-skill",
+        "l4-final-gate-aggregator-skill"
+      ]
+    }
+  },
+  "recommendations": {
+    "immediate": [
+      "Re-run scripts/generate_skill_tier_registry.py to update skill_tier_registry.json",
+      "Clean up stale entries in registry/skills.jsonl referencing deleted .agents/skills/",
+      "Remove or update SKILL-PLACEHOLDER entry in registry/skills.jsonl"
+    ],
+    "consolidation": [
+      "Decide on single naming convention: underscore (.agents/) vs hyphen (skills/)",
+      "Consider migration path for remaining .agents/skills if still needed",
+      "Establish registry sync protocol to prevent drift"
+    ]
+  },
+  "evidence_refs": {
+    "skills_directory": "ls -la d:/GM-SkillForge/skills/",
+    "main_registry": "d:/GM-SkillForge/registry/skills.jsonl",
+    "tier_registry": "d:/GM-SkillForge/configs/skill_tier_registry.json",
+    "dispatch_registry": "d:/GM-SkillForge/configs/dispatch_skill_registry.json",
+    "git_status_deleted": "git status shows deleted .agents/skills/ entries"
+  }
+}

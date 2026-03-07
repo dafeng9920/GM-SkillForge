@@ -1,0 +1,253 @@
+# T2 Follow-up F2 Execution Report
+# Selective Mainline Promotion for Outer Intake/Freeze Intents
+
+schema_version: t2_f2_execution_report_v1
+task_id: T2-F2
+executor: Antigravity-1
+execution_date: "2026-03-07"
+track: T2
+follow_up_item: "Promote outer_intent_ingest and outer_contract_freeze from l42_planned to mainline"
+
+# ============================================================
+# Executive Summary
+# ============================================================
+summary:
+  status: COMPLETED
+  completion_rate: 100%
+  intents_promoted: 2
+  files_modified: 1
+  files_created: 2
+
+# ============================================================
+# Promoted Intents Reference Table
+# ============================================================
+promoted_intents:
+  - intent_id: outer_intent_ingest
+    previous_level: l42_planned
+    current_level: mainline
+    legacy_aliases:
+      - axis_intent_ingest  # Original axis_top10 identifier
+    contract_location: contracts/intents/outer_intent_ingest.yml
+    dispatch_reference: skillforge/src/orchestration/intent_map.yml:70
+
+  - intent_id: outer_contract_freeze
+    previous_level: l42_planned
+    current_level: mainline
+    legacy_aliases:
+      - axis_contract_freeze  # Original axis_top10 identifier
+    contract_location: contracts/intents/outer_contract_freeze.yml
+    dispatch_reference: skillforge/src/orchestration/intent_map.yml:94
+
+# ============================================================
+# Modified Files
+# ============================================================
+modified_files:
+  - path: skillforge/src/orchestration/intent_map.yml
+    changes:
+      - description: "Promoted outer_intent_ingest to mainline"
+        lines_modified: "70-82"
+        old_integration_level: l42_planned
+        new_integration_level: mainline
+        old_migration_status: mapped
+        new_migration_status: mainline
+        old_contract_path: docs/2026-02-16/完整版模块清单 + 全量接口契约目录.md
+        new_contract_path: contracts/intents/outer_intent_ingest.yml
+
+      - description: "Promoted outer_contract_freeze to mainline"
+        lines_modified: "94-106"
+        old_integration_level: l42_planned
+        new_integration_level: mainline
+        old_migration_status: mapped
+        new_migration_status: mainline
+        old_contract_path: docs/2026-02-16/完整版模块清单 + 全量接口契约目录.md
+        new_contract_path: contracts/intents/outer_contract_freeze.yml
+
+# ============================================================
+# Created Files
+# ============================================================
+created_files:
+  - path: contracts/intents/outer_intent_ingest.yml
+    intent_id: outer_intent_ingest
+    status: mainline
+    sections:
+      - intent_id (canonical)
+      - inputs_schema
+      - required_gates
+      - required_evidence
+      - outputs
+      - canonical_naming reference
+      - migration metadata
+      - gate_path alignment
+      - integration notes
+
+  - path: contracts/intents/outer_contract_freeze.yml
+    intent_id: outer_contract_freeze
+    status: mainline
+    sections:
+      - intent_id (canonical)
+      - inputs_schema
+      - required_gates
+      - required_evidence
+      - outputs
+      - canonical_naming reference
+      - migration metadata
+      - gate_path alignment
+      - constitution_alignment
+      - integration notes
+
+# ============================================================
+# Gate/Evidence Alignment
+# ============================================================
+gate_evidence_mapping:
+  outer_intent_ingest:
+    gate_path: [intake_repo, repo_scan_fit_score]
+    evidence_required: [intent_ingest_receipt, scan_report, fit_score, component_id]
+    integration_level: mainline
+    minimum_level: L4
+    binds_to_contracts_first: true
+
+  outer_contract_freeze:
+    gate_path: [draft_skill_spec, constitution_risk_gate]
+    evidence_required: [draft_spec, risk_assessment, contract_freeze_receipt, constitution_hash]
+    integration_level: mainline
+    minimum_level: L4
+    binds_to_contracts_first: true
+    fail_closed: true
+    constitution_reference: docs/2026-02-16/constitution_v1.md
+
+# ============================================================
+# Verification Method
+# ============================================================
+verification:
+  method: "Three-layer consistency check + gate binding verification"
+  layers:
+    - layer: "intent_map.yml (dispatch)"
+      check: "integration_level changed from l42_planned to mainline"
+      result: PASS
+      evidence: "Lines 73, 97, 78, 102"
+
+    - layer: "contract_path reference"
+      check: "points to production location contracts/intents/"
+      result: PASS
+      evidence: "Lines 75, 99"
+
+    - layer: "contract files created"
+      check: "canonical contracts exist at production locations"
+      result: PASS
+      evidence: "contracts/intents/outer_intent_ingest.yml, outer_contract_freeze.yml"
+
+    - layer: "gate path binding"
+      check: "gate_path references existing mainline gates"
+      result: PASS
+      evidence: "intake_repo, repo_scan_fit_score, draft_skill_spec, constitution_risk_gate all exist"
+
+    - layer: "evidence requirements"
+      check: "evidence_required aligned with gate outputs"
+      result: PASS
+      evidence: "intent_ingest_receipt, scan_report, draft_spec, risk_assessment all defined in gate contracts"
+
+# ============================================================
+# Completion Definition Status
+# ============================================================
+completion_criteria:
+  - criterion: "Both intents leave l42_planned and enter mainline"
+    status: SATISFIED
+    evidence: "integration_level changed to mainline for both intents"
+
+  - criterion: "Each intent has contract path tied to production location"
+    status: SATISFIED
+    evidence: "contract_path points to contracts/intents/*.yml"
+
+  - criterion: "Gate path tied to current repo rules"
+    status: SATISFIED
+    evidence: "gate_path references existing gates in skillforge/src/contracts/gates/"
+
+  - criterion: "Evidence requirements specified and aligned"
+    status: SATISFIED
+    evidence: "evidence_required matches gate output types"
+
+  - criterion: "No placeholder-only migration_status remains"
+    status: SATISFIED
+    evidence: "migration_status changed from 'mapped' to 'mainline'"
+
+  - criterion: "Canonical naming documented"
+    status: SATISFIED
+    evidence: "canonical_intent_id and legacy_aliases added to both intents"
+
+# ============================================================
+# Remaining Risks
+# ============================================================
+remaining_risks:
+  - risk: "Code in skillforge/src/skills/ may still reference old intent_id values"
+    severity: LOW
+    mitigation: "Legacy aliases documented for backward compatibility lookup"
+
+  - risk: "Documentation may reference old naming or planned status"
+    severity: LOW
+    mitigation: "Completion record and execution report document the transition"
+
+  - risk: "Downstream consumers may expect l42_planned behavior"
+    severity: LOW
+    mitigation: "Gate path remains unchanged - only promotion status changed"
+
+# ============================================================
+# Evidence References (Key Changes: Planned -> Mainline)
+# ============================================================
+evidence_refs:
+  - type: "intent_map_promotion_outer_intent_ingest"
+    location: "skillforge/src/orchestration/intent_map.yml"
+    lines: "70-82"
+    key_changes:
+      - "integration_level: l42_planned -> mainline"
+      - "migration_status: mapped -> mainline"
+      - "contract_path: docs/2026-02-16/... -> contracts/intents/outer_intent_ingest.yml"
+      - "added: canonical_intent_id, legacy_aliases, promoted_at, promotion_task"
+
+  - type: "intent_map_promotion_outer_contract_freeze"
+    location: "skillforge/src/orchestration/intent_map.yml"
+    lines: "94-106"
+    key_changes:
+      - "integration_level: l42_planned -> mainline"
+      - "migration_status: mapped -> mainline"
+      - "contract_path: docs/2026-02-16/... -> contracts/intents/outer_contract_freeze.yml"
+      - "added: canonical_intent_id, legacy_aliases, promoted_at, promotion_task"
+
+  - type: "canonical_contract_outer_intent_ingest"
+    location: "contracts/intents/outer_intent_ingest.yml"
+    sections: "full contract with gate/evidence alignment"
+
+  - type: "canonical_contract_outer_contract_freeze"
+    location: "contracts/intents/outer_contract_freeze.yml"
+    sections: "full contract with constitution alignment"
+
+  - type: "legacy_reference"
+    locations:
+      - "docs/2026-02-16/完整版模块清单 + 全量接口契约目录.md"
+      - "docs/2026-03-06/NEW_GM_INTENT_MIGRATION_SCORING.md"
+
+# ============================================================
+# Next Steps
+# ============================================================
+next_steps:
+  - step: "Review and compliance verification"
+    priority: HIGH
+    assignee: Kior-C (review), Antigravity-1 (compliance)
+
+  - step: "Update documentation references from l42_planned to mainline"
+    priority: MEDIUM
+    assignee: TBD
+
+  - step: "Verify gate implementations produce expected evidence types"
+    priority: MEDIUM
+    assignee: TBD
+
+# ============================================================
+# Sign-Off
+# ============================================================
+sign_off:
+  executor: Antigravity-1
+  executor_status: COMPLETE
+  reviewer: Kior-C
+  reviewer_status: PENDING
+  compliance: Antigravity-1
+  compliance_status: PENDING

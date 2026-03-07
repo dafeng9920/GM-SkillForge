@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gm-skillforge.local/schemas/openclaw_execution_receipt.schema.json",
+  "title": "OpenClaw Execution Receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "task_id",
+    "executor",
+    "started_at_utc",
+    "finished_at_utc",
+    "status",
+    "executed_commands",
+    "exit_code",
+    "artifacts",
+    "summary"
+  ],
+  "properties": {
+    "schema_version": { "type": "string", "const": "1.0.0" },
+    "task_id": { "type": "string", "minLength": 8 },
+    "executor": { "type": "string", "minLength": 1 },
+    "started_at_utc": { "type": "string", "pattern": "Z$" },
+    "finished_at_utc": { "type": "string", "pattern": "Z$" },
+    "status": { "type": "string", "enum": ["success", "failure"] },
+    "executed_commands": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "exit_code": { "type": "integer", "minimum": 0 },
+    "artifacts": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "summary": { "type": "string", "minLength": 1 },
+    "error": { "type": "string" }
+  }
+}
+

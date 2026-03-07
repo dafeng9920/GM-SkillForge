@@ -1,0 +1,249 @@
+{
+  "meta": {
+    "task": "T1-C: Skill Registry Discoverability Baseline",
+    "executor": "Antigravity-1",
+    "scan_timestamp": "2026-03-07T14:50:00Z",
+    "baseline_version": "v1.0.0"
+  },
+  "summary": {
+    "total_skills_in_directory": 55,
+    "total_registered_in_skills_jsonl": 55,
+    "total_registered_in_tier_registry": 41,
+    "dispatch_level_skills": 8,
+    "core_skills": 8,
+    "support_skills": 26,
+    "experimental_skills": 7,
+    "enabled_for_mainline": 8
+  },
+  "classification": {
+    "registered_in_both_registries": [
+      "ai-response-improvement-skill",
+      "ci-skill-validation-skill",
+      "decision-schema-normalizer-skill",
+      "dispatch-broadcast-builder-skill",
+      "dispatch-taskbook-generator-skill",
+      "drill-evidence-collector-skill",
+      "evidence-chain-verify-skill",
+      "evidence-freeze-board-skill",
+      "evidence-freeze-manifest-skill",
+      "example-data-processing-skill",
+      "execution-guard-a-proposal-skill",
+      "execution-guard-b-execution-skill",
+      "experience-template-retriever-skill",
+      "final-gate-adjudicator-skill",
+      "governance-orchestrator-skill",
+      "l3-killer-gate-runner-skill",
+      "master-signoff-skill",
+      "multi-entry-consistency-checker-skill",
+      "p0-final-adjudicator-skill",
+      "p1-closing-freeze-skill",
+      "p2-final-gate-aggregate-skill",
+      "permit-governance-skill",
+      "policy-lock-check-skill",
+      "protocol-gate-ci-checker-skill",
+      "release-gate-skill",
+      "rollback-drill-skill",
+      "rollback-tombstone-skill",
+      "seed-gate-validator-skill",
+      "t2-integrity-regression-guard-skill",
+      "task-pack-writer-skill",
+      "trinity-dispatch-orchestrator-skill",
+      "triple-record-validator-skill",
+      "wave-gate-orchestrator-skill",
+      "wave-recheck-generator-skill"
+    ],
+    "registered_in_skills_jsonl_only": [
+      "budget-guard-skill",
+      "cloud-closed-loop-archive-skill",
+      "cloud-lobster-closed-loop-skill",
+      "failure-explainer-skill",
+      "final-gate-recheck-skill",
+      "gm-baseline-e2e-smoketest-skill",
+      "governance-protocol-skill",
+      "l4-evidence-freeze-skill",
+      "l4-final-gate-aggregator-skill",
+      "library-intent-mainline-mapper-skill",
+      "loop-detector-skill",
+      "n8n-workflow-automation-skill",
+      "openclaw-cloud-bridge-skill",
+      "openclaw-runtime-recovery-skill"
+    ],
+    "legacy_agents_dir_deleted": [
+      "ai_search_scanner",
+      "execution_guard_a_proposal",
+      "execution_guard_b_compliance",
+      "governance_protocol",
+      "intelligence_factory",
+      "lobster_intelligence_harvester",
+      "trend_sniffer"
+    ]
+  },
+  "tier_distribution": {
+    "core": [
+      "drill-evidence-collector-skill",
+      "experience-template-retriever-skill",
+      "governance-orchestrator-skill",
+      "master-signoff-skill",
+      "seed-gate-validator-skill",
+      "task-pack-writer-skill",
+      "trinity-dispatch-orchestrator-skill",
+      "governance_protocol"
+    ],
+    "support": [
+      "ai-response-improvement-skill",
+      "ci-skill-validation-skill",
+      "decision-schema-normalizer-skill",
+      "dispatch-broadcast-builder-skill",
+      "dispatch-taskbook-generator-skill",
+      "evidence-freeze-board-skill",
+      "evidence-freeze-manifest-skill",
+      "example-data-processing-skill",
+      "final-gate-adjudicator-skill",
+      "l3-killer-gate-runner-skill",
+      "multi-entry-consistency-checker-skill",
+      "p0-final-adjudicator-skill",
+      "permit-governance-skill",
+      "protocol-gate-ci-checker-skill",
+      "release-gate-skill",
+      "rollback-tombstone-skill",
+      "t2-integrity-regression-guard-skill",
+      "triple-record-validator-skill",
+      "wave-gate-orchestrator-skill",
+      "wave-recheck-generator-skill",
+      "ai_search_scanner",
+      "execution_guard_a_proposal",
+      "execution_guard_b_compliance",
+      "intelligence_factory",
+      "lobster_intelligence_harvester",
+      "trend_sniffer"
+    ],
+    "experimental": [
+      "evidence-chain-verify-skill",
+      "execution-guard-a-proposal-skill",
+      "execution-guard-b-execution-skill",
+      "p1-closing-freeze-skill",
+      "p2-final-gate-aggregate-skill",
+      "policy-lock-check-skill",
+      "rollback-drill-skill"
+    ]
+  },
+  "dispatch_registry": {
+    "entries": [
+      {
+        "name": "governance-orchestrator-skill",
+        "path": "skills/governance-orchestrator-skill/SKILL.md",
+        "owner_role": "Orchestrator",
+        "trigger": "统一调度、校验、返工收敛与 Final Gate 裁决"
+      },
+      {
+        "name": "seed-gate-validator-skill",
+        "path": "skills/seed-gate-validator-skill/SKILL.md",
+        "owner_role": "Orchestrator",
+        "trigger": "批次收口前 strict gate 校验"
+      },
+      {
+        "name": "master-signoff-skill",
+        "path": "skills/master-signoff-skill/SKILL.md",
+        "owner_role": "Orchestrator",
+        "trigger": "主控签核阶段（Txx Master-Control）"
+      },
+      {
+        "name": "task-pack-writer-skill",
+        "path": "skills/task-pack-writer-skill/SKILL.md",
+        "owner_role": "Orchestrator",
+        "trigger": "新批次任务包生成/改版"
+      },
+      {
+        "name": "drill-evidence-collector-skill",
+        "path": "skills/drill-evidence-collector-skill/SKILL.md",
+        "owner_role": "Execution",
+        "trigger": "单次可审计演练收口"
+      },
+      {
+        "name": "experience-template-retriever-skill",
+        "path": "skills/experience-template-retriever-skill/SKILL.md",
+        "owner_role": "Execution",
+        "trigger": "按 IssueKey/FixKind 复用经验模板"
+      },
+      {
+        "name": "trinity-dispatch-orchestrator-skill",
+        "path": "skills/trinity-dispatch-orchestrator-skill/SKILL.md",
+        "owner_role": "Orchestrator",
+        "trigger": "兼容层（建议迁移到 governance-orchestrator-skill）"
+      },
+      {
+        "name": "GOVERNANCE_PROTOCOL",
+        "path": "skills/governance-protocol-skill/SKILL.md",
+        "owner_role": "Compliance",
+        "trigger": "高风险操作（Shell/File/DB/Network）前强制治理与审计"
+      }
+    ]
+  },
+  "issues_identified": {
+    "tier_registry_outdated": {
+      "severity": "medium",
+      "description": "configs/skill_tier_registry.json is outdated (2026-02-26), missing 14 skills registered after that date",
+      "affected_skills": [
+        "budget-guard-skill",
+        "cloud-closed-loop-archive-skill",
+        "cloud-lobster-closed-loop-skill",
+        "failure-explainer-skill",
+        "final-gate-recheck-skill",
+        "gm-baseline-e2e-smoketest-skill",
+        "governance-protocol-skill",
+        "l4-evidence-freeze-skill",
+        "l4-final-gate-aggregator-skill",
+        "library-intent-mainline-mapper-skill",
+        "loop-detector-skill",
+        "n8n-workflow-automation-skill",
+        "openclaw-cloud-bridge-skill",
+        "openclaw-runtime-recovery-skill"
+      ],
+      "recommendation": "Re-run skill_tier_registry generation to include newly registered skills"
+    },
+    "legacy_agents_dir_entries": {
+      "severity": "low",
+      "description": "skill_tier_registry.json still references deleted .agents/skills/ entries",
+      "affected_entries": [
+        "ai_search_scanner",
+        "execution_guard_a_proposal",
+        "execution_guard_b_compliance",
+        "governance_protocol",
+        "intelligence_factory",
+        "lobster_intelligence_harvester",
+        "trend_sniffer"
+      ],
+      "recommendation": "Clean up tier registry to remove references to deleted .agents/skills/ directory"
+    },
+    "duplicate_skill_concept": {
+      "severity": "informational",
+      "description": "Some skills appear to have overlapping purposes or are legacy versions",
+      "observations": [
+        "governance-orchestrator-skill vs trinity-dispatch-orchestrator-skill (noted as compatibility layer)",
+        "governance-protocol-skill in skills/ vs governance_protocol in .agents/skills/ (deleted)",
+        "ai-search-scanner-skill vs ai_search_scanner (deleted)",
+        "trend-sniffer-skill vs trend_sniffer (deleted)",
+        "lobster-intelligence-harvester-skill vs lobster_intelligence_harvester (deleted)"
+      ],
+      "recommendation": "Audit for consolidation during next cleanup cycle"
+    }
+  },
+  "remaining_risks": {
+    "high": [],
+    "medium": [
+      "14 newly registered skills not classified in tier registry",
+      "No automated sync between skills.jsonl and skill_tier_registry.json"
+    ],
+    "low": [
+      "Legacy .agents/skills/ entries create confusion",
+      "Duplicate/overlapping skill concepts not consolidated"
+    ]
+  },
+  "evidence_refs": {
+    "skills_directory": "d:/GM-SkillForge/skills/",
+    "skills_jsonl": "d:/GM-SkillForge/registry/skills.jsonl",
+    "tier_registry": "d:/GM-SkillForge/configs/skill_tier_registry.json",
+    "dispatch_registry": "d:/GM-SkillForge/configs/dispatch_skill_registry.json",
+    "scan_method": "Directory listing + registry file parsing + diff analysis"
+  }
+}

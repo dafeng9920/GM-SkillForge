@@ -1,0 +1,22 @@
+{
+  "review_meta": {
+    "reviewer": "Kior-C",
+    "reviewed_at_utc": "2026-03-05T06:59:44Z",
+    "execution_environment": "LOCAL-ANTIGRAVITY",
+    "task_id": "tg1-official-20260305-1417",
+    "baseline_id": "AG2-SOVEREIGNTY-ROOT-2026-03-05"
+  },
+  "review_decision": {
+    "status": "ALLOW",
+    "fail_closed_policy": true,
+    "blocking_evidence": [],
+    "required_changes": []
+  },
+  "evidence_refs": {
+    "task_contract": ".tmp/openclaw-dispatch/tg1-official-20260305-1417/task_contract.json",
+    "execution_receipt": ".tmp/openclaw-dispatch/tg1-official-20260305-1417/execution_receipt.json",
+    "stdout_log": ".tmp/openclaw-dispatch/tg1-official-20260305-1417/stdout.log",
+    "stderr_log": ".tmp/openclaw-dispatch/tg1-official-20260305-1417/stderr.log",
+    "audit_event": ".tmp/openclaw-dispatch/tg1-official-20260305-1417/audit_event.json"
+  }
+}

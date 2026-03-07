@@ -1,0 +1,211 @@
+task_id: "T2-F3"
+executor: "vs--cc1"
+reviewer: "Kior-C"
+compliance: "Antigravity-2"
+status: "完成"
+execution_date: "2026-03-06"
+started_at: "2026-03-06T09:00:00Z"
+completed_at: "2026-03-06T09:30:00Z"
+
+objective: |
+  补齐三项的 replay/parity 可复核证据：
+  1. constitutional default-deny stop behavior
+  2. evidence-first publish chain
+  3. time_semantics at_time replay discipline
+
+scope: |
+  - 只处理测试、验证脚本、最小文档化证据产物
+  - 必须绑定当前 archive/verification 流程
+  - 不修改无关业务逻辑
+
+deliverables:
+  - path: "skillforge-spec-pack/skillforge/tests/test_t2_f3_replay_parity.py"
+    action: "新建"
+    description: "Comprehensive test suite for T2 F3 replay/parity evidence"
+    lines_added: 680
+    test_classes: 3
+    test_cases: 16
+
+  - path: "reports/l3_gap_closure/2026-03-06/F3_replay_parity_report.json"
+    action: "新建"
+    description: "Automated test report with EvidenceRefs"
+
+  - path: "docs/2026-03-06/F3_execution_report.yaml"
+    action: "新建"
+    description: "Execution report with evidence references"
+
+  - path: "docs/2026-03-06/F3_COMPLETION_RECORD.md"
+    action: "新建"
+    description: "Completion record for T2 F3 follow-up"
+
+test_results:
+  total_tests: 16
+  passed: 16
+  failed: 0
+  errors: 0
+  status: "PASS"
+
+  test_classes:
+    - name: "TestConstitutionalDefaultDenyBehavior"
+      tests: 5
+      passed: 5
+      target: "constitutional_default_deny"
+      description: "Tests for constitutional default-deny stop behavior"
+      coverage:
+        - "Malicious intent bypass security pattern"
+        - "English bypass pattern"
+        - "Fraud pattern"
+        - "Unauthorized access pattern"
+        - "Benign request passes early detection"
+
+    - name: "TestEvidenceFirstPublishChain"
+      tests: 5
+      passed: 5
+      target: "evidence_first_publish"
+      description: "Tests for evidence-first publish chain"
+      coverage:
+        - "Evidence collected before publish decision"
+        - "Evidence has unique ID and hash"
+        - "Gate decisions recorded as evidence"
+        - "Static analysis findings recorded as evidence"
+        - "Policy matrix references evidence"
+
+    - name: "TestTimeSemanticsReplayDiscipline"
+      tests: 6
+      passed: 6
+      target: "time_semantics_replay"
+      description: "Tests for time_semantics at_time replay discipline"
+      coverage:
+        - "run_id propagation"
+        - "trace_id deterministic"
+        - "timestamp ISO8601 UTC"
+        - "revision effective_at time semantics"
+        - "at_time replay simulation"
+        - "Evidence chain timestamps"
+
+evidence_refs:
+  # Target 1: Constitutional Default-Deny Stop Behavior
+  - id: "EV-F3-001"
+    target: "constitutional_default_deny"
+    kind: "TEST"
+    locator: "skillforge-spec-pack/skillforge/tests/test_t2_f3_replay_parity.py:TestConstitutionalDefaultDenyBehavior"
+    description: "Tests for constitutional default-deny stop behavior"
+    verified_behaviors:
+      - "Malicious intent patterns detected via MALICIOUS_INTENT_PATTERNS"
+      - "Early detection returns DENY decision before node execution"
+      - "Gate decision includes ruling with blocked=True"
+      - "Pipeline stops immediately (stages_completed=0)"
+      - "Constitution reference and hash included in decision"
+    code_locations:
+      - file: "skillforge-spec-pack/skillforge/src/orchestration/engine.py"
+        lines: "69-95"
+        description: "MALICIOUS_INTENT_PATTERNS definition"
+      - file: "skillforge-spec-pack/skillforge/src/orchestration/engine.py"
+        lines: "272-329"
+        description: "Early malicious intent detection and DENY logic"
+      - file: "skillforge-spec-pack/skillforge/src/nodes/pack_publish.py"
+        lines: "334-342"
+        description: "Hard gate blocking: DENY forces rejection"
+
+  # Target 2: Evidence-First Publish Chain
+  - id: "EV-F3-002"
+    target: "evidence_first_publish"
+    kind: "TEST"
+    locator: "skillforge-spec-pack/skillforge/tests/test_t2_f3_replay_parity.py:TestEvidenceFirstPublishChain"
+    description: "Tests for evidence-first publish chain"
+    verified_behaviors:
+      - "Evidence collected BEFORE publish decision"
+      - "Each evidence has unique evidence_id (UUID-based)"
+      - "Evidence includes sha256 hash for integrity"
+      - "Gate decisions recorded as evidence"
+      - "Static analysis findings recorded as evidence"
+      - "Policy matrix findings reference evidence_id"
+    code_locations:
+      - file: "skillforge-spec-pack/skillforge/src/nodes/pack_publish.py"
+        lines: "348-368"
+        description: "_add_evidence() function for evidence generation"
+      - file: "skillforge-spec-pack/skillforge/src/nodes/pack_publish.py"
+        lines: "370-420"
+        description: "Evidence collection (intake, static analysis, gate decisions)"
+      - file: "skillforge-spec-pack/skillforge/src/nodes/pack_publish.py"
+        lines: "464-502"
+        description: "Policy matrix with evidence_ref integration"
+      - file: "skillforge-spec-pack/skillforge/src/nodes/pack_publish.py"
+        lines: "543-555"
+        description: "Evidence.jsonl - complete evidence chain"
+
+  # Target 3: Time Semantics at_time Replay Discipline
+  - id: "EV-F3-003"
+    target: "time_semantics_replay"
+    kind: "TEST"
+    locator: "skillforge-spec-pack/skillforge/tests/test_t2_f3_replay_parity.py:TestTimeSemanticsReplayDiscipline"
+    description: "Tests for time_semantics at_time replay discipline"
+    verified_behaviors:
+      - "run_id generated and propagated through pipeline"
+      - "trace_id deterministic based on run_id + counter (L5 G4)"
+      - "Timestamps in ISO-8601 UTC format (ends with Z)"
+      - "Revisions support effective_at for time-based queries"
+      - "get_revisions() returns state ordered by effective_at DESC"
+      - "Evidence chain includes proper timestamps for replay"
+    code_locations:
+      - file: "skillforge-spec-pack/skillforge/src/orchestration/engine.py"
+        lines: "177-191"
+        description: "run_id generation and L5 G3 traceability"
+      - file: "skillforge-spec-pack/skillforge/src/orchestration/engine.py"
+        lines: "570-608"
+        description: "_make_trace_event() with deterministic trace_id"
+      - file: "skillforge-spec-pack/skillforge/src/storage/schema.py"
+        lines: "32-43"
+        description: "revisions table with effective_at field"
+      - file: "skillforge-spec-pack/skillforge/src/nodes/pack_publish.py"
+        lines: "346-368"
+        description: "Evidence with created_at ISO-8601 timestamps"
+
+verification_methodology:
+  approach: "Automated unit tests with direct code assertions"
+  coverage: "Three test classes covering each target independently"
+  reproducibility: "Tests are fully deterministic and can be run via pytest"
+  binding: "All tests use actual engine/pack_publish/repository code"
+
+completion_definition:
+  criteria_met:
+    - "三个目标均有可复现的 parity/replay artifact"
+    - "artifact 可归档并被 Verification Map 或 follow-up gate 引用"
+    - "不再只靠 narrative claim 支撑 parity"
+  remaining_risk: "LOW"
+  notes: |
+    - All three targets now have automated test coverage
+    - Tests provide reproducible evidence for each feature
+    - EvidenceRefs are structured for Verification Map integration
+    - Tests can be run in CI/CD pipeline for continuous validation
+
+next_steps:
+  - step: 1
+    owner: "Kior-C"
+    action: "Review test coverage and EvidenceRef structure"
+  - step: 2
+    owner: "Antigravity-2"
+    action: "Compliance attestation for T2 F3 completion"
+  - step: 3
+    owner: "Orchestrator"
+    action: "Update Verification Map with new EvidenceRefs"
+
+execution_trace:
+  - timestamp: "2026-03-06T09:00:00Z"
+    action: "Started T2 F3 execution"
+  - timestamp: "2026-03-06T09:10:00Z"
+    action: "Created test_t2_f3_replay_parity.py with 16 tests"
+  - timestamp: "2026-03-06T09:15:00Z"
+    action: "Fixed evidence_count path issue (audit_pack.files.evidence_count)"
+  - timestamp: "2026-03-06T09:20:00Z"
+    action: "All 16 tests passing"
+  - timestamp: "2026-03-06T09:27:00Z"
+    action: "Generated F3_replay_parity_report.json"
+  - timestamp: "2026-03-06T09:30:00Z"
+    action: "Created execution_report and completion_record"
+
+signatures:
+  executor: "vs--cc1"
+  execution_timestamp: "2026-03-06T09:30:00Z"
+  reviewer: "PENDING: Kior-C"
+  compliance: "PENDING: Antigravity-2"

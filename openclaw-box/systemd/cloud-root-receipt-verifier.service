@@ -1,0 +1,57 @@
+[Unit]
+Description=GM-SkillForge Cloud Root Receipt Verifier
+Documentation=https://github.com/genesismind-bot/GM-SkillForge
+After=network.target network-online.target cloud-root-mandatory-gate.service
+Wants=network-online.target
+StartLimitBurst=5
+StartLimitIntervalSec=300
+
+[Service]
+Type=simple
+User=cloud-root
+Group=cloud-root
+WorkingDirectory=/opt/gm-skillforge
+Environment="PATH=/usr/local/bin:/usr/bin:/bin"
+Environment="PYTHONUNBUFFERED=1"
+Environment="GM_ENVIRONMENT=CLOUD-ROOT"
+Environment="LOG_LEVEL=INFO"
+Environment="VERIFIER_SCHEMA_PATH=/opt/gm-skillforge/schemas"
+Environment="VERIFIER_CONTRACT_PATH=/var/lib/gm-skillforge/contracts"
+Environment="VERIFIER_RECEIPT_PATH=/var/lib/gm-skillforge/receipts"
+Environment="VERIFIER_ALERT_WEBHOOK="
+
+# Main service command - continuous verification
+ExecStart=/usr/bin/python3 -m skillforge.verifiers.receipt_verifier \
+    --watch-dir /var/lib/gm-skillforge/dispatch \
+    --schema-dir /opt/gm-skillforge/schemas \
+    --log-dir /var/log/gm-skillforge \
+    --alert-webhook ${VERIFIER_ALERT_WEBHOOK}
+
+# Health check
+ExecStartPost=/usr/bin/bash -c 'sleep 5 && pgrep -f receipt_verifier || exit 1'
+
+# Restart policy with backoff
+Restart=on-failure
+RestartSec=15
+TimeoutStartSec=30
+TimeoutStopSec=30
+
+# Resource limits
+MemoryMax=256M
+CPUQuota=25%
+TasksMax=50
+
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/gm-skillforge /var/log/gm-skillforge /run/gm-skillforge
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=gm-receipt-verifier
+
+[Install]
+WantedBy=multi-user.target

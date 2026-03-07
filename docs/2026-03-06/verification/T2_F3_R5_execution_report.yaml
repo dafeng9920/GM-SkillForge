@@ -1,0 +1,82 @@
+# T2 Remediation F3-R5 Execution Report
+# Task: Remove misleading evidence-first terminology
+
+task_id: T2-F3-R5
+task_name: "Clear evidence-first strong semantic terminology"
+executor: vs--cc1
+execution_timestamp: "2026-03-06T00:00:00Z"
+task_status: COMPLETED
+
+authority_sources:
+  - "Kior-C / T2-F3-R4 Reviewer"
+  - "Antigravity-2 / T2-F3-R4 Compliance FAIL"
+
+remediation_scope:
+  description: "Remove misleading 'evidence-first' terminology that suggests evidence precedes decisions"
+  constraint: "Must NOT expand modification scope beyond specified 5 locations"
+  constraint: "Must NOT refactor logic"
+  constraint: "Must use single unified terminology across same semantic layer"
+
+modifications:
+  - location: "skillforge/src/skills/gates/gate_permit.py:9"
+    old_text: "- Evidence-First: 每次校验生成 EvidenceRef"
+    new_text: "- Evidence-Mandatory: 每次校验生成 EvidenceRef"
+    semantic_type: "code_comment"
+    rationale: "Evidence-Mandatory accurately reflects that evidence is required, not that it precedes decision"
+
+  - location: "skillforge/src/skills/gates/permit_issuer.py:6"
+    old_text: "- Evidence-First: 每次签发尝试都生成 EvidenceRef"
+    new_text: "- Evidence-Mandatory: 每次签发尝试都生成 EvidenceRef"
+    semantic_type: "code_comment"
+    rationale: "Evidence-Mandatory accurately reflects that evidence is required for issuance attempts"
+
+  - location: "skillforge/src/skills/experience_capture.py:91"
+    old_text: "# Strong evidence-first rule."
+    new_text: "# Strong evidence-mandatory rule."
+    semantic_type: "code_comment"
+    rationale: "Evidence-mandatory captures the requirement without temporal ordering implication"
+
+  - location: "skills/ci-skill-validation-skill/SKILL.md:27"
+    old_text: "evidence_first: true"
+    new_text: "evidence_traceability: true"
+    semantic_type: "yaml_config"
+    rationale: "evidence_traceability accurately describes audit trail requirement without temporal bias"
+
+  - location: "skills/permit-governance-skill/SKILL.md:27"
+    old_text: "evidence_first: true"
+    new_text: "evidence_traceability: true"
+    semantic_type: "yaml_config"
+    rationale: "evidence_traceability accurately describes audit trail requirement without temporal bias"
+
+unified_terminology:
+  code_comments: "Evidence-Mandatory"
+  yaml_config: "evidence_traceability"
+  deprecated: "evidence-first (historical term, NOT to be used as current rule name)"
+
+verification:
+  all_locations_fixed: true
+  no_dual_track_terminology: true
+  no_logic_refactoring: true
+  scope_contained: true
+  files_modified: 5
+  lines_changed: 5
+
+completion_criteria_met:
+  - criterion: "All 5 locations no longer misleadingly suggest 'evidence precedes decision'"
+    status: PASSED
+  - criterion: "Repository terminology consistent with F3-R4 document stance"
+    status: PASSED
+  - criterion: "No dual-track terminology (tests say historical, code says current)"
+    status: PASSED
+
+deliverables:
+  - "Modified files (5)"
+  - "execution_report (this file)"
+  - "completion_record"
+  - "EvidenceRef mapping (5 locations)"
+  - "Unified terminology documentation"
+
+signoff:
+  remediation_complete: true
+  ready_for_review: true
+  next_reviewer: "Kior-C / Antigravity-2"

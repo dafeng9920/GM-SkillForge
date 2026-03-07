@@ -1,0 +1,25 @@
+{
+  "gate_id": "r1_cloud_smoke_20260306_0019_final_gate_20260306",
+  "task_id": "r1-cloud-smoke-20260306-0019",
+  "baseline_id": "AG2-FIXED-CALIBER-TG1-20260304",
+  "triggered_at": "2026-03-05T16:38:04Z",
+  "triggered_by": {
+    "type": "Antigravity-1",
+    "environment": "LOCAL-ANTIGRAVITY"
+  },
+  "final_decision": "FINAL_ALLOW",
+  "decision_basis": {
+    "dual_gate_result": "PASS",
+    "receipt_verification": "PASS",
+    "mandatory_gate": "ALLOW",
+    "fail_closed": "SATISFIED"
+  },
+  "blocking_evidence": [],
+  "required_changes": [],
+  "chain_of_custody": {
+    "execution_environment": "CLOUD-ROOT",
+    "verification_environment": "LOCAL-ANTIGRAVITY",
+    "artifacts_path": ".tmp/openclaw-dispatch/r1-cloud-smoke-20260306-0019/",
+    "decision_file": "docs/2026-03-06/verification/r1_cloud_smoke_20260306_0019_final_gate.json"
+  }
+}

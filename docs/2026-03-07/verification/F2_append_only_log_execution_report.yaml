@@ -1,0 +1,51 @@
+task_id: F2
+task_name: append_only_log 模块并发保护补齐
+executor: vs--cc1
+execution_date: 2026-03-06
+status: COMPLETED
+
+objective: |
+  为 append_only_log 模块补齐 SQLite 并发保护基线，
+  确保 WAL mode + busy_timeout + timeout 完整配置。
+
+scope:
+  - skillforge/src/storage/append_only_log/core.py
+  - skillforge/src/storage/append_only_log/retention.py
+
+files_modified:
+  - path: skillforge/src/storage/append_only_log/core.py
+    location: lines 181-187
+    changes:
+      - added timeout=30 parameter to sqlite3.connect()
+      - added PRAGMA busy_timeout=5000
+      - added PRAGMA synchronous=NORMAL
+      - WAL mode already existed
+
+  - path: skillforge/src/storage/append_only_log/retention.py
+    location: lines 264-270
+    changes:
+      - added timeout=30 parameter to sqlite3.connect()
+      - added PRAGMA busy_timeout=5000
+      - added PRAGMA synchronous=NORMAL
+      - WAL mode already existed
+
+protection_mechanism:
+  - WAL mode: enabled (pre-existing)
+  - busy_timeout: 5000ms (newly added)
+  - connection_timeout: 30s (newly added)
+  - synchronous: NORMAL (newly added)
+
+verification:
+  grep_busy_timeout_found: true
+  both_files_updated: true
+  protection_complete: true
+
+evidence_refs:
+  - skillforge/src/storage/append_only_log/core.py:181-187
+  - skillforge/src/storage/append_only_log/retention.py:264-270
+  - grep -n "PRAGMA busy_timeout" returns 2 matches
+
+completion_definition_met: true
+notes:
+  - This was completed as part of T1-A execution
+  - append_only_log module now has same protection level as other SQLite paths

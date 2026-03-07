@@ -1,0 +1,17 @@
+{
+  "schema_version": "final_gate_decision_v1",
+  "task_id": "tg1-official-20260305-1417",
+  "decision": "ALLOW",
+  "decision_issued_at": "2026-03-05T06:59:44Z",
+  "decision_issued_by": "Antigravity-1",
+  "execution_environment": "LOCAL-ANTIGRAVITY",
+  "baseline_id": "AG2-SOVEREIGNTY-ROOT-2026-03-05",
+  "blocking_evidence": [],
+  "required_changes": [],
+  "verification_summary": {
+    "verify_execution_receipt_py": "PASS",
+    "receipt_status": "success",
+    "commands_executed": 8,
+    "acceptance_items": 5
+  }
+}

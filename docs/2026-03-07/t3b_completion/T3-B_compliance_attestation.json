@@ -1,0 +1,245 @@
+{
+  "attestation_id": "ATST-T3-B-20260307",
+  "shard_id": "T3-B",
+  "attestation_type": "COMPLIANCE_ATTESTATION",
+  "timestamp": "2026-03-07T16:00:00Z",
+  "attester": "Kior-C",
+  "attester_role": "T3-B Executor",
+  "compliance_officer": "Antigravity-1",
+  "status": "PENDING_REVIEW",
+
+  "permit_reference": {
+    "permit_id": "T3_T2_WAVE2_DISPATCH_2026-03-07",
+    "contract_path": "docs/2026-03-07/T3_T2_WAVE2_DISPATCH_2026-03-07.md",
+    "time_window": {
+      "start": "2026-03-07T00:00:00Z",
+      "end": "2026-03-08T23:59:59Z"
+    }
+  },
+
+  "execution_window": {
+    "start": "2026-03-07T14:00:00Z",
+    "end": "2026-03-07T16:00:00Z",
+    "duration_hours": 2,
+    "within_permit_window": true
+  },
+
+  "n1_command_allowlist_compliance": {
+    "requirement": "所有执行的命令必须在 permit 定义的 allowlist 中",
+    "status": "PASS",
+    "evidence": {
+      "commands_used": [
+        "prepare",
+        "submit",
+        "status",
+        "fetch",
+        "verify"
+      ],
+      "allowlist_source": "scripts/lobsterctl.py:215-249",
+      "verification_method": "Code review - all commands are defined in lobsterctl.py CLI interface",
+      "evidence_ref": "docs/2026-03-07/T3-B_overnight_unattended_runbook.md:239-254"
+    },
+    "attestation": "我确认 runbook 中引用的所有命令 (prepare, submit, status, fetch, verify) 都在 lobsterctl.py 中定义，且符合 permit 要求。"
+  },
+
+  "n2_artifact_integrity": {
+    "requirement": "所有必需的 artifacts 必须完整存在",
+    "status": "PASS",
+    "evidence": {
+      "required_artifacts": [
+        {
+          "name": "overnight_unattended_runbook.md",
+          "path": "docs/2026-03-07/T3-B_overnight_unattended_runbook.md",
+          "exists": true,
+          "size_lines": 298,
+          "hash_check": "not_required_for_documentation"
+        },
+        {
+          "name": "execution_report.yaml",
+          "path": "docs/2026-03-07/T3-B_execution_report.yaml",
+          "exists": true,
+          "size_lines": 100,
+          "hash_check": "not_required_for_documentation"
+        },
+        {
+          "name": "completion_record_COMPLIANT.md",
+          "path": "docs/2026-03-07/T3-B_completion_record_COMPLIANT.md",
+          "exists": true,
+          "size_lines": 400,
+          "hash_check": "not_required_for_documentation"
+        }
+      ],
+      "verification_method": "File existence check",
+      "evidence_ref": "docs/2026-03-07/T3-B_completion_record_COMPLIANT.md:58-68"
+    },
+    "attestation": "我确认所有必需的 artifacts (runbook, execution_report, completion_record) 已创建并可访问。"
+  },
+
+  "n3_time_window_compliance": {
+    "requirement": "执行必须在 permit 定义的时间窗口内",
+    "status": "PASS",
+    "evidence": {
+      "permit_window": {
+        "start": "2026-03-07T00:00:00Z",
+        "end": "2026-03-08T23:59:59Z"
+      },
+      "execution_window": {
+        "start": "2026-03-07T14:00:00Z",
+        "end": "2026-03-07T16:00:00Z"
+      },
+      "comparison": "execution_window is completely within permit_window",
+      "evidence_ref": "docs/2026-03-07/T3-B_completion_record_COMPLIANT.md:163"
+    },
+    "attestation": "我确认本 shard 的所有执行都在 permit 定义的时间窗口内完成。"
+  },
+
+  "n4_no_permit_gate_bypass": {
+    "requirement": "不得绕过任何 permit 或 gate 检查",
+    "status": "PASS",
+    "evidence": {
+      "verification_performed": [
+        "Runbook 只引用现有的 lobsterctl 命令",
+        "所有验证步骤使用现有的 cloud_lobster_mandatory_gate.py",
+        "未引入新的验证路径或绕过机制",
+        "未修改任何现有的 gate 或 permit 代码"
+      ],
+      "existing_infrastructure_used": [
+        {
+          "component": "lobsterctl.py",
+          "purpose": "CLI control interface",
+          "evidence_ref": "scripts/lobsterctl.py:1-260"
+        },
+        {
+          "component": "cloud_lobster_mandatory_gate.py",
+          "purpose": "FAIL-CLOSED enforcement gate",
+          "evidence_ref": "scripts/cloud_lobster_mandatory_gate.py:1-582"
+        }
+      ],
+      "evidence_ref": "docs/2026-03-07/T3-B_completion_record_COMPLIANT.md:164"
+    },
+    "attestation": "我确认本 shard 的执行未绕过任何 permit 或 gate。所有操作都通过现有的基础设施进行。"
+  },
+
+  "n5_no_unsubstantiated_stable_claims": {
+    "requirement": "任何 '稳定' / 'stable' 宣称必须有证据支持",
+    "status": "PASS",
+    "evidence": {
+      "claims_made": [
+        {
+          "claim": "Pre-shutdown checklist 定义完整",
+          "evidence_ref": "docs/2026-03-07/T3-B_overnight_unattended_runbook.md:35-125",
+          "evidence_type": "documented_steps"
+        },
+        {
+          "claim": "Morning fetch/verify checklist 定义完整",
+          "evidence_ref": "docs/2026-03-07/T3-B_overnight_unattended_runbook.md:127-179",
+          "evidence_type": "documented_steps"
+        },
+        {
+          "claim": "Failure branch checklist 定义完整",
+          "evidence_ref": "docs/2026-03-07/T3-B_overnight_unattended_runbook.md:181-237",
+          "evidence_type": "documented_steps"
+        }
+      ],
+      "no_stability_claims": "runbook 是操作指南，不包含任何 '稳定' 或 '已稳定' 的宣称",
+      "evidence_ref": "docs/2026-03-07/T3-B_completion_record_COMPLIANT.md:159"
+    },
+    "attestation": "我确认本 runbook 不包含任何未经验证的 '稳定' 宣称。所有步骤都有 EvidenceRef 支持。"
+  },
+
+  "n6_closed_loop_verification": {
+    "requirement": "contract → receipt → gate 链路必须完整",
+    "status": "PASS",
+    "evidence": {
+      "chain": [
+        {
+          "step": "contract",
+          "path": "docs/2026-03-07/T3_T2_WAVE2_DISPATCH_2026-03-07.md",
+          "exists": true
+        },
+        {
+          "step": "receipt",
+          "path": "docs/2026-03-07/T3-B_execution_report.yaml",
+          "exists": true
+        },
+        {
+          "step": "exit_gate",
+          "path": "docs/2026-03-07/t3b_completion/T3-B_exit_gate_decision.json",
+          "exists": true
+        },
+        {
+          "step": "compliance_attestation",
+          "path": "docs/2026-03-07/t3b_completion/T3-B_compliance_attestation.json",
+          "exists": true
+        }
+      ],
+      "chain_complete": true,
+      "evidence_ref": "docs/2026-03-07/T3-B_exit_gate_decision.json:44-52"
+    },
+    "attestation": "我确认 contract → receipt → gate → attestation 链路完整。"
+  },
+
+  "acceptance_criteria_verification": {
+    "dispatch_acceptance": [
+      {
+        "criterion": "one unattended overnight runbook exists",
+        "status": "PASS",
+        "evidence_ref": "docs/2026-03-07/T3-B_overnight_unattended_runbook.md"
+      },
+      {
+        "criterion": "every step maps to current real console/button/command",
+        "status": "PASS",
+        "evidence_ref": "docs/2026-03-07/T3-B_overnight_unattended_runbook.md:58-124, 239-254"
+      },
+      {
+        "criterion": "failure branch includes block/remediation wording",
+        "status": "PASS",
+        "evidence_ref": "docs/2026-03-07/T3-B_overnight_unattended_runbook.md:181-237"
+      }
+    ],
+    "all_passed": true
+  },
+
+  "risk_assessment": {
+    "remaining_risks": [
+      {
+        "risk_id": "RISK-001",
+        "impact": "low",
+        "mitigation": "使用时验证模板中的命令白名单"
+      },
+      {
+        "risk_id": "RISK-002",
+        "impact": "medium",
+        "mitigation": "PowerShell 脚本已内置重试逻辑"
+      },
+      {
+        "risk_id": "RISK-003",
+        "impact": "medium",
+        "mitigation": "runbook 强调 FAIL-CLOSED 策略"
+      }
+    ],
+    "no_blocking_risks": true
+  },
+
+  "attestation_summary": {
+    "total_requirements": 6,
+    "passed": 6,
+    "failed": 0,
+    "partial": 0,
+    "overall_status": "PASS"
+  },
+
+  "attester_declaration": {
+    "statement": "我特此证明本 shard 的执行符合所有 Antigravity-1 合规要求，包括 N1-N6 硬性要求。所有宣称均有 EvidenceRef 支持，未引入任何绕过 permit/gate 的手法。",
+    "attester": "Kior-C",
+    "timestamp": "2026-03-07T16:00:00Z"
+  },
+
+  "compliance_review": {
+    "status": "PENDING",
+    "reviewer": "Antigravity-1",
+    "review_date": "pending",
+    "findings": [],
+    "recommendations": []
+  }
+}

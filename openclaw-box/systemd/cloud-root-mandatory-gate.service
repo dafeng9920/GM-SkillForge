@@ -1,0 +1,59 @@
+[Unit]
+Description=GM-SkillForge Cloud Root Mandatory Gate
+Documentation=https://github.com/genesismind-bot/GM-SkillForge
+After=network.target network-online.target cloud-root-dispatch-queue.service
+Wants=network-online.target
+Requires=cloud-root-dispatch-queue.service
+StartLimitBurst=3
+StartLimitIntervalSec=600
+
+[Service]
+Type=oneshot
+User=cloud-root
+Group=cloud-root
+WorkingDirectory=/opt/gm-skillforge
+Environment="PATH=/usr/local/bin:/usr/bin:/bin"
+Environment="PYTHONUNBUFFERED=1"
+Environment="GM_ENVIRONMENT=CLOUD-ROOT"
+Environment="LOG_LEVEL=INFO"
+Environment="GATE_FAIL_CLOSED=true"
+Environment="GATE_COMPLIANCE_DIR=/var/lib/gm-skillforge/compliance"
+Environment="GATE_DISPATCH_DIR=/var/lib/gm-skillforge/dispatch"
+
+# Main gate command - runs on each task completion
+ExecStart=/usr/bin/python3 /opt/gm-skillforge/scripts/cloud_lobster_mandatory_gate.py \
+    --dispatch-dir /var/lib/gm-skillforge/dispatch \
+    --compliance-dir /var/lib/gm-skillforge/compliance \
+    --write-violations
+
+# Failure handling - enforce fail-closed
+ExecStop=/usr/bin/python3 /opt/gm-skillforge/scripts/cloud_lobster_mandatory_gate.py \
+    --dispatch-dir /var/lib/gm-skillforge/dispatch \
+    --compliance-dir /var/lib/gm-skillforge/compliance \
+    --final-check
+
+# Restart policy - gate failures are critical
+Restart=on-failure
+RestartSec=60
+TimeoutStartSec=120
+TimeoutStopSec=60
+
+# Resource limits
+MemoryMax=256M
+CPUQuota=25%
+TasksMax=50
+
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/gm-skillforge /var/log/gm-skillforge
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=gm-mandatory-gate
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,49 @@
+{
+  "schema_version": "t1_final_review_decision_v1",
+  "decision_id": "T1-FINAL-REVIEW-20260307",
+  "review_date": "2026-03-07",
+  "reviewer": "Codex",
+  "scope": "T1-A/T1-B/T1-C/T1-D",
+  "status": "ALLOW",
+  "summary": "T1 architecture remediation track passed final review after T1-A and T1-B evidence files were completed. All four shards now have execution, review, and compliance records with traceable evidence.",
+  "shards": {
+    "T1-A": {
+      "execution": "PRESENT",
+      "review": "ALLOW",
+      "compliance": "PASS"
+    },
+    "T1-B": {
+      "execution": "PRESENT",
+      "review": "ALLOW",
+      "compliance": "PASS"
+    },
+    "T1-C": {
+      "execution": "PRESENT",
+      "review": "ALLOW",
+      "compliance": "PASS"
+    },
+    "T1-D": {
+      "execution": "PRESENT",
+      "review": "ALLOW",
+      "compliance": "PASS"
+    }
+  },
+  "remaining_risks": [
+    "T1-A notes an unrelated change in adapters/quant/__init__.py that should be cleaned in a later pass.",
+    "T1-A notes append_only_log still lacks busy_timeout, outside this shard scope.",
+    "T1-C confirms 7 skills remain outside tier registry baseline and need follow-up consolidation.",
+    "T1-D backlog pack still contains pending immediate-fix items; backlog normalization does not equal remediation completion."
+  ],
+  "evidence_refs": [
+    "docs/2026-03-07/T1-A_T1-B_T1-C_T1-D_任务回传.md",
+    "docs/2026-03-07/verification/T1-A_execution_report.yaml",
+    "docs/2026-03-07/verification/T1-A_review_decision.json",
+    "docs/2026-03-07/verification/T1-A_compliance_attestation.json",
+    "docs/2026-03-07/verification/T1-B_execution_report.yaml",
+    "docs/2026-03-07/verification/T1-B_review_decision.json",
+    "docs/2026-03-07/verification/T1-B_compliance_attestation.json",
+    "docs/2026-03-07/verification/T1-C_execution_report.yaml",
+    "docs/2026-03-07/verification/T1-C_compliance_attestation.json",
+    "docs/2026-03-07/verification/T1-D_compliance_attestation.json"
+  ]
+}

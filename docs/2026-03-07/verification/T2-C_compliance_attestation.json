@@ -1,0 +1,18 @@
+{
+  "task_id": "T2-C",
+  "compliance_officer": "Antigravity-1",
+  "attestation_date": "2026-03-07",
+  "decision": "PASS",
+  "checks": [
+    "repository audit semantics 已绑定当前 EvidenceRef / GateDecision / AuditPack 边界。",
+    "time semantics 使用 at_time fail-closed 口径，没有被文档化稀释。",
+    "date-directory 与 verification flow 仅被判定为 aligned，不被冒充成新功能开发完成。"
+  ],
+  "evidence_refs": [
+    "skillforge/src/contracts/api/n8n_boundary_v1.yaml:19-20",
+    "skillforge/src/api/routes/n8n_orchestration.py:12",
+    "docs/2026-02-17/图书馆迁移/contracts/intents/time_semantics.yml:10-183",
+    "docs/VERIFICATION_MAP.md"
+  ],
+  "attestation_statement": "T2-C 的结论保持保守和可复核，未将命名不一致或缺少 replay 样例的问题掩盖为已解决。"
+}

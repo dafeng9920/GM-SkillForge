@@ -1,0 +1,38 @@
+{
+  "schema_version": "t2_remediation_final_review_decision_v1",
+  "decision_id": "T2-REMEDIATION-FINAL-REVIEW-20260307",
+  "review_date": "2026-03-07",
+  "reviewer": "Codex",
+  "scope": "F1-R / F2-C / F3-R5",
+  "status": "ALLOW",
+  "summary": "T2 remediation reached sufficient closure for final acceptance. F1-R restored contract governance capacity, F2-C replaced the invalid compliance path with an independent PASS attestation, and F3-R5 removed the misleading evidence-first strong-semantic terminology from active code and skill surfaces.",
+  "shards": {
+    "F1-R": {
+      "execution": "PRESENT",
+      "review": "ALLOW",
+      "compliance": "PASS"
+    },
+    "F2-C": {
+      "execution": "N/A",
+      "review": "N/A",
+      "compliance": "PASS"
+    },
+    "F3-R5": {
+      "execution": "PRESENT",
+      "review": "ALLOW",
+      "compliance": "PASS"
+    }
+  },
+  "remaining_risks": [
+    "F3-R5 execution artifacts are split across 2026-03-06 and 2026-03-07 archive dates, which may create mild traceability friction.",
+    "Some non-F1 intents in intent_map.yml still point to migration-doc paths; these are outside the current remediation scope."
+  ],
+  "evidence_refs": [
+    "docs/2026-03-07/T2_REMEDIATION_F1R_F2C_F3R5_任务回传.md",
+    "docs/2026-03-07/verification/T2-F1-R_execution_report.yaml",
+    "docs/2026-03-07/verification/T2-F1-R_review_decision.json",
+    "docs/2026-03-07/verification/T2-F1-R_compliance_attestation_PASS.json",
+    "docs/2026-03-07/verification/T2-F2_compliance_attestation.json",
+    "docs/2026-03-07/verification/T2-F3-R5_compliance_attestation.json"
+  ]
+}

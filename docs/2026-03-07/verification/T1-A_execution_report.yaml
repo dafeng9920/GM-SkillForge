@@ -1,0 +1,89 @@
+task_id: T1-A
+executor: vs--cc1
+execution_date: 2026-03-06
+status: COMPLETED
+
+objective: |
+  为 GM-SkillForge 中涉及 registry / SQLite 写入的路径补齐并发保护基线，
+  重点是 WAL mode、timeout、busy_timeout 或等效机制。
+
+scope:
+  - 只处理与 registry / SQLite 写入直接相关的代码路径
+  - 不扩大到 PostgreSQL/Redis 重构
+  - 不改动无关业务逻辑
+
+files_modified:
+  - path: skillforge-spec-pack/skillforge/src/storage/schema.py
+    location: lines 126-133
+    changes:
+      - added timeout=30 parameter to sqlite3.connect()
+      - added PRAGMA busy_timeout=5000
+      - added PRAGMA synchronous=NORMAL
+
+  - path: gm_plugin_core_seed/src/services/orchestration/store_sqlite.py
+    location: lines 206-221
+    changes:
+      - added centralized _connect() method with WAL mode
+      - added busy_timeout=5000ms
+      - added timeout=30s
+      - updated 12 connection points to use _connect()
+
+  - path: gm_plugin_core_seed/src/services/gates/gate_store.py
+    location: lines 14-30
+    changes:
+      - added centralized _connect() method with WAL mode
+      - added busy_timeout=5000ms
+      - updated all connection points to use _connect()
+
+  - path: gm_plugin_core_seed/src/api/routes/orchestration_commit.py
+    location: lines 122, 182
+    changes:
+      - updated _verify_spec_and_decision() to use store._connect()
+      - updated _write_contract_to_store() to use store._connect()
+
+  - path: gm_plugin_core_seed/src/api/routes/orchestration_replay.py
+    location: line 84
+    changes:
+      - updated get_db_connection() to return store._connect()
+
+  - path: skillforge/src/storage/append_only_log/core.py
+    location: lines 181-187
+    changes:
+      - added timeout=30 parameter to sqlite3.connect()
+      - added PRAGMA busy_timeout=5000
+      - added PRAGMA synchronous=NORMAL
+
+  - path: skillforge/src/storage/append_only_log/retention.py
+    location: lines 264-270
+    changes:
+      - added timeout=30 parameter to sqlite3.connect()
+      - added PRAGMA busy_timeout=5000
+      - added PRAGMA synchronous=NORMAL
+
+already_protected:
+  - path: skillforge/src/storage/registry_store.py
+    location: lines 118-126
+    note: Already has FIX-005 implementation with full concurrency protection
+
+verification:
+  all_active_write_paths_protected: true
+  wal_mode_enabled: true
+  busy_timeout_set: true
+  timeout_set: true
+  synchronous_mode: NORMAL
+
+evidence_refs:
+  - skillforge-spec-pack/skillforge/src/storage/schema.py:126-133
+  - gm_plugin_core_seed/src/services/orchestration/store_sqlite.py:206-221
+  - gm_plugin_core_seed/src/services/gates/gate_store.py:14-30
+  - gm_plugin_core_seed/src/api/routes/orchestration_commit.py:122,182
+  - gm_plugin_core_seed/src/api/routes/orchestration_replay.py:84
+  - skillforge/src/storage/append_only_log/core.py:181-187
+  - skillforge/src/storage/append_only_log/retention.py:264-270
+
+remaining_risks:
+  - rewrite_registry.py contains unprotected connections (one-time migration script, not active code)
+  - adapters/quant/__init__.py contains unrelated changes (建议移除)
+
+completion_definition_met: true
+no_local_verification_regression: true

@@ -1,0 +1,82 @@
+{
+  "task_id": "T1-A",
+  "execution_id": "vs--cc1-T1-A-20260306",
+  "title": "SQLite Concurrency Protection Baseline",
+  "changes": [
+    {
+      "file": "skillforge-spec-pack/skillforge/src/storage/schema.py",
+      "location": "init_db() function, lines 126-133",
+      "type": "enhancement",
+      "description": "Added timeout=30, busy_timeout=5000, synchronous=NORMAL to SQLite connection",
+      "before": "conn = sqlite3.connect(str(db_path))",
+      "after": "conn = sqlite3.connect(str(db_path), timeout=30)",
+      "pragmas_added": [
+        "PRAGMA busy_timeout=5000",
+        "PRAGMA synchronous=NORMAL"
+      ]
+    },
+    {
+      "file": "gm_plugin_core_seed/src/services/orchestration/store_sqlite.py",
+      "location": "OrchestrationStore class, lines 206-221",
+      "type": "new_method",
+      "description": "Added centralized _connect() method with WAL mode and busy_timeout",
+      "method": "_connect()",
+      "impact": "All 12 database methods now use protected connections"
+    },
+    {
+      "file": "gm_plugin_core_seed/src/services/gates/gate_store.py",
+      "location": "GateStore class, lines 14-30",
+      "type": "new_method",
+      "description": "Added centralized _connect() method with WAL mode and busy_timeout",
+      "method": "_connect()",
+      "impact": "All database methods now use protected connections"
+    },
+    {
+      "file": "gm_plugin_core_seed/src/api/routes/orchestration_commit.py",
+      "location": "_verify_spec_and_decision() and _write_contract_to_store()",
+      "type": "refactor",
+      "description": "Updated to use store._connect() instead of direct sqlite3.connect()",
+      "lines": "122, 182"
+    },
+    {
+      "file": "gm_plugin_core_seed/src/api/routes/orchestration_replay.py",
+      "location": "get_db_connection() function",
+      "type": "refactor",
+      "description": "Updated to return store._connect() instead of direct sqlite3.connect()",
+      "lines": "84"
+    },
+    {
+      "file": "skillforge/src/storage/append_only_log/core.py",
+      "location": "AppendOnlyLog.conn property, lines 181-187",
+      "type": "enhancement",
+      "description": "Added timeout=30, busy_timeout=5000, synchronous=NORMAL to connection",
+      "pragmas_added": [
+        "PRAGMA busy_timeout=5000",
+        "PRAGMA synchronous=NORMAL"
+      ]
+    },
+    {
+      "file": "skillforge/src/storage/append_only_log/retention.py",
+      "location": "RetentionManager.conn property, lines 264-270",
+      "type": "enhancement",
+      "description": "Added timeout=30, busy_timeout=5000, synchronous=NORMAL to connection",
+      "pragmas_added": [
+        "PRAGMA busy_timeout=5000",
+        "PRAGMA synchronous=NORMAL"
+      ]
+    }
+  ],
+  "already_protected": [
+    {
+      "file": "skillforge/src/storage/registry_store.py",
+      "location": "RegistryStore._connect() method, lines 118-126",
+      "note": "Already has FIX-005 implementation with full concurrency protection"
+    }
+  ],
+  "summary": {
+    "total_files_modified": 7,
+    "new_methods_added": 2,
+    "connection_points_updated": 15,
+    "concurrency_protection": "WAL mode + busy_timeout=5000ms + timeout=30s + synchronous=NORMAL"
+  }
+}

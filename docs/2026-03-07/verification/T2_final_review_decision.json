@@ -1,0 +1,44 @@
+{
+  "schema_version": "t2_final_review_decision_v1",
+  "decision_id": "T2-FINAL-REVIEW-20260307",
+  "review_date": "2026-03-07",
+  "reviewer": "Codex",
+  "scope": "T2-A/T2-B/T2-C/T2-D",
+  "status": "ALLOW",
+  "summary": "T2 high-value NEW-GM intent migration baseline is archive-ready. All four shards contain execution, review, and compliance records. The track correctly distinguishes already_present, partially_present, and selective migration labels without pretending unresolved gaps are closed.",
+  "shards": {
+    "T2-A": {
+      "execution": "PRESENT",
+      "review": "ALLOW",
+      "compliance": "PASS"
+    },
+    "T2-B": {
+      "execution": "PRESENT",
+      "review": "ALLOW",
+      "compliance": "PASS"
+    },
+    "T2-C": {
+      "execution": "PRESENT",
+      "review": "ALLOW",
+      "compliance": "PASS"
+    },
+    "T2-D": {
+      "execution": "PRESENT",
+      "review": "ALLOW",
+      "compliance": "PASS"
+    }
+  },
+  "remaining_risks": [
+    "Lifecycle and audit contracts still use non-canonical intent_id values relative to dispatch naming.",
+    "Several migration contracts remain under docs/ migration paths instead of production contracts/ assets.",
+    "outer_intent_ingest and outer_contract_freeze are selected for migrate now but remain planned, not mainline.",
+    "time_semantics still needs a current replay regression artifact tied to archive flow."
+  ],
+  "evidence_refs": [
+    "docs/2026-03-07/T2-A_T2-B_T2-C_T2-D_任务回传.md",
+    "docs/2026-03-07/verification/T2-A_execution_report.yaml",
+    "docs/2026-03-07/verification/T2-B_execution_report.yaml",
+    "docs/2026-03-07/verification/T2-C_execution_report.yaml",
+    "docs/2026-03-07/verification/T2-D_execution_report.yaml"
+  ]
+}

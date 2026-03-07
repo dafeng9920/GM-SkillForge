@@ -1,0 +1,51 @@
+{
+  "schema_version": "verification_archive_index_v1",
+  "archive_date": "2026-03-06",
+  "archive_id": "AG2-FIXED-CALIBER-ARCHIVE-20260306",
+  "execution_environment": "LOCAL-ANTIGRAVITY",
+  "baseline_id": "AG2-FIXED-CALIBER-TG1-20260304",
+  "permit_revision": "tg1_baseline_rev_005",
+  "archive_status": {
+    "formal_release": "APPROVED",
+    "fail_closed_chain": "ACTIVE",
+    "evidence_frozen": true
+  },
+  "milestones": {
+    "G1_nightly_recheck": "IN_PROGRESS (3/14 days)",
+    "G2_incremental_boundaries": "COMPLETED (N+1/N+2/N+3)",
+    "G3_permit_change_drills": "COMPLETED (2/2 drills)",
+    "G4_closure_report": "PENDING (requires G1 completion)"
+  },
+  "next_actions": [
+    "Continue daily nightly recheck (11 days remaining)",
+    "Generate Final Closure Report after G1 completion",
+    "Transition to maintenance mode"
+  ],
+  "audit_trail": {
+    "created_at": "2026-03-06T00:00:00Z",
+    "created_by": "Antigravity-1",
+    "last_updated": "2026-03-06T21:00:00Z",
+    "guard_version": "Antigravity-1",
+    "evidence_frozen": true,
+    "last_recheck": {
+      "date": "2026-03-06",
+      "status": "PASS",
+      "drift_detected": false,
+      "report_file": "docs/2026-03-04/verification/ANTIGRAVITY-1-NIGHTLY-RECHECK-2026-03-06.json"
+    }
+  },
+  "daily_progress": {
+    "2026-03-05": {
+      "recheck_status": "PASS",
+      "drift_detected": false,
+      "consecutive_days": 2,
+      "remaining_days": 12
+    },
+    "2026-03-06": {
+      "recheck_status": "PASS",
+      "drift_detected": false,
+      "consecutive_days": 3,
+      "remaining_days": 11
+    }
+  }
+}

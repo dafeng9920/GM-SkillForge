@@ -1,0 +1,56 @@
+task_id: F1
+task_name: T1-A 无关 diff 清理
+executor: vs--cc1
+execution_date: 2026-03-07
+status: COMPLETED
+
+objective: |
+  清理 T1-A 执行过程中产生的无关变更，确保所有修改都限定在
+  registry/SQLite 并发保护范围内。
+
+scope:
+  - 移除 adapters/quant/ 目录中与 T1-A 无关的变更
+  - 保留所有 SQLite 相关的并发保护修改
+
+files_reverted:
+  - path: adapters/quant/__init__.py
+    action: git checkout
+    reason: 重构了导入和导出，与 SQLite 并发保护无关
+    changes_reverted:
+      - 新增 contracts 模块导入
+      - 新增多个 adapter 类导入
+      - 更新 __all__ 导出列表
+
+  - path: adapters/quant/strategies/signal_generator.py
+    action: git checkout
+    reason: 大规模重构（版本 2.0.0），与 SQLite 并发保护无关
+    changes_reverted:
+      - 从 skill 结构改为 adapter 结构
+      - 修改了导入和类定义
+
+  - path: adapters/quant/strategies/stock_selector.py
+    action: git checkout
+    reason: 重构为 adapter 结构，与 SQLite 并发保护无关
+    changes_reverted:
+      - 从 skill 结构改为 adapter 结构
+      - 修改了导入和类定义
+
+preserved_changes:
+  - skillforge-spec-pack/skillforge/src/storage/schema.py (WAL + busy_timeout)
+  - gm_plugin_core_seed/src/services/orchestration/store_sqlite.py (_connect 方法)
+  - gm_plugin_core_seed/src/services/gates/gate_store.py (_connect 方法)
+  - gm_plugin_core_seed/src/api/routes/orchestration_commit.py (使用 store._connect())
+  - gm_plugin_core_seed/src/api/routes/orchestration_replay.py (使用 store._connect())
+  - skillforge/src/storage/append_only_log/core.py (WAL + busy_timeout)
+  - skillforge/src/storage/append_only_log/retention.py (WAL + busy_timeout)
+
+verification:
+  adapters_quant_clean: true
+  sqlite_changes_preserved: true
+  git_status_verified: true
+
+evidence_refs:
+  - git diff adapters/quant/__init__.py (已无变更)
+  - git diff adapters/quant/strategies/ (已无变更)
+
+completion_definition_met: true

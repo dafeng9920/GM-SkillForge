@@ -1,0 +1,206 @@
+task_id: "T2-F3-R4"
+parent_task: "T2-F3-R3"
+executor: "vs--cc1"
+reviewer: "Kior-C"
+compliance: "Antigravity-2"
+status: "完成"
+execution_date: "2026-03-07"
+started_at: "2026-03-07T17:30:00Z"
+completed_at: "2026-03-07T18:00:00Z"
+
+objective: |
+  语义降级：停止硬造当前架构中并不存在的"evidence-first = 证据先于决策"时序语义，
+  统一改成当前代码真实能证明的语义口径。
+
+remediation_context:
+  background: |
+    F3-R / F3-R2 / F3-R3 连续失败的根因：
+    - 不是"没有时间字段"
+    - 而是"当前实现无法真实证明 evidence-first 的时序含义"
+  root_cause: |
+    架构中：gate decision -> evidence collection -> publish decision
+    证据记录的是gate decision，而不是evidence在gate decision之前创建
+  goal: |
+    不再强行证明"先于决策"，而是统一改成真实可证明的语义口径
+
+unified_terminology:
+  primary: "decision-evidence traceability"
+  alternatives:
+    - "gate decision timestamp preservation in evidence"
+    - "evidence-recorded decision chain"
+  deprecated_term: "evidence-first"
+  deprecated_status: "历史术语，非严格时序语义（仅表示'evidence记录decision'）"
+
+scope:
+  - 只处理语义降级、术语统一、文案与测试口径对齐
+  - 不扩大到新的时序架构改造
+  - 不重构 publish pipeline
+
+deliverables:
+  - path: "skillforge-spec-pack/skillforge/tests/test_t2_f3_replay_parity.py"
+    action: "修改"
+    description: "统一术语为 decision-evidence traceability，标注 evidence-first 为历史术语"
+    lines_modified: ~10
+    changes:
+      - 文件顶部：2. Evidence-first -> Decision-Evidence Traceability (historically "evidence-first")
+      - TestEvidenceFirstPublishChain 类：保留名称但添加标注为历史术语
+      - 类文档：诚实陈述验证内容，移除虚假时序声称
+
+  - path: "docs/2026-03-07/F3-R_execution_report.yaml"
+    action: "修改"
+    description: "移除虚假修复声称，诚实陈述实际验证内容"
+    lines_modified: ~20
+    changes:
+      - CV-F3-003: 移除 "evidence-first 成为可验证的时间顺序语义"虚假声称
+      - 替换为诚实描述
+
+  - path: "docs/2026-03-07/F3-R4_execution_report.yaml"
+    action: "创建"
+    description: "F3-R4 最终修复报告"
+
+  - path: "docs/2026-03-07/F3-R4_COMPLETION_RECORD.md"
+    action: "创建"
+    description: "F3-R4 最终完成记录"
+
+test_results:
+  total_tests: 19
+  passed: 19
+  failed: 0
+  errors: 0
+  status: "PASS"
+
+remediation_details:
+
+  # F3-R4: Semantic Demotion - Terminology Unification
+
+  ## Root Cause Analysis
+  原问题：F3-R3 试图证明"证据先于决策"的时序关系，但这与当前架构不符
+
+  实际架构流程：
+  1. Gate decision happens (with timestamp)
+  2. Evidence collection records the decision (evidence created_at = timestamp)
+  3. Publish decision is made
+
+  因此"evidence-first"在字面意义上是误导的 - evidence 并不是在 decision 之前创建，
+  而是在 decision 之后记录 decision。
+
+  ## Terminology Unification
+
+  Old (misleading): "evidence-first publish chain"
+  New (accurate): "decision-evidence traceability"
+
+  Definition: Gate decision timestamps are preserved in evidence chain for traceability.
+
+  ## Changes Made
+
+  ### test_t2_f3_replay_parity.py
+  - Line 12: "Evidence is collected BEFORE publish decisions"
+    -> "Evidence records gate decisions with timestamps for traceability"
+
+  - Line 238: "Test 2: Evidence-First Publish Chain"
+    -> "Test 2: Decision-Evidence Traceability (historically 'evidence-first')"
+
+  - Line 239-244: Class docstring
+    -> Updated to reflect actual verification: gate decision timestamps preserved,
+       evidence traces back to decisions, evidence in publish output
+
+  - Line 795: evidence_refs description
+    -> "Tests for decision-evidence traceability"
+
+  ### F3-R_execution_report.yaml (updated version)
+  - CV-F3-003 section: Removed false claim "evidence-first 成为可验证的时间顺序语义"
+  - completion_definition: Removed false claim, updated to honest assessment
+
+  ### F3-R_COMPLETION_RECORD.md (updated version)
+  - CV-F3-003 Before/After: Updated to honest description
+
+evidence_refs:
+  # F3-R4 Semantic Demotion
+  - id: "EV-F3-R4-001"
+    target: "Terminology unification"
+    kind: "DOC+TEST"
+    locator: "skillforge-spec-pack/skillforge/tests/test_t2_f3_replay_parity.py:10-15, 238-244"
+    description: "文件顶部和测试类名称统 一术语为 decision-evidence traceability"
+
+  - id: "EV-F4-R4-002"
+    target: "Execution report semantic cleanup"
+    kind: "DOC"
+    locator: "docs/2026-03-07/F3-R4_execution_report.yaml"
+    description: "移除虚假修复声称，诚实陈述实际验证内容"
+
+  - id: "EV-F4-R4-003"
+    target: "Completion record semantic cleanup"
+    kind: "DOC"
+    locator: "docs/2026-03-07/F3-R4_COMPLETION_RECORD.md"
+    description: "移除虚假修复声称，诚实陈述实际验证内容"
+
+  # Previous valid fixes (still true)
+  - id: "EV-F3-R-002"
+    target: "CV-F3-002 fix"
+    kind: "CODE"
+    locator: "skillforge-spec-pack/skillforge/src/nodes/pack_publish.py:398-420"
+    description: "Gate decision evidence 包含 decision_time 字段（代码修复有效）"
+
+completion_definition:
+  criteria_met:
+    - [x] 仓库内与本 shard 相关的表述不再把 evidence-first 当作已验证的时序语义
+    - [x] 测试、报告、完成记录三者口径一致
+    - [x] 当前系统真实可证明的能力被准确命名
+    - [x] 无 fake closure 话术残留
+    - [x] evidence-first 标注为历史术语/非严格时序术语
+
+  actual_capabilities_verified:
+    - "Gate decision timestamps are preserved in evidence chain"
+    - "Evidence records trace back to gate decisions"
+    - "Evidence is included in publish output"
+    - "decision_time field exists and matches input timestamps"
+
+  deprecated_term_handling:
+    term: "evidence-first publish chain"
+    status: "历史术语，保留用于向后兼容，但标注为非严格时序语义"
+    new_meaning: "decision-evidence traceability"
+   标注位置: "skillforge-spec-pack/skillforge/tests/test_t2_f3_replay_parity.py:238"
+
+remaining_limitations:
+  architectural_clarity:
+    - "evidence-first 术语与其字面意思（证据在决策之前）不符，可能造成误解"
+    - "建议：后续版本考虑完全移除该术语，使用 decision-evidence traceability"
+
+  not_verified:
+    - "证据在决策之前创建" - 此语义在当前架构下不成立
+    - "时序顺序可验证" - 当前只能验证 timestamp 被保存，无法验证先后顺序
+
+next_steps:
+  - step: 1
+    owner: "Kior-C"
+    action: "Review F3-R4 semantic demotion and verify terminology unification"
+  - step: 2
+    owner: "Antigravity-2"
+    action: "Compliance re-attestation for T2-F3-R4"
+  - step: 3
+    owner: "Documentation"
+    action: "Consider removing evidence-first terminology in future version"
+
+execution_trace:
+  - timestamp: "2026-03-07T17:30:00Z"
+    action: "Started T2 F3-R4 semantic demotion"
+  - timestamp: "2026-03-07T17:35:00Z"
+    action: "Updated test file: unified to decision-evidence traceability terminology"
+  - timestamp: "2026-03-07T17:40:00Z"
+    action: "Created F3-R4_execution_report.yaml with semantic cleanup"
+  - timestamp: "2026-03-07T17:45:00Z"
+    action: "Created F3-R4_COMPLETION_RECORD.md"
+  - timestamp: "2026-03-07T17:50:00Z"
+    action: "Verified all 19 tests still passing"
+
+signatures:
+  executor: "vs--cc1"
+  execution_timestamp: "2026-03-07T18:00:00Z"
+  reviewer: "PENDING: Kior-C"
+  compliance: "PENDING: Antigravity-2 re-attestation"
+
+unified_terminology_summary:
+  primary: "decision-evidence traceability"
+  meaning: "Gate decision timestamps are preserved in evidence chain for traceability"
+  deprecated: "evidence-first publish chain"
+  deprecation_note: "Historical term, not to be interpreted as literal temporal ordering"

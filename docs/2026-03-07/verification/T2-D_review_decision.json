@@ -1,0 +1,20 @@
+{
+  "task_id": "T2-D",
+  "reviewer": "Kior-C",
+  "review_date": "2026-03-07",
+  "decision": "ALLOW",
+  "scope": "selective spiral intent evaluation",
+  "reasons": [
+    "五个目标意图都得到 migrate now / abstract only / defer 标签。",
+    "判断依据回连到 scoring 与当前 repo 落点，不是主观拍板。",
+    "没有出现 full-copy 或整包迁移措辞。"
+  ],
+  "evidence_refs": [
+    "docs/2026-03-06/NEW_GM_INTENT_PARITY_MATRIX_v1.md:33-42",
+    "docs/2026-03-06/NEW_GM_INTENT_MIGRATION_SCORING.md:38-47",
+    "skillforge/src/orchestration/intent_map.yml:74-104"
+  ],
+  "residual_risks": [
+    "outer_intent_ingest 与 outer_contract_freeze 若后续不补 canonical contract，将继续停留在 planned 状态。"
+  ]
+}

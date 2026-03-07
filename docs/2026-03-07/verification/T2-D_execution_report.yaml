@@ -1,0 +1,61 @@
+task_id: T2-D
+executor: Kior-A
+execution_date: 2026-03-07
+status: COMPLETED
+
+objective: |
+  对 selective spiral intents 做价值驱动评估，
+  仅输出 migrate now / abstract only / defer，
+  不进行 full-copy 迁移。
+
+scope:
+  - outer_intent_ingest
+  - outer_contract_freeze
+  - outer_artifact_build
+  - inner_health_audit_intent
+  - beidou_observability_intent
+
+decisions:
+  - intent_id: outer_intent_ingest
+    label: migrate now
+    rationale:
+      - 与 n8n closed-loop intake receipt 直接耦合
+      - 已在 intent_map 有 planned locus
+      - 直接增强 contract + receipt + evidence 入口
+
+  - intent_id: outer_contract_freeze
+    label: migrate now
+    rationale:
+      - 直接服务 contract freeze / spec freeze 边界
+      - 与 draft_skill_spec -> constitution_risk_gate 链路高度贴合
+      - 可降低运行时漂移与人工改口径风险
+
+  - intent_id: outer_artifact_build
+    label: abstract only
+    rationale:
+      - 价值较高，但与 scaffold/build 主链存在语义重叠
+      - 当前更适合作为 build manifest policy 抽象，而非独立主线 intent
+
+  - intent_id: inner_health_audit_intent
+    label: abstract only
+    rationale:
+      - 分数落在选择性迁移区间
+      - 当前仓库缺少 inner spiral 主线实现落点
+      - 应先定义 contract/evidence schema，再决定是否主线化
+
+  - intent_id: beidou_observability_intent
+    label: defer
+    rationale:
+      - 现仓未见等价服务或数据模型
+      - 属于特定观测域，当前对主线 contracts/gates/evidence 的直接贡献不足
+      - 应保留为后续专项，不进入本波迁移
+
+evidence_refs:
+  - docs/2026-03-06/NEW_GM_INTENT_PARITY_MATRIX_v1.md:33-42
+  - docs/2026-03-06/NEW_GM_INTENT_MIGRATION_SCORING.md:38-47
+  - skillforge/src/orchestration/intent_map.yml:74-104
+
+acceptance_check:
+  all_target_intents_labeled: true
+  rationale_fit_contribution_value_tied: true
+  no_full_copy_language: true

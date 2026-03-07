@@ -1,0 +1,19 @@
+{
+  "task_id": "T2-B",
+  "compliance_officer": "Antigravity-2",
+  "attestation_date": "2026-03-07",
+  "decision": "PASS",
+  "checks": [
+    "lifecycle parity 只做现状映射与 gap 登记，未宣称主线已完全统一。",
+    "每个 intent 都有可追溯证据和 backlog。",
+    "owner path 已标注，满足后续接单条件。"
+  ],
+  "evidence_refs": [
+    "docs/2026-03-06/NEW_GM_INTENT_PARITY_MATRIX_v1.md:28-31",
+    "skillforge/src/orchestration/intent_map.yml:134-186",
+    "docs/2026-02-17/图书馆迁移/contracts/intents/generate_skill.yml:10",
+    "docs/2026-02-17/图书馆迁移/contracts/intents/upgrade_skill.yml:9",
+    "docs/2026-02-17/图书馆迁移/contracts/intents/tombstone.yml:10"
+  ],
+  "attestation_statement": "T2-B 满足迁移基线要求：生命周期意图均已映射，缺失环节转化为显式 backlog，未发生范围漂移。"
+}

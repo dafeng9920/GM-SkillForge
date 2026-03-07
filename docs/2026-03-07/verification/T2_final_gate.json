@@ -1,0 +1,25 @@
+{
+  "schema_version": "t2_final_gate_v1",
+  "gate_id": "T2-FINAL-GATE-20260307",
+  "gate_date": "2026-03-07",
+  "orchestrator": "Codex",
+  "decision": "ALLOW",
+  "track": "T2",
+  "scope": [
+    "T2-A",
+    "T2-B",
+    "T2-C",
+    "T2-D"
+  ],
+  "reason": "All T2 shards now have execution evidence, review record, and compliance decision. The migration track is normalized into a parity baseline with explicit gaps and selective migration decisions.",
+  "follow_up_required": true,
+  "follow_up_items": [
+    "Normalize canonical intent_id values for lifecycle and audit contracts.",
+    "Promote migrate-now selective intents from l42_planned to mainline contracts.",
+    "Add replay/parity regression artifacts for default-deny, evidence-first, and time_semantics."
+  ],
+  "artifacts": [
+    "docs/2026-03-07/verification/T2_final_review_decision.json",
+    "docs/2026-03-07/T2-A_T2-B_T2-C_T2-D_任务回传.md"
+  ]
+}

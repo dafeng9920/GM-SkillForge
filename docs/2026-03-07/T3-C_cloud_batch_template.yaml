@@ -1,0 +1,274 @@
+# T3-C: Parallel Cloud Batch Template
+# Version: v1.0
+# Generated: 2026-03-07
+# Purpose: Template for concurrent cloud dispatch batches (M2/M3/M4 or similar)
+
+# ============================================================
+# METADATA
+# ============================================================
+metadata:
+  template_name: "parallel_cloud_batch_template"
+  version: "1.0"
+  created_by: "Antigravity-1"
+  created_at: "2026-03-07T12:00:00Z"
+  description: "Template for parallel cloud batch execution with evidence aggregation"
+
+# ============================================================
+# BATCH CONFIGURATION
+# ============================================================
+batch_config:
+  # Naming convention: <WAVE>-<SEQUENCE>-<DATE>-<INDEX>
+  # Example: M2-01-20260307-01
+  wave_prefix: "M"  # M for migration batch
+  batch_size_max: 10  # Maximum concurrent tasks per wave
+  retry_limit: 2  # Auto-retry limit before human intervention
+
+# ============================================================
+# TASK ID STRUCTURE
+# ============================================================
+task_id_schema:
+  pattern: "{wave_prefix}-{sequence:02d}-{date}-{index:02d}"
+  example: "M2-01-20260307-01"
+  components:
+    - name: "wave_prefix"
+      description: "Batch identifier (M2, M3, M4, etc.)"
+      validation: "^[A-Z][0-9]$"
+    - name: "sequence"
+      description: "Wave sequence number (01-99)"
+      validation: "^[0-9]{2}$"
+    - name: "date"
+      description: "Execution date (YYYYMMDD)"
+      validation: "^[0-9]{8}$"
+    - name: "index"
+      description: "Task index within wave (01-99)"
+      validation: "^[0-9]{2}$"
+
+# ============================================================
+# WAVE ORDER DEFINITION
+# ============================================================
+wave_order:
+  sequential_waves:
+    - wave_id: "WAVE_1"
+      description: "Initial smoke test wave (small batch, high scrutiny)"
+      max_tasks: 3
+      requires_signoff: true
+      signoff_roles: ["Kior-C", "Antigravity-1"]
+
+    - wave_id: "WAVE_2"
+      description: "Expanded wave after WAVE_1 approval"
+      max_tasks: 10
+      requires_signoff: true
+      signoff_roles: ["Kior-C", "Antigravity-2"]
+      depends_on: ["WAVE_1"]
+
+    - wave_id: "WAVE_3"
+      description: "Full production wave"
+      max_tasks: 10
+      requires_signoff: true
+      signoff_roles: ["Kior-C", "Antigravity-1"]
+      depends_on: ["WAVE_2"]
+
+# ============================================================
+# REQUIRED ARTIFACTS PER TASK
+# ============================================================
+required_artifacts:
+  - file: "{task_id}_execution_report.yaml"
+    description: "Execution report with objective, scope, results"
+    required: true
+
+  - file: "{task_id}_gate_decision.json"
+    description: "Gate decision (ALLOW/REQUIRES_CHANGES/DENY)"
+    required: true
+
+  - file: "{task_id}_compliance_attestation.json"
+    description: "Compliance attestation with N1/N2/N3 verification"
+    required: true
+
+  - file: "stdout.log"
+    description: "Standard output from cloud execution"
+    required: true
+
+  - file: "stderr.log"
+    description: "Standard error from cloud execution"
+    required: true
+
+  - file: "audit_event.json"
+    description: "Audit trail of execution events"
+    required: true
+
+# ============================================================
+# THREE-TIER SEPARATION (NO SELF-APPROVAL)
+# ============================================================
+role_separation:
+  execution:
+    role: "Executor"
+    responsibilities:
+      - "Prepare task contract"
+      - "Submit to cloud"
+      - "Fetch artifacts"
+      - "Write execution_report"
+    cannot_approve: true  # Executor cannot approve their own work
+
+  review:
+    role: "Reviewer"
+    responsibilities:
+      - "Review execution_report"
+      - "Generate gate_decision"
+      - "MUST be different person from Executor"
+    allowed_reviewers: ["Kior-A", "Kior-B", "Kior-C"]
+
+  compliance:
+    role: "Compliance Officer"
+    responsibilities:
+      - "Verify closed-loop (contract → receipt → gate)"
+      - "Verify no unproven stability claims"
+      - "Verify no permit/gate bypass"
+      - "Generate compliance_attestation"
+    allowed_compliance: ["Antigravity-1", "Antigravity-2"]
+    location: "LOCAL-ANTIGRAVITY"  # Compliance stays local
+
+# ============================================================
+# ARCHIVE TARGETS
+# ============================================================
+archive_targets:
+  snapshot_directory:
+    pattern: "docs/{date}/{batch_id}/evidence_pass_snapshot"
+    example: "docs/2026-03-07/M2-01-20260307/evidence_pass_snapshot"
+
+  manifest_file:
+    name: "MANIFEST.json"
+    purpose: "Complete file list with SHA256 hashes"
+    required_fields:
+      - "generated_at_utc"
+      - "source_dir"
+      - "snapshot_dir"
+      - "required_files"
+      - "missing_count"
+      - "files (with sha256, size_bytes, last_write_time_utc)"
+
+  board_freeze:
+    name: "BOARD_FREEZE.json"
+    purpose: "Immutable evidence snapshot record"
+    required_fields:
+      - "frozen_at_utc"
+      - "job_id"
+      - "task_count"
+      - "manifest_sha256"
+
+  final_gate:
+    name: "final_gate_decision.json"
+    purpose: "Aggregate decision for entire batch"
+    required_fields:
+      - "job_id"
+      - "timestamp"
+      - "decision (ALLOW/REQUIRES_CHANGES/DENY)"
+      - "required_changes"
+      - "blocking_items"
+      - "tasks (array of task summaries)"
+
+# ============================================================
+# AGGREGATION PATH
+# ============================================================
+aggregation_path:
+  step_1_verification:
+    description: "Verify all required artifacts exist"
+    script: "scripts/freeze_l3_evidence_snapshot.py"
+    input: "verification/ directory"
+    output: "evidence_pass_snapshot/"
+
+  step_2_manifest:
+    description: "Generate MANIFEST.json with all file hashes"
+    script: "scripts/freeze_l3_evidence_snapshot.py"
+    input: "evidence_pass_snapshot/"
+    output: "evidence_pass_snapshot/MANIFEST.json"
+
+  step_3_board_freeze:
+    description: "Create immutable freeze record"
+    script: "scripts/freeze_l3_evidence_snapshot.py"
+    input: "MANIFEST.json"
+    output: "evidence_pass_snapshot/BOARD_FREEZE.json"
+
+  step_4_final_gate:
+    description: "Generate final gate decision for batch"
+    script: "scripts/cloud_lobster_mandatory_gate.py or manual review"
+    input: "All gate_decision.json files"
+    output: "evidence_pass_snapshot/final_gate_decision.json"
+
+  step_5_handoff:
+    description: "Handoff to stakeholder (Codex or designated reviewer)"
+    deliverable: "Completion record using compliant template"
+    template: "docs/2026-03-07/T3_T2_WAVE2_任务回传模板_COMPLIANT_v1.md"
+
+# ============================================================
+# EXAMPLE BATCH STRUCTURE
+# ============================================================
+example_batch:
+  batch_id: "M2-01-20260307"
+  tasks:
+    - task_id: "M2-01-20260307-01"
+      executor: "Kior-A"
+      reviewer: "Kior-B"
+      compliance: "Antigravity-1"
+
+    - task_id: "M2-01-20260307-02"
+      executor: "Kior-B"
+      reviewer: "Kior-C"
+      compliance: "Antigravity-2"
+
+    - task_id: "M2-01-20260307-03"
+      executor: "Kior-C"
+      reviewer: "Kior-A"
+      compliance: "Antigravity-1"
+
+# ============================================================
+# COMPLETION DEFINITION
+# ============================================================
+completion_definition:
+  batch_complete_when:
+    - "All task_id assigned"
+    - "All required artifacts present"
+    - "All gate_decision files generated (ALLOW or REQUIRES_CHANGES with clear path)"
+    - "All compliance_attestation files generated"
+    - "MANIFEST.json created"
+    - "BOARD_FREEZE.json created"
+    - "final_gate_decision.json created"
+    - "Completion record written using compliant template"
+    - "No executor self-approval detected"
+
+  blocking_conditions:
+    - "Any task missing required artifacts"
+    - "Any task with no gate_decision"
+    - "Any task with no compliance_attestation"
+    - "Evidence of executor self-approval"
+    - "MANIFEST.json shows missing_count > 0"
+    - "final_gate_decision is DENY"
+
+# ============================================================
+# REFERENCE TO EXISTING IMPLEMENTATIONS
+# ============================================================
+reference_implementations:
+  evidence_structure:
+    example: "docs/2026-02-26/l4-n8n-execution/evidence_pass_snapshot/"
+    evidence_ref: "docs/2026-02-26/l4-n8n-execution/evidence_pass_snapshot/MANIFEST.json:1-236"
+
+  gate_decision_format:
+    example: "docs/2026-02-26/l4-n8n-execution/evidence_pass_snapshot/final_gate_decision.json"
+    evidence_ref: "docs/2026-02-26/l4-n8n-execution/evidence_pass_snapshot/final_gate_decision.json:1-81"
+
+  completion_template:
+    path: "docs/2026-03-07/T3_T2_WAVE2_任务回传模板_COMPLIANT_v1.md"
+    evidence_ref: "docs/2026-03-07/T3_T2_WAVE2_任务回传模板_COMPLIANT_v1.md:1-436"
+
+  lobsterctl_interface:
+    path: "scripts/lobsterctl.py"
+    evidence_ref: "scripts/lobsterctl.py:1-260"
+
+# ============================================================
+# NOTES
+# ============================================================
+notes:
+  - "Template is designed for CLOUD-ROOT execution environment"
+  - "Review and compliance MUST remain local (LOCAL-ANTIGRAVITY)"
+  - "No executor may approve their own work"
+  - "All evidence must be frozen before final gate decision"
+  - "Template does NOT directly launch cloud batches - that requires separate activation"
