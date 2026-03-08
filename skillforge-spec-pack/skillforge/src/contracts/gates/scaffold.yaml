@@ -1,0 +1,61 @@
+# Scaffold Gate Contract
+# Gate Group: delivery (Squad C)
+# Position: G5
+# Status: FROZEN
+
+gate_name: scaffold_skill_impl
+description: |
+  Evaluates scaffold_skill_impl output and chains evidence from prior gates.
+  Validates manifest integrity and file generation.
+
+inputs:
+  - name: skill_spec
+    type: object
+    required: true
+    description: "Skill specification from draft_skill_spec or skill_compose"
+  - name: constitution_risk_gate
+    type: object
+    required: false
+    description: "G4 gate decision (should be PASSED/ALLOW)"
+  - name: prior_evidence_refs
+    type: array
+    required: false
+    description: "Evidence refs from G1-G4 to chain"
+
+outputs:
+  - name: gate_result
+    type: GateResult
+    description: "Gate decision with evidence refs"
+
+validation_rules:
+  - id: SCAFFOLD-001
+    description: "scaffold_skill_impl output must be present"
+    on_fail: REJECTED
+    error_code: ERR_SCAFFOLD_MISSING
+
+  - id: SCAFFOLD-002
+    description: "files_generated must not be empty"
+    on_fail: REJECTED
+    error_code: ERR_NO_FILES_GENERATED
+
+  - id: SCAFFOLD-003
+    description: "manifest must be present"
+    on_fail: REJECTED
+    error_code: ERR_MANIFEST_MISSING
+
+  - id: SCAFFOLD-004
+    description: "manifest must include skill_id, version, checksum"
+    on_fail: REJECTED
+    error_code: ERR_MANIFEST_INCOMPLETE
+
+evidence_types:
+  - type: SOURCE_CODE
+    description: "Generated source code bundle"
+    required_fields:
+      - skill_id
+      - bundle_path
+      - content_hash
+
+chaining:
+  prior_gates: [intake_repo, license_gate, repo_scan_fit_score, constitution_risk_gate]
+  description: "Must chain evidence refs from G1-G4"

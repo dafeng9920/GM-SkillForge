@@ -1,0 +1,203 @@
+{
+  "attestation_id": "ATTEST-T85-20260222-003",
+  "task_id": "T85",
+  "task_name": "L4-SKILL-07 合规终审 (Crypto Signature Compliance Final Audit)",
+  "executor": "Kior-C",
+  "role": "Compliance (Kior-C)",
+  "attestation_type": "EXECUTION_POST_REVIEW_COMPLIANCE",
+  "attestation_date": "2026-02-22T23:15:00Z",
+
+  "decision": "PASS",
+
+  "prerequisite_verification": {
+    "T84_gate_decision": {
+      "status": "VERIFIED",
+      "decision": "ALLOW",
+      "file": "docs/2026-02-22/verification/T84_gate_decision.json",
+      "reviewed_at": "2026-02-22T22:15:00Z",
+      "acceptance_tests_passed": "6/6 (100%)"
+    },
+    "T83_execution_report": {
+      "status": "FOUND",
+      "file": "docs/2026-02-22/verification/T83_execution_report.yaml",
+      "generated_at": "2026-02-22T22:00:00Z"
+    },
+    "hard_gate_rule": "T84.decision == ALLOW 满足，可出具 PASS"
+  },
+
+  "three_item_compliance_review": {
+    "item_1_crypto_signature_gate": {
+      "requirement": "crypto 验签硬门禁是否生效",
+      "verification": {
+        "parameter_exists": {
+          "status": "PASS",
+          "evidence": "aggregate_final_gate.py:633-637 --require-crypto-signature 参数定义"
+        },
+        "integrated_to_main_flow": {
+          "status": "PASS",
+          "evidence": "aggregate_final_gate.py:348-355, 437-441 参数传递和调用"
+        },
+        "fail_closed_logic": {
+          "status": "PASS",
+          "evidence": "aggregate_final_gate.py:471-493 Fail-Closed 决策逻辑"
+        },
+        "t84_acceptance": {
+          "status": "PASS",
+          "test_ids": ["AT-T84-RERUN-001", "AT-T84-RERUN-002", "AT-T84-RERUN-003"]
+        }
+      },
+      "status": "PASS",
+      "rationale": "--require-crypto-signature 参数已实现并接入主流程，T84 验收通过"
+    },
+
+    "item_2_fail_closed_for_invalid_signature": {
+      "requirement": "非法签名/非法 signer_id 是否 fail-closed（DENY）",
+      "verification": {
+        "allowed_signer_ids": {
+          "status": "PASS",
+          "evidence": "verify_guard_signature.py:41-48 ALLOWED_SIGNER_IDS = {'Antigravity-1', 'Antigravity-2', 'Kior-C', 'Codex', 'vs--cc2', 'vs--cc3'}"
+        },
+        "validate_signer_id": {
+          "status": "PASS",
+          "evidence": "verify_guard_signature.py:63-70 validate_signer_id() 函数"
+        },
+        "deny_logic": {
+          "status": "PASS",
+          "evidence": "aggregate_final_gate.py:477-478, 483-485 has_crypto_deny => FINAL_FAIL"
+        },
+        "no_timestamp_only": {
+          "status": "PASS",
+          "evidence": "--require-crypto-signature 检查 guard_signature，不依赖 timestamp"
+        },
+        "t84_acceptance": {
+          "status": "PASS",
+          "test_ids": ["AT-T84-RERUN-003", "AT-T84-RERUN-004", "AT-T84-RERUN-005"]
+        }
+      },
+      "status": "PASS",
+      "rationale": "signer_id 白名单、验签失败 DENY、禁止仅时间戳通过均已实现，T84 验收通过"
+    },
+
+    "item_3_historical_evidence_integrity": {
+      "requirement": "T70-T80 历史证据文件是否未被违规改写",
+      "verification_method": "文件修改时间检查",
+      "files_checked": {
+        "T70": {"count": 3, "mtime_range": "17:08-17:10", "status": "PASS"},
+        "T71": {"count": 3, "mtime_range": "17:18-17:19", "status": "PASS"},
+        "T72": {"count": 3, "mtime_range": "17:12-20:53", "status": "PASS"},
+        "T73": {"count": 3, "mtime_range": "17:08-17:09", "status": "PASS"},
+        "T74": {"count": 3, "mtime_range": "18:11-21:08", "status": "PASS"},
+        "T75": {"count": 3, "mtime_range": "18:12-18:13", "status": "PASS"},
+        "T76": {"count": 3, "mtime_range": "17:57-17:58", "status": "PASS"},
+        "T77": {"count": 3, "mtime_range": "18:23", "status": "PASS"},
+        "T78": {"count": 3, "mtime_range": "18:25-18:28", "status": "PASS"},
+        "T79": {"count": 3, "mtime_range": "18:23", "status": "PASS"},
+        "T80": {"count": 3, "mtime_range": "18:54-19:05", "status": "PASS"}
+      },
+      "total_files": 33,
+      "violations_detected": 0,
+      "status": "PASS",
+      "rationale": "所有历史证据文件修改时间均在 L4-SKILL-07 任务启动前，未发现违规改写"
+    }
+  },
+
+  "compliance_summary": {
+    "total_items": 3,
+    "passed": 3,
+    "failed": 0,
+    "pass_rate_percent": 100.0
+  },
+
+  "violations": [],
+
+  "reasons": [
+    "PASS: T84.decision = ALLOW，前置条件满足",
+    "PASS: crypto 验签硬门禁生效 --require-crypto-signature 参数已实现并接入主流程",
+    "PASS: 非法签名/非法 signer_id fail-closed -- ALLOWED_SIGNER_IDS 白名单 + DENY 逻辑已实现",
+    "PASS: 禁止'仅 timestamp 通过' -- --require-crypto-signature 检查 guard_signature 字段",
+    "PASS: 历史证据文件 T70-T80 (33个) 完整性验证通过，未发现违规改写",
+    "PASS: L4-SKILL-06.1 strict decision 规则保持，仅接受显式 decision 字段"
+  ],
+
+  "evidence_refs": [
+    {
+      "id": "EV-T85-001",
+      "kind": "FILE",
+      "locator": "docs/2026-02-22/verification/T84_gate_decision.json",
+      "description": "T84 验收决策 (ALLOW, 6/6 PASS)"
+    },
+    {
+      "id": "EV-T85-002",
+      "kind": "SNIPPET",
+      "locator": "skills/p2-final-gate-aggregate-skill/aggregate_final_gate.py:633-637",
+      "content": "parser.add_argument('--require-crypto-signature', action='store_true', help='L4-SKILL-07: Enable crypto signature verification (fail-closed mode)')",
+      "description": "--require-crypto-signature 参数定义"
+    },
+    {
+      "id": "EV-T85-003",
+      "kind": "SNIPPET",
+      "locator": "skills/p2-final-gate-aggregate-skill/aggregate_final_gate.py:477-485",
+      "content": "if triad.has_invalid_crypto_signature or triad.has_invalid_signer_id: has_crypto_deny = True\n...\nif has_crypto_deny: return 'FINAL_FAIL', self.all_alerts",
+      "description": "Fail-Closed DENY 逻辑"
+    },
+    {
+      "id": "EV-T85-004",
+      "kind": "SNIPPET",
+      "locator": "scripts/verify_guard_signature.py:41-48",
+      "content": "ALLOWED_SIGNER_IDS = {'Antigravity-1', 'Antigravity-2', 'Kior-C', 'Codex', 'vs--cc2', 'vs--cc3'}",
+      "description": "signer_id 允许名单"
+    },
+    {
+      "id": "EV-T85-005",
+      "kind": "SNIPPET",
+      "locator": "skills/p2-final-gate-aggregate-skill/aggregate_final_gate.py:201-212",
+      "content": "# HARD RULE: Only accept explicit 'decision' field\nfallback derivation is PROHIBITED",
+      "description": "L4-SKILL-06.1 strict decision 规则"
+    },
+    {
+      "id": "EV-T85-006",
+      "kind": "DIRECTORY_SCAN",
+      "locator": "docs/2026-02-22/verification/T70-T80*",
+      "description": "历史证据文件完整性验证 (33 files, 0 violations)"
+    },
+    {
+      "id": "EV-T85-007",
+      "kind": "CONSTITUTION",
+      "locator": "docs/EXECUTION_GUARD_B_EXECUTION_SKILL_v1.md",
+      "description": "Execution 合规约束 Skill 宪法"
+    }
+  ],
+
+  "required_changes": [],
+
+  "compliance_checklist": {
+    "T84_allow_verified": true,
+    "T83_execution_report_exists": true,
+    "crypto_signature_gate_enabled": true,
+    "fail_closed_for_invalid_signature": true,
+    "fail_closed_for_invalid_signer_id": true,
+    "no_timestamp_only_pass": true,
+    "historical_evidence_integrity": true,
+    "strict_decision_rules_maintained": true,
+    "no_prohibited_modifications": true,
+    "no_role_consolidation": true,
+    "documentation_updated": true
+  },
+
+  "rationale": "T85 合规终审 PASS。三项检查全部通过：(1) crypto 验签硬门禁已生效，--require-crypto-signature 参数实现并接入主流程 (2) 非法签名/非法 signer_id fail-closed 逻辑已实现，ALLOWED_SIGNER_IDS 白名单 + DENY 决策 (3) 历史证据文件 T70-T80 (33个) 完整性验证通过。T84 验收 ALLOW (6/6)，L4-SKILL-06.1 strict decision 规则保持。",
+
+  "constitution_refs": [
+    "docs/EXECUTION_GUARD_A_PROPOSAL_SKILL_v1.md",
+    "docs/EXECUTION_GUARD_B_EXECUTION_SKILL_v1.md"
+  ],
+
+  "signatures": {
+    "compliance_officer": {
+      "role": "Kior-C",
+      "action": "ATTESTED",
+      "timestamp": "2026-02-22T23:15:00Z"
+    }
+  },
+
+  "next_action": "T86: Final Gate (Codex) - 聚合 T83/T84/T85 最终决策"
+}

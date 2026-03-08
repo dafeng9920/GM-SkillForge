@@ -1,0 +1,72 @@
+{
+    "monitoring_system": {
+        "version": "2026.1.1",
+        "description": "OpenClaw 舆情监控核心目标库 - 技能专区版",
+        "categories": {
+            "Tier_1_Foundational": {
+                "label": "硬核算法与行业领袖",
+                "strategy": "real_time",
+                "targets": [
+                    {
+                        "name": "Andrej Karpathy",
+                        "x": "@karpathy",
+                        "yt": "Andrej Karpathy",
+                        "focus": "LLM底层/技术教育"
+                    },
+                    {
+                        "name": "Sam Altman",
+                        "x": "@sama",
+                        "focus": "OpenAI 战略/产品风向"
+                    }
+                ]
+            },
+            "Tier_5_Skill_Gaps": {
+                "label": "Agent 技能与工具链缺口",
+                "strategy": "real_time",
+                "targets": [
+                    {
+                        "name": "Antigravity Devs",
+                        "forum": "google.dev",
+                        "focus": "UES (Env Sync) 需求"
+                    },
+                    {
+                        "name": "MCP Ecosystem",
+                        "reddit": "r/mcp",
+                        "focus": "通用 pSEO 矩阵服务器"
+                    },
+                    {
+                        "name": "Cursor/Windsurf",
+                        "forum": "cursor.com",
+                        "focus": "长效项目记忆 (Swap File)"
+                    }
+                ]
+            }
+        }
+    },
+    "intelligence_findings": {
+        "latest_scan": "2026-02-24",
+        "top_opportunities": [
+            {
+                "id": "AIO-001",
+                "title": "ChatGPT SEO / AI Checker",
+                "niche": "AI Search Visibility",
+                "roi_score": 9.8,
+                "strategy": "Copy AIO Checker for CN/Global niche market"
+            },
+            {
+                "id": "GADS-002",
+                "title": "Google Ads Health Monitor",
+                "niche": "Account Security",
+                "roi_score": 9.2,
+                "strategy": "Predictive suspension alerts"
+            },
+            {
+                "id": "ENV-003",
+                "title": "Env Security for AI",
+                "niche": "Developer Security",
+                "roi_score": 8.8,
+                "strategy": "Diff enveil for AI-leaks protection"
+            }
+        ]
+    }
+}

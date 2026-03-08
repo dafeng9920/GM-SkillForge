@@ -1,0 +1,80 @@
+{
+  "schema_version": "0.1.0",
+  "gate_id": "final-gate-p2-20260222183000",
+  "phase": "P2",
+  "decision": "ALLOW",
+  "decided_at": "2026-02-22T18:30:00Z",
+  "expires_at": "2026-02-23T18:30:00Z",
+  "summary": {
+    "phase": "P2_HARDENING",
+    "total_tasks": 10,
+    "allowed": 10,
+    "denied": 0,
+    "pass_rate_percent": 100
+  },
+  "task_results": [
+    {
+      "task_id": "T70",
+      "decision": "ALLOW"
+    },
+    {
+      "task_id": "T71",
+      "decision": "ALLOW"
+    },
+    {
+      "task_id": "T72",
+      "decision": "ALLOW"
+    },
+    {
+      "task_id": "T73",
+      "decision": "ALLOW"
+    },
+    {
+      "task_id": "T74",
+      "decision": "ALLOW"
+    },
+    {
+      "task_id": "T75",
+      "decision": "ALLOW"
+    },
+    {
+      "task_id": "T76",
+      "decision": "ALLOW"
+    },
+    {
+      "task_id": "T77",
+      "decision": "ALLOW"
+    },
+    {
+      "task_id": "T78",
+      "decision": "ALLOW"
+    },
+    {
+      "task_id": "T79",
+      "decision": "ALLOW"
+    }
+  ],
+  "interception_check": {
+    "any_missing_gate_decision": false,
+    "any_missing_compliance_attestation": false,
+    "any_missing_evidence_ref": false,
+    "any_side_effect_without_permit": false,
+    "intercepted": false
+  },
+  "phase_status": "FINAL_PASS",
+  "signatures": {
+    "master_gate": {
+      "id": "vs--cc2",
+      "timestamp": "2026-02-22T18:30:00Z"
+    },
+    "reviewer": {
+      "id": "Codex",
+      "timestamp": "2026-02-22T11:07:53Z"
+    },
+    "compliance_officer": {
+      "id": "Kior-C",
+      "timestamp": "2026-02-22T19:42:00Z"
+    }
+  },
+  "compliance_closure_status": "FINAL_PASS"
+}

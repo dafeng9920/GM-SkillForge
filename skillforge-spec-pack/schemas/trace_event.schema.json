@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://gm-os.dev/schemas/trace_event.schema.json",
+  "title": "TraceEvent",
+  "description": "执行追踪事件 - 四大硬合同之一，记录执行过程中的每一步",
+  "type": "object",
+  "required": ["schema_version", "event_id", "execution_id", "event_type", "timestamp"],
+  "properties": {
+    "schema_version": { "$ref": "common.schema.json#/definitions/SchemaVersion" },
+    "event_id": { "$ref": "common.schema.json#/definitions/UUID" },
+    "execution_id": { "$ref": "common.schema.json#/definitions/UUID" },
+    "parent_event_id": { "$ref": "common.schema.json#/definitions/UUID" },
+    "event_type": {
+      "type": "string",
+      "enum": ["start", "tool_call", "tool_result", "llm_call", "llm_result", "error", "end", "checkpoint"]
+    },
+    "timestamp": { "$ref": "common.schema.json#/definitions/Timestamp" },
+    "duration_ms": { "type": "integer", "minimum": 0 },
+    "node_id": { "type": "string" },
+    "step_name": { "type": "string" },
+    "tool_name": { "type": "string" },
+    "tool_input": { "type": "object" },
+    "tool_output": { "type": "object" },
+    "error": {
+      "type": "object",
+      "properties": {
+        "code": { "$ref": "common.schema.json#/definitions/ErrorCode" },
+        "message": { "type": "string" },
+        "stack": { "type": "string" },
+        "retryable": { "type": "boolean" }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "tokens_used": { "type": "integer", "minimum": 0 },
+        "cost_usd": { "type": "number", "minimum": 0 },
+        "bytes_io": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "metadata": { "type": "object" }
+  },
+  "additionalProperties": true,
+  "version": "0.1.0"
+}

@@ -1,0 +1,125 @@
+{
+  "summary": {
+    "run_date": "2026-02-22",
+    "generated_at": "2026-02-22T05:36:53Z",
+    "profile": "l5-static",
+    "policy_version": "v1.0.0-20260222",
+    "policy_path": "D:\\GM-SkillForge\\configs\\audit_policy_v1.json",
+    "scope": "domains=finance,legal top_n=3 size_rank=chars",
+    "run_id": "L5S-20260222053653Z-E93D9286",
+    "evidence_ref": "EV-L5S-L5S-20260222053653Z-E93D9286",
+    "input_hash": "ae2b9c980e9c3d27c5e7d95acc4a883cf5855a59336dffa8a59fdfca8a773a66",
+    "sample_size": 3,
+    "gate_counts": {
+      "PASS": 3,
+      "WARN": 0,
+      "FAIL": 0
+    },
+    "avg_overall_score": 75.3,
+    "avg_est_tokens": 3502.3,
+    "high_cost_count_ge_3000_tokens": 3,
+    "high_redundancy_count_ge_0.26": 0,
+    "result_hash": "5ac54c406076febf16bd5034002acd327f36a97b23675fcbea7d2b194b2fe4d7"
+  },
+  "results": [
+    {
+      "domain": "finance",
+      "skill": "audit-support",
+      "path": "D:\\GM-SkillForge\\git-Claude仓库\\knowledge-work-plugins\\finance\\skills\\audit-support\\SKILL.md",
+      "source_sha256": "1675e1e5d7367633902561dcd905939ec467c93498b712045d79d1f4364359a7",
+      "evidence_ref": "EV-L5S-L5S-20260222053653Z-E93D9286-finance-audit-support",
+      "chars": 16633,
+      "est_tokens": 4158,
+      "repeat_ratio": 0.035,
+      "broken_links": 0,
+      "checklist_items": 0,
+      "numbered_steps": 33,
+      "tables": 7,
+      "sensitive_hits": 1,
+      "has_disclaimer": false,
+      "has_review_warning": true,
+      "layer_scores": {
+        "L1_cost": 40,
+        "L2_redundancy": 100,
+        "L3_safety": 60,
+        "L4_structure": 100,
+        "L5_evidence_ready": 80
+      },
+      "layer_status": {
+        "L1_cost": "WARN",
+        "L2_redundancy": "PASS",
+        "L3_safety": "WARN",
+        "L4_structure": "PASS",
+        "L5_evidence_ready": "PASS"
+      },
+      "overall_score": 74.0,
+      "gate": "PASS"
+    },
+    {
+      "domain": "legal",
+      "skill": "legal-risk-assessment",
+      "path": "D:\\GM-SkillForge\\git-Claude仓库\\knowledge-work-plugins\\legal\\skills\\legal-risk-assessment\\SKILL.md",
+      "source_sha256": "d785bda1b959fde52afa2a84ce6d8faa9233d817d8fac7ba051dabfc75643c58",
+      "evidence_ref": "EV-L5S-L5S-20260222053653Z-E93D9286-legal-legal-risk-assessment",
+      "chars": 12581,
+      "est_tokens": 3145,
+      "repeat_ratio": 0.078,
+      "broken_links": 0,
+      "checklist_items": 0,
+      "numbered_steps": 2,
+      "tables": 15,
+      "sensitive_hits": 0,
+      "has_disclaimer": false,
+      "has_review_warning": true,
+      "layer_scores": {
+        "L1_cost": 40,
+        "L2_redundancy": 100,
+        "L3_safety": 60,
+        "L4_structure": 100,
+        "L5_evidence_ready": 80
+      },
+      "layer_status": {
+        "L1_cost": "WARN",
+        "L2_redundancy": "PASS",
+        "L3_safety": "WARN",
+        "L4_structure": "PASS",
+        "L5_evidence_ready": "PASS"
+      },
+      "overall_score": 74.0,
+      "gate": "PASS"
+    },
+    {
+      "domain": "legal",
+      "skill": "compliance",
+      "path": "D:\\GM-SkillForge\\git-Claude仓库\\knowledge-work-plugins\\legal\\skills\\compliance\\SKILL.md",
+      "source_sha256": "46d7998a6eb51a25acefc4e0e07ceb5e5fec56f57038e691ff4a801d851f4177",
+      "evidence_ref": "EV-L5S-L5S-20260222053653Z-E93D9286-legal-compliance",
+      "chars": 12818,
+      "est_tokens": 3204,
+      "repeat_ratio": 0.012,
+      "broken_links": 0,
+      "checklist_items": 29,
+      "numbered_steps": 15,
+      "tables": 10,
+      "sensitive_hits": 0,
+      "has_disclaimer": false,
+      "has_review_warning": true,
+      "layer_scores": {
+        "L1_cost": 40,
+        "L2_redundancy": 100,
+        "L3_safety": 60,
+        "L4_structure": 100,
+        "L5_evidence_ready": 100
+      },
+      "layer_status": {
+        "L1_cost": "WARN",
+        "L2_redundancy": "PASS",
+        "L3_safety": "WARN",
+        "L4_structure": "PASS",
+        "L5_evidence_ready": "PASS"
+      },
+      "overall_score": 78.0,
+      "gate": "PASS"
+    }
+  ]
+}

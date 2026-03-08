@@ -1,0 +1,303 @@
+# T91 Execution Report
+# L4.5 Upgrade: policy_version and Policy Configuration
+# Executor: vs--cc3
+
+task_id: T91
+skill_id: L4P5-SKILL-02
+executor: vs--cc3
+execution_role: Execution
+generated_at: 2026-02-24T12:30:00Z
+rerun_at: 2026-02-24T19:45:00Z
+job_id: L4P5-UPGRADE-20260222-001
+depends_on: [T90]
+status: COMPLETED
+
+## Execution Summary
+summary: |
+  Implement policy_version and policy configuration for L1-L5 rules, thresholds, and weights.
+  All reports now include policy_version and policy_hash for full traceability.
+  Policy validation tool created for schema compliance checking.
+
+## PreflightChecklist
+
+preflight_checklist:
+  - id: PC-T91-001
+    description: "Verify T90 execution report exists"
+    status: PASS
+    evidence: "docs/2026-02-22/verification/T90_execution_report.yaml exists"
+  - id: PC-T91-002
+    description: "Verify existing policy configuration file"
+    status: PASS
+    evidence: "configs/audit_policy_v1.json exists with policy_version v1.0.0-20260222"
+  - id: PC-T91-003
+    description: "Verify policy is already used in audit pipeline"
+    status: PASS
+    evidence: "scripts/run_skill_5layer_audit.py load_policy() and policy_version usage confirmed"
+  - id: PC-T91-004
+    description: "Check schema directory structure"
+    status: PASS
+    evidence: "schemas/ directory exists for schema files"
+  - id: PC-T91-005
+    description: "Verify skill_audit_report.schema.json references policy_version"
+    status: PASS
+    evidence: "policy_version is required field in AuditSummary"
+
+## ExecutionContract
+
+execution_contract:
+  contract_version: "v1"
+  intent_id: "T91-POLICY-VERSION-CONFIG"
+  ruleset_revision: "L4.5-20260222"
+  constitution_ref: "docs/EXECUTION_GUARD_B_EXECUTION_SKILL_v1.md"
+
+  inputs:
+    existing_policy: "configs/audit_policy_v1.json"
+    existing_schema: "schemas/skill_audit_report.schema.json"
+    audit_script: "scripts/skillforge_audit.py"
+
+  outputs:
+    policy_schema: "schemas/audit_policy.schema.json"
+    validation_tool: "scripts/validate_policy.py"
+    enhanced_audit_cli: "scripts/skillforge_audit.py (modified)"
+    enhanced_report_schema: "schemas/skill_audit_report.schema.json (modified)"
+
+  controls:
+    timeout_ms: 300000
+    file_policy: "MODIFY_ALLOWED"
+
+  side_effects:
+    - kind: "FILE"
+      details: "Create schemas/audit_policy.schema.json"
+    - kind: "FILE"
+      details: "Create scripts/validate_policy.py"
+    - kind: "FILE"
+      details: "Modify scripts/skillforge_audit.py to add policy_hash"
+    - kind: "FILE"
+      details: "Modify schemas/skill_audit_report.schema.json to require policy_hash"
+
+  roles:
+    execution:
+      responsibilities:
+        - "Create policy JSON schema for validation"
+        - "Create policy validation tool"
+        - "Add policy_hash to all audit reports"
+      allowed_actions:
+        - "Create new schema files"
+        - "Modify audit pipeline for traceability"
+        - "Create validation scripts"
+    review:
+      responsibilities:
+        - "Verify schema correctness"
+        - "Check policy_hash computation logic"
+      checks:
+        - "Schema validates against draft/2020-12"
+        - "policy_hash is consistent for same policy content"
+    compliance:
+      responsibilities:
+        - "Verify policy_version traceability"
+        - "Check all outputs include policy_version and policy_hash"
+      must_follow: "docs/EXECUTION_GUARD_B_EXECUTION_SKILL_v1.md"
+
+  acceptance_tests:
+    - id: AT-T91-001
+      assertion: "Policy schema file exists and is valid JSON"
+      evidence_required:
+        - "EV_KIND:FILE"
+    - id: AT-T91-002
+      assertion: "Policy validation tool runs successfully"
+      evidence_required:
+        - "EV_KIND:CLI_OUTPUT"
+    - id: AT-T91-003
+      assertion: "All audit reports include policy_version and policy_hash"
+      evidence_required:
+        - "EV_KIND:CODE_SNIPPET"
+    - id: AT-T91-004
+      assertion: "Schema requires policy_hash field"
+      evidence_required:
+        - "EV_KIND:FILE"
+
+  artifacts_expected:
+    - "POLICY_SCHEMA"
+    - "VALIDATION_TOOL"
+    - "MODIFIED_AUDIT_CLI"
+    - "MODIFIED_REPORT_SCHEMA"
+
+## RequiredChanges
+
+required_changes: []
+
+## Implementation Details
+
+implementation:
+  - id: IC-T91-001
+    description: "Create audit_policy.schema.json"
+    status: COMPLETED
+    details: |
+      Created comprehensive JSON schema for policy configuration:
+      - policy_version with format validation (v{major}.{minor}.{patch}-{date})
+      - L1-L5 layer configurations (cost, redundancy, safety, structure, evidence_ready)
+      - Thresholds and score_maps for each layer
+      - overall_weights with sum validation
+      - gate rules configuration
+      - metadata with change_log support
+    file: "schemas/audit_policy.schema.json"
+    lines_added: 180
+
+  - id: IC-T91-002
+    description: "Create validate_policy.py tool"
+    status: COMPLETED
+    details: |
+      Created policy validation tool that:
+      - Validates policy against schema (with or without jsonschema library)
+      - Computes SHA256 hash of policy content (excluding change_log)
+      - Reports validation errors and warnings
+      - Supports JSON output for CI integration
+    file: "scripts/validate_policy.py"
+    lines_added: 150
+
+  - id: IC-T91-003
+    description: "Add policy_hash to skillforge_audit.py"
+    status: COMPLETED
+    details: |
+      Enhanced audit CLI to include policy_hash:
+      - Added compute_policy_hash() function
+      - Updated input_descriptor to include policy_hash
+      - Updated summary to include policy_hash
+      - Updated run_meta.json output to include policy_hash
+      - Updated stdout output to display policy_hash
+    file: "scripts/skillforge_audit.py"
+    lines_added: 20
+    lines_modified: 10
+
+  - id: IC-T91-004
+    description: "Update skill_audit_report.schema.json to require policy_hash"
+    status: COMPLETED
+    details: |
+      Updated report schema to require policy_hash:
+      - Added policy_hash to required fields
+      - Added pattern validation for SHA256 format
+      - Added description for traceability purpose
+    file: "schemas/skill_audit_report.schema.json"
+    lines_modified: 5
+
+## Files Modified
+
+modified_files:
+  - path: schemas/audit_policy.schema.json
+    action: create
+    lines_added: 180
+    sha256: "sha256:5c5d607a0dbd63a50dea73ad534dfad18b78c8e74fe49876de26221df03aa287"
+    description: "Policy configuration JSON schema"
+  - path: scripts/validate_policy.py
+    action: create
+    lines_added: 150
+    sha256: "sha256:d3a0e891f2a083f1cbd1fd2cdecec664b47e9571fc60f4b30719a143a0ec52b2"
+    description: "Policy validation and hash computation tool"
+  - path: scripts/skillforge_audit.py
+    action: modify
+    lines_added: 20
+    lines_modified: 10
+    sha256: "sha256:14e72e6768d481330b17d12be93880b69de7faea8567302f6964c01dfc1f5f19"
+    description: "Add policy_hash support for traceability"
+  - path: schemas/skill_audit_report.schema.json
+    action: modify
+    lines_modified: 5
+    sha256: "sha256:10a48de7f73621aa49a8e9ce6632fff1189e9dff08a1ba2a3f08b4175c25e9a7"
+    description: "Require policy_hash field in AuditSummary"
+
+## Gate Self-Check
+
+gate_self_check:
+  - command: "python scripts/validate_policy.py --policy configs/audit_policy_v1.json --compute-hash"
+    result: "PASS - Policy valid, Hash: 5b9fd70c863196c9d5df30603d5b60b0959f99fcb292047aafca6fc6c7ea251d"
+  - command: "python scripts/skillforge_audit.py --help"
+    result: "PASS - Help text displayed correctly"
+  - command: "python -c \"import json; s=json.load(open('schemas/audit_policy.schema.json')); print('Schema valid')\""
+    result: "PASS - Schema is valid JSON"
+
+## Evidence References
+
+evidence_refs:
+  - id: EV-T91-001
+    kind: FILE
+    locator: "schemas/audit_policy.schema.json"
+    sha256: "sha256:5c5d607a0dbd63a50dea73ad534dfad18b78c8e74fe49876de26221df03aa287"
+    description: "Policy configuration JSON schema"
+    verified_at: "2026-02-24T19:45:00Z"
+  - id: EV-T91-002
+    kind: FILE
+    locator: "scripts/validate_policy.py"
+    sha256: "sha256:d3a0e891f2a083f1cbd1fd2cdecec664b47e9571fc60f4b30719a143a0ec52b2"
+    description: "Policy validation tool"
+    verified_at: "2026-02-24T19:45:00Z"
+  - id: EV-T91-003
+    kind: FILE
+    locator: "scripts/skillforge_audit.py"
+    sha256: "sha256:14e72e6768d481330b17d12be93880b69de7faea8567302f6964c01dfc1f5f19"
+    description: "Enhanced audit CLI with policy_hash"
+    verified_at: "2026-02-24T19:45:00Z"
+  - id: EV-T91-004
+    kind: FILE
+    locator: "schemas/skill_audit_report.schema.json"
+    sha256: "sha256:10a48de7f73621aa49a8e9ce6632fff1189e9dff08a1ba2a3f08b4175c25e9a7"
+    description: "Report schema with policy_hash requirement"
+    verified_at: "2026-02-24T19:45:00Z"
+  - id: EV-T91-005
+    kind: CLI_OUTPUT
+    locator: "stdout of validate_policy.py"
+    description: "Policy validation successful output"
+    verified_at: "2026-02-24T19:45:00Z"
+    output: |
+      Policy: configs\audit_policy_v1.json
+      Version: v1.0.0-20260222
+      Hash: 5b9fd70c863196c9d5df30603d5b60b0959f99fcb292047aafca6fc6c7ea251d
+      Valid: True
+
+## Policy Version Implementation Evidence
+
+policy_version_evidence:
+  - component: "configs/audit_policy_v1.json"
+    policy_version: "v1.0.0-20260222"
+    policy_hash: "sha256:5b9fd70c863196c9d5df30603d5b60b0959f99fcb292047aafca6fc6c7ea251d"
+    traceability: "All audit reports include policy_version and policy_hash"
+    verified_at: "2026-02-24T19:45:00Z"
+  - component: "schemas/audit_policy.schema.json"
+    sha256: "sha256:5c5d607a0dbd63a50dea73ad534dfad18b78c8e74fe49876de26221df03aa287"
+    purpose: "Schema validation for policy configuration"
+    features:
+      - "Version format validation"
+      - "L1-L5 layer thresholds and weights"
+      - "Gate rules configuration"
+      - "Metadata with change_log"
+    verified_at: "2026-02-24T19:45:00Z"
+  - component: "scripts/validate_policy.py"
+    sha256: "sha256:d3a0e891f2a083f1cbd1fd2cdecec664b47e9571fc60f4b30719a143a0ec52b2"
+    purpose: "Policy validation and hash computation"
+    features:
+      - "Schema validation"
+      - "SHA256 hash computation"
+      - "JSON output for CI integration"
+    verified_at: "2026-02-24T19:45:00Z"
+
+## Constitution Compliance
+
+constitution_refs:
+  - path: docs/EXECUTION_GUARD_A_PROPOSAL_SKILL_v1.md
+    sha256: "sha256:1ff28e16c05fa367218306599b2b76ca2349362c308d8073716d1fab093054e1"
+  - path: docs/EXECUTION_GUARD_B_EXECUTION_SKILL_v1.md
+    sha256: "sha256:16956775d1ba801da5aa3980ddd3b15e5be16e73df9792cf87cdfe64810d6fd2"
+
+compliance_checklist:
+  within_allowed_scope: true
+  no_prohibited_modifications: true
+  three_role_separation: true
+  evidence_requirements_met: true
+  no_side_effects_without_declaration: true
+  policy_version_traceable: true
+
+## Next Steps
+
+next_steps:
+  - T92: Evidence chain hard constraints (Antigravity-1)
+  - T93: Review verification T90-T92 (Antigravity-2)
+  - T94: Compliance attestation T90-T93 (Kior-C)

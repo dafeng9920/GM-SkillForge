@@ -1,0 +1,61 @@
+{
+  "metrics_id": "quant-trading-system-evaluation-metrics",
+  "version": "1.0.0",
+  "metric_groups": [
+    {
+      "group": "performance",
+      "metrics": [
+        { "name": "annualized_return", "target": ">= 0.12", "direction": "higher_better" },
+        { "name": "sharpe_ratio", "target": ">= 1.50", "direction": "higher_better" },
+        { "name": "sortino_ratio", "target": ">= 2.00", "direction": "higher_better" },
+        { "name": "calmar_ratio", "target": ">= 1.00", "direction": "higher_better" },
+        { "name": "information_ratio", "target": ">= 0.80", "direction": "higher_better" }
+      ]
+    },
+    {
+      "group": "risk",
+      "metrics": [
+        { "name": "max_drawdown", "target": "<= 0.15", "direction": "lower_better" },
+        { "name": "expected_shortfall_95", "target": "<= 0.03", "direction": "lower_better" },
+        { "name": "volatility_annualized", "target": "<= 0.20", "direction": "lower_better" },
+        { "name": "gross_leverage", "target": "<= 2.00", "direction": "lower_better" },
+        { "name": "turnover_daily", "target": "<= 0.35", "direction": "lower_better" }
+      ]
+    },
+    {
+      "group": "execution_quality",
+      "metrics": [
+        { "name": "fill_rate", "target": ">= 0.97", "direction": "higher_better" },
+        { "name": "slippage_bps", "target": "<= 8", "direction": "lower_better" },
+        { "name": "order_reject_rate", "target": "<= 0.01", "direction": "lower_better" },
+        { "name": "p95_execution_latency_ms", "target": "<= 900", "direction": "lower_better" }
+      ]
+    },
+    {
+      "group": "robustness",
+      "metrics": [
+        { "name": "walk_forward_pass_rate", "target": ">= 0.80", "direction": "higher_better" },
+        { "name": "regime_consistency_score", "target": ">= 0.70", "direction": "higher_better" },
+        { "name": "backtest_live_drift", "target": "<= 0.20", "direction": "lower_better" },
+        { "name": "data_quality_pass_rate", "target": ">= 0.995", "direction": "higher_better" }
+      ]
+    },
+    {
+      "group": "governance",
+      "metrics": [
+        { "name": "evidence_coverage", "target": "== 1.00", "direction": "higher_better" },
+        { "name": "traceability_completeness", "target": "== 1.00", "direction": "higher_better" },
+        { "name": "policy_violation_unblocked_count", "target": "== 0", "direction": "lower_better" }
+      ]
+    }
+  ],
+  "aggregation": {
+    "score_formula": "0.35*performance + 0.25*risk + 0.20*execution_quality + 0.10*robustness + 0.10*governance",
+    "pass_threshold": 0.80,
+    "hard_fail_rules": [
+      "max_drawdown > 0.20",
+      "policy_violation_unblocked_count > 0",
+      "evidence_coverage < 1.00"
+    ]
+  }
+}

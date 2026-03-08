@@ -1,0 +1,65 @@
+{
+    "monitoring_system": {
+        "version": "2026.1.1",
+        "description": "OpenClaw 舆情监控核心目标库 - 技能专区版",
+        "categories": {
+            "Tier_1_Foundational": {
+                "label": "硬核算法与行业领袖",
+                "strategy": "real_time",
+                "targets": [
+                    {
+                        "name": "Andrej Karpathy",
+                        "x": "@karpathy",
+                        "yt": "Andrej Karpathy",
+                        "focus": "LLM底层/技术教育"
+                    },
+                    {
+                        "name": "Sam Altman",
+                        "x": "@sama",
+                        "focus": "OpenAI 战略/产品风向"
+                    }
+                ]
+            },
+            "Tier_5_Skill_Gaps": {
+                "label": "Agent 技能与工具链缺口",
+                "strategy": "real_time",
+                "targets": [
+                    {
+                        "name": "Antigravity Devs",
+                        "forum": "google.dev",
+                        "focus": "UES (Env Sync) 需求"
+                    },
+                    {
+                        "name": "MCP Ecosystem",
+                        "reddit": "r/mcp",
+                        "focus": "通用 pSEO 矩阵服务器"
+                    },
+                    {
+                        "name": "Cursor/Windsurf",
+                        "forum": "cursor.com",
+                        "focus": "长效项目记忆 (Swap File)"
+                    }
+                ]
+            }
+        }
+    },
+    "intelligence_findings": {
+        "latest_scan": "2026-02-24",
+        "top_opportunities": [
+            {
+                "id": "UES-001",
+                "title": "Unified Environment Sync Skill",
+                "niche": "De-sync resolution for Agent .venv",
+                "roi_score": 9.5,
+                "strategy": "Automatic virtualenv provisioning"
+            },
+            {
+                "id": "PSEO-002",
+                "title": "pSEO Universal Tool Matrix",
+                "niche": "Programmatic Tool Generation",
+                "roi_score": 9.0,
+                "strategy": "1-to-100 conversion page generator"
+            }
+        ]
+    }
+}

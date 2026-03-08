@@ -1,0 +1,249 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gm-skillforge.local/schemas/audit_policy.schema.json",
+  "title": "AuditPolicy",
+  "description": "5-Layer Audit Policy Schema - L1-L5 规则、阈值、权重配置化",
+  "type": "object",
+  "required": [
+    "policy_version",
+    "policy_name",
+    "description",
+    "token_estimator",
+    "cost",
+    "redundancy",
+    "safety",
+    "structure",
+    "evidence_ready",
+    "levels",
+    "overall_weights",
+    "gate",
+    "metadata"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "policy_version": {
+      "type": "string",
+      "pattern": "^v\\d+\\.\\d+\\.\\d+(-[0-9]{8})?$",
+      "description": "策略版本号，格式 v{major}.{minor}.{patch}(-{date})"
+    },
+    "policy_name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "策略名称"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "description": "策略描述"
+    },
+    "token_estimator": {
+      "type": "object",
+      "required": ["chars_per_token"],
+      "additionalProperties": false,
+      "properties": {
+        "chars_per_token": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 10,
+          "description": "每 Token 对应的字符数估算"
+        }
+      }
+    },
+    "cost": {
+      "type": "object",
+      "required": ["thresholds", "score_map"],
+      "additionalProperties": false,
+      "properties": {
+        "thresholds": {
+          "type": "object",
+          "required": ["max_pass", "max_warn", "max_fail_soft"],
+          "additionalProperties": false,
+          "properties": {
+            "max_pass": { "type": "integer", "minimum": 0 },
+            "max_warn": { "type": "integer", "minimum": 0 },
+            "max_fail_soft": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "score_map": {
+          "type": "object",
+          "required": ["pass", "warn", "fail_soft", "fail_hard"],
+          "additionalProperties": false,
+          "properties": {
+            "pass": { "type": "integer", "minimum": 0, "maximum": 100 },
+            "warn": { "type": "integer", "minimum": 0, "maximum": 100 },
+            "fail_soft": { "type": "integer", "minimum": 0, "maximum": 100 },
+            "fail_hard": { "type": "integer", "minimum": 0, "maximum": 100 }
+          }
+        }
+      }
+    },
+    "redundancy": {
+      "type": "object",
+      "required": ["thresholds", "score_map"],
+      "additionalProperties": false,
+      "properties": {
+        "thresholds": {
+          "type": "object",
+          "required": ["max_pass", "max_warn", "max_fail_soft"],
+          "additionalProperties": false,
+          "properties": {
+            "max_pass": { "type": "number", "minimum": 0, "maximum": 1 },
+            "max_warn": { "type": "number", "minimum": 0, "maximum": 1 },
+            "max_fail_soft": { "type": "number", "minimum": 0, "maximum": 1 }
+          }
+        },
+        "score_map": {
+          "type": "object",
+          "required": ["pass", "warn", "fail_soft", "fail_hard"],
+          "additionalProperties": false,
+          "properties": {
+            "pass": { "type": "integer", "minimum": 0, "maximum": 100 },
+            "warn": { "type": "integer", "minimum": 0, "maximum": 100 },
+            "fail_soft": { "type": "integer", "minimum": 0, "maximum": 100 },
+            "fail_hard": { "type": "integer", "minimum": 0, "maximum": 100 }
+          }
+        }
+      }
+    },
+    "safety": {
+      "type": "object",
+      "required": ["disclaimer_hints", "review_hints", "sensitive_keywords", "sensitive_hits_high", "score_map"],
+      "additionalProperties": false,
+      "properties": {
+        "disclaimer_hints": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "review_hints": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "sensitive_keywords": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "sensitive_hits_high": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "score_map": {
+          "type": "object",
+          "required": ["high_risk_without_disclaimer", "full", "disclaimer_only", "review_only", "none"],
+          "additionalProperties": false,
+          "properties": {
+            "high_risk_without_disclaimer": { "type": "integer", "minimum": 0, "maximum": 100 },
+            "full": { "type": "integer", "minimum": 0, "maximum": 100 },
+            "disclaimer_only": { "type": "integer", "minimum": 0, "maximum": 100 },
+            "review_only": { "type": "integer", "minimum": 0, "maximum": 100 },
+            "none": { "type": "integer", "minimum": 0, "maximum": 100 }
+          }
+        }
+      }
+    },
+    "structure": {
+      "type": "object",
+      "required": ["heading_depth", "weights"],
+      "additionalProperties": false,
+      "properties": {
+        "heading_depth": {
+          "type": "object",
+          "required": ["pass", "warn", "min"],
+          "additionalProperties": false,
+          "properties": {
+            "pass": { "type": "integer", "minimum": 1 },
+            "warn": { "type": "integer", "minimum": 1 },
+            "min": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "weights": {
+          "type": "object",
+          "required": ["required_fields", "depth", "h1"],
+          "additionalProperties": false,
+          "properties": {
+            "required_fields": { "type": "number", "minimum": 0, "maximum": 1 },
+            "depth": { "type": "number", "minimum": 0, "maximum": 1 },
+            "h1": { "type": "number", "minimum": 0, "maximum": 1 }
+          }
+        }
+      }
+    },
+    "evidence_ready": {
+      "type": "object",
+      "required": ["min_checklist", "min_numbered_steps", "min_tables", "base_score", "points_per_signal", "max_broken_link_penalty", "broken_link_penalty_per_item", "min_score", "max_score"],
+      "additionalProperties": false,
+      "properties": {
+        "min_checklist": { "type": "integer", "minimum": 0 },
+        "min_numbered_steps": { "type": "integer", "minimum": 0 },
+        "min_tables": { "type": "integer", "minimum": 0 },
+        "base_score": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "points_per_signal": { "type": "integer", "minimum": 0 },
+        "max_broken_link_penalty": { "type": "integer", "minimum": 0 },
+        "broken_link_penalty_per_item": { "type": "integer", "minimum": 0 },
+        "min_score": { "type": "integer", "minimum": 0 },
+        "max_score": { "type": "integer", "minimum": 0, "maximum": 100 }
+      }
+    },
+    "levels": {
+      "type": "object",
+      "required": ["pass_min", "warn_min"],
+      "additionalProperties": false,
+      "properties": {
+        "pass_min": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "warn_min": { "type": "integer", "minimum": 0, "maximum": 100 }
+      }
+    },
+    "overall_weights": {
+      "type": "object",
+      "required": ["L1_cost", "L2_redundancy", "L3_safety", "L4_structure", "L5_evidence_ready"],
+      "additionalProperties": false,
+      "properties": {
+        "L1_cost": { "type": "number", "minimum": 0, "maximum": 1 },
+        "L2_redundancy": { "type": "number", "minimum": 0, "maximum": 1 },
+        "L3_safety": { "type": "number", "minimum": 0, "maximum": 1 },
+        "L4_structure": { "type": "number", "minimum": 0, "maximum": 1 },
+        "L5_evidence_ready": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "gate": {
+      "type": "object",
+      "required": ["fail_if_fail_count_gte", "warn_if_fail_count_gte", "warn_if_warn_count_gte"],
+      "additionalProperties": false,
+      "properties": {
+        "fail_if_fail_count_gte": { "type": "integer", "minimum": 1 },
+        "warn_if_fail_count_gte": { "type": "integer", "minimum": 0 },
+        "warn_if_warn_count_gte": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["created_at", "author", "change_log"],
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "format": "date"
+        },
+        "author": {
+          "type": "string",
+          "minLength": 1
+        },
+        "change_log": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["version", "date", "changes"],
+            "additionalProperties": false,
+            "properties": {
+              "version": { "type": "string" },
+              "date": { "type": "string", "format": "date" },
+              "changes": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

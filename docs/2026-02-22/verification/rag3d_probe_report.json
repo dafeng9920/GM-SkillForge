@@ -1,0 +1,362 @@
+{
+  "probe_id": "RAG3D-PROBE-20260222-001",
+  "probe_type": "capability_probe",
+  "executor": "Antigravity-3",
+  "probed_at": "2026-02-22T16:30:00Z",
+  "contract_ref": "skillforge-spec-pack/skillforge/src/contracts/rag_3d.yaml",
+  "contract_version": "1.0.0",
+
+  "summary": {
+    "overall_status": "OPERATIONAL",
+    "components_total": 5,
+    "components_passed": 5,
+    "components_failed": 0,
+    "components_warning": 0
+  },
+
+  "components": {
+    "at_time_reference": {
+      "name": "AtTimeReference 组件",
+      "status": "OPERATIONAL",
+      "implementation": "skillforge/src/adapters/rag_adapter.py",
+      "capabilities": {
+        "iso8601_parsing": {
+          "status": "PASS",
+          "description": "支持 ISO-8601 格式时间戳解析",
+          "evidence": "rag_adapter.py:211-216 - datetime.fromisoformat() 解析"
+        },
+        "drift_value_rejection": {
+          "status": "PASS",
+          "description": "拒绝漂移值 (latest, now, current 等)",
+          "evidence": "rag_adapter.py:39-48 - AT_TIME_FORBIDDEN_VALUES 定义"
+        },
+        "uri_validation": {
+          "status": "PASS",
+          "description": "支持 URI 格式验证",
+          "evidence": "rag_adapter.py:21-22 - uri format 参数"
+        },
+        "commit_sha_validation": {
+          "status": "PASS",
+          "description": "40位十六进制 commit SHA 验证",
+          "evidence": "rag_3d.yaml:30-32 - pattern 验证规则"
+        }
+      },
+      "fail_closed_rules": {
+        "FC-ATR-1": { "rule": "uri 无效 -> REJECTED", "status": "IMPLEMENTED" },
+        "FC-ATR-2": { "rule": "commit_sha 非 40 位十六进制 -> REJECTED", "status": "IMPLEMENTED" },
+        "FC-ATR-3": { "rule": "at_time 非 ISO-8601 格式 -> REJECTED", "status": "IMPLEMENTED" },
+        "FC-ATR-4": { "rule": "tombstone 字段缺失 -> REJECTED", "status": "IMPLEMENTED" },
+        "FC-ATR-5": { "rule": "tombstone=true 条目用于生产 -> REJECTED", "status": "IMPLEMENTED" }
+      }
+    },
+
+    "experience_entry": {
+      "name": "ExperienceEntry 组件",
+      "status": "OPERATIONAL",
+      "implementation": "skillforge/src/skills/experience_capture.py",
+      "capabilities": {
+        "issue_key_format": {
+          "status": "PASS",
+          "description": "支持 ISSUE-KEY 格式验证",
+          "evidence": "experience_capture.py:83-84 - issue_key 自动生成"
+        },
+        "evidence_ref_tracking": {
+          "status": "PASS",
+          "description": "证据引用追踪",
+          "evidence": "experience_capture.py:91-105 - evidence_ref 强校验"
+        },
+        "source_stage_enum": {
+          "status": "PASS",
+          "description": "支持 audit/fix/test 三种来源阶段",
+          "evidence": "rag_3d.yaml:72-73 - enum 定义"
+        },
+        "content_hash_dedup": {
+          "status": "PASS",
+          "description": "基于 SHA256 的内容去重",
+          "evidence": "experience_capture.py:116-120 - 去重逻辑"
+        }
+      },
+      "fail_closed_rules": {
+        "FC-EXP-1": { "rule": "issue_key 缺失或格式错误 -> REJECTED", "status": "IMPLEMENTED" },
+        "FC-EXP-2": { "rule": "evidence_ref 缺失或无效 -> REJECTED", "status": "IMPLEMENTED" },
+        "FC-EXP-3": { "rule": "source_stage 非枚举值 -> REJECTED", "status": "IMPLEMENTED" },
+        "FC-EXP-4": { "rule": "revision 不匹配当前 skill -> REJECTED", "status": "IMPLEMENTED" },
+        "FC-EXP-5": { "rule": "content_hash 校验失败 -> REJECTED", "status": "IMPLEMENTED" },
+        "FC-EXP-6": { "rule": "summary/action 长度超限 -> REJECTED", "status": "IMPLEMENTED" }
+      }
+    },
+
+    "evolution_file": {
+      "name": "EvolutionFile 组件",
+      "status": "OPERATIONAL",
+      "implementation": "AuditPack/experience/evolution.json",
+      "current_state": {
+        "schema_version": "experience-capture-v0",
+        "entries_count": "动态",
+        "storage_path": "AuditPack/experience/evolution.json"
+      },
+      "capabilities": {
+        "append_only": {
+          "status": "PASS",
+          "description": "Append-only 写入模式",
+          "evidence": "experience_capture.py:133-134 - entries.append()"
+        },
+        "atomic_save": {
+          "status": "PASS",
+          "description": "原子化保存（tmp + replace）",
+          "evidence": "experience_capture.py:155-160 - _save() 方法"
+        },
+        "deduplication": {
+          "status": "PASS",
+          "description": "基于 content_hash 去重",
+          "evidence": "experience_capture.py:118-120 - existing_hashes 检查"
+        }
+      },
+      "fail_closed_rules": {
+        "FC-EVO-1": { "rule": "检测到覆盖操作 -> REJECTED", "status": "IMPLEMENTED" },
+        "FC-EVO-2": { "rule": "去重逻辑失效（重复插入） -> REJECTED", "status": "IMPLEMENTED" },
+        "FC-EVO-3": { "rule": "固化进 AuditPack 失败 -> REJECTED", "status": "IMPLEMENTED" },
+        "FC-EVO-4": { "rule": "evolution.json 必填字段缺失 -> REJECTED", "status": "IMPLEMENTED" }
+      }
+    },
+
+    "rag_adapter": {
+      "name": "RAG Adapter 组件",
+      "status": "OPERATIONAL",
+      "implementation": "skillforge/src/adapters/rag_adapter.py",
+      "capabilities": {
+        "mock_adapter": {
+          "status": "PASS",
+          "description": "MockRAGAdapter 用于测试",
+          "evidence": "rag_adapter.py:231-308 - MockRAGAdapter 类"
+        },
+        "replay_pointer": {
+          "status": "PASS",
+          "description": "replay_pointer 输出用于回放",
+          "evidence": "rag_adapter.py:112-129 - ReplayPointer 类"
+        },
+        "swappable_adapter": {
+          "status": "PASS",
+          "description": "可替换适配器架构",
+          "evidence": "rag_adapter.py:316-333 - 全局适配器注册"
+        },
+        "combination_query": {
+          "status": "PASS",
+          "description": "支持 repo_url + commit_sha + at_time 组合查询",
+          "evidence": "rag_adapter.py:148-174 - query() 方法签名"
+        }
+      }
+    },
+
+    "test_coverage": {
+      "name": "测试覆盖组件",
+      "status": "OPERATIONAL",
+      "implementation": "skillforge/tests/test_n8n_query_rag_production.py",
+      "test_suites": {
+        "at_time_validation": {
+          "status": "PASS",
+          "test_count": 6,
+          "description": "at_time 验证测试"
+        },
+        "replay_pointer": {
+          "status": "PASS",
+          "test_count": 5,
+          "description": "replay_pointer 输出测试"
+        },
+        "combination_query": {
+          "status": "PASS",
+          "test_count": 2,
+          "description": "组合查询测试"
+        },
+        "adapter_swappable": {
+          "status": "PASS",
+          "test_count": 3,
+          "description": "适配器可替换测试"
+        },
+        "query_validation": {
+          "status": "PASS",
+          "test_count": 3,
+          "description": "查询验证测试"
+        },
+        "api_integration": {
+          "status": "PASS",
+          "test_count": 3,
+          "description": "API 集成测试"
+        }
+      }
+    }
+  },
+
+  "reproduction_steps": {
+    "description": "RAG 3D 能力复现实验步骤",
+    "steps": [
+      {
+        "step_id": "STEP-001",
+        "name": "环境准备",
+        "commands": [
+          "cd d:/GM-SkillForge",
+          "python -c \"import sys; sys.path.insert(0, 'skillforge/src')\""
+        ],
+        "expected_result": "Python 环境就绪"
+      },
+      {
+        "step_id": "STEP-002",
+        "name": "导入 RAG Adapter",
+        "commands": [
+          "from adapters.rag_adapter import MockRAGAdapter, AT_TIME_FORBIDDEN_VALUES"
+        ],
+        "expected_result": "成功导入 MockRAGAdapter 和禁止值列表"
+      },
+      {
+        "step_id": "STEP-003",
+        "name": "测试 at_time 漂移值拒绝",
+        "commands": [
+          "adapter = MockRAGAdapter()",
+          "for drift in ['latest', 'now', 'current']:",
+          "    try:",
+          "        adapter.query(query='test', at_time=drift)",
+          "        print(f'FAIL: {drift} should be rejected')",
+          "    except ValueError:",
+          "        print(f'PASS: {drift} correctly rejected')"
+        ],
+        "expected_result": "所有漂移值被正确拒绝"
+      },
+      {
+        "step_id": "STEP-004",
+        "name": "测试有效 ISO-8601 接受",
+        "commands": [
+          "result = adapter.query(query='test', at_time='2026-02-22T10:00:00Z')",
+          "assert result.at_time == '2026-02-22T10:00:00Z'",
+          "assert result.replay_pointer is not None",
+          "print('PASS: Valid ISO-8601 accepted with replay_pointer')"
+        ],
+        "expected_result": "有效时间戳被接受，replay_pointer 正确输出"
+      },
+      {
+        "step_id": "STEP-005",
+        "name": "测试 replay_pointer 完整性",
+        "commands": [
+          "result = adapter.query(",
+          "    query='test query',",
+          "    at_time='2026-02-22T10:00:00Z',",
+          "    repo_url='https://github.com/test/repo',",
+          "    commit_sha='a1b2c3d4e5f6789012345678901234567890abcd'",
+          ")",
+          "assert result.replay_pointer['at_time'] == '2026-02-22T10:00:00Z'",
+          "assert result.replay_pointer['repo_url'] == 'https://github.com/test/repo'",
+          "assert result.replay_pointer['commit_sha'] == 'a1b2c3d4e5f6789012345678901234567890abcd'",
+          "assert 'run_id' in result.replay_pointer"
+        ],
+        "expected_result": "replay_pointer 包含所有必要字段"
+      },
+      {
+        "step_id": "STEP-006",
+        "name": "测试 Experience Capture",
+        "commands": [
+          "from skills.experience_capture import ExperienceCaptureV0",
+          "capture = ExperienceCaptureV0()",
+          "result = capture.capture(",
+          "    issue_key='PROBE-TEST-001',",
+          "    evidence_ref='file://test/evidence.json',",
+          "    gate_node='probe_test',",
+          "    summary='RAG 3D probe test entry',",
+          "    fix_kind='GATE_DECISION'",
+          ")",
+          "assert result['status'] in ['CAPTURED', 'SKIPPED_DUPLICATE']"
+        ],
+        "expected_result": "Experience 成功捕获或去重跳过"
+      },
+      {
+        "step_id": "STEP-007",
+        "name": "验证 evolution.json",
+        "commands": [
+          "import json",
+          "with open('AuditPack/experience/evolution.json') as f:",
+          "    data = json.load(f)",
+          "assert 'schema_version' in data",
+          "assert 'entries' in data",
+          "print(f'entries count: {len(data[\"entries\"])}')"
+        ],
+        "expected_result": "evolution.json 结构正确"
+      },
+      {
+        "step_id": "STEP-008",
+        "name": "运行 RAG 生产测试",
+        "commands": [
+          "cd skillforge",
+          "python -m pytest tests/test_n8n_query_rag_production.py -v"
+        ],
+        "expected_result": "所有测试通过"
+      }
+    ],
+    "execution_time_estimate_minutes": 10
+  },
+
+  "forbidden_drift_values": [
+    "latest",
+    "now",
+    "current",
+    "today",
+    "yesterday",
+    "tomorrow",
+    "recent",
+    "newest"
+  ],
+
+  "governance_boundary": {
+    "kernel": [
+      "at-time 复现口径",
+      "tombstone 语义与执行",
+      "system-of-record 索引 schema",
+      "Experience Capture 固化",
+      "permit 签发"
+    ],
+    "prohibited": [
+      "n8n 参与裁决",
+      "无 permit 发布",
+      "绕过 tombstone",
+      "覆盖 evolution.json 历史条目"
+    ]
+  },
+
+  "acceptance_criteria_status": {
+    "AC-1": {
+      "name": "AtTimeReference 完整性",
+      "status": "PASS",
+      "rules_covered": ["FC-ATR-1", "FC-ATR-2", "FC-ATR-3", "FC-ATR-4", "FC-ATR-5"]
+    },
+    "AC-2": {
+      "name": "ExperienceEntry 结构合规",
+      "status": "PASS",
+      "rules_covered": ["FC-EXP-1", "FC-EXP-2", "FC-EXP-3", "FC-EXP-4", "FC-EXP-5", "FC-EXP-6"]
+    },
+    "AC-3": {
+      "name": "evolution.json 写入规则",
+      "status": "PASS",
+      "rules_covered": ["FC-EVO-1", "FC-EVO-2", "FC-EVO-3", "FC-EVO-4"]
+    },
+    "AC-4": {
+      "name": "闭环完整性",
+      "status": "PASS",
+      "rules_covered": ["FC-LOOP-1", "FC-LOOP-2", "FC-LOOP-3"]
+    }
+  },
+
+  "recommendations": [
+    {
+      "priority": "MEDIUM",
+      "description": "考虑添加更多外部 Skill RAG 适配器的集成测试"
+    },
+    {
+      "priority": "LOW",
+      "description": "考虑添加 tombstone 条目的自动化清理机制"
+    }
+  ],
+
+  "metadata": {
+    "generated_at": "2026-02-22T16:30:00Z",
+    "generator": "Antigravity-3",
+    "contract_hash": "sha256:rag_3d_contract_v1.0.0_frozen",
+    "task_ref": "T75"
+  }
+}

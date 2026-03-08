@@ -1,0 +1,47 @@
+{
+  "skill_id": "L4-SKILL-06.1",
+  "skill_name": "p2-final-gate-aggregate-skill",
+  "version": "v1.1.0",
+  "compliance_officer": "Kior-C",
+  "decision": "PASS",
+  "reviewed_at": "2026-02-22T13:20:14Z",
+  "hard_gate_mode": true,
+  "reasons": [
+    "聚合范围: T70-T79 (10 个任务)",
+    "Triad 完整性: 10/10",
+    "Gate Decision 一致性: PASS",
+    "Compliance 一致性 (硬规则): PASS",
+    "告警数量: 0",
+    "三权门禁硬规则聚合逻辑符合 EXECUTION_GUARD 规范"
+  ],
+  "evidence_refs": [
+    {
+      "id": "EV-L4-SKILL-06.1-001",
+      "kind": "AGGREGATION",
+      "locator": "docs/2026-02-22/verification/L4-SKILL-06.1_gate_decision.json"
+    },
+    {
+      "id": "EV-L4-SKILL-06.1-002",
+      "kind": "SCRIPT",
+      "locator": "skills/p2-final-gate-aggregate-skill/aggregate_final_gate.py"
+    }
+  ],
+  "contract_hash": "sha256:L4-SKILL-06.1_p2_aggregate_hard_gate_20260222",
+  "compliance_checklist": {
+    "triad_files_complete": true,
+    "all_gate_decisions_allow": true,
+    "all_compliance_decisions_pass": true,
+    "hard_gate_logic_valid": true,
+    "no_missing_files": true,
+    "no_missing_decision_fields": true,
+    "signatures_valid": true
+  },
+  "alerts_summary": {
+    "total": 0,
+    "by_code": {}
+  },
+  "constitution_refs": [
+    "docs/EXECUTION_GUARD_A_PROPOSAL_SKILL_v1.md",
+    "docs/EXECUTION_GUARD_B_EXECUTION_SKILL_v1.md"
+  ]
+}

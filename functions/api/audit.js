@@ -3,7 +3,7 @@ export async function onRequestPost(context) {
 
     try {
         const body = await request.json();
-        const { domain, email, framework } = body;
+        const { domain, email } = body;
 
         if (!domain || !email) {
             return new Response(JSON.stringify({ error: "Missing domain or email" }), {
@@ -12,60 +12,37 @@ export async function onRequestPost(context) {
             });
         }
 
-        const timestamp = new Date().toISOString();
-        const leadId = `lead_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
+        // Logic: Capture the Lead
+        // In a production environment, you would save this to:
+        // 1. Cloudflare D1 (SQL Database)
+        // 2. Cloudflare KV (Key-Value Store)
+        // 3. Discord Webhook (Real-time notification)
 
-        // --- 核心逻辑：持久化存储到 Cloudflare KV ---
-        // 需要在 Cloudflare 控制台绑定名为 LEADS_KV 的命名空间
-        if (env.LEADS_KV) {
-            const leadData = {
-                id: leadId,
-                domain,
-                email,
-                framework: framework || "Direct",
-                timestamp,
-                status: "pending"
-            };
-            await env.LEADS_KV.put(leadId, JSON.stringify(leadData));
-            console.log(`Lead stored in KV: ${leadId}`);
-        } else {
-            // 调试模式：如果没找到绑定，直接抛错，方便用户在浏览器看到
-            const availableKeys = Object.keys(env).join(", ");
-            throw new Error(`Critical Error: LEADS_KV binding is missing. Available bindings: [${availableKeys}]. Please check Settings -> Bindings -> KV.`);
-        }
+        console.log(`Lead Captured: Domain=${domain}, Email=${email}`);
 
-        // --- 实时通知：Discord Webhook (可选) ---
+        // OPTIONAL: Send to Discord (uncomment and add DISCORD_WEBHOOK_URL to Cloudflare Env)
+        /*
         if (env.DISCORD_WEBHOOK_URL) {
-            try {
-                await fetch(env.DISCORD_WEBHOOK_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        embeds: [{
-                            title: "🚀 New SEO Audit Lead!",
-                            color: 0x00ffcc,
-                            fields: [
-                                { name: "Domain", value: domain, inline: true },
-                                { name: "Email", value: email, inline: true },
-                                { name: "Framework", value: framework || "Matrix", inline: false }
-                            ],
-                            timestamp: timestamp
-                        }]
-                    })
-                });
-            } catch (e) { console.error("Discord notification failed", e); }
+            await fetch(env.DISCORD_WEBHOOK_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    content: `🚀 **New SEO Audit Lead Captured!**\n**Domain**: ${domain}\n**Email**: ${email}\n**Framework**: ${request.headers.get("referer") || "Direct"}`
+                })
+            });
         }
+        */
 
         return new Response(JSON.stringify({
             success: true,
-            message: "Audit task queued successfully.",
-            leadId: leadId
+            message: "Audit started. You will receive the report shortly.",
+            auditId: `audit-${Math.random().toString(36).substr(2, 9)}`
         }), {
             headers: { "Content-Type": "application/json" }
         });
 
     } catch (err) {
-        return new Response(JSON.stringify({ error: "Invalid request payload", details: err.message }), {
+        return new Response(JSON.stringify({ error: "Invalid request payload" }), {
             status: 400,
             headers: { "Content-Type": "application/json" }
         });

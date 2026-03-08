@@ -1,0 +1,116 @@
+{
+  "evidence_id": "T35-ER-20260220-001",
+  "task_id": "T35",
+  "executor": "vs--cc3",
+  "job_id": "L45-FE-V10-20260220-007",
+  "created_at": "2026-02-20T14:35:00Z",
+
+  "evidence_list": [
+    {
+      "id": "T35-EV-001",
+      "type": "source_code",
+      "description": "路由配置文件",
+      "path": "ui/app/src/app/router.tsx",
+      "content_summary": "v1.0 五页路由配置，使用 react-router-dom createBrowserRouter",
+      "verification": {
+        "routes_defined": [
+          "/execute/run-intent",
+          "/execute/import-skill",
+          "/audit/packs",
+          "/audit/rag-query",
+          "/system/health"
+        ],
+        "default_redirect": "/execute/run-intent"
+      }
+    },
+    {
+      "id": "T35-EV-002",
+      "type": "source_code",
+      "description": "导航框架组件",
+      "path": "ui/app/src/app/layout/AppShell.tsx",
+      "content_summary": "统一导航框架，包含一级导航 3 组和全局搜索",
+      "verification": {
+        "nav_groups": ["执行中心", "审计与查询", "系统运维"],
+        "global_search": true,
+        "no_n8n_navigation": true
+      }
+    },
+    {
+      "id": "T35-EV-003",
+      "type": "source_code",
+      "description": "入口文件更新",
+      "path": "ui/app/src/main.tsx",
+      "content_summary": "使用 RouterProvider 替代原有 App 组件",
+      "verification": {
+        "uses_router_provider": true,
+        "redux_integration": true
+      }
+    },
+    {
+      "id": "T35-EV-004",
+      "type": "config",
+      "description": "依赖更新",
+      "path": "ui/app/package.json",
+      "content_summary": "添加 react-router-dom 依赖",
+      "verification": {
+        "new_dependency": "react-router-dom@^6.22.0"
+      }
+    },
+    {
+      "id": "T35-EV-005",
+      "type": "documentation",
+      "description": "IA 路由收敛报告",
+      "path": "docs/2026-02-20/L45_FE_T35_IA_ROUTING_REPORT_v1.md",
+      "content_summary": "完整的 IA 与路由收敛报告，包含路由结构、约束验证、页面组件清单",
+      "verification": {
+        "report_complete": true,
+        "constraints_verified": true
+      }
+    },
+    {
+      "id": "T35-EV-006",
+      "type": "source_code",
+      "description": "执行意图页面",
+      "path": "ui/app/src/pages/execute/RunIntentPage.tsx",
+      "content_summary": "执行意图页面，先结论后细节设计",
+      "verification": {
+        "api_endpoint": "POST /api/v1/n8n/run_intent",
+        "gate_decision_display": true,
+        "evidence_ref_copyable": true
+      }
+    },
+    {
+      "id": "T35-EV-007",
+      "type": "source_code",
+      "description": "技能导入页面",
+      "path": "ui/app/src/pages/execute/ImportSkillPage.tsx",
+      "content_summary": "六步流水线可视化页面",
+      "verification": {
+        "api_endpoint": "POST /api/v1/n8n/import_external_skill",
+        "pipeline_steps": 6,
+        "audit_layers": 5
+      }
+    },
+    {
+      "id": "T35-EV-008",
+      "type": "source_code",
+      "description": "审计包页面",
+      "path": "ui/app/src/pages/audit/AuditPacksPage.tsx",
+      "content_summary": "AuditPack 浏览页面",
+      "verification": {
+        "api_endpoint": "POST /api/v1/n8n/fetch_pack"
+      }
+    }
+  ],
+
+  "build_evidence": {
+    "command": "cd ui/app && npm run build",
+    "status": "PENDING_NODE_ENV",
+    "note": "由于当前环境 node 路径问题，build 需要在正确的 Node.js 环境中执行"
+  },
+
+  "compliance_evidence_refs": [
+    "T35-execution_contract.json",
+    "T35-compliance_attestation.json"
+  ]
+}

@@ -1,0 +1,521 @@
+{
+  "name": "L4.5 Day-2 MinCap E2E Orchestration Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "webhook/skillforge/mincap/run",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "trigger-webhook-mincap",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "skillforge-mincap-trigger",
+      "notes": "接收 n8n 最小能力编排触发请求"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.repo_url }}",
+              "operation": "isNotEmpty"
+            },
+            {
+              "value1": "={{ $json.commit_sha }}",
+              "operation": "isNotEmpty"
+            },
+            {
+              "value1": "={{ $json.at_time }}",
+              "operation": "isNotEmpty"
+            },
+            {
+              "value1": "={{ $json.requester_id }}",
+              "operation": "isNotEmpty"
+            },
+            {
+              "value1": "={{ $json.intent_id }}",
+              "operation": "isNotEmpty"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "validate-mincap-input",
+      "name": "Validate Required Fields",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [450, 300],
+      "notes": "校验必填字段：repo_url, commit_sha, at_time, requester_id, intent_id"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 检查禁止字段（越权防护）\nconst input = $input.item.json;\nconst forbiddenFields = ['gate_decision', 'release_allowed', 'evidence_ref', 'permit_id', 'run_id'];\nconst detected = forbiddenFields.filter(f => input.hasOwnProperty(f));\n\nif (detected.length > 0) {\n  return {\n    json: {\n      forbidden_detected: true,\n      forbidden_fields: detected,\n      error_code: 'N8N-FORBIDDEN-FIELD',\n      error_message: `Forbidden fields detected: ${detected.join(', ')}. n8n cannot inject these fields.`\n    }\n  };\n}\n\n// 检查 at_time 是否为漂移值\nconst driftValues = ['latest', 'now', 'current', 'today', 'yesterday', 'tomorrow', 'recent', 'newest'];\nif (driftValues.includes(input.at_time?.toLowerCase())) {\n  return {\n    json: {\n      forbidden_detected: true,\n      error_code: 'N8N-AT-TIME-FIXED-REQUIRED',\n      error_message: `at_time must be a fixed ISO-8601 timestamp. '${input.at_time}' is not allowed.`\n    }\n  };\n}\n\nreturn {\n  json: {\n    forbidden_detected: false,\n    input: input\n  }\n};"
+      },
+      "id": "check-forbidden-fields",
+      "name": "Check Forbidden Fields",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [650, 200],
+      "notes": "检测越权字段和 at_time 漂移值"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.forbidden_detected }}",
+              "value2": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "route-forbidden-check",
+      "name": "Route Forbidden Check",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [850, 200],
+      "notes": "越权字段检测路由"
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SKILLFORGE_API_BASE }}/api/v1/n8n/run_intent",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "httpMethod": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"repo_url\": \"{{ $(\"Check Forbidden Fields\").item.json.input.repo_url }}\",\n  \"commit_sha\": \"{{ $(\"Check Forbidden Fields\").item.json.input.commit_sha }}\",\n  \"at_time\": \"{{ $(\"Check Forbidden Fields\").item.json.input.at_time }}\",\n  \"requester_id\": \"{{ $(\"Check Forbidden Fields\").item.json.input.requester_id }}\",\n  \"intent_id\": \"{{ $(\"Check Forbidden Fields\").item.json.input.intent_id }}\",\n  \"n8n_execution_id\": \"{{ $executionId }}\"\n}",
+        "options": {
+          "timeout": 30000,
+          "retry": {
+            "enabled": true,
+            "maxRetries": 3,
+            "retryInterval": 5000
+          }
+        }
+      },
+      "id": "call-run-intent-mincap",
+      "name": "Call run_intent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1050, 100],
+      "notes": "调用 SkillForge run_intent API (生产化版本)",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "skillforge-api-auth",
+          "name": "SkillForge API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.ok }}",
+              "value2": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "route-run-intent-result",
+      "name": "Route run_intent Result",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1250, 100],
+      "notes": "根据 run_intent 返回的 ok 字段路由"
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SKILLFORGE_API_BASE }}/api/v1/n8n/fetch_pack",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "httpMethod": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"run_id\": \"{{ $(\"Call run_intent\").item.json.run_id }}\",\n  \"evidence_ref\": \"{{ $(\"Call run_intent\").item.json.evidence_ref }}\"\n}",
+        "options": {
+          "timeout": 60000,
+          "retry": {
+            "enabled": true,
+            "maxRetries": 3,
+            "retryInterval": 5000
+          }
+        }
+      },
+      "id": "call-fetch-pack-mincap",
+      "name": "Call fetch_pack",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1450, 50],
+      "notes": "调用 SkillForge fetch_pack API (生产化版本，支持一致性校验)",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "skillforge-api-auth",
+          "name": "SkillForge API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.ok }}",
+              "value2": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "route-fetch-pack-result",
+      "name": "Route fetch_pack Result",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1650, 50],
+      "notes": "根据 fetch_pack 返回的 ok 字段路由"
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SKILLFORGE_API_BASE }}/api/v1/n8n/query_rag",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "httpMethod": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"audit_pack_summary\",\n  \"at_time\": \"{{ $(\"Check Forbidden Fields\").item.json.input.at_time }}\",\n  \"repo_url\": \"{{ $(\"Check Forbidden Fields\").item.json.input.repo_url }}\",\n  \"commit_sha\": \"{{ $(\"Check Forbidden Fields\").item.json.input.commit_sha }}\",\n  \"run_id\": \"{{ $(\"Call run_intent\").item.json.run_id }}\"\n}",
+        "options": {
+          "timeout": 45000,
+          "retry": {
+            "enabled": true,
+            "maxRetries": 3,
+            "retryInterval": 5000
+          }
+        }
+      },
+      "id": "call-query-rag-mincap",
+      "name": "Call query_rag",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1850, 0],
+      "notes": "调用 SkillForge query_rag API (at_time 固定输入)",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "skillforge-api-auth",
+          "name": "SkillForge API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.gate_decision || $(\"Call run_intent\").item.json.gate_decision }}",
+              "value2": "ALLOW",
+              "operation": "equals"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "route-final-gate-decision",
+      "name": "Route by gate_decision",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [2050, 0],
+      "notes": "仅消费 SkillForge 返回的 gate_decision，n8n 不自造决策"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.NOTIFICATION_WEBHOOK_SUCCESS }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"status\": \"SUCCESS\",\n  \"run_id\": \"{{ $(\"Call run_intent\").item.json.run_id }}\",\n  \"gate_decision\": \"{{ $(\"Call run_intent\").item.json.gate_decision }}\",\n  \"evidence_ref\": \"{{ $(\"Call run_intent\").item.json.evidence_ref }}\",\n  \"release_allowed\": \"{{ $(\"Call run_intent\").item.json.release_allowed }}\",\n  \"replay_pointer\": \"{{ $(\"Call fetch_pack\").item.json.data?.replay_pointer || {} }}\",\n  \"audit_pack_ref\": \"{{ $(\"Call fetch_pack\").item.json.data?.receipt_id }}\",\n  \"intent_id\": \"{{ $(\"Check Forbidden Fields\").item.json.input.intent_id }}\",\n  \"repo_url\": \"{{ $(\"Check Forbidden Fields\").item.json.input.repo_url }}\",\n  \"commit_sha\": \"{{ $(\"Check Forbidden Fields\").item.json.input.commit_sha }}\",\n  \"at_time\": \"{{ $(\"Check Forbidden Fields\").item.json.input.at_time }}\",\n  \"n8n_execution_id\": \"{{ $executionId }}\",\n  \"timestamp\": \"{{ $now.toISO() }}\"\n}",
+        "options": {}
+      },
+      "id": "notify-success-mincap",
+      "name": "Notify Success",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [2250, -100],
+      "notes": "E2E 成功通知：包含完整证据链与 replay_pointer"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.NOTIFICATION_WEBHOOK_FAILURE }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"status\": \"BLOCKED\",\n  \"run_id\": \"{{ $(\"Call run_intent\").item.json.run_id || 'N/A' }}\",\n  \"gate_decision\": \"{{ $(\"Call run_intent\").item.json.gate_decision || 'DENY' }}\",\n  \"error_code\": \"{{ $json.error_code || $(\"Call run_intent\").item.json.error_code || 'UNKNOWN' }}\",\n  \"blocked_by\": \"{{ $json.blocked_by || $(\"Call run_intent\").item.json.blocked_by || 'GATE' }}\",\n  \"message\": \"{{ $json.message || $(\"Call run_intent\").item.json.message || 'Execution blocked' }}\",\n  \"evidence_ref\": \"{{ $(\"Call run_intent\").item.json.evidence_ref || 'N/A' }}\",\n  \"auto_retry\": false,\n  \"note\": \"Business errors (E001/E003) must not auto-retry\",\n  \"n8n_execution_id\": \"{{ $executionId }}\",\n  \"timestamp\": \"{{ $now.toISO() }}\"\n}",
+        "options": {}
+      },
+      "id": "notify-failure-business-error",
+      "name": "Notify Business Error",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [2250, 100],
+      "notes": "业务错误通知（E001/E003）- 禁止自动重试，fail-closed"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.NOTIFICATION_WEBHOOK_ERROR }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"status\": \"FORBIDDEN_FIELD_DETECTED\",\n  \"error_code\": \"{{ $(\"Check Forbidden Fields\").item.json.error_code }}\",\n  \"error_message\": \"{{ $(\"Check Forbidden Fields\").item.json.error_message }}\",\n  \"forbidden_fields\": \"{{ $(\"Check Forbidden Fields\").item.json.forbidden_fields || [] }}\",\n  \"n8n_execution_id\": \"{{ $executionId }}\",\n  \"auto_retry\": false,\n  \"timestamp\": \"{{ $now.toISO() }}\"\n}",
+        "options": {}
+      },
+      "id": "notify-forbidden-field",
+      "name": "Notify Forbidden Field",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1050, 300],
+      "notes": "越权字段检测通知 - 立即阻断"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.NOTIFICATION_WEBHOOK_ERROR }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"status\": \"VALIDATION_ERROR\",\n  \"error_code\": \"E_VALIDATION\",\n  \"error_message\": \"Missing required fields: repo_url, commit_sha, at_time, requester_id, or intent_id\",\n  \"n8n_execution_id\": \"{{ $executionId }}\",\n  \"timestamp\": \"{{ $now.toISO() }}\"\n}",
+        "options": {}
+      },
+      "id": "notify-validation-error-mincap",
+      "name": "Notify Validation Error",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [650, 450],
+      "notes": "输入验证失败通知"
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Validate Required Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Required Fields": {
+      "main": [
+        [
+          {
+            "node": "Check Forbidden Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify Validation Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Forbidden Fields": {
+      "main": [
+        [
+          {
+            "node": "Route Forbidden Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Forbidden Check": {
+      "main": [
+        [
+          {
+            "node": "Call run_intent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify Forbidden Field",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call run_intent": {
+      "main": [
+        [
+          {
+            "node": "Route run_intent Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route run_intent Result": {
+      "main": [
+        [
+          {
+            "node": "Call fetch_pack",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify Business Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call fetch_pack": {
+      "main": [
+        [
+          {
+            "node": "Route fetch_pack Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route fetch_pack Result": {
+      "main": [
+        [
+          {
+            "node": "Call query_rag",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify Business Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call query_rag": {
+      "main": [
+        [
+          {
+            "node": "Route by gate_decision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by gate_decision": {
+      "main": [
+        [
+          {
+            "node": "Notify Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify Business Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "L4.5-Day2",
+      "createdAt": "2026-02-20T00:00:00.000Z"
+    },
+    {
+      "name": "mincap-e2e",
+      "createdAt": "2026-02-20T00:00:00.000Z"
+    },
+    {
+      "name": "production",
+      "createdAt": "2026-02-20T00:00:00.000Z"
+    }
+  ],
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "skillforge-l45-day2-mincap"
+  },
+  "pinData": {},
+  "versionId": "2.0.0",
+  "createdAt": "2026-02-20T00:00:00.000Z",
+  "updatedAt": "2026-02-20T00:00:00.000Z",
+  "workflowMetadata": {
+    "job_id": "L45-D2-ORCH-MINCAP-20260220-002",
+    "skill_id": "l45_orchestration_min_capabilities",
+    "wave": "Wave 2",
+    "depends_on": ["T7", "T8", "T9"],
+    "responsibilities": ["trigger", "route", "retry", "notify"],
+    "forbidden_actions": [
+      "generate_gate_decision",
+      "bypass_skillforge_api",
+      "direct_audit_pack_write",
+      "modify_t7_t8_t9_contracts"
+    ],
+      "allowed_input_fields": [
+      "repo_url",
+      "commit_sha",
+      "at_time",
+      "requester_id",
+      "intent_id",
+      "n8n_execution_id"
+    ],
+    "forbidden_input_fields": [
+      "gate_decision",
+      "release_allowed",
+      "evidence_ref",
+      "permit_id",
+      "run_id"
+    ],
+    "retry_policy": {
+      "allowed_errors": ["E_NETWORK", "E_TIMEOUT"],
+      "forbidden_retry_errors": ["E001", "E003", "N8N-FORBIDDEN-FIELD", "N8N-AT-TIME-FIXED-REQUIRED"]
+    },
+    "e2e_requirements": {
+      "success_chain": ["run_intent", "fetch_pack", "query_rag"],
+      "failure_chains": ["E001_PERMIT_REQUIRED", "E003_PERMIT_INVALID"],
+      "required_output_fields": ["run_id", "evidence_ref", "gate_decision", "replay_pointer"]
+    }
+  }
+}

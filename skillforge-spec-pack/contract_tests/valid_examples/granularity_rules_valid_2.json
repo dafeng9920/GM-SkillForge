@@ -1,0 +1,88 @@
+{
+    "schema_version": "0.1.0",
+    "controls_catalog": {
+        "max_bytes_io": {
+            "type": "integer",
+            "description": "Maximum I/O bytes per execution",
+            "default": 1048576,
+            "minimum": 0,
+            "maximum": 104857600,
+            "aliases": [
+                "io_limit",
+                "bytes_limit"
+            ]
+        },
+        "allowed_domains": {
+            "type": "array",
+            "description": "Permitted network domains",
+            "default": [],
+            "aliases": [
+                "domains_whitelist"
+            ]
+        },
+        "sandbox_mode": {
+            "type": "string",
+            "description": "Sandbox isolation level",
+            "default": "strict",
+            "enum": [
+                "strict",
+                "moderate",
+                "permissive"
+            ],
+            "aliases": [
+                "isolation"
+            ]
+        }
+    },
+    "lint_rules": [
+        {
+            "rule_id": "NET_001",
+            "description": "Network access must declare domains",
+            "severity": "warning",
+            "check": {
+                "type": "not_empty",
+                "field": "allowed_domains"
+            }
+        },
+        {
+            "rule_id": "ISO_001",
+            "description": "Sandbox mode must be specified",
+            "severity": "error",
+            "check": {
+                "type": "required",
+                "field": "sandbox_mode"
+            }
+        }
+    ],
+    "risk_tier_minimums": {
+        "L0": {
+            "required_controls": [
+                "sandbox_mode"
+            ],
+            "required_schema_depth": 1
+        },
+        "L1": {
+            "required_controls": [
+                "sandbox_mode",
+                "max_bytes_io"
+            ],
+            "required_schema_depth": 2
+        },
+        "L2": {
+            "required_controls": [
+                "sandbox_mode",
+                "max_bytes_io",
+                "allowed_domains"
+            ],
+            "required_schema_depth": 3
+        },
+        "L3": {
+            "required_controls": [
+                "sandbox_mode",
+                "max_bytes_io",
+                "allowed_domains"
+            ],
+            "required_schema_depth": 4
+        }
+    }
+}

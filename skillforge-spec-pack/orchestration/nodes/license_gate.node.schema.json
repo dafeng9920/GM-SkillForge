@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://gm-os.dev/orchestration/nodes/license_gate.schema.json",
+  "title": "LicenseGateNode",
+  "description": "Stage 1: 溯源与许可证门禁",
+  "type": "object",
+  "required": ["node_id", "input", "output"],
+  "properties": {
+    "node_id": { "const": "license_gate" },
+    "stage": { "const": 1 },
+    "input": {
+      "type": "object",
+      "required": ["build_record"],
+      "properties": {
+        "build_record": { "type": "object" }
+      }
+    },
+    "output": {
+      "type": "object",
+      "required": ["provenance", "license_status"],
+      "properties": {
+        "provenance": {
+          "type": "object",
+          "required": ["source_url", "commit_sha", "fetched_at"],
+          "properties": {
+            "source_url": { "type": "string" },
+            "commit_sha": { "type": "string" },
+            "fetched_at": { "type": "string", "format": "date-time" },
+            "author": { "type": "string" },
+            "license_spdx": { "type": "string" }
+          }
+        },
+        "license_status": {
+          "type": "string",
+          "enum": ["APPROVED", "UNKNOWN", "RESTRICTED", "FORBIDDEN"]
+        }
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["AUDIT_LICENSE_UNKNOWN", "AUDIT_PROVENANCE_INCOMPLETE"]
+      }
+    }
+  },
+  "version": "0.1.0"
+}

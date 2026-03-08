@@ -1,0 +1,213 @@
+.card {
+    background-color: var(--gm-color-card-solid);
+    border: 1px solid var(--gm-color-card-border);
+    border-radius: var(--gm-radius-lg);
+    box-shadow: var(--gm-shadow-md);
+    margin-bottom: var(--gm-space-4);
+    overflow: hidden;
+    transition: box-shadow var(--gm-transition-fast);
+}
+
+.card:focus-within {
+    box-shadow: var(--gm-focus-ring);
+}
+
+/* Severity Indicators */
+.severity-critical {
+    border-left: 4px solid var(--gm-color-state-block);
+}
+
+.severity-error {
+    border-left: 4px solid var(--gm-color-state-warning);
+}
+
+.severity-warning {
+    border-left: 4px solid var(--gm-color-primary);
+}
+
+/* Header Area */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--gm-space-4);
+    border-bottom: 1px solid var(--gm-color-card-border);
+}
+
+.header-critical {
+    background-color: var(--gm-color-state-block-bg);
+}
+
+.header-error {
+    background-color: var(--gm-color-state-warning-bg);
+}
+
+.header-warning {
+    background-color: rgba(82, 106, 242, 0.1);
+}
+
+.header-title {
+    display: flex;
+    align-items: center;
+    gap: var(--gm-space-3);
+    font-family: var(--gm-font-header);
+    font-size: var(--gm-text-lg);
+    font-weight: var(--gm-font-weight-bold);
+    color: var(--gm-color-text-primary);
+}
+
+/* Badge Neon Effect strictly limited to small tags */
+.code-badge {
+    font-family: var(--gm-font-mono);
+    font-size: var(--gm-text-xs);
+    padding: var(--gm-space-1) var(--gm-space-2);
+    border-radius: var(--gm-radius-sm);
+    background-color: var(--gm-color-base-100);
+    border: 1px solid;
+}
+
+.code-badge-critical {
+    color: var(--gm-color-state-block);
+    border-color: var(--gm-color-state-block);
+    box-shadow: 0 0 4px var(--gm-color-state-block-bg);
+}
+
+/* Body Area: High Semantic Clarity */
+.body {
+    padding: var(--gm-space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--gm-space-4);
+}
+
+/* Data Points Typography Match */
+.data-point {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gm-space-1);
+}
+
+.data-label {
+    font-size: var(--gm-text-xs);
+    color: var(--gm-color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: var(--gm-font-weight-bold);
+}
+
+/* The critical "Blocked By" node must be large and AA contrasted */
+.data-value-primary {
+    font-family: var(--gm-font-header);
+    font-size: var(--gm-text-xl);
+    font-weight: var(--gm-font-weight-black);
+}
+
+.data-value-critical {
+    color: var(--gm-color-state-block);
+}
+
+.data-value-warning {
+    color: var(--gm-color-state-warning);
+}
+
+.message-box {
+    background-color: var(--gm-color-base-100);
+    border: 1px solid var(--gm-color-base-300);
+    padding: var(--gm-space-3);
+    border-radius: var(--gm-radius-sm);
+    font-size: var(--gm-text-sm);
+    color: var(--gm-color-text-secondary);
+    line-height: 1.6;
+}
+
+/* Evidence and Required Changes Section */
+.required-changes {
+    margin-top: var(--gm-space-2);
+}
+
+.changes-list {
+    padding-left: var(--gm-space-4);
+    margin-top: var(--gm-space-2);
+    display: flex;
+    flex-direction: column;
+    gap: var(--gm-space-2);
+}
+
+.change-item {
+    font-size: var(--gm-text-sm);
+    color: var(--gm-color-text-primary);
+}
+
+.evidence-trail {
+    background-color: rgba(82, 106, 242, 0.05);
+    border-left: 3px solid var(--gm-color-primary);
+    padding: var(--gm-space-3);
+    border-radius: 0 var(--gm-radius-md) var(--gm-radius-md) 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gm-space-2);
+}
+
+.evidence-row {
+    display: flex;
+    align-items: center;
+    gap: var(--gm-space-2);
+    flex-wrap: wrap;
+}
+
+.mono-link {
+    font-family: var(--gm-font-mono);
+    font-size: var(--gm-text-xs);
+    color: var(--gm-color-primary);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    transition: text-decoration-color var(--gm-transition-fast);
+}
+
+.mono-link:hover,
+.mono-link:focus-visible {
+    text-decoration-color: var(--gm-color-primary);
+    outline: none;
+}
+
+.mono-link:focus-visible {
+    box-shadow: var(--gm-focus-ring);
+}
+
+.copy-btn {
+    background-color: var(--gm-color-base-200);
+    border: 1px solid var(--gm-color-base-400);
+    color: var(--gm-color-text-secondary);
+    font-size: 0.65rem;
+    padding: 2px 6px;
+    border-radius: var(--gm-radius-sm);
+    cursor: pointer;
+    transition: all var(--gm-transition-fast);
+}
+
+.copy-btn:hover {
+    background-color: var(--gm-color-base-300);
+    color: var(--gm-color-text-primary);
+}
+
+.copy-btn:focus-visible {
+    outline: none;
+    box-shadow: var(--gm-focus-ring);
+}
+/* Utility classes to replace inline styles */
+.clickable { cursor: pointer; text-decoration: underline; }
+.compact-btn { width: 100%; background: transparent; cursor: pointer; border-left-width: 4px; }
+.w-full { width: 100%; }
+.capitalize-none { text-transform: none; }
+.text-secondary { color: var(--gm-color-text-secondary); }
+.ml-2 { margin-left: var(--gm-space-2); }
+.mb-0 { margin-bottom: 0; }
+.bg-base-100 { background: var(--gm-color-base-100); }
+.border-pass { border-left-color: var(--gm-color-state-pass); }
+.text-pass { color: var(--gm-color-state-pass); }
+.fw-600 { font-weight: 600; }
+.context-pre { font-family: var(--gm-font-mono); font-size: 0.75rem; margin-top: var(--gm-space-2); white-space: pre-wrap; }

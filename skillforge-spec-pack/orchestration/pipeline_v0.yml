@@ -1,0 +1,144 @@
+# GM OS SkillForge 编排流水线 v0
+# Stage 0-7 → 8 个节点
+schema_version: "0.1.0"
+
+name: "skillforge-pipeline-v0"
+description: "GitHub Repo → 可发布 GM OS Skill 的编排流水线"
+
+nodes:
+  - id: "intake_repo"
+    stage: 0
+    name: "入口与任务建档"
+    description: "接收 repo_url，生成 job_id，拉取基本信息"
+    consumes: []
+    produces:
+      - "build_record.json"
+    next: ["license_gate"]
+    timeout_seconds: 60
+    retryable: true
+
+  - id: "license_gate"
+    stage: 1
+    name: "溯源与许可证门禁"
+    description: "解析 LICENSE，建立溯源链，标记 license_status"
+    consumes:
+      - "build_record.json"
+    produces:
+      - "provenance.json"
+    gate: true
+    next: ["repo_scan_fit_score"]
+    timeout_seconds: 30
+    retryable: false
+
+  - id: "repo_scan_fit_score"
+    stage: 2
+    name: "结构探测与可转化性评分"
+    description: "探测语言栈、入口文件、依赖，输出 FitScore"
+    consumes:
+      - "build_record.json"
+      - "provenance.json"
+    produces:
+      - "scan_report.json"
+      - "fit_score"
+    next: ["draft_skill_spec"]
+    timeout_seconds: 120
+    retryable: true
+
+  - id: "draft_skill_spec"
+    stage: 3
+    name: "Skill 规格草案生成"
+    description: "生成 SKILL.md、input/output schema、capabilities"
+    consumes:
+      - "scan_report.json"
+    produces:
+      - "SKILL.md"
+      - "schemas/input.json"
+      - "schemas/output.json"
+      - "capabilities.json"
+    next: ["constitution_risk_gate"]
+    timeout_seconds: 180
+    retryable: true
+
+  - id: "constitution_risk_gate"
+    stage: 4
+    name: "宪法门禁与风险分级"
+    description: "风险分级 L0-L3，触发 GM OS 宪法判别"
+    consumes:
+      - "capabilities.json"
+      - "scan_report.json"
+    produces:
+      - "gate_decision.json"
+      - "risk_tier"
+    gate: true
+    next:
+      - condition: "decision == 'ALLOW'"
+        nodes: ["scaffold_skill_impl"]
+      - condition: "decision == 'REQUIRES_CHANGES'"
+        nodes: ["draft_skill_spec"]
+      - condition: "decision == 'DENY'"
+        nodes: []
+    timeout_seconds: 60
+    retryable: false
+
+  - id: "scaffold_skill_impl"
+    stage: 5
+    name: "生成 Skill 实现骨架"
+    description: "生成 skill.py/ts、executor 包装、manifest.json"
+    consumes:
+      - "SKILL.md"
+      - "schemas/input.json"
+      - "schemas/output.json"
+      - "capabilities.json"
+      - "gate_decision.json"
+    produces:
+      - "scaffold_bundle/"
+    next: ["sandbox_test_and_trace"]
+    timeout_seconds: 300
+    retryable: true
+
+  - id: "sandbox_test_and_trace"
+    stage: 6
+    name: "测试样例与沙箱试跑"
+    description: "自动生成测试，沙箱执行，采集 trace"
+    consumes:
+      - "scaffold_bundle/"
+      - "gate_decision.json"
+    produces:
+      - "tests/"
+      - "run_trace.jsonl"
+      - "sandbox_report.json"
+    next: ["pack_audit_and_publish"]
+    timeout_seconds: 600
+    retryable: true
+
+  - id: "pack_audit_and_publish"
+    stage: 7
+    name: "审计包与发布"
+    description: "打包审计，生成 release_notes，发布到 Registry"
+    consumes:
+      - "provenance.json"
+      - "gate_decision.json"
+      - "sandbox_report.json"
+      - "run_trace.jsonl"
+    produces:
+      - "audit_pack.zip"
+      - "publish_result.json"
+    gate: true
+    next: []
+    timeout_seconds: 120
+    retryable: false
+
+# 全局配置
+global:
+  max_total_timeout_seconds: 1800
+  default_retry_count: 3
+  default_retry_backoff_seconds: 5
+
+# 门禁汇总
+gates:
+  - node_id: "license_gate"
+    on_fail: "terminate"
+  - node_id: "constitution_risk_gate"
+    on_fail: "terminate"
+  - node_id: "pack_audit_and_publish"
+    on_fail: "hold"

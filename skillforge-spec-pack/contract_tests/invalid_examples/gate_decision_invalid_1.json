@@ -1,0 +1,7 @@
+{
+  "schema_version": "0.1.0",
+  "gate_id": "not-a-uuid",
+  "node_id": "constitution_risk_gate",
+  "decision": "INVALID_DECISION",
+  "decided_at": "invalid-date"
+}

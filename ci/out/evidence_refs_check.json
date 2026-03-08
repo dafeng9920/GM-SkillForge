@@ -1,0 +1,218 @@
+{
+  "passed": true,
+  "timestamp": "2026-02-19T16:06:56Z",
+  "check_name": "evidence_refs",
+  "skills": [
+    {
+      "skill": "permit-governance-skill",
+      "checks": [
+        {
+          "source": "SKILL.md",
+          "ref": "docs/2026-02-18/permit_contract_v1_spec.md",
+          "exists": true
+        },
+        {
+          "source": "SKILL.md",
+          "ref": "docs/2026-02-18/permit_gate_implementation_report_v1.md",
+          "exists": true
+        },
+        {
+          "source": "SKILL.md",
+          "ref": "docs/2026-02-18/permit_issuer_implementation_report_v1.md",
+          "exists": true
+        },
+        {
+          "source": "SKILL.md",
+          "ref": "docs/2026-02-18/business_phase1_execution_report_v1.md",
+          "exists": true
+        },
+        {
+          "source": "SKILL.md",
+          "ref": "docs/2026-02-18/business_phase1_acceptance_report_v1.md",
+          "exists": true
+        },
+        {
+          "source": "SKILL.md",
+          "ref": "skillforge/src/skills/gates/permit_issuer.py",
+          "exists": true
+        },
+        {
+          "source": "SKILL.md",
+          "ref": "skillforge/src/skills/gates/gate_permit.py",
+          "exists": true
+        },
+        {
+          "source": "SKILL.md",
+          "ref": "skillforge/src/skills/gates/batch_permit_issuer.py",
+          "exists": true
+        },
+        {
+          "source": "references/permit-contract-mapping.md",
+          "ref": "docs/2026-02-18/permit_contract_v1_spec.md",
+          "exists": true
+        },
+        {
+          "source": "references/permit-contract-mapping.md",
+          "ref": "docs/2026-02-18/permit_contract_v1_spec.md",
+          "exists": true
+        },
+        {
+          "source": "references/permit-contract-mapping.md",
+          "ref": "skillforge/src/skills/gates/permit_issuer.py",
+          "exists": true
+        },
+        {
+          "source": "references/permit-contract-mapping.md",
+          "ref": "skillforge/src/skills/gates/gate_permit.py",
+          "exists": true
+        },
+        {
+          "source": "references/phase1_evidence.md",
+          "ref": "docs/2026-02-18/business_phase1_execution_report_v1.md",
+          "exists": true
+        },
+        {
+          "source": "references/phase1_evidence.md",
+          "ref": "docs/2026-02-18/business_phase1_acceptance_report_v1.md",
+          "exists": true
+        },
+        {
+          "source": "references/phase1_evidence.md",
+          "ref": "docs/2026-02-18/business_phase1_governance_linkage_report_v1.md",
+          "exists": true
+        },
+        {
+          "source": "references/phase1_evidence.md",
+          "ref": "docs/2026-02-18/permit_gate_implementation_report_v1.md",
+          "exists": true
+        },
+        {
+          "source": "references/phase1_evidence.md",
+          "ref": "docs/2026-02-18/permit_issuer_implementation_report_v1.md",
+          "exists": true
+        },
+        {
+          "source": "references/phase1_evidence.md",
+          "ref": "docs/2026-02-18/permit_contract_v1_spec.md",
+          "exists": true
+        }
+      ],
+      "evidence_refs": [
+        "docs/2026-02-18/permit_contract_v1_spec.md",
+        "docs/2026-02-18/permit_gate_implementation_report_v1.md",
+        "docs/2026-02-18/permit_issuer_implementation_report_v1.md",
+        "docs/2026-02-18/business_phase1_execution_report_v1.md",
+        "docs/2026-02-18/business_phase1_acceptance_report_v1.md",
+        "skillforge/src/skills/gates/permit_issuer.py",
+        "skillforge/src/skills/gates/gate_permit.py",
+        "skillforge/src/skills/gates/batch_permit_issuer.py"
+      ],
+      "passed": true
+    },
+    {
+      "skill": "release-gate-skill",
+      "checks": [
+        {
+          "source": "SKILL.md",
+          "ref": "docs/2026-02-18/permit_gate_implementation_report_v1.md",
+          "exists": true
+        },
+        {
+          "source": "SKILL.md",
+          "ref": "skillforge/src/skills/gates/gate_permit.py",
+          "exists": true
+        },
+        {
+          "source": "references/phase1_evidence.md",
+          "ref": "docs/2026-02-18/business_phase1_execution_report_v1.md",
+          "exists": true
+        },
+        {
+          "source": "references/phase1_evidence.md",
+          "ref": "docs/2026-02-18/business_phase1_acceptance_report_v1.md",
+          "exists": true
+        },
+        {
+          "source": "references/phase1_evidence.md",
+          "ref": "docs/2026-02-18/permit_gate_implementation_report_v1.md",
+          "exists": true
+        },
+        {
+          "source": "references/phase1_evidence.md",
+          "ref": "docs/2026-02-18/business_phase1_governance_linkage_report_v1.md",
+          "exists": true
+        }
+      ],
+      "evidence_refs": [
+        "docs/2026-02-18/permit_gate_implementation_report_v1.md",
+        "skillforge/src/skills/gates/gate_permit.py"
+      ],
+      "passed": true
+    },
+    {
+      "skill": "rollback-tombstone-skill",
+      "checks": [
+        {
+          "source": "SKILL.md",
+          "ref": "docs/2026-02-18/business_phase1_rollback_drill_report_v1.md",
+          "exists": true
+        },
+        {
+          "source": "SKILL.md",
+          "ref": "docs/2026-02-18/canary_rollback_drill_run_sheet_v1.md",
+          "exists": true
+        },
+        {
+          "source": "references/phase1_evidence.md",
+          "ref": "docs/2026-02-18/business_phase1_rollback_drill_report_v1.md",
+          "exists": true
+        },
+        {
+          "source": "references/phase1_evidence.md",
+          "ref": "docs/2026-02-18/canary_rollback_drill_run_sheet_v1.md",
+          "exists": true
+        },
+        {
+          "source": "references/replay-consistency-check.md",
+          "ref": "docs/2026-02-18/tombstone_persistence_contract_v1.md",
+          "exists": true
+        },
+        {
+          "source": "references/replay-consistency-check.md",
+          "ref": "docs/2026-02-18/tombstone_persistence_contract_v1.md",
+          "exists": true
+        },
+        {
+          "source": "references/replay-consistency-check.md",
+          "ref": "docs/2026-02-18/canary_rollback_drill_report_v1.md",
+          "exists": true
+        },
+        {
+          "source": "references/replay-consistency-check.md",
+          "ref": "docs/2026-02-18/business_phase1_governance_linkage_report_v1.md",
+          "exists": true
+        },
+        {
+          "source": "references/tombstone-contract-summary.md",
+          "ref": "docs/2026-02-18/tombstone_persistence_contract_v1.md",
+          "exists": true
+        },
+        {
+          "source": "references/tombstone-contract-summary.md",
+          "ref": "docs/2026-02-18/tombstone_persistence_contract_v1.md",
+          "exists": true
+        },
+        {
+          "source": "references/tombstone-contract-summary.md",
+          "ref": "docs/2026-02-18/canary_rollback_drill_report_v1.md",
+          "exists": true
+        }
+      ],
+      "evidence_refs": [
+        "docs/2026-02-18/business_phase1_rollback_drill_report_v1.md",
+        "docs/2026-02-18/canary_rollback_drill_run_sheet_v1.md"
+      ],
+      "passed": true
+    }
+  ]
+}

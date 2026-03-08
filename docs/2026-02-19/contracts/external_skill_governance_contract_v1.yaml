@@ -1,0 +1,277 @@
+# External Skill Governance Contract v1
+# 外部技能治理契约
+# 生效日期: 2026-02-19
+# 状态: FROZEN
+
+meta:
+  contract_id: "external-skill-governance-v1"
+  version: "1.0.0"
+  status: "PLANNED"           # 封板后规划，v1+ 实现
+  created_at: "2026-02-19"
+  planned_for: "v1.x"
+  blocked_by: "L4 封板冻结"
+
+# ============================================================
+# 核心原则
+# ============================================================
+principles:
+  - principle: "Imported Skill must pass Quarantine → Constitution Gate → System Audit → Permit before Registry admission."
+    description: "外部 Skill 入库前必须通过完整的治理流程"
+    mandatory: true
+
+  - principle: "调用是调用，但调来了不是直接用，先入临时仓裁决审计后再入库。"
+    description: "外部资源不能直接污染主仓库"
+    mandatory: true
+
+  - principle: "No permit, no registry admission."
+    description: "无 Permit 禁止入库"
+    mandatory: true
+
+  - principle: "Upgrade = Full Governance Cycle"
+    description: "升级走完整治理流程"
+    mandatory: true
+
+# ============================================================
+# 6 步导入流程
+# ============================================================
+import_pipeline:
+  steps:
+    - id: "S1"
+      name: "Import to Quarantine"
+      description: "外部 skill 先落到临时仓（不可执行态）"
+      input:
+        - skill_package_url
+        - source_repository
+        - requested_version
+      output:
+        - quarantine_id
+        - import_timestamp
+      on_failure: "REJECT + log"
+
+    - id: "S2"
+      name: "Constitution Gate"
+      description: "宪法裁决（边界/权限/禁用能力）"
+      checks:
+        - boundary_check
+        - permission_check
+        - forbidden_capability_check
+      output:
+        - constitution_decision: "PASS | REJECT"
+        - violation_codes: []
+      on_failure: "REJECT + TOMBSTONE"
+
+    - id: "S3"
+      name: "System Audit (5-Layer)"
+      description: "五层系统审计"
+      layers:
+        - "L1_contract_audit"
+        - "L2_control_audit"
+        - "L3_security_audit"
+        - "L4_evidence_audit"
+        - "L5_reproducibility_audit"
+      output:
+        - audit_report
+        - pass_count
+        - critical_failures: []
+      on_failure: "REJECT + TOMBSTONE"
+
+    - id: "S4"
+      name: "Decision"
+      description: "仅允许 PASS@L3+ 进入下一步"
+      rules:
+        - "pass_count >= 4 AND critical_failures.length == 0 → PROCEED"
+        - "otherwise → REJECT"
+      on_failure: "REJECT + TOMBSTONE"
+
+    - id: "S5"
+      name: "Permit Issuance"
+      description: "签发入库 permit（带 run_id/evidence_ref）"
+      output:
+        - permit_token
+        - run_id
+        - evidence_ref
+        - issued_at
+      on_failure: "BLOCK + alert"
+
+    - id: "S6"
+      name: "Registry Admission"
+      description: "写入正式 skill registry；可查可追溯"
+      output:
+        - registry_entry_id
+        - skill_version
+        - revision_number
+      state: "QUERYABLE | TRACEABLE | NOT_EXECUTABLE_BY_DEFAULT"
+
+# ============================================================
+# 五层审计流程
+# ============================================================
+five_layer_audit:
+  L1_contract_audit:
+    name: "合同审计"
+    description: "输入/输出 schema、错误信封、边界条件是否完整"
+    checks:
+      - input_schema_completeness
+      - output_schema_completeness
+      - error_envelope_format
+      - boundary_condition_coverage
+    pass_criteria: "all checks PASS"
+
+  L2_control_audit:
+    name: "控制审计"
+    description: "超时、并发、速率、域名白名单、资源上限是否强制"
+    checks:
+      - timeout_enforcement
+      - concurrency_limits
+      - rate_limits
+      - domain_whitelist
+      - resource_ceiling
+    pass_criteria: "all controls DEFINED and ENFORCED"
+
+  L3_security_audit:
+    name: "安全姿态审计"
+    description: "权限最小化、危险能力禁用、执行边界是否清晰"
+    checks:
+      - least_privilege
+      - dangerous_capabilities_disabled
+      - execution_boundary_clear
+      - no_privilege_escalation
+    pass_criteria: "no security violations"
+
+  L4_evidence_audit:
+    name: "证据审计"
+    description: "每个关键结论是否有 EvidenceRef + hash + source_locator"
+    checks:
+      - evidence_ref_present
+      - hash_integrity
+      - source_locator_valid
+      - evidence_chain_complete
+    pass_criteria: "100% critical claims have evidence"
+
+  L5_reproducibility_audit:
+    name: "复现审计"
+    description: "同输入同版本是否可复现（revision/证据集合稳定）"
+    checks:
+      - deterministic_output
+      - revision_stability
+      - evidence_set_stability
+      - at_time_replay_possible
+    pass_criteria: "reproducibility verified"
+
+# ============================================================
+# 升级规则
+# ============================================================
+upgrade_rules:
+  principle: "Upgrade = Full Governance Cycle"
+  rules:
+    - id: "UR-001"
+      rule: "任何升级都走同一流程: Quarantine → Constitution Gate → 5层审计 → Permit → Replace Revision"
+      mandatory: true
+
+    - id: "UR-002"
+      rule: "禁止'覆盖升级'，只能新增 revision"
+      mandatory: true
+
+    - id: "UR-003"
+      rule: "旧 revision 保留，支持 at-time 回放"
+      mandatory: true
+
+    - id: "UR-004"
+      rule: "升级 permit 必须引用原 permit 的 evidence_ref"
+      mandatory: true
+
+# ============================================================
+# 有害处置/下架规则
+# ============================================================
+hazard_handling:
+  trigger_conditions:
+    - "命中高风险宪法规则"
+    - "L3 安全审计发现严重漏洞"
+    - "运行时发现恶意行为"
+    - "外部安全通报"
+
+  actions:
+    - id: "HH-001"
+      action: "立即 Tombstone"
+      description: "标记为不可用，停止所有调用"
+
+    - id: "HH-002"
+      action: "默认查询不可见"
+      description: "从常规查询中移除"
+
+    - id: "HH-003"
+      action: "仅 at-time 可回放审计"
+      description: "保留历史记录供审计"
+
+    - id: "HH-004"
+      action: "通知所有使用方"
+      description: "广播下架通知"
+
+  tombstone_properties:
+    immutable: true
+    deletable: false
+    queryable_by_admin_only: true
+    replay_enabled: true
+
+# ============================================================
+# Skill Registry 结构
+# ============================================================
+registry_schema:
+  required_fields:
+    - name
+    - version
+    - revision
+    - capability
+    - input_schema
+    - output_schema
+    - permit_token
+    - quarantine_id
+    - constitution_decision
+    - audit_report_ref
+    - evidence_ref
+    - registered_at
+    - registered_by
+
+  optional_fields:
+    - description
+    - tags
+    - dependencies
+    - deprecation_date
+
+# ============================================================
+# Skill Router 职责
+# ============================================================
+router_responsibilities:
+  - "根据 intent/任务类型选择并调用 skill"
+  - "验证 permit 有效性"
+  - "生成调用 evidence_ref"
+  - "处理调用失败/超时"
+  - "执行 fallback policy"
+
+# ============================================================
+# Fallback Policy
+# ============================================================
+fallback_policy:
+  principle: "Skill 不可用时返回可审计失败，不静默降级"
+  rules:
+    - id: "FB-001"
+      rule: "失败必须返回结构化错误信封"
+      mandatory: true
+
+    - id: "FB-002"
+      rule: "禁止静默降级到非治理路径"
+      mandatory: true
+
+    - id: "FB-003"
+      rule: "每次失败都生成 evidence_ref"
+      mandatory: true
+
+# ============================================================
+# Governance Wrapper
+# ============================================================
+governance_wrapper:
+  principle: "每次调用都经过 Gate/Permit/EvidenceRef（不能绕）"
+  mandatory_layers:
+    - gate_check
+    - permit_validation
+    - evidence_generation
+  bypass_allowed: false

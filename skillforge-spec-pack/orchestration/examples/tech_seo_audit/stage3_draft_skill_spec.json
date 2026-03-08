@@ -1,0 +1,71 @@
+{
+  "node_id": "draft_skill_spec",
+  "stage": 3,
+  "input": {
+    "scan_report": {
+      "language": "python",
+      "entry_files": ["seo_audit/main.py", "seo_audit/cli.py"],
+      "dependencies": ["requests", "beautifulsoup4", "lxml"],
+      "repo_type": "cli"
+    }
+  },
+  "output": {
+    "skill_md": "# Tech SEO Audit\n\nAnalyzes websites for technical SEO issues including meta tags, headers, broken links, and performance indicators.\n\n## Usage\n\n```\nskill run tech_seo_audit --url https://example.com\n```\n\n## Output\n\nReturns a structured report with SEO recommendations.",
+    "input_schema": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "type": "object",
+      "required": ["url"],
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Target URL to analyze"
+        },
+        "depth": {
+          "type": "integer",
+          "default": 1,
+          "description": "Crawl depth for internal links"
+        },
+        "check_external_links": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to validate external links"
+        }
+      }
+    },
+    "output_schema": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "type": "object",
+      "required": ["url", "score", "issues"],
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "Analyzed URL"
+        },
+        "score": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "SEO health score"
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "severity": { "type": "string", "enum": ["error", "warning", "info"] },
+              "category": { "type": "string" },
+              "message": { "type": "string" },
+              "element": { "type": "string" }
+            }
+          }
+        },
+        "recommendations": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "capabilities": ["network", "file_read"]
+  }
+}

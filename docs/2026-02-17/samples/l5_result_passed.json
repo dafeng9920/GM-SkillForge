@@ -1,0 +1,50 @@
+{
+  "status": "PASSED",
+  "level": "L5",
+  "gates": [
+    {
+      "id": "G1",
+      "passed": true,
+      "error_code": null,
+      "evidence_ref": "runtime_check_report.json",
+      "check_id": "G1-RUN-001"
+    },
+    {
+      "id": "G2",
+      "passed": true,
+      "error_code": null,
+      "evidence_ref": "audit_report_boundary.json",
+      "check_id": "G2-GOV-001"
+    },
+    {
+      "id": "G3",
+      "passed": true,
+      "error_code": null,
+      "evidence_ref": "traceability_report.json",
+      "check_id": "G3-TRC-001"
+    },
+    {
+      "id": "G4",
+      "passed": true,
+      "error_code": null,
+      "evidence_ref": "replay_diff_report.json",
+      "check_id": "G4-RPL-001"
+    },
+    {
+      "id": "G5",
+      "passed": true,
+      "error_code": null,
+      "evidence_ref": "audit_report_consistency.json",
+      "check_id": "G5-CHG-001"
+    }
+  ],
+  "summary": {
+    "passed_count": 5,
+    "failed_count": 0
+  },
+  "trace": {
+    "run_id": "run-l5-passed-20260217-001",
+    "trace_id": "trace-l5-passed-001",
+    "timestamp": "2026-02-17T10:30:00Z"
+  }
+}

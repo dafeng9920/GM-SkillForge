@@ -1,0 +1,219 @@
+# ============================================================
+# Generate Skill Intent Contract (Normalized)
+# ============================================================
+# Priority: P0
+# Source: NEW-GM/src/services/outer_skill_factory
+# Migration: A2 - Wave 4 Batch 1
+# Normalized: 2026-02-18
+# ============================================================
+
+intent_id: generate_skill
+summary: |
+  从自然语言需求生成技能规格说明（SkillSpec）。
+  此意图仅创建草稿，不触发实际执行逻辑（advisory-only 模式）。
+  必须通过 Gate 链验证，确保 license 兼容性。
+contract_version: v1.0.0
+schema_hash: TBD_SHA256
+
+# ============================================================
+# Inputs Schema
+# ============================================================
+inputs_schema:
+  required:
+    - name: repo_url
+      type: string
+      description: "仓库 URL（确定性输入）"
+      pattern: "^(https?|git)://.+$"
+
+    - name: commit_sha
+      type: string
+      description: "Git commit SHA（确定性输入）"
+      pattern: "^[a-f0-9]{7,40}$"
+
+    - name: skill_name
+      type: string
+      description: "技能唯一标识符"
+      pattern: "^[a-z][a-z0-9_]*$"
+      maxLength: 50
+
+    - name: skill_intent
+      type: string
+      description: "技能意图的自然语言描述"
+      maxLength: 500
+
+    - name: example_inputs
+      type: array
+      description: "示例输入数据"
+      minItems: 1
+
+    - name: example_outputs
+      type: array
+      description: "期望输出数据"
+      minItems: 1
+
+    - name: tier
+      type: integer
+      description: "风险等级 (0=最低, 3=最高)"
+      enum: [0, 1, 2, 3]
+      default: 0
+
+    - name: side_effects
+      type: array
+      description: "潜在副作用列表"
+      items:
+        type: string
+        enum: ["none", "read", "write", "external", "stateful"]
+      default: ["none"]
+
+    - name: policy_pack_version
+      type: string
+      description: "策略包版本"
+      pattern: "^v[0-9]+\\.[0-9]+\\.[0-9]+$"
+
+  optional:
+    - name: risk_notes
+      type: string
+      description: "风险评估备注"
+      maxLength: 1000
+
+# ============================================================
+# Required Gates
+# ============================================================
+required_gates:
+  - proposal_gate          # Stage A: 验证请求完整性
+  - build_gate             # Stage B: 验证构建资格
+  - license_gate           # 许可证兼容性检查 (原 license_compatibility)
+  - tier_risk_gate         # 风险等级 Gate
+
+# ============================================================
+# Minimum Level
+# ============================================================
+minimum_level: L3
+
+# ============================================================
+# Required Evidence
+# ============================================================
+required_evidence:
+  - skill_request_payload  # 输入载荷
+  - skill_spec_pack        # 规格包
+  - gate_results           # Gate 判定结果
+  - source_doc_ref         # 源文档引用
+
+# ============================================================
+# Outputs
+# ============================================================
+outputs:
+  - name: audit_pack_ref
+    type: string
+    description: "L3 AuditPack 引用标识"
+
+  - name: gate_decision
+    type: string
+    enum: ["ALLOW", "DENY", "REQUIRE_HITL"]
+    description: "Gate 最终决策"
+
+  - name: revision
+    type: integer
+    description: "合约版本号"
+
+  - name: pack_type
+    type: string
+    const: "skill_spec"
+
+  - name: pack_id
+    type: string
+    description: "唯一包标识 (UUID-based)"
+
+  - name: pack_hash
+    type: string
+    description: "SHA256 哈希"
+
+  - name: skill_spec
+    type: object
+    description: "技能规格说明"
+
+  - name: dry_run
+    type: boolean
+    const: true
+    description: "始终为 true - advisory 模式"
+
+  - name: constraints
+    type: array
+    items:
+      type: string
+    default: ["advisory_only", "dry_run"]
+
+# ============================================================
+# Validation Rules
+# ============================================================
+validation_rules:
+  - rule_id: SF.REQ.FIELD.skill_name
+    condition: "input.skill_name is not empty"
+    on_failure: DENY
+
+  - rule_id: SF.REQ.FIELD.skill_intent
+    condition: "input.skill_intent is not empty"
+    on_failure: DENY
+
+  - rule_id: SF.REQ.FIELD.policy_pack_version
+    condition: "input.policy_pack_version not in ['unknown', 'unavailable']"
+    on_failure: DENY
+
+  - rule_id: SF.RISK.TIER_HIGH
+    condition: "input.tier not in [2, 3]"
+    on_failure: REQUIRE_HITL
+    message: "Tier 2/3 需要 HITL 审批"
+
+  - rule_id: SF.RISK.TIER_LOW
+    condition: "input.tier in [0, 1]"
+    on_failure: ALLOW
+    message: "Tier 0/1 只读或纯转换请求"
+
+# ============================================================
+# Architecture Boundary
+# ============================================================
+architecture_boundary: |
+  - n8n 仅作为 Orchestrator（触发/路由/通知），不做最终裁决
+  - SkillForge 是 Governor（Gate 判定、Evidence 产出、AuditPack 固化）
+  - 输入确定性：repo_url + commit_sha (+ at_time)
+  - 无 permit 不允许发布/打 tag/release
+  - dry_run=True 强制执行，无执行副作用
+
+# ============================================================
+# Source References (Evidence Chain)
+# ============================================================
+source_doc_ref:
+  files:
+    - path: "D:\\NEW-GM\\src\\services\\outer_skill_factory\\factory.py"
+      lines: "187-252"
+      purpose: "主流程编排器"
+
+    - path: "D:\\NEW-GM\\src\\services\\outer_skill_factory\\packs.py"
+      lines: "59-141"
+      purpose: "输入/输出模式定义"
+
+    - path: "D:\\NEW-GM\\src\\services\\outer_skill_factory\\policy.py"
+      lines: "23-105"
+      purpose: "Gate 验证规则"
+
+    - path: "D:\\NEW-GM\\src\\services\\buildskills\\skill_draft_generator.py"
+      lines: "18-102"
+      purpose: "草稿生成器"
+
+# ============================================================
+# Migration Metadata
+# ============================================================
+migration:
+  task_id: A2
+  wave: 4
+  batch: 1
+  priority: P0
+  decision: MIGRATE
+  status: normalized
+  value_score: 9
+  risk_level: Low
+  mapping_targets:
+    - skillforge/src/skills/generate_skill.py
+    - skillforge/src/skills/contracts/inputs.py
+    - skillforge/src/skills/contracts/skill_spec.py
+    - skillforge/src/skills/gates/policy_gate.py

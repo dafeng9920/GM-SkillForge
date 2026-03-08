@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://gm-os.dev/schemas/common.schema.json",
+  "title": "GM OS Common Types",
+  "description": "通用类型定义，被其他 schema 引用",
+  "definitions": {
+    "SchemaVersion": {
+      "type": "string",
+      "pattern": "^0\\.1\\.\\d+$",
+      "description": "Schema 版本号，格式 0.1.x"
+    },
+    "Timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 时间戳"
+    },
+    "UUID": {
+      "type": "string",
+      "format": "uuid",
+      "description": "UUID v4"
+    },
+    "ErrorCode": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9_]*$",
+      "description": "错误码，大写下划线命名"
+    },
+    "Provenance": {
+      "type": "object",
+      "required": ["source_url", "commit_sha", "fetched_at"],
+      "properties": {
+        "source_url": { "type": "string", "format": "uri" },
+        "commit_sha": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+        "branch": { "type": "string" },
+        "tag": { "type": "string" },
+        "fetched_at": { "$ref": "#/definitions/Timestamp" },
+        "author": { "type": "string" },
+        "license_spdx": { "type": "string" }
+      }
+    },
+    "Hash": {
+      "type": "object",
+      "required": ["algorithm", "value"],
+      "properties": {
+        "algorithm": { "type": "string", "enum": ["sha256", "sha512", "blake3"] },
+        "value": { "type": "string", "pattern": "^[a-f0-9]{64,128}$" }
+      }
+    },
+    "RiskTier": {
+      "type": "string",
+      "enum": ["L0", "L1", "L2", "L3"],
+      "description": "风险分级：L0低风险 -> L3高风险"
+    },
+    "QualityGateLevel": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "质量门禁等级 1-5"
+    }
+  },
+  "version": "0.1.0"
+}

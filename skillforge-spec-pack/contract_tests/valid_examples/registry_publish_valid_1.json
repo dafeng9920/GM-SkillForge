@@ -1,0 +1,10 @@
+{
+    "schema_version": "0.1.0",
+    "request_id": "r1a2b3c4-d5e6-7890-abcd-ef1234567890",
+    "skill_id": "tech_seo_audit",
+    "skill_version": "0.1.0",
+    "audit_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "visibility": "public",
+    "bundle_path": "/builds/tech_seo_audit/0.1.0/bundle.zip",
+    "metadata": {}
+}

@@ -1,0 +1,31 @@
+{
+    "schema_version": "0.1.0",
+    "event_id": "ev2b3c4d-e6f7-8901-bcde-f12345678901",
+    "execution_id": "e1a2b3c4-d5e6-7890-abcd-ef1234567890",
+    "parent_event_id": "ev1a2b3c-d5e6-7890-abcd-ef1234567890",
+    "event_type": "tool_call",
+    "timestamp": "2026-02-15T16:00:05Z",
+    "duration_ms": 1200,
+    "node_id": "repo_scan_fit_score",
+    "step_name": "scan_directory_structure",
+    "tool_name": "github_api_fetch",
+    "tool_input": {
+        "repo": "example/seo-tool",
+        "path": "/"
+    },
+    "tool_output": {
+        "files_count": 42,
+        "languages": [
+            "python",
+            "javascript"
+        ]
+    },
+    "metrics": {
+        "tokens_used": 350,
+        "cost_usd": 0.001,
+        "bytes_io": 8192
+    },
+    "metadata": {
+        "retry_attempt": 0
+    }
+}

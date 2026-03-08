@@ -1,0 +1,210 @@
+# ============================================================
+# Tombstone Intent Contract (Normalized)
+# ============================================================
+# Priority: P0
+# Source: NEW-GM/AUDIT/CONSTITUTION.md (Section 3: Default Deny)
+# Migration: A4 - Wave 4 Batch 1
+# Normalized: 2026-02-18
+# ============================================================
+
+intent_id: tombstone
+summary: |
+  废弃技能意图 - 实现 Fail-Closed 原则下的技能永久废弃机制。
+  核心约束：一旦技能被标记为废弃（REVOKED），该状态不可逆。
+  任何恢复请求必须被拒绝。废弃技能不可被检索链绕过。
+contract_version: v1.0.0
+schema_hash: TBD_SHA256
+
+# ============================================================
+# Inputs Schema
+# ============================================================
+inputs_schema:
+  required:
+    - name: repo_url
+      type: string
+      description: "仓库 URL（确定性输入）"
+      pattern: "^(https?|git)://.+$"
+
+    - name: commit_sha
+      type: string
+      description: "Git commit SHA（确定性输入）"
+      pattern: "^[a-f0-9]{7,40}$"
+
+    - name: skill_id
+      type: string
+      description: "被废弃技能的唯一标识符"
+      pattern: "^[a-zA-Z0-9_-]+$"
+
+    - name: revoke_reason
+      type: string
+      description: "废弃原因（必须提供审计追溯）"
+      minLength: 10
+
+    - name: revoked_by
+      type: string
+      description: "执行废弃操作的实体标识"
+
+  optional:
+    - name: related_issue_key
+      type: string
+      description: "关联的问题/事件标识"
+
+    - name: replacement_skill_id
+      type: string
+      description: "替代技能ID（如有）"
+
+# ============================================================
+# Required Gates
+# ============================================================
+required_gates:
+  - intake_repo              # 输入验证 (原 intake_validate)
+  - constitution_risk_gate   # 宪法风险 Gate
+  - tombstone_write_gate     # 废弃写入 Gate
+  - audit_chain_append       # 审计链追加
+  - tombstone_publish        # 废弃发布
+
+# ============================================================
+# Minimum Level
+# ============================================================
+minimum_level: L3
+
+# ============================================================
+# Required Evidence
+# ============================================================
+required_evidence:
+  - tombstone_record         # 废弃记录
+  - tombstone_hash           # 废弃哈希
+  - audit_chain_link         # 审计链链接
+  - source_doc_ref           # 源文档引用
+
+# ============================================================
+# Outputs
+# ============================================================
+outputs:
+  - name: audit_pack_ref
+    type: string
+    description: "L3 AuditPack 引用标识"
+
+  - name: gate_decision
+    type: string
+    enum: ["REVOKED"]
+    description: "Gate 最终决策（固定为 REVOKED）"
+
+  - name: revision
+    type: integer
+    description: "合约版本号"
+
+  - name: tombstone_record
+    type: object
+    description: "废弃记录对象"
+    fields:
+      - skill_id: string
+      - revoke_reason: string
+      - revoked_by: string
+      - revoke_timestamp: datetime
+      - tombstone_hash: sha256
+      - audit_chain_ref: string
+
+  - name: tombstone_state
+    type: string
+    const: "REVOKED"
+    description: "废弃后状态，固定为 REVOKED"
+
+  - name: evidence_ref
+    type: object
+    description: "废弃操作证据引用"
+
+# ============================================================
+# Validation Rules (Fail-Closed Core)
+# ============================================================
+validation_rules:
+  - rule_id: VR-TOMB-001
+    name: "Fail-Closed 不可逆"
+    description: "一旦废弃，永不恢复"
+    severity: CRITICAL
+    check: |
+      tombstone_state == REVOKED ->
+        FOREVER( NOT EXISTS(skill WHERE id == skill_id AND status != REVOKED) )
+
+  - rule_id: VR-TOMB-002
+    name: "审计记录强制"
+    description: "必须有明确的审计记录"
+    severity: CRITICAL
+    check: |
+      tombstone_record.tombstone_hash IS NOT NULL
+      AND tombstone_record.audit_chain_ref IS NOT NULL
+
+  - rule_id: VR-TOMB-003
+    name: "恢复请求拒绝"
+    description: "任何恢复请求必须被拒绝"
+    severity: CRITICAL
+    check: |
+      FORALL request IN recovery_requests WHERE request.skill_id == skill_id:
+        request.verdict == DENIED
+
+  - rule_id: VR-TOMB-004
+    name: "检索拦截"
+    description: "废弃技能不可被检索链绕过"
+    severity: HIGH
+    check: |
+      FORALL query IN search_queries:
+        NOT EXISTS( result WHERE result.skill_id == skill_id )
+
+# ============================================================
+# Architecture Boundary
+# ============================================================
+architecture_boundary: |
+  - n8n 仅作为 Orchestrator（触发/路由/通知），不做最终裁决
+  - SkillForge 是 Governor（Gate 判定、Evidence 产出、AuditPack 固化）
+  - 输入确定性：repo_url + commit_sha (+ at_time)
+  - 无 permit 不允许发布/打 tag/release
+  - Fail-Closed: 废弃操作不可逆，拒绝所有恢复请求
+
+# ============================================================
+# Source References (Evidence Chain)
+# ============================================================
+source_doc_ref:
+  files:
+    - path: "D:\\NEW-GM\\AUDIT\\CONSTITUTION.md"
+      section: "Section 3: The Default Deny Principle"
+      lines: "12-16"
+      evidence_ref: "CONSTITUTION-DEFAULT-DENY-L12-16"
+
+    - path: "D:\\NEW-GM\\docs\\2026-02-17\\图书馆意图迁移执行方案_v2.md"
+      section: "Section 4: 今晚可执行最小清单"
+      lines: "86"
+      evidence_ref: "MIGRATION-PLAN-TOMBSTONE-L86"
+
+    - path: "D:\\NEW-GM\\docs\\2026-02-17\\三维RAG与数据飞轮约束_v1.md"
+      section: "Section 2: 3D RAG 范围定义"
+      lines: "13-17"
+      evidence_ref: "3DRAG-TOMBSTONE-L13-17"
+
+# ============================================================
+# Error Codes
+# ============================================================
+error_codes:
+  - code: "TOMB-E001"
+    description: "Skill ID 不存在或格式无效"
+  - code: "TOMB-E002"
+    description: "废弃原因不满足最小长度要求"
+  - code: "TOMB-E003"
+    description: "技能已被废弃（重复废弃请求）"
+  - code: "TOMB-E004"
+    description: "审计链写入失败"
+  - code: "TOMB-E005"
+    description: "尝试恢复已废弃技能（违规操作）"
+
+# ============================================================
+# Migration Metadata
+# ============================================================
+migration:
+  task_id: A4
+  wave: 4
+  batch: 1
+  priority: P0
+  decision: MIGRATE
+  status: normalized
+  value_score: 9
+  risk_level: Critical
+  mapping_target: skillforge/src/skills/tombstone.py

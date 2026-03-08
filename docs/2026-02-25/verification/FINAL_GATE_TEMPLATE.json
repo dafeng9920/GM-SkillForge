@@ -1,0 +1,28 @@
+{
+  "gate_id": "L3-FINAL-GATE-20260225",
+  "job_id": "L3-CLOSURE-2026-02-25",
+  "decision": "ALLOW|REQUIRES_CHANGES|DENY",
+  "summary": "string",
+  "blocking_evidence": [
+    {
+      "task": "T{N}",
+      "required": "string",
+      "actual": "string",
+      "locator": "path"
+    }
+  ],
+  "required_changes": [
+    {
+      "issue_key": "SF-...",
+      "reason": "string",
+      "next_action": "string"
+    }
+  ],
+  "next_steps": [
+    {
+      "step": 1,
+      "owner": "string",
+      "action": "string"
+    }
+  ]
+}

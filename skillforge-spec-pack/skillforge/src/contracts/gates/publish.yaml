@@ -1,0 +1,89 @@
+# Publish Gate Contract
+# Gate Group: delivery (Squad C)
+# Position: G7 (Final Gate)
+# Status: FROZEN
+
+gate_name: pack_audit_and_publish
+description: |
+  Evaluates pack_audit_and_publish output and produces L3 AuditPack.
+  Must include content_hash of ALL prior artifacts (G1-G6).
+  This is the final gate in the delivery pipeline.
+
+inputs:
+  - name: all_evidence
+    type: array
+    required: true
+    description: "All evidence from prior gates G1-G6"
+  - name: sandbox_test_and_trace
+    type: object
+    required: true
+    description: "G6 gate decision (should be PASSED)"
+  - name: pack_audit_and_publish
+    type: object
+    required: true
+    description: "Publish output with audit_pack"
+
+outputs:
+  - name: gate_result
+    type: GateResult
+    description: "Final gate decision with complete evidence chain"
+
+validation_rules:
+  - id: PUBLISH-001
+    description: "pack_audit_and_publish output must be present"
+    on_fail: REJECTED
+    error_code: ERR_PUBLISH_OUTPUT_MISSING
+
+  - id: PUBLISH-002
+    description: "audit_pack must be present and valid"
+    on_fail: REJECTED
+    error_code: ERR_AUDIT_PACK_MISSING
+
+  - id: PUBLISH-003
+    description: "quality_level must be L3"
+    on_fail: REJECTED
+    error_code: ERR_QUALITY_LEVEL_INVALID
+
+  - id: PUBLISH-004
+    description: "publish status must be 'published' for PASSED"
+    on_fail: REJECTED
+    error_code: ERR_PUBLISH_REJECTED
+
+  - id: PUBLISH-005
+    description: "manifest must be present in audit_pack.files"
+    on_fail: REJECTED
+    error_code: ERR_MANIFEST_MISSING
+
+l3_audit_pack_requirements:
+  quality_level: L3
+  must_files:
+    - manifest.json
+    - policy_matrix.json
+    - static_analysis.log
+    - original_repo_snapshot.json
+    - repro_env.yml
+    - evidence.jsonl
+
+  content_hash_requirement: |
+    L3 AuditPack manifest.provenance MUST include content_hash
+    of ALL prior artifacts (G1-G6) for integrity verification.
+
+  required_manifest_fields:
+    - audit_id
+    - skill_id
+    - version
+    - quality_level
+    - provenance
+
+evidence_types:
+  - type: AUDIT_PACK_MANIFEST
+    description: "L3 AuditPack manifest with complete evidence chain"
+    required_fields:
+      - audit_id
+      - skill_id
+      - provenance
+      - files
+
+chaining:
+  prior_gates: [intake_repo, license_gate, repo_scan_fit_score, constitution_risk_gate, scaffold_skill_impl, sandbox_test_and_trace]
+  description: "Must chain evidence refs from G1-G6 and include content_hash for each"

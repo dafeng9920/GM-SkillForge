@@ -1,0 +1,68 @@
+{
+  "job_id": "L45-FE-V10-20260220-007",
+  "task_id": "T38",
+  "executor": "Kior-B",
+  "execution_contract": {
+    "version": "1.0",
+    "created_at": "2026-02-21T00:00:00Z",
+    "deliverables": [
+      {
+        "path": "ui/app/src/pages/audit/AuditPacksPage.tsx",
+        "type": "new",
+        "description": "审计包浏览页面 - 列表+详情+JSON/replay_pointer",
+        "constraints": [
+          "run_id/evidence_ref 可点击跳转",
+          "at_time 漂移错误按 Fail-Closed 展示"
+        ]
+      },
+      {
+        "path": "ui/app/src/pages/audit/RagQueryPage.tsx",
+        "type": "new",
+        "description": "RAG 查询页面 - 查询表单+结果片段+evidence_ref",
+        "constraints": [
+          "at_time 必须是固定时间戳，禁止 latest",
+          "RAG 命中项必须显示 evidence_ref"
+        ]
+      },
+      {
+        "path": "ui/app/src/components/governance/EvidenceDrawer.tsx",
+        "type": "new",
+        "description": "证据 JSON 抽屉组件 - 可复制",
+        "constraints": [
+          "支持 JSON 复制功能",
+          "显示 run_id 和 evidence_ref"
+        ]
+      },
+      {
+        "path": "docs/2026-02-20/L45_FE_T38_AUDIT_RAG_REPORT_v1.md",
+        "type": "new",
+        "description": "审计与查询闭环验收报告"
+      }
+    ],
+    "api_endpoints": [
+      {
+        "endpoint": "/api/v1/n8n/fetch_pack",
+        "method": "POST",
+        "params": ["run_id", "evidence_ref", "at_time"],
+        "constraint": "run_id 与 evidence_ref 至少填写一个"
+      },
+      {
+        "endpoint": "/api/v1/n8n/query_rag",
+        "method": "POST",
+        "params": ["query", "at_time", "repo_url", "commit_sha", "top_k"],
+        "constraint": "at_time 必须是固定时间戳"
+      }
+    ],
+    "constraints_enforced": [
+      "run_id/evidence_ref 在两页都必须可点击跳转",
+      "RAG 命中项必须显示 evidence_ref",
+      "at_time 漂移错误必须按 Fail-Closed 结构展示",
+      "不得出现 evidence_ref 无交互锚点"
+    ],
+    "gate_requirements": {
+      "build_command": "cd ui/app; npm run build",
+      "expected_result": "passed"
+    }
+  },
+  "contract_hash": "sha256:a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456"
+}

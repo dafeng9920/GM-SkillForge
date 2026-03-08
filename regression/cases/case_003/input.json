@@ -1,0 +1,16 @@
+{
+  "case_id": "case_003",
+  "description": "Registry Store - Append-only behavior verification",
+  "category": "registry_store",
+  "input": {
+    "skill_id": "SKILL-REGRESSION-003",
+    "revision": "REV-001",
+    "pack_hash": "PACK-HASH-REGRESSION-003",
+    "permit_id": "PERMIT-REGRESSION-003",
+    "tombstone_state": "ACTIVE"
+  },
+  "expected_append_success": true,
+  "expected_read_latest": "REV-001",
+  "expected_append_only": true,
+  "notes": "Verifies that registry store is append-only and can read latest ACTIVE revision."
+}

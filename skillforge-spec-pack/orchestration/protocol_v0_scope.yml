@@ -1,0 +1,125 @@
+# ============================================================================
+# GM-SkillForge Audit Engine — v0 Scope Lock
+# ============================================================================
+# This addendum pins the 7 architectural anchor points for the v0 release.
+# Any change to these boundaries requires explicit approval from the
+# project owner before implementation.
+#
+# Parent Document: GM-SkillForge Audit Engine Protocol (v1.0)
+# Locked At:       2026-02-16T22:43:00+08:00
+# ============================================================================
+
+schema_version: 1
+status: locked          # locked | draft | superseded
+supersedes: ~           # e.g. "protocol_v0_scope_draft.yml"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 1. Audit Scope
+# ─────────────────────────────────────────────────────────────────────────────
+audit_scope:
+  v0: contracts_and_static_analysis
+  description: >
+    v0 only audits Skill contracts (schema conformance, license compliance,
+    constitution risk) and static analysis output.
+    No execution, no stress testing, no live behavior validation.
+  deferred_to_v1:
+    - execution_testing        # L4 — benchmark harness
+    - stress_testing           # L5 — long-running stress vectors
+    - live_behavior_validation # Playwright / browser-control skills
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 2. Supported Protocols (Upstream Intake)
+# ─────────────────────────────────────────────────────────────────────────────
+supported_protocols:
+  v0:
+    - github       # repo_url + commit_sha
+    - cli          # local filesystem path via CLI
+  deferred_to_v1:
+    - mcp          # Model Context Protocol adapter
+    - openclaw     # OpenClaw agent framework
+    - dify         # Dify workflow engine
+  rationale: >
+    GitHub is the primary intake path; CLI enables local dev testing.
+    MCP is the most mature agent protocol and will be first v1 addition.
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 3. Supported Languages (Skill Target)
+# ─────────────────────────────────────────────────────────────────────────────
+supported_languages:
+  v0:
+    - python       # 3.10+
+  deferred_to_v1:
+    - node         # 18+ (LTS)
+  rationale: >
+    Single language keeps sandbox, dependency resolution, and scaffold
+    templates manageable. Node support multiplies complexity 2-3x.
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 4. Minimum Deliverable (Quality Level)
+# ─────────────────────────────────────────────────────────────────────────────
+minimum_deliverable:
+  commercial_entry_point: L3
+  description: >
+    L3 (Trustworthy) is the minimum quality level for commercial use.
+    L3 Audit Pack includes all 7 MUST files: manifest, policy_matrix,
+    static_analysis, original_repo_snapshot, repro_env, evidence, lineage.
+  levels:
+    L1: { status: supported,  description: "Basic — schema + lint pass" }
+    L2: { status: supported,  description: "Standard — provenance verified" }
+    L3: { status: supported,  description: "Trustworthy — full audit pack" }
+    L4: { status: deferred,   description: "Robust — benchmark harness" }
+    L5: { status: deferred,   description: "Elite — stress vectors + baselines" }
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 5. Evidence Collection Scope
+# ─────────────────────────────────────────────────────────────────────────────
+evidence_collection:
+  v0:
+    - intake_provenance      # repo source + commit + snapshot_hash
+    - gate_decisions         # license / constitution verdicts
+    - static_analysis_output # semgrep / lint scan results
+    - policy_findings        # issue_key + severity + evidence_ref chain
+  excluded_from_v0:
+    - live_web_crawl         # no real HTTP fetching of target URLs
+    - html_content_capture   # no HTML/headers/structured-data scraping
+    - browser_rendering      # no Playwright / headless browser
+  rationale: >
+    Evidence in v0 = static metadata + analysis output.
+    Real web crawling is Skill execution (L4+), not audit engine concern.
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 6. GitHub Input Contract
+# ─────────────────────────────────────────────────────────────────────────────
+github_input:
+  required_fields:
+    - repo_url               # MUST — full GitHub URL
+    - commit_sha             # MUST — pinned commit for reproducibility
+  optional_fields:
+    - branch                 # SHOULD — informational, defaults to "main"
+  rationale: >
+    Forced commit_sha ensures bit-exact reproducibility of the audit.
+    original_repo_snapshot.json already carries snapshot_hash; adding
+    commit_sha completes the provenance chain.
+  validation_rule: >
+    If commit_sha is missing → DENY with error_code SF_INTAKE_REPO_FAILED,
+    suggested_fix: "Provide commit_sha for reproducible audit."
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 7. Legal / Compliance Boundaries
+# ─────────────────────────────────────────────────────────────────────────────
+compliance_boundaries:
+  robots_txt:
+    policy: respect          # MUST respect robots.txt
+    enforcement: constitution_risk_gate
+  authenticated_content:
+    policy: deny             # MUST NOT crawl login-gated / restricted content
+    enforcement: constitution_risk_gate
+  data_retention:
+    policy: audit_only       # evidence retained for audit trail, not resale
+  additional_rules:
+    - "No credential storage in audit pack"
+    - "No PII collection beyond repo author/committer metadata"
+    - "All evidence is hash-verified and tamper-evident"
+  rationale: >
+    Hard-wiring compliance rules in v0 avoids post-launch legal exposure.
+    These constraints are enforced at the constitution_risk_gate level.

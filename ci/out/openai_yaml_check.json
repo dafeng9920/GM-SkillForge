@@ -1,0 +1,103 @@
+{
+  "passed": true,
+  "timestamp": "2026-02-19T16:06:56Z",
+  "check_name": "openai_yaml",
+  "skills": [
+    {
+      "skill": "permit-governance-skill",
+      "checks": [
+        {
+          "passed": true,
+          "value": "permit_governance_skill",
+          "name": "name_field"
+        },
+        {
+          "name": "description_field",
+          "passed": true
+        },
+        {
+          "name": "version_field",
+          "passed": true
+        },
+        {
+          "name": "frozen_at_field",
+          "passed": true
+        },
+        {
+          "name": "prompt_field",
+          "passed": true
+        },
+        {
+          "name": "fail_closed_rules",
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "skill": "release-gate-skill",
+      "checks": [
+        {
+          "passed": true,
+          "value": "release_gate_skill",
+          "name": "name_field"
+        },
+        {
+          "name": "description_field",
+          "passed": true
+        },
+        {
+          "name": "version_field",
+          "passed": true
+        },
+        {
+          "name": "frozen_at_field",
+          "passed": true
+        },
+        {
+          "optional": true,
+          "passed": true,
+          "name": "prompt_field"
+        },
+        {
+          "name": "fail_closed_rules",
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "skill": "rollback-tombstone-skill",
+      "checks": [
+        {
+          "passed": true,
+          "value": "rollback-tombstone-agent",
+          "name": "name_field"
+        },
+        {
+          "name": "description_field",
+          "passed": true
+        },
+        {
+          "name": "version_field",
+          "passed": true
+        },
+        {
+          "optional": true,
+          "passed": true,
+          "name": "frozen_at_field"
+        },
+        {
+          "name": "prompt_field",
+          "passed": true
+        },
+        {
+          "optional": true,
+          "passed": true,
+          "name": "fail_closed_rules"
+        }
+      ],
+      "passed": true
+    }
+  ]
+}

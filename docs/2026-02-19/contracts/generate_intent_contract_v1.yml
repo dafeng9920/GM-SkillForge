@@ -1,0 +1,379 @@
+# Generate Intent Contract v1
+# 用于生成技能模块的意图合同
+# 遵循 Fail-Closed 原则
+
+# ============================================================
+# 合同基础信息
+# ============================================================
+contract_id: generate_intent_contract_v1
+frozen_at: "2026-02-19T00:00:00Z"
+version: "1.0.0"
+schema_hash: TBD_SHA256
+author: "vs--cc2"
+status: "FROZEN"
+
+# ============================================================
+# 1. 意图ID
+# ============================================================
+intent_id: generate
+description: "从源代码仓库生成技能模块"
+
+# ============================================================
+# 2. 意图类型
+# ============================================================
+intent_type: "GENERATE"
+category: "skill_creation"
+lifecycle_stage: "creation"
+
+# ============================================================
+# 3. 输入 Schema
+# ============================================================
+input_schema:
+  # 必填字段
+  required:
+    - repo_url
+    - commit_sha
+    - skill_name
+
+  properties:
+    repo_url:
+      type: string
+      format: "https://github.com/{org}/{repo}"
+      description: "源代码仓库 URL"
+      example: "https://github.com/local/NEW-GM"
+
+    commit_sha:
+      type: string
+      pattern: "^[a-f0-9]{40}$"
+      description: "Git commit SHA（完整 40 位）"
+      example: "4ea179d31a66fc2616f0cf953cd0e5c5c43d8ea8"
+
+    skill_name:
+      type: string
+      pattern: "^[a-z][a-z0-9_]*$"
+      description: "技能名称（小写字母、数字、下划线）"
+      example: "template_mean_reversion"
+
+    skill_version:
+      type: string
+      format: "v{MAJOR}.{MINOR}.{PATCH}"
+      description: "技能版本"
+      default: "v1.0.0"
+
+    entry_path:
+      type: string
+      description: "入口文件路径"
+      example: "strategies/template_mean_reversion.py"
+
+    skill_type:
+      type: string
+      enum: ["strategy", "indicator", "utility", "connector"]
+      description: "技能类型"
+      default: "strategy"
+
+    metadata:
+      type: object
+      properties:
+        author:
+          type: string
+        description:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        dependencies:
+          type: array
+          items:
+            type: string
+      description: "技能元数据"
+
+    generation_config:
+      type: object
+      properties:
+        include_tests:
+          type: boolean
+          default: true
+        include_docs:
+          type: boolean
+          default: true
+        optimize_code:
+          type: boolean
+          default: false
+        target_platform:
+          type: string
+          enum: ["python", "nodejs", "native"]
+          default: "python"
+      description: "生成配置"
+
+# ============================================================
+# 4. 输出 Schema
+# ============================================================
+output_schema:
+  properties:
+    generation_id:
+      type: string
+      format: "GEN-{YYYYMMDD}-{SEQ}"
+      description: "生成执行 ID"
+
+    skill_id:
+      type: string
+      format: "SKILL-{skill_name}-{version}"
+      description: "生成的技能 ID"
+
+    status:
+      type: string
+      enum: ["GENERATED", "FAILED", "PARTIAL"]
+      description: "生成状态"
+
+    generated_files:
+      type: array
+      items:
+        type: object
+        properties:
+          path:
+            type: string
+          type:
+            type: string
+            enum: ["source", "test", "config", "doc"]
+          size_bytes:
+            type: integer
+          checksum:
+            type: string
+      description: "生成的文件列表"
+
+    skill_manifest:
+      type: object
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+        entry_point:
+          type: string
+        dependencies:
+          type: array
+          items:
+            type: string
+        capabilities:
+          type: array
+          items:
+            type: string
+      description: "技能清单"
+
+    validation_result:
+      type: object
+      properties:
+        syntax_valid:
+          type: boolean
+        imports_valid:
+          type: boolean
+        structure_valid:
+          type: boolean
+        warnings:
+          type: array
+          items:
+            type: string
+      description: "验证结果"
+
+    evidence_refs:
+      type: array
+      items:
+        type: string
+      description: "Evidence 引用列表"
+
+    completed_at:
+      type: string
+      format: ISO8601_UTC
+      description: "生成完成时间"
+
+# ============================================================
+# 5. 错误码映射
+# ============================================================
+error_codes:
+  E_GEN_001:
+    description: "仓库 URL 无效"
+    condition: "repo_url format invalid or unreachable"
+    severity: "CRITICAL"
+    recovery_hint: "验证仓库 URL 格式和可访问性"
+
+  E_GEN_002:
+    description: "Commit SHA 不存在"
+    condition: "commit_sha not found in repository"
+    severity: "CRITICAL"
+    recovery_hint: "验证 commit SHA 是否正确"
+
+  E_GEN_003:
+    description: "技能名称无效"
+    condition: "skill_name does not match pattern ^[a-z][a-z0-9_]*$"
+    severity: "HIGH"
+    recovery_hint: "使用小写字母开头，仅包含字母、数字、下划线"
+
+  E_GEN_004:
+    description: "入口文件不存在"
+    condition: "entry_path not found at commit_sha"
+    severity: "CRITICAL"
+    recovery_hint: "验证入口文件路径"
+
+  E_GEN_005:
+    description: "代码解析失败"
+    condition: "source code parsing failed"
+    severity: "CRITICAL"
+    recovery_hint: "检查代码语法和结构"
+
+  E_GEN_006:
+    description: "依赖解析失败"
+    condition: "dependency resolution failed"
+    severity: "HIGH"
+    recovery_hint: "检查依赖声明和版本兼容性"
+
+  E_GEN_007:
+    description: "生成超时"
+    condition: "generation exceeds timeout limit"
+    severity: "HIGH"
+    recovery_hint: "减少代码复杂度或增加超时配置"
+
+  E_GEN_008:
+    description: "技能已存在"
+    condition: "skill with same name and version already exists"
+    severity: "MEDIUM"
+    recovery_hint: "使用不同的版本号或技能名称"
+
+  E_GEN_009:
+    description: "验证失败"
+    condition: "generated skill fails validation"
+    severity: "HIGH"
+    recovery_hint: "检查生成的代码和配置"
+
+# ============================================================
+# 6. Fail-Closed 规则
+# ============================================================
+fail_closed_rules:
+  - rule_id: "FC-GEN-001"
+    condition: "repo_url == null OR repo_url == ''"
+    result: "GENERATION_BLOCKED"
+    blocked_by: "MISSING_REPO_URL"
+    description: "缺少仓库 URL，禁止生成"
+
+  - rule_id: "FC-GEN-002"
+    condition: "commit_sha == null OR commit_sha == ''"
+    result: "GENERATION_BLOCKED"
+    blocked_by: "MISSING_COMMIT_SHA"
+    description: "缺少 commit SHA，禁止生成"
+
+  - rule_id: "FC-GEN-003"
+    condition: "skill_name == null OR skill_name == ''"
+    result: "GENERATION_BLOCKED"
+    blocked_by: "MISSING_SKILL_NAME"
+    description: "缺少技能名称，禁止生成"
+
+  - rule_id: "FC-GEN-004"
+    condition: "repo_url unreachable"
+    result: "GENERATION_BLOCKED"
+    blocked_by: "REPO_ACCESS_FAILED"
+    description: "无法访问仓库，禁止生成"
+
+  - rule_id: "FC-GEN-005"
+    condition: "commit_sha not found"
+    result: "GENERATION_BLOCKED"
+    blocked_by: "COMMIT_NOT_FOUND"
+    description: "Commit 不存在，禁止生成"
+
+  - rule_id: "FC-GEN-006"
+    condition: "entry_path not found"
+    result: "GENERATION_BLOCKED"
+    blocked_by: "ENTRY_NOT_FOUND"
+    description: "入口文件不存在，禁止生成"
+
+  - rule_id: "FC-GEN-007"
+    condition: "code parsing failed"
+    result: "GENERATION_FAILED"
+    blocked_by: "CODE_PARSE_ERROR"
+    description: "代码解析失败，生成中止"
+
+  - rule_id: "FC-GEN-008"
+    condition: "validation_result.syntax_valid == false"
+    result: "GENERATION_FAILED"
+    blocked_by: "SYNTAX_ERROR"
+    description: "语法验证失败，生成中止"
+
+# ============================================================
+# 7. Evidence 字段
+# ============================================================
+evidence_fields:
+  - field_id: "generation_execution_evidence"
+    type: "object"
+    required: true
+    description: "生成执行证据"
+    schema:
+      generation_id: "string"
+      started_at: "ISO8601_UTC"
+      completed_at: "ISO8601_UTC"
+      executor: "string"
+
+  - field_id: "source_code_evidence"
+    type: "object"
+    required: true
+    description: "源代码证据"
+    schema:
+      repo_url: "string"
+      commit_sha: "string"
+      files_analyzed: "integer"
+      total_lines: "integer"
+
+  - field_id: "code_analysis_evidence"
+    type: "object"
+    required: true
+    description: "代码分析证据"
+    schema:
+      ast_generated: "boolean"
+      dependencies_found: "array"
+      complexity_metrics: "object"
+      structure_analysis: "object"
+
+  - field_id: "generation_output_evidence"
+    type: "object"
+    required: true
+    description: "生成输出证据"
+    schema:
+      files_generated: "integer"
+      total_size_bytes: "integer"
+      manifest_created: "boolean"
+
+  - field_id: "validation_evidence"
+    type: "object"
+    required: true
+    description: "验证证据"
+    schema:
+      syntax_check: "boolean"
+      import_check: "boolean"
+      structure_check: "boolean"
+      warnings: "array"
+
+# ============================================================
+# 8. 版本
+# ============================================================
+version_info:
+  contract_version: "1.0.0"
+  schema_version: "1.0.0"
+  compatible_intent_versions:
+    - "1.0.0"
+    - "1.0.1"
+    - "1.1.0"
+
+# ============================================================
+# 9. 冻结时间
+# ============================================================
+frozen_at: "2026-02-19T00:00:00Z"
+
+# ============================================================
+# 附加配置
+# ============================================================
+config:
+  timeout_seconds: 7200
+  max_retries: 2
+  parallel_execution: false
+  cache_results: true
+  cache_ttl_seconds: 86400
+  max_file_size_bytes: 10485760  # 10MB
+  max_total_size_bytes: 104857600  # 100MB

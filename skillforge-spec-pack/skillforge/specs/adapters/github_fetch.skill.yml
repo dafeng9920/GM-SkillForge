@@ -1,0 +1,47 @@
+schema_version: "0.1.0"
+skill_id: "github_fetch"
+name: "GitHub Fetch Adapter"
+description: "Interacts with GitHub API for repo info, scanning, discovery"
+version: "0.1.0"
+
+# 输入合同
+input:
+  required:
+    - action:
+        type: "string"
+        description: "Action to perform: fetch_repo_info, scan_repo_structure, or discover_repos"
+    - params:
+        type: "object"
+        description: "Action-specific parameters"
+
+# 输出合同
+output:
+  required:
+    - result:
+        type: "object"
+        description: "Action result payload (RepoInfo, ScanResult, or DiscoveryResult)"
+
+# 能力声明
+capabilities:
+  network: true
+  filesystem: false
+  subprocess: false
+  gpu: false
+
+# 风险等级
+risk_tier: "L1"
+
+# 依赖
+dependencies:
+  adapters: []
+  schemas: []
+  error_codes: ["SYS_ADAPTER_UNAVAILABLE", "SYS_TIMEOUT"]
+
+# 错误处理
+errors:
+  - code: "SYS_ADAPTER_UNAVAILABLE"
+    retryable: true
+    description: "GitHub API is unavailable"
+  - code: "SYS_TIMEOUT"
+    retryable: true
+    description: "GitHub API request timed out"

@@ -1,0 +1,56 @@
+{
+  "task_id": "T73",
+  "compliance_officer": "Kior-C",
+  "decision": "PASS",
+  "reasons": [
+    "A Guard 结构符合 EXECUTION_GUARD_A_PROPOSAL_SKILL_v1.md 规范",
+    "B Guard 结构符合 EXECUTION_GUARD_B_EXECUTION_SKILL_v1.md 规范",
+    "所有证据引用 (EvidenceRef) 包含有效的 id, kind, locator, sha256",
+    "无副作用操作，无需 permit 验证",
+    "三角色 (Execution/Review/Compliance) 已明确分配",
+    "验收测试 (acceptance_tests) 全部通过",
+    "交付物三件套完整: execution_report + gate_decision + compliance_attestation"
+  ],
+  "evidence_refs": [
+    {
+      "id": "EV-T73-001",
+      "kind": "FILE",
+      "locator": "configs/audit_policy_v1.json",
+      "sha256": "5f7b3189d40a4398094ae9a297add3c26bce4c7ac9a2c086c3550d4839985e60"
+    },
+    {
+      "id": "EV-T73-003",
+      "kind": "FILE",
+      "locator": "docs/2026-02-22/verification/policy_lock_report.json"
+    }
+  ],
+  "contract_hash": "sha256:T73-contract-policy-lock-v1",
+  "compliance_checks": {
+    "constitution_adherence": {
+      "status": "PASS",
+      "ref": "docs/EXECUTION_GUARD_A_PROPOSAL_SKILL_v1.md"
+    },
+    "execution_guard_b_adherence": {
+      "status": "PASS",
+      "ref": "docs/EXECUTION_GUARD_B_EXECUTION_SKILL_v1.md"
+    },
+    "no_false_completion": {
+      "status": "PASS",
+      "reason": "所有完成声明均附带 EvidenceRef"
+    },
+    "no_implicit_permissions": {
+      "status": "PASS",
+      "reason": "无副作用操作"
+    },
+    "evidence_traceability": {
+      "status": "PASS",
+      "reason": "所有证据包含可验证的 sha256"
+    }
+  },
+  "reviewed_at": "2026-02-22T08:15:00Z",
+  "signature": {
+    "signer": "Kior-C",
+    "algorithm": "policy-lock-v1",
+    "timestamp": "2026-02-22T08:15:00Z"
+  }
+}

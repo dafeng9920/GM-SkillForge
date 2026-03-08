@@ -1,0 +1,170 @@
+@import './tokens.css';
+
+/* ==========================================================================
+   CSS RESET & BASELINES
+   ========================================================================== */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+dl,
+dd {
+    margin: 0;
+}
+
+ul[role="list"],
+ol[role="list"] {
+    list-style: none;
+}
+
+html:focus-within {
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    text-rendering: optimizeSpeed;
+    line-height: 1.5;
+    background-color: var(--gm-color-base-100);
+    color: var(--gm-color-text-primary);
+    font-family: var(--gm-font-body);
+    font-size: var(--gm-text-base);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ==========================================================================
+   TYPOGRAPHY INJECTIONS
+   ========================================================================== */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--gm-font-header);
+    font-weight: var(--gm-font-weight-bold);
+    color: var(--gm-color-text-primary);
+    line-height: 1.2;
+}
+
+a {
+    text-decoration-skip-ink: auto;
+    color: var(--gm-color-primary);
+    transition: color var(--gm-transition-fast);
+}
+
+a:hover {
+    color: var(--gm-color-primary-hover);
+}
+
+img,
+picture {
+    max-width: 100%;
+    display: block;
+}
+
+/* ==========================================================================
+   ACCESSIBILITY HARD GATES (WCAG AA enforcement)
+   ========================================================================== */
+
+/* 1. Global Focus visibility (MUST not be hidden) */
+*:focus-visible {
+    outline: none;
+    box-shadow: var(--gm-focus-ring) !important;
+}
+
+/* 2. Global Accessibility / Screen Reader Only Class */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* 3. Performance & Degraded Motion */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ==========================================================================
+   UTILITY CLASSES (Strictly scoped)
+   ========================================================================== */
+
+/* Neon Accents (Restricted Usage) */
+.neon-pass {
+    color: var(--gm-color-state-pass);
+    text-shadow: 0 0 8px var(--gm-color-state-pass-bg);
+}
+
+.neon-block {
+    color: var(--gm-color-state-block);
+    text-shadow: 0 0 8px var(--gm-color-state-block-bg);
+}
+
+/* Glass Panels (Restricted to secondary containers) */
+.glass-panel {
+    background-color: var(--gm-glass-bg);
+    backdrop-filter: var(--gm-glass-blur);
+    -webkit-backdrop-filter: var(--gm-glass-blur);
+    /* Safari polyfill */
+    border: var(--gm-glass-border);
+}
+
+/* Solid Information Cards (High Contrast Data) */
+.solid-card {
+    background-color: var(--gm-color-card-solid);
+    border: 1px solid var(--gm-color-card-border);
+    border-radius: var(--gm-radius-lg);
+    box-shadow: var(--gm-shadow-sm);
+}
+
+/* Layout Utilities */
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flex-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.gap-2 {
+    gap: var(--gm-space-2);
+}
+
+.gap-4 {
+    gap: var(--gm-space-4);
+}

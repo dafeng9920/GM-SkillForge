@@ -1,0 +1,35 @@
+{
+  "task_id": "T36",
+  "executor": "vs--cc1",
+  "attestation_timestamp": "2026-02-20T12:00:00Z",
+  "decision": "PASS",
+  "evidence_refs": [
+    "EV-T36-001",
+    "EV-T36-002",
+    "EV-T36-003"
+  ],
+  "checks": [
+    {
+      "check_id": "CHK-001",
+      "description": "DecisionHeroCard displays gate_decision and release_allowed prominently",
+      "result": "PASS"
+    },
+    {
+      "check_id": "CHK-002",
+      "description": "evidence_ref has copy functionality",
+      "result": "PASS"
+    },
+    {
+      "check_id": "CHK-003",
+      "description": "BlockReasonCard used for error scenarios",
+      "result": "PASS"
+    },
+    {
+      "check_id": "CHK-004",
+      "description": "TypeScript compilation of T36 files",
+      "result": "PASS"
+    }
+  ],
+  "blocking_issues": [],
+  "attester": "vs--cc1"
+}

@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://gm-os.dev/orchestration/nodes/scaffold_skill_impl.schema.json",
+  "title": "ScaffoldSkillImplNode",
+  "description": "Stage 5: 生成 Skill 实现骨架",
+  "type": "object",
+  "required": ["node_id", "input", "output"],
+  "properties": {
+    "node_id": { "const": "scaffold_skill_impl" },
+    "stage": { "const": 5 },
+    "input": {
+      "type": "object",
+      "required": ["skill_md", "input_schema", "output_schema", "capabilities", "gate_decision"],
+      "properties": {
+        "skill_md": { "type": "string" },
+        "input_schema": { "type": "object" },
+        "output_schema": { "type": "object" },
+        "capabilities": { "type": "array", "items": { "type": "string" } },
+        "gate_decision": { "type": "object" }
+      }
+    },
+    "output": {
+      "type": "object",
+      "required": ["scaffold_bundle_path", "manifest"],
+      "properties": {
+        "scaffold_bundle_path": { "type": "string", "description": "skill 包目录路径" },
+        "manifest": {
+          "type": "object",
+          "required": ["name", "version", "capabilities"],
+          "properties": {
+            "name": { "type": "string" },
+            "version": { "type": "string" },
+            "capabilities": { "type": "array", "items": { "type": "string" } },
+            "schemas": { "type": "object" },
+            "provenance": { "type": "object" }
+          }
+        }
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["SCHEMA_INVALID", "SYS_INTERNAL", "SYS_DEPENDENCY_FAILURE"]
+      }
+    }
+  },
+  "version": "0.1.0"
+}

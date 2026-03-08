@@ -1,0 +1,6 @@
+
+version: 1
+actions_requiring_permit:
+  - CUSTOM_ACTION_A
+  - CUSTOM_ACTION_B
+deny_without_permit_error_code: "PERMIT_REQUIRED"

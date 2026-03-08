@@ -1,0 +1,54 @@
+{
+  "timestamp": "2026-02-19T16:06:56Z",
+  "summary": {
+    "passed_checks": 5,
+    "total_checks": 5,
+    "required_passed": 5,
+    "required_total": 5
+  },
+  "checks": [
+    {
+      "name": "structure",
+      "required": true,
+      "script": "check_skill_structure.ps1",
+      "error": null,
+      "passed": true,
+      "duration_ms": 32
+    },
+    {
+      "name": "openai_yaml",
+      "required": true,
+      "script": "check_openai_yaml.ps1",
+      "error": null,
+      "passed": true,
+      "duration_ms": 17
+    },
+    {
+      "name": "contract_markers",
+      "required": true,
+      "script": "check_skill_contract_markers.ps1",
+      "error": null,
+      "passed": true,
+      "duration_ms": 23
+    },
+    {
+      "name": "evidence_refs",
+      "required": true,
+      "script": "check_evidence_refs.ps1",
+      "error": null,
+      "passed": true,
+      "duration_ms": 40
+    },
+    {
+      "name": "error_semantics",
+      "required": true,
+      "script": "check_error_semantics_consistency.ps1",
+      "error": null,
+      "passed": true,
+      "duration_ms": 24
+    }
+  ],
+  "gate_name": "skillization_gate",
+  "passed": true,
+  "duration_ms": 152
+}

@@ -1,0 +1,30 @@
+{
+  "run_id": "run-abc9d60d",
+  "timestamp": "2026-02-18T08:40:29Z",
+  "final_decision": "REJECTED",
+  "fail_closed_triggered": true,
+  "stop_gate": "G1",
+  "gate_results": [
+    {
+      "gate": "intake_repo",
+      "status": "REJECTED",
+      "error_code": "EXEC_VALIDATION_FAILED: repo_url must contain 'github.com' or start with 'git://' or 'https://'"
+    }
+  ],
+  "evidence_refs": [],
+  "skill_artifact": null,
+  "audit_pack": null,
+  "permit_token": null,
+  "release_allowed": false,
+  "artifacts": {
+    "input": {
+      "repo_url": "file:///D:/NEW-GM",
+      "commit_sha": "4ea179d31a66fc2616f0cf953cd0e5c5c43d8ea8",
+      "branch": "main",
+      "entry_path": "strategies/template_mean_reversion.py",
+      "options": {
+        "sandbox_mode": "strict"
+      }
+    }
+  }
+}

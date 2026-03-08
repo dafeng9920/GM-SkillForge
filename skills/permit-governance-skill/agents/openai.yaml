@@ -1,0 +1,317 @@
+# permit-governance-skill Agent Configuration
+# OpenAI Function Calling Format
+# 版本: v1.1.0
+
+name: permit_governance_skill
+description: |
+  Permit 治理 Skill - 封装签发、验签、阻断完整能力。
+  确保 no-permit-no-release 语义不变。
+
+  核心能力:
+  1. 签发 (issue): Gate 通过后签发 permit_token
+  2. 验签 (validate): 发布前校验 permit 有效性
+  3. 阻断 (block): 无有效 permit 时阻断发布
+
+  Fail-Closed 保证:
+  - permit 缺失/无效 → release_allowed = false
+  - 签发条件不满足 → permit_token = null
+
+version: "1.1.0"
+frozen_at: "2026-02-18"
+
+# ============================================================================
+# 默认提示 - Agent 执行顺序
+# ============================================================================
+
+default_prompt: |
+  作为 Permit 治理 Agent，在处理任何发布请求时必须遵循以下顺序:
+
+  ## 执行顺序
+
+  1. **先验签** (validate)
+     - 检查 permit_token 是否存在
+     - 校验签名有效性
+     - 检查过期时间
+     - 匹配执行上下文 (run_id/repo_url/commit_sha)
+
+  2. **再决定放行**
+     - 如果验签通过 (gate_decision=ALLOW, release_allowed=true): 允许发布
+     - 如果验签失败 (gate_decision=BLOCK, release_allowed=false): 阻断发布
+
+  3. **阻断时返回原因**
+     - E001: PERMIT_REQUIRED - permit 缺失
+     - E002: PERMIT_INVALID - 格式无效
+     - E003: PERMIT_INVALID - 签名异常
+     - E004: PERMIT_EXPIRED - 已过期
+     - E005: PERMIT_SCOPE_MISMATCH - 作用域不匹配
+     - E006: PERMIT_SUBJECT_MISMATCH - 主体不匹配
+     - E007: PERMIT_REVOKED - 已撤销
+
+  ## 核心约束
+
+  **no-permit-no-release**: 任何发布动作必须持有有效 permit。
+  release_allowed 默认 false，只有 permit 校验完全通过时才为 true。
+
+# ============================================================================
+# 操作定义
+# ============================================================================
+
+operations:
+  issue:
+    description: "签发 permit_token（Gate 通过后调用）"
+    parameters:
+      type: object
+      required:
+        - run_id
+        - intent_id
+        - repo_url
+        - commit_sha
+        - final_gate_decision
+        - audit_pack_ref
+        - ttl_seconds
+      properties:
+        run_id:
+          type: string
+          description: 运行ID，贯穿全链路
+        intent_id:
+          type: string
+          description: 意图ID
+        repo_url:
+          type: string
+          description: 仓库URL
+        commit_sha:
+          type: string
+          description: 提交SHA (40位)
+        final_gate_decision:
+          type: string
+          enum: [PASSED, PASSED_NO_PERMIT]
+          description: Gate决策结果
+        release_blocked_by:
+          type: string
+          nullable: true
+          description: 阻断原因（有值则不签发）
+        audit_pack_ref:
+          type: string
+          description: 审计包引用
+        gate_count:
+          type: integer
+          default: 8
+        evidence_count:
+          type: integer
+          default: 8
+        ttl_seconds:
+          type: integer
+          minimum: 1
+          maximum: 86400
+          description: Permit有效期（秒）
+        allowed_actions:
+          type: array
+          items:
+            type: string
+          default: ["release"]
+        environment:
+          type: string
+          enum: [development, staging, production]
+          default: development
+        gate_profile:
+          type: string
+          default: "batch2_8gate"
+    returns:
+      type: object
+      properties:
+        success:
+          type: boolean
+        permit_id:
+          type: string
+          nullable: true
+        permit_token:
+          type: string
+          nullable: true
+        issued_at:
+          type: string
+          format: date-time
+        expires_at:
+          type: string
+          format: date-time
+        error_code:
+          type: string
+          enum: [I001, I002, I003, I004, I005]
+          nullable: true
+        evidence_refs:
+          type: array
+          items:
+            type: object
+
+  validate:
+    description: "验签 permit_token（发布前调用）"
+    parameters:
+      type: object
+      required:
+        - run_id
+        - repo_url
+        - commit_sha
+        - requested_action
+      properties:
+        permit_token:
+          type: string
+          nullable: true
+          description: Permit Token（可为空，触发E001）
+        run_id:
+          type: string
+          description: 运行ID
+        repo_url:
+          type: string
+          description: 仓库URL
+        commit_sha:
+          type: string
+          description: 提交SHA
+        requested_action:
+          type: string
+          default: "release"
+          description: 请求动作
+        current_time:
+          type: string
+          format: date-time
+          description: 当前时间（可选）
+    returns:
+      type: object
+      properties:
+        gate_name:
+          type: string
+          default: "permit_gate"
+        gate_decision:
+          type: string
+          enum: [ALLOW, BLOCK]
+        permit_validation_status:
+          type: string
+          enum: [VALID, INVALID]
+        release_allowed:
+          type: boolean
+        release_blocked_by:
+          type: string
+          nullable: true
+          enum:
+            - PERMIT_REQUIRED
+            - PERMIT_INVALID
+            - PERMIT_EXPIRED
+            - PERMIT_SCOPE_MISMATCH
+            - PERMIT_SUBJECT_MISMATCH
+            - PERMIT_REVOKED
+        error_code:
+          type: string
+          enum: [E001, E002, E003, E004, E005, E006, E007]
+          nullable: true
+        permit_id:
+          type: string
+          nullable: true
+        evidence_refs:
+          type: array
+          items:
+            type: object
+        validation_timestamp:
+          type: string
+          format: date-time
+
+# ============================================================================
+# Fail-Closed 规则
+# ============================================================================
+
+fail_closed_rules:
+  # 签发阻断规则
+  issue:
+    - condition: "final_gate_decision NOT IN [PASSED, PASSED_NO_PERMIT]"
+      result: "permit_token = null, error_code = I001"
+    - condition: "release_blocked_by IS NOT NULL"
+      result: "permit_token = null, error_code = I001"
+    - condition: "audit_pack_ref IS NULL OR audit_pack_ref = ''"
+      result: "permit_token = null, error_code = I001"
+    - condition: "ttl_seconds < 1 OR ttl_seconds > 86400"
+      result: "permit_token = null, error_code = I003"
+    - condition: "signing_key_unavailable"
+      result: "permit_token = null, error_code = I004"
+
+  # 验签阻断规则
+  validate:
+    - condition: "permit_token IS NULL OR permit_token = ''"
+      result: "release_allowed = false, error_code = E001, release_blocked_by = PERMIT_REQUIRED"
+    - condition: "signature_verification_failed"
+      result: "release_allowed = false, error_code = E003, release_blocked_by = PERMIT_INVALID"
+    - condition: "current_time > expires_at"
+      result: "release_allowed = false, error_code = E004, release_blocked_by = PERMIT_EXPIRED"
+    - condition: "requested_action NOT IN allowed_actions"
+      result: "release_allowed = false, error_code = E005, release_blocked_by = PERMIT_SCOPE_MISMATCH"
+    - condition: "subject_mismatch"
+      result: "release_allowed = false, error_code = E006, release_blocked_by = PERMIT_SUBJECT_MISMATCH"
+    - condition: "revoked = true"
+      result: "release_allowed = false, error_code = E007, release_blocked_by = PERMIT_REVOKED"
+
+# ============================================================================
+# Evidence 字段要求
+# ============================================================================
+
+evidence_fields:
+  required:
+    - run_id
+    - permit_id
+    - timestamp
+    - decision_snapshot
+  optional:
+    - replay_pointer
+    - source_locator
+    - content_hash
+
+# ============================================================================
+# 实现映射
+# ============================================================================
+
+implementation:
+  issue:
+    module: skillforge.src.skills.gates.permit_issuer
+    class: PermitIssuer
+    method: issue_permit
+  validate:
+    module: skillforge.src.skills.gates.gate_permit
+    class: GatePermit
+    method: execute
+
+contracts:
+  - docs/2026-02-18/permit_contract_v1_spec.md
+  - docs/2026-02-18/contracts/permit_contract_v1.yml
+
+# ============================================================================
+# 测试覆盖
+# ============================================================================
+
+test_coverage:
+  # 正常路径
+  normal:
+    - S1: 正常签发 → permit_token 非空
+    - S2: 正常验签 → gate_decision=ALLOW, release_allowed=true
+
+  # 签发阻断
+  issue_blocked:
+    - I001: final_gate_decision 非 PASSED → permit_token = null
+    - I002: subject 不完整 → permit_token = null
+    - I003: TTL 非法 → permit_token = null
+    - I004: 签名密钥不可用 → permit_token = null
+
+  # 验签阻断
+  validate_blocked:
+    - E001: permit 缺失 → BLOCK, release_allowed=false
+    - E002: 格式无效 → BLOCK, release_allowed=false
+    - E003: 签名异常 → BLOCK, release_allowed=false
+    - E004: 已过期 → BLOCK, release_allowed=false
+    - E005: 作用域不匹配 → BLOCK, release_allowed=false
+    - E006: 主体不匹配 → BLOCK, release_allowed=false
+    - E007: 已撤销 → BLOCK, release_allowed=false
+
+# ============================================================================
+# 验收报告引用
+# ============================================================================
+
+validation_reports:
+  - docs/2026-02-18/permit_gate_implementation_report_v1.md
+  - docs/2026-02-18/permit_issuer_implementation_report_v1.md
+  - docs/2026-02-18/business_phase1_execution_report_v1.md
+  - docs/2026-02-18/business_phase1_acceptance_report_v1.md
+  - docs/2026-02-18/business_phase1_governance_linkage_report_v1.md

@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gm-skillforge.local/schemas/skill_audit_report.schema.json",
+  "title": "SkillAuditReport",
+  "description": "5-Layer Skill Audit Report Schema - P1-2 前后端数据契约",
+  "type": "object",
+  "required": ["summary", "results"],
+  "additionalProperties": false,
+  "properties": {
+    "summary": {
+      "$ref": "#/$defs/AuditSummary"
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/AuditResultItem"
+      },
+      "minItems": 0
+    }
+  },
+  "$defs": {
+    "GateStatus": {
+      "type": "string",
+      "enum": ["PASS", "WARN", "FAIL"],
+      "description": "审计门禁状态"
+    },
+    "LayerScores": {
+      "type": "object",
+      "required": ["L1_cost", "L2_redundancy", "L3_safety", "L4_structure", "L5_evidence_ready"],
+      "additionalProperties": false,
+      "properties": {
+        "L1_cost": { "type": "number", "minimum": 0, "maximum": 100, "description": "L1 成本分数" },
+        "L2_redundancy": { "type": "number", "minimum": 0, "maximum": 100, "description": "L2 冗余分数" },
+        "L3_safety": { "type": "number", "minimum": 0, "maximum": 100, "description": "L3 安全分数" },
+        "L4_structure": { "type": "number", "minimum": 0, "maximum": 100, "description": "L4 结构分数" },
+        "L5_evidence_ready": { "type": "number", "minimum": 0, "maximum": 100, "description": "L5 证据分数" }
+      }
+    },
+    "LayerStatusMap": {
+      "type": "object",
+      "required": ["L1_cost", "L2_redundancy", "L3_safety", "L4_structure", "L5_evidence_ready"],
+      "additionalProperties": false,
+      "properties": {
+        "L1_cost": { "$ref": "#/$defs/GateStatus" },
+        "L2_redundancy": { "$ref": "#/$defs/GateStatus" },
+        "L3_safety": { "$ref": "#/$defs/GateStatus" },
+        "L4_structure": { "$ref": "#/$defs/GateStatus" },
+        "L5_evidence_ready": { "$ref": "#/$defs/GateStatus" }
+      }
+    },
+    "GateCounts": {
+      "type": "object",
+      "required": ["PASS", "WARN", "FAIL"],
+      "additionalProperties": false,
+      "properties": {
+        "PASS": { "type": "integer", "minimum": 0 },
+        "WARN": { "type": "integer", "minimum": 0 },
+        "FAIL": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "AuditSummary": {
+      "type": "object",
+      "required": [
+        "run_date",
+        "generated_at",
+        "profile",
+        "policy_version",
+        "policy_hash",
+        "policy_path",
+        "scope",
+        "run_id",
+        "evidence_ref",
+        "input_hash",
+        "sample_size",
+        "gate_counts",
+        "avg_overall_score",
+        "avg_est_tokens",
+        "result_hash"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "run_date": { "type": "string", "format": "date", "description": "运行日期" },
+        "generated_at": { "type": "string", "format": "date-time", "description": "生成时间" },
+        "profile": { "type": "string", "minLength": 1, "description": "审计配置名" },
+        "policy_version": { "type": "string", "minLength": 1, "description": "策略版本" },
+        "policy_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$", "description": "策略内容SHA256哈希" },
+        "policy_path": { "type": "string", "minLength": 1, "description": "策略文件路径" },
+        "scope": { "type": "string", "minLength": 1, "description": "审计范围描述" },
+        "run_id": { "type": "string", "minLength": 1, "description": "运行ID" },
+        "evidence_ref": { "type": "string", "minLength": 1, "description": "证据引用" },
+        "input_hash": { "type": "string", "minLength": 1, "description": "输入哈希" },
+        "sample_size": { "type": "integer", "minimum": 0, "description": "样本数量" },
+        "gate_counts": { "$ref": "#/$defs/GateCounts", "description": "Gate计数" },
+        "avg_overall_score": { "type": "number", "minimum": 0, "maximum": 100, "description": "平均分数" },
+        "avg_est_tokens": { "type": "number", "minimum": 0, "description": "平均Token数" },
+        "high_cost_count_ge_3000_tokens": { "type": "integer", "minimum": 0, "description": "高成本技能数" },
+        "high_redundancy_count_ge_0.26": { "type": "integer", "minimum": 0, "description": "高冗余技能数" },
+        "result_hash": { "type": "string", "minLength": 1, "description": "结果哈希" }
+      }
+    },
+    "AuditResultItem": {
+      "type": "object",
+      "required": [
+        "domain",
+        "skill",
+        "path",
+        "source_sha256",
+        "evidence_ref",
+        "chars",
+        "est_tokens",
+        "repeat_ratio",
+        "broken_links",
+        "checklist_items",
+        "numbered_steps",
+        "tables",
+        "sensitive_hits",
+        "has_disclaimer",
+        "has_review_warning",
+        "layer_scores",
+        "layer_status",
+        "overall_score",
+        "gate"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "domain": { "type": "string", "minLength": 1, "description": "技能域" },
+        "skill": { "type": "string", "minLength": 1, "description": "技能名" },
+        "path": { "type": "string", "minLength": 1, "description": "技能文件路径" },
+        "source_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$", "description": "源文件SHA256" },
+        "evidence_ref": { "type": "string", "minLength": 1, "description": "证据引用" },
+        "chars": { "type": "integer", "minimum": 0, "description": "字符数" },
+        "est_tokens": { "type": "integer", "minimum": 0, "description": "估算Token数" },
+        "repeat_ratio": { "type": "number", "minimum": 0, "maximum": 1, "description": "重复率" },
+        "broken_links": { "type": "integer", "minimum": 0, "description": "坏链接数" },
+        "checklist_items": { "type": "integer", "minimum": 0, "description": "检查项数" },
+        "numbered_steps": { "type": "integer", "minimum": 0, "description": "编号步骤数" },
+        "tables": { "type": "integer", "minimum": 0, "description": "表格数" },
+        "sensitive_hits": { "type": "integer", "minimum": 0, "description": "敏感词命中数" },
+        "has_disclaimer": { "type": "boolean", "description": "是否包含免责声明" },
+        "has_review_warning": { "type": "boolean", "description": "是否包含审核提示" },
+        "layer_scores": { "$ref": "#/$defs/LayerScores", "description": "L1-L5分数" },
+        "layer_status": { "$ref": "#/$defs/LayerStatusMap", "description": "L1-L5状态" },
+        "overall_score": { "type": "number", "minimum": 0, "maximum": 100, "description": "综合分数" },
+        "gate": { "$ref": "#/$defs/GateStatus", "description": "Gate状态" }
+      }
+    }
+  }
+}

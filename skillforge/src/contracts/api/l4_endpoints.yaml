@@ -1,0 +1,652 @@
+# L4 API Endpoints Definition
+# SkillForge Governance System - Codex Frontend API
+# Version: v1.0
+
+openapi: 3.0.3
+info:
+  title: SkillForge L4 Governance API
+  description: |
+    API definitions for L4-A Frontend governance operations.
+    Includes 10-dimensional cognition assessment and governance adoption endpoints.
+  version: 1.0.0
+  contact:
+    name: SkillForge Team
+  license:
+    name: Proprietary
+
+servers:
+  - url: https://api.skillforge.local/v1
+    description: Production server
+  - url: https://api-staging.skillforge.local/v1
+    description: Staging server
+
+tags:
+  - name: cognition
+    description: 10-dimensional cognitive assessment operations
+  - name: governance
+    description: Work item governance and adoption operations
+
+paths:
+  # ============================================
+  # COGNITION ENDPOINTS
+  # ============================================
+  /cognition/10d:
+    post:
+      tags:
+        - cognition
+      summary: Generate 10-dimensional cognition assessment
+      description: |
+        Performs a 10-dimensional cognitive assessment on a repository commit.
+
+        The assessment evaluates:
+        - L1: 事实提取 (Fact Extraction)
+        - L2: 概念抽象 (Concept Abstraction)
+        - L3: 因果推理 (Causal Reasoning)
+        - L4: 结构解构 (Structural Decomposition)
+        - L5: 风险感知 (Risk Perception)
+        - L6: 时序建模 (Temporal Modeling)
+        - L7: 跨域关联 (Cross-Domain Association)
+        - L8: 不确定性标注 (Uncertainty Annotation)
+        - L9: 建议可行性 (Suggestion Feasibility)
+        - L10: 叙事连贯性 (Narrative Coherence)
+
+        **Overall Policy**: pass_count >= 8 AND all critical dimensions (L1, L3, L5, L10) must PASS
+      operationId: generateCognition10d
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Cognition10dRequest'
+            examples:
+              standard_request:
+                summary: Standard cognition request
+                value:
+                  repo_url: "https://github.com/skillforge/workflow-orchestration"
+                  commit_sha: "a1b2c3d4e5f6789012345678901234567890abcd"
+                  at_time: "2026-02-19T12:00:00Z"
+                  rubric_version: "1.0.0"
+                  requester_id: "user-kior-b"
+      responses:
+        '200':
+          description: Cognition assessment completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cognition10dResponse'
+              examples:
+                passed:
+                  summary: Assessment passed
+                  value:
+                    intent_id: "cognition_10d"
+                    status: "PASSED"
+                    repo_url: "https://github.com/skillforge/workflow-orchestration"
+                    commit_sha: "a1b2c3d4e5f6789012345678901234567890abcd"
+                    at_time: "2026-02-19T12:00:00Z"
+                    rubric_version: "1.0.0"
+                    dimensions:
+                      - dim_id: "L1"
+                        label: "事实提取"
+                        score: 85
+                        threshold: 60
+                        verdict: "PASS"
+                        evidence_ref: "AuditPack/cognition_10d/a1b2c.../dimension_evidence/L1.md"
+                    overall_pass_count: 9
+                    rejection_reasons: []
+                    audit_pack_ref: "AuditPack/cognition_10d/a1b2c.../"
+                    generated_at: "2026-02-19T12:01:30Z"
+                rejected:
+                  summary: Assessment rejected
+                  value:
+                    intent_id: "cognition_10d"
+                    status: "REJECTED"
+                    repo_url: "https://github.com/skillforge/workflow-orchestration"
+                    commit_sha: "a1b2c3d4e5f6789012345678901234567890abcd"
+                    at_time: "2026-02-19T12:00:00Z"
+                    rubric_version: "1.0.0"
+                    dimensions: []
+                    overall_pass_count: 5
+                    rejection_reasons:
+                      - "Insufficient pass count: 5/8"
+                      - "Critical dimension failures: L3, L5"
+                    audit_pack_ref: "AuditPack/cognition_10d/a1b2c.../"
+                    generated_at: "2026-02-19T12:01:30Z"
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                validation_error:
+                  value:
+                    error_code: "FC-1"
+                    error_message: "repo_url must be a valid URI"
+                    timestamp: "2026-02-19T12:00:00Z"
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /cognition/10d/{commit_sha}:
+    get:
+      tags:
+        - cognition
+      summary: Get cached cognition assessment
+      description: Retrieves a previously generated cognition assessment by commit SHA
+      operationId: getCognition10d
+      parameters:
+        - name: commit_sha
+          in: path
+          required: true
+          description: 40-character commit SHA
+          schema:
+            type: string
+            pattern: '^[0-9a-f]{40}$'
+        - name: at_time
+          in: query
+          required: false
+          description: ISO-8601 timestamp for time-travel query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Cognition assessment found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cognition10dResponse'
+        '404':
+          description: Assessment not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # ============================================
+  # GOVERNANCE ENDPOINTS
+  # ============================================
+  /governance/adopt:
+    post:
+      tags:
+        - governance
+      summary: Adopt a Reason Card as a Work Item
+      description: |
+        Migrates a Reason Card from the dual-window frontend into the
+        formal governance system as a structured Work Item.
+
+        This endpoint:
+        1. Validates the Reason Card content
+        2. Extracts structured work item fields
+        3. Creates evidence references
+        4. Registers the work item in the governance system
+
+        **Adoption Requirements**:
+        - Reason card must have valid `reason_card_id`
+        - All 7 required Work Item fields must be derivable
+        - Evidence chain must be preserved
+      operationId: adoptWorkItem
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdoptRequest'
+            examples:
+              standard_adopt:
+                summary: Standard adoption request
+                value:
+                  reason_card_id: "RC-2026-02-19-A1B2C3"
+                  requester_id: "user-kior-b"
+                  context:
+                    session_id: "session-xyz123"
+                    window_id: "reason-window-1"
+                  options:
+                    verify_immediately: true
+                    preserve_raw_content: true
+      responses:
+        '201':
+          description: Work item adopted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdoptResponse'
+              examples:
+                successful_adoption:
+                  value:
+                    work_item_id: "WI-A1B2C3D4"
+                    status: "ADOPTED"
+                    adopted_from:
+                      reason_card_id: "RC-2026-02-19-A1B2C3"
+                      migration_timestamp: "2026-02-19T12:30:00Z"
+                      migration_version: "1.0.0"
+                      verified: true
+                      verified_by: "system"
+                      verified_at: "2026-02-19T12:30:05Z"
+                    evidence_refs:
+                      - ref_id: "EV-ADOPT-001"
+                        type: "audit_pack"
+                        path: "AuditPack/adoptions/WI-A1B2C3D4/"
+                    created_at: "2026-02-19T12:30:00Z"
+        '400':
+          description: Invalid adoption request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalid_reason_card:
+                  value:
+                    error_code: "ADOPT-001"
+                    error_message: "Invalid reason_card_id format"
+                    timestamp: "2026-02-19T12:30:00Z"
+        '409':
+          description: Work item already exists for this reason card
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Cannot derive required work item fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /governance/work-items/{work_item_id}:
+    get:
+      tags:
+        - governance
+      summary: Get work item details
+      description: Retrieves a work item by its ID
+      operationId: getWorkItem
+      parameters:
+        - name: work_item_id
+          in: path
+          required: true
+          description: Work item identifier
+          schema:
+            type: string
+            pattern: '^WI-[A-Z0-9]{8,16}$'
+      responses:
+        '200':
+          description: Work item found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItem'
+        '404':
+          description: Work item not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    patch:
+      tags:
+        - governance
+      summary: Update work item
+      description: Updates specific fields of a work item
+      operationId: updateWorkItem
+      parameters:
+        - name: work_item_id
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^WI-[A-Z0-9]{8,16}$'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                intent:
+                  type: string
+                constraints:
+                  type: object
+                acceptance:
+                  type: object
+      responses:
+        '200':
+          description: Work item updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItem'
+        '400':
+          description: Invalid update request
+        '404':
+          description: Work item not found
+
+# ============================================
+# COMPONENTS
+# ============================================
+components:
+  schemas:
+    # --- Cognition Schemas ---
+    Cognition10dRequest:
+      type: object
+      required:
+        - repo_url
+        - commit_sha
+        - at_time
+        - rubric_version
+        - requester_id
+      additionalProperties: false
+      properties:
+        repo_url:
+          type: string
+          format: uri
+          description: Repository URL to assess
+        commit_sha:
+          type: string
+          pattern: '^[0-9a-f]{40}$'
+          description: 40-character commit SHA
+        at_time:
+          type: string
+          format: date-time
+          description: ISO-8601 timestamp for time-travel query
+        rubric_version:
+          type: string
+          pattern: '^\d+\.\d+\.\d+$'
+          description: Semver rubric version
+          default: "1.0.0"
+        requester_id:
+          type: string
+          description: ID of the requesting user or system
+
+    Cognition10dResponse:
+      type: object
+      required:
+        - intent_id
+        - status
+        - repo_url
+        - commit_sha
+        - at_time
+        - rubric_version
+        - dimensions
+        - overall_pass_count
+        - rejection_reasons
+        - audit_pack_ref
+        - generated_at
+      additionalProperties: false
+      properties:
+        intent_id:
+          type: string
+          const: "cognition_10d"
+        status:
+          type: string
+          enum: ["PASSED", "REJECTED"]
+        repo_url:
+          type: string
+          format: uri
+        commit_sha:
+          type: string
+        at_time:
+          type: string
+          format: date-time
+        rubric_version:
+          type: string
+        dimensions:
+          type: array
+          minItems: 10
+          maxItems: 10
+          items:
+            $ref: '#/components/schemas/Dimension'
+        overall_pass_count:
+          type: integer
+          minimum: 0
+          maximum: 10
+        rejection_reasons:
+          type: array
+          items:
+            type: string
+        audit_pack_ref:
+          type: string
+        generated_at:
+          type: string
+          format: date-time
+
+    Dimension:
+      type: object
+      required:
+        - dim_id
+        - label
+        - score
+        - threshold
+        - verdict
+        - evidence_ref
+      additionalProperties: false
+      properties:
+        dim_id:
+          type: string
+          enum: ["L1", "L2", "L3", "L4", "L5", "L6", "L7", "L8", "L9", "L10"]
+        label:
+          type: string
+        score:
+          type: number
+          minimum: 0
+          maximum: 100
+        threshold:
+          type: number
+        verdict:
+          type: string
+          enum: ["PASS", "FAIL"]
+        evidence_ref:
+          type: string
+
+    # --- Governance Schemas ---
+    AdoptRequest:
+      type: object
+      required:
+        - reason_card_id
+        - requester_id
+      additionalProperties: false
+      properties:
+        reason_card_id:
+          type: string
+          pattern: '^RC-[A-Z0-9-]+$'
+          description: Original Reason Card identifier
+        requester_id:
+          type: string
+          description: ID of the requesting user
+        context:
+          type: object
+          properties:
+            session_id:
+              type: string
+            window_id:
+              type: string
+            trigger_type:
+              type: string
+        options:
+          type: object
+          properties:
+            verify_immediately:
+              type: boolean
+              default: true
+            preserve_raw_content:
+              type: boolean
+              default: true
+            custom_work_item_id:
+              type: string
+              pattern: '^WI-[A-Z0-9]{8,16}$'
+
+    AdoptResponse:
+      type: object
+      required:
+        - work_item_id
+        - status
+        - adopted_from
+        - evidence_refs
+        - created_at
+      properties:
+        work_item_id:
+          type: string
+          pattern: '^WI-[A-Z0-9]{8,16}$'
+        status:
+          type: string
+          enum: ["ADOPTED", "PENDING_VERIFICATION"]
+        adopted_from:
+          $ref: '#/components/schemas/AdoptedFrom'
+        evidence_refs:
+          type: array
+          items:
+            $ref: '#/components/schemas/EvidenceRef'
+        created_at:
+          type: string
+          format: date-time
+
+    AdoptedFrom:
+      type: object
+      required:
+        - reason_card_id
+        - migration_timestamp
+      properties:
+        reason_card_id:
+          type: string
+        migration_timestamp:
+          type: string
+          format: date-time
+        migration_version:
+          type: string
+        verified:
+          type: boolean
+        verified_by:
+          type: string
+        verified_at:
+          type: string
+          format: date-time
+
+    EvidenceRef:
+      type: object
+      required:
+        - ref_id
+        - type
+        - path
+      properties:
+        ref_id:
+          type: string
+        type:
+          type: string
+          enum: ["audit_pack", "log", "artifact", "metric", "screenshot", "report", "signature"]
+        path:
+          type: string
+        hash:
+          type: object
+          properties:
+            algorithm:
+              type: string
+            value:
+              type: string
+        generated_at:
+          type: string
+          format: date-time
+
+    WorkItem:
+      type: object
+      required:
+        - work_item_id
+        - intent
+        - inputs
+        - constraints
+        - acceptance
+        - evidence
+        - adopted_from
+      additionalProperties: false
+      properties:
+        work_item_id:
+          type: string
+          pattern: '^WI-[A-Z0-9]{8,16}$'
+        intent:
+          type: string
+        inputs:
+          type: object
+          additionalProperties:
+            type: object
+        constraints:
+          type: object
+          required:
+            - timeout_seconds
+            - max_retries
+          properties:
+            timeout_seconds:
+              type: integer
+            max_retries:
+              type: integer
+            fail_mode:
+              type: string
+              enum: ["OPEN", "CLOSED"]
+            blocking:
+              type: boolean
+            dependencies:
+              type: array
+              items:
+                type: string
+        acceptance:
+          type: object
+          required:
+            - criteria
+          properties:
+            criteria:
+              type: array
+              items:
+                type: object
+            min_pass_count:
+              type: integer
+        evidence:
+          type: object
+          required:
+            - evidence_refs
+          properties:
+            evidence_refs:
+              type: array
+              items:
+                $ref: '#/components/schemas/EvidenceRef'
+            audit_pack_ref:
+              type: string
+        adopted_from:
+          $ref: '#/components/schemas/AdoptedFrom'
+
+    # --- Common Schemas ---
+    ErrorResponse:
+      type: object
+      required:
+        - error_code
+        - error_message
+        - timestamp
+      properties:
+        error_code:
+          type: string
+        error_message:
+          type: string
+        details:
+          type: object
+        timestamp:
+          type: string
+          format: date-time
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+
+security:
+  - BearerAuth: []
+  - ApiKeyAuth: []

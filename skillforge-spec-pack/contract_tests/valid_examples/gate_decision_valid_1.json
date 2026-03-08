@@ -1,0 +1,12 @@
+{
+  "schema_version": "0.1.0",
+  "gate_id": "550e8400-e29b-41d4-a716-446655440001",
+  "node_id": "constitution_risk_gate",
+  "job_id": "550e8400-e29b-41d4-a716-446655440000",
+  "decision": "ALLOW",
+  "risk_tier": "L1",
+  "reasons": [],
+  "required_changes": [],
+  "decided_at": "2026-02-15T12:00:00Z",
+  "metadata": {}
+}

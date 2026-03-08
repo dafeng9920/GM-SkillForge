@@ -1,0 +1,30 @@
+# Permit Policy Configuration
+# 用于 permit_required(action) 规则配置
+#
+# Contract: docs/SEEDS_v0.md P0-3
+# Job ID: L45-D4-SEEDS-P0-20260220-004
+
+version: 1
+actions_requiring_permit:
+  # 发布上架 - 需要 permit
+  - PUBLISH_LISTING
+  # n8n 执行 - 需要 permit
+  - EXECUTE_VIA_N8N
+  # OpenClaw 行为 - 需要 permit
+  - OPENCLAW_ACTION
+  - SHELL_EXECUTION
+  - FILE_DELETE
+  # 白名单导出 - 需要 permit
+  - EXPORT_WHITELIST
+  # 升级替换活跃版本 - 需要 permit
+  - UPGRADE_REPLACE_ACTIVE
+
+# 无 permit 时的统一错误码
+# 注意：E001 错误语义必须映射为 PERMIT_REQUIRED
+deny_without_permit_error_code: "PERMIT_REQUIRED"
+
+# 策略元数据
+metadata:
+  created_at: "2026-02-20T00:00:00Z"
+  ruleset_revision: "v1"
+  schema_ref: "SEEDS-P0-3 Permit Policy"

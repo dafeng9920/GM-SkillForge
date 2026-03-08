@@ -1,0 +1,30 @@
+{
+  "task_id": "T36",
+  "evidence_refs": [
+    {
+      "ref_id": "EV-T36-001",
+      "type": "source_code",
+      "path": "ui/app/src/components/governance/DecisionHeroCard.tsx",
+      "description": "Decision hero card component implementation"
+    },
+    {
+      "ref_id": "EV-T36-002",
+      "type": "source_code",
+      "path": "ui/app/src/components/governance/BlockReasonCard.tsx",
+      "description": "Block reason card component implementation"
+    },
+    {
+      "ref_id": "EV-T36-003",
+      "type": "source_code",
+      "path": "ui/app/src/pages/execute/RunIntentPage.tsx",
+      "description": "Run Intent page implementation"
+    },
+    {
+      "ref_id": "EV-T36-004",
+      "type": "documentation",
+      "path": "docs/2026-02-20/L45_FE_T36_RUN_INTENT_REPORT_v1.md",
+      "description": "T36 verification report"
+    }
+  ],
+  "created_at": "2026-02-20T12:00:00Z"
+}

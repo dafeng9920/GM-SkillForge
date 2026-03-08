@@ -1,0 +1,313 @@
+# ============================================================
+# Evidence Schema Contract (Normalized)
+# ============================================================
+# Priority: P0
+# Source: NEW-GM/AUDIT/EVIDENCE_SCHEMA.md
+# Target: skillforge/src/contracts/evidence_schema.yaml
+# Normalized: 2026-02-18
+# ============================================================
+
+schema_id: evidence_schema
+schema_version: v1
+contract_version: v1.0.0
+schema_hash: TBD_SHA256
+
+# ============================================================
+# Canonical Serialization Rules
+# ============================================================
+canonical_serialization:
+  format: "canonical_json"
+  rules:
+    - keys_sorted_alphabetically: true
+    - no_whitespace_separators: true
+    - timestamps: "UTC_ISO8601_Z_suffix"
+    - encoding: "UTF-8"
+
+# ============================================================
+# Hash Chain Configuration
+# ============================================================
+hash_chain:
+  algorithm: "SHA-256"
+  genesis_prev_hash: "0000000000000000000000000000000000000000000000000000000000000000"
+  entry_fields:
+    prev_hash:
+      type: "string"
+      pattern: "^[a-f0-9]{64}$"
+      required: true
+      description: "SHA-256 hash of previous entry"
+    hash:
+      type: "string"
+      pattern: "^[a-f0-9]{64}$"
+      required: true
+      description: "SHA-256 hash of current entry"
+
+# ============================================================
+# Standard Evidence Types
+# ============================================================
+# Each type must include: component_id, description, fields, validation_rules
+# ============================================================
+
+evidence_types:
+  # --------------------------------------------------------
+  # ScanReport: 扫描报告
+  # --------------------------------------------------------
+  ScanReport:
+    component_id: "evidence/v1/scan-report"
+    description: "扫描报告 - 记录组件扫描结果和发现"
+    minimum_level: L3
+    required_gates:
+      - intake_validate
+      - schema_validation
+    fields:
+      component_id:
+        type: "string"
+        pattern: "^[a-z0-9_/-]+$"
+        required: true
+        description: "组件唯一标识"
+      status:
+        type: "string"
+        enum: ["PENDING", "IN_PROGRESS", "COMPLETED", "FAILED"]
+        required: true
+        description: "扫描状态"
+      findings:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            severity: { type: "string", enum: ["LOW", "MEDIUM", "HIGH", "CRITICAL"] }
+            description: { type: "string" }
+            location: { type: "string" }
+        required: true
+        description: "扫描发现列表"
+      timestamp:
+        type: "string"
+        format: "ISO8601"
+        required: true
+        description: "扫描时间戳"
+      source_doc_ref:
+        type: "string"
+        required: true
+        description: "源文档引用路径"
+    outputs:
+      - audit_pack_ref
+      - gate_decision
+      - revision
+    validation_rules:
+      - "component_id must be unique across all reports"
+      - "timestamp must be in UTC ISO-8601 format"
+      - "findings array cannot be empty if status is COMPLETED"
+
+  # --------------------------------------------------------
+  # TestResult: 测试结果
+  # --------------------------------------------------------
+  TestResult:
+    component_id: "evidence/v1/test-result"
+    description: "测试结果 - 记录测试执行结果和错误信息"
+    minimum_level: L3
+    required_gates:
+      - test_validation
+      - schema_validation
+    fields:
+      test_id:
+        type: "string"
+        pattern: "^[a-z0-9_-]+$"
+        required: true
+        description: "测试唯一标识"
+      passed:
+        type: "boolean"
+        required: true
+        description: "测试是否通过"
+      duration:
+        type: "number"
+        minimum: 0
+        required: true
+        description: "测试执行时长(毫秒)"
+      error_message:
+        type: "string"
+        required: false
+        description: "错误信息(测试失败时)"
+      timestamp:
+        type: "string"
+        format: "ISO8601"
+        required: true
+        description: "测试时间戳"
+      evidence_ref:
+        type: "string"
+        required: true
+        description: "证据引用标识"
+    outputs:
+      - audit_pack_ref
+      - gate_decision
+      - revision
+    validation_rules:
+      - "test_id must match pattern ^[a-z0-9_-]+$"
+      - "error_message is required when passed is false"
+      - "duration must be non-negative"
+
+  # --------------------------------------------------------
+  # Tombstone: 废弃记录
+  # --------------------------------------------------------
+  Tombstone:
+    component_id: "evidence/v1/tombstone"
+    description: "废弃记录 - 记录技能/组件废弃信息"
+    minimum_level: L3
+    required_gates:
+      - constitution_risk_gate
+      - tombstone_write_gate
+      - audit_chain_append
+    fields:
+      skill_id:
+        type: "string"
+        pattern: "^[a-z0-9_/-]+$"
+        required: true
+        description: "被废弃技能的唯一标识"
+      revoked_at:
+        type: "string"
+        format: "ISO8601"
+        required: true
+        description: "废弃时间戳"
+      reason:
+        type: "string"
+        minLength: 10
+        required: true
+        description: "废弃原因说明"
+      revoked_by:
+        type: "string"
+        pattern: "^[a-z0-9_-]+$"
+        required: true
+        description: "执行废弃的操作者标识"
+      replacement_id:
+        type: "string"
+        required: false
+        description: "替代技能标识(如有)"
+      source_doc_ref:
+        type: "string"
+        required: true
+        description: "源文档引用路径"
+    outputs:
+      - audit_pack_ref
+      - gate_decision
+      - revision
+      - tombstone_state
+    validation_rules:
+      - "skill_id must reference existing skill"
+      - "reason must be at least 10 characters"
+      - "revoked_at must be in UTC ISO-8601 format"
+      - "Fail-Closed: 一旦废弃，永不恢复"
+
+  # --------------------------------------------------------
+  # UpgradeManifest: 升级清单
+  # --------------------------------------------------------
+  UpgradeManifest:
+    component_id: "evidence/v1/upgrade-manifest"
+    description: "升级清单 - 记录技能升级信息"
+    minimum_level: L3
+    required_gates:
+      - build_gate
+      - trace_reputation_gate
+      - compose_gate
+      - run_gate
+    fields:
+      skill_id:
+        type: "string"
+        pattern: "^[a-z0-9_]+$"
+        required: true
+        description: "技能唯一标识"
+      old_revision:
+        type: "integer"
+        minimum: 1
+        required: true
+        description: "升级前版本号"
+      new_revision:
+        type: "integer"
+        minimum: 1
+        required: true
+        description: "升级后版本号"
+      decision:
+        type: "string"
+        enum: ["ALLOW_ACTIVE", "DENY", "REQUIRES_HUMAN"]
+        required: true
+        description: "升级决策"
+      change_type:
+        type: "string"
+        enum: ["canonical_change", "idempotent_update"]
+        required: true
+        description: "变更类型"
+      evidence_ref:
+        type: "object"
+        required: true
+        description: "证据引用"
+    outputs:
+      - audit_pack_ref
+      - gate_decision
+      - revision
+      - evolution_record
+    validation_rules:
+      - "Atomic update only"
+      - "new_revision must equal old_revision + 1 for canonical_change"
+      - "new_revision must equal old_revision for idempotent_update"
+      - "All gate results must be ALLOW for ALLOW_ACTIVE decision"
+
+# ============================================================
+# Ledger Record Types (Immutable Audit Trail)
+# ============================================================
+ledger_record_types:
+  TRIGGER:
+    description: "记录启动决策流程的上下文"
+    payload_fields:
+      decision_id: { type: "UUID", required: true }
+      operator_id: { type: "string", required: true }
+      reason_codes: { type: "array<string>", required: true }
+      snapshot_ref: { type: "SHA256_HASH", required: true }
+      context: { type: "object", required: false }
+      timestamp: { type: "ISO8601", required: true }
+
+  DECISION:
+    description: "记录状态变更决策"
+    payload_fields:
+      decision_id: { type: "UUID", required: true }
+      action: { type: "string", enum: ["REVOKE", "UPGRADE", "CREATE"], required: true }
+      prev_state: { type: "string", required: true }
+      new_state: { type: "string", required: true }
+      timestamp: { type: "ISO8601", required: true }
+
+  EXECUTION:
+    description: "记录执行动作和结果"
+    payload_fields:
+      decision_id: { type: "UUID", required: true }
+      action: { type: "string", required: true }
+      success: { type: "boolean", required: true }
+      details: { type: "object", required: false }
+      timestamp: { type: "ISO8601", required: true }
+
+# ============================================================
+# Architecture Boundary
+# ============================================================
+architecture_boundary: |
+  - n8n 仅作为 Orchestrator（触发/路由/通知），不做最终裁决
+  - SkillForge 是 Governor（Gate 判定、Evidence 产出、AuditPack 固化）
+  - 所有证据必须包含 source_doc_ref
+  - 无 permit 不允许发布/打 tag/release
+  - Hash Chain 保证证据不可篡改
+
+# ============================================================
+# Source References (Evidence Chain)
+# ============================================================
+source_doc_ref:
+  file: "D:\\NEW-GM\\AUDIT\\EVIDENCE_SCHEMA.md"
+  lines: "1-173"
+  purpose: "证据模式定义"
+
+# ============================================================
+# Migration Metadata
+# ============================================================
+migration:
+  task_id: A8
+  wave: 4
+  batch: 1
+  priority: P0
+  decision: MIGRATE
+  status: normalized
+  value_score: 10
+  risk_level: Medium
+  mapping_target: skillforge/src/contracts/evidence_schema.yaml

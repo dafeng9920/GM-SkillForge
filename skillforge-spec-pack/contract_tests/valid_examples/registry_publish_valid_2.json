@@ -1,0 +1,16 @@
+{
+    "schema_version": "0.1.0",
+    "request_id": "r2b3c4d5-e6f7-8901-bcde-f12345678901",
+    "skill_id": "data_transformer",
+    "skill_version": "0.2.0",
+    "status": "published",
+    "registry_url": "https://registry.gm-os.dev/skills/data_transformer/0.2.0",
+    "published_at": "2026-02-15T15:00:00Z",
+    "hash": {
+        "algorithm": "sha256",
+        "value": "1122334455667788990011223344556677889900aabbccddeeff112233445566"
+    },
+    "metadata": {
+        "publisher": "gm-os-ci"
+    }
+}

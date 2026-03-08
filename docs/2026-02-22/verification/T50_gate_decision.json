@@ -1,0 +1,43 @@
+{
+  "task_id": "T50",
+  "reviewer": "vs--cc2",
+  "decision": "ALLOW",
+  "reasons": [
+    "交付物 configs/audit_policy_v1.json 存在（93行）",
+    "约束'报告summary必须出现policy_version'满足：验证到 policy_version=v1.0.0-20260222",
+    "约束'阈值可改配置不改代码'满足：策略文件独立，脚本通过load_policy()读取",
+    "auto_check 通过：审计脚本 exit 0",
+    "manual_check 通过：JSON输出包含 summary.policy_version",
+    "deny规则未触发：未跳过版本字段，未删除现有输出字段"
+  ],
+  "evidence_refs": [
+    {
+      "id": "EV-T50-REVIEW-001",
+      "kind": "FILE",
+      "locator": "configs/audit_policy_v1.json",
+      "description": "策略配置文件存在"
+    },
+    {
+      "id": "EV-T50-REVIEW-002",
+      "kind": "SNIPPET",
+      "locator": "reports/skill-audit/finance_legal_top3_l5-static_2026-02-22.json",
+      "content": "\"policy_version\": \"v1.0.0-20260222\"",
+      "description": "报告包含policy_version字段"
+    },
+    {
+      "id": "EV-T50-REVIEW-003",
+      "kind": "LOG",
+      "locator": "gate_self_check execution",
+      "description": "auto_check: python scripts/run_skill_5layer_audit.py exit 0"
+    }
+  ],
+  "review_checks": {
+    "deliverable_exists": true,
+    "constraint_policy_version_in_report": "PASS",
+    "configurable_thresholds": "PASS",
+    "auto_check_audit_exit0": "PASS",
+    "manual_check_json_policy_version": "PASS",
+    "deny_rules_compliant": true
+  },
+  "generated_at": "2026-02-22T05:40:00Z"
+}

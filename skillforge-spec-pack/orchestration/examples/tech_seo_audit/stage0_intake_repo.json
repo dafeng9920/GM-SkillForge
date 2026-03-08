@@ -1,0 +1,21 @@
+{
+  "node_id": "intake_repo",
+  "stage": 0,
+  "input": {
+    "repo_url": "https://github.com/nichochar/tech-seo-tool",
+    "branch": "main",
+    "target_environment": "python",
+    "intended_use": "web"
+  },
+  "output": {
+    "job_id": "550e8400-e29b-41d4-a716-446655440000",
+    "build_record": {
+      "repo_name": "tech-seo-tool",
+      "repo_owner": "nichochar",
+      "default_branch": "main",
+      "stars": 42,
+      "last_commit": "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2",
+      "license_detected": "MIT"
+    }
+  }
+}

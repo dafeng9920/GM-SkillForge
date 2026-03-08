@@ -1,0 +1,61 @@
+schema_version: "0.1.0"
+skill_id: "skill_compose"
+name: "Skill Composer"
+description: "Generate a skill spec from intent (no repo source)"
+version: "0.1.0"
+
+# 所属路径
+paths: ["A"]
+stage: -1
+
+# 输入合同
+input:
+  required:
+    - intent:
+        type: "object"
+        description: "Parsed intent object"
+    - options:
+        type: "object"
+        description: "Pipeline options"
+  optional:
+    - generation_hints:
+        type: "object"
+        description: "Hints for skill generation"
+
+# 输出合同
+output:
+  required:
+    - schema_version:
+        type: "string"
+        description: "Schema version (0.1.0)"
+    - skill_spec:
+        type: "object"
+        description: "Generated skill specification with name, version, description, inputs, outputs, tools_required, steps, constraints"
+    - source:
+        type: "string"
+        description: "Source type (generated)"
+    - confidence:
+        type: "number"
+        description: "Generation confidence score"
+
+# 能力声明
+capabilities:
+  network: false
+  filesystem: false
+  subprocess: false
+  gpu: false
+
+# 风险等级
+risk_tier: "L1"
+
+# 依赖
+dependencies:
+  adapters: []
+  schemas: ["skill_spec"]
+  error_codes: []
+
+# 错误处理
+errors:
+  - code: "SKILL_GENERATION_FAILED"
+    retryable: false
+    description: "Failed to generate skill specification"

@@ -1,0 +1,151 @@
+{
+  "task_id": "T81",
+  "task_name": "L4-SKILL-07 预审 (Crypto Signature Gate Pre-review)",
+  "role": "Review (Antigravity-2)",
+  "decision": "ALLOW",
+  "reviewed_at": "2026-02-22T21:45:00Z",
+  "reviewer": "Antigravity-2",
+  "contract_reference": "docs/2026-02-22/task_dispatch_l4_skill07.md",
+
+  "execution_contract_review": {
+    "intent_id": "L4-SKILL-07-CRYPTO-SIGNATURE-20260222-001",
+    "goal": "将'时间戳签署'升级为'密码学验签'硬门禁（Fail-Closed）",
+    "constitution_refs": [
+      "docs/EXECUTION_GUARD_A_PROPOSAL_SKILL_v1.md",
+      "docs/EXECUTION_GUARD_B_EXECUTION_SKILL_v1.md"
+    ],
+
+    "three_role_separation": {
+      "execution": "Antigravity-1",
+      "review": "Antigravity-2",
+      "compliance": "Kior-C",
+      "valid": true,
+      "note": "三权分立明确，无角色混同"
+    },
+
+    "allowed_modifications": [
+      "skills/p2-final-gate-aggregate-skill/aggregate_final_gate.py",
+      "scripts/verify_guard_signature.py",
+      "skills/p2-final-gate-aggregate-skill/SKILL.md"
+    ],
+
+    "prohibited_modifications": [
+      "docs/2026-02-22/verification/T70-T80* (历史证据文件，只读)",
+      "任何无关技能目录"
+    ],
+
+    "fail_closed_requirements": {
+      "require_crypto_signature_flag": {
+        "required": true,
+        "description": "必须实现 --require-crypto-signature 标志"
+      },
+      "missing_signature_behavior": {
+        "required": "REQUIRES_CHANGES",
+        "description": "缺失签名字段 => REQUIRES_CHANGES"
+      },
+      "verification_failure_behavior": {
+        "required": "DENY",
+        "description": "验签失败 => DENY"
+      },
+      "invalid_signer_id_behavior": {
+        "required": "DENY",
+        "description": "signer_id 不在允许名单 => DENY"
+      },
+      "no_timestamp_only_pass": {
+        "required": true,
+        "description": "禁止'仅时间戳即通过'"
+      },
+      "strict_decision_rules": {
+        "required": true,
+        "description": "保持 L4-SKILL-06.1 strict decision 规则，禁止从非标准字段推导 PASS"
+      }
+    }
+  },
+
+  "reasons": [
+    "执行合同三权分立角色明确 (Execution/Review/Compliance)",
+    "允许改动范围限定为 3 个目标文件，边界清晰",
+    "禁止改动范围明确包含历史证据文件和无关技能",
+    "Fail-Closed 硬门禁规则定义完整 (5项要求)",
+    "验收标准与 EXECUTION_GUARD 宪法规范一致",
+    "输出产物清单完整 (6个必交付文件)"
+  ],
+
+  "evidence_refs": [
+    {
+      "id": "EV-T81-001",
+      "kind": "FILE",
+      "locator": "docs/2026-02-22/task_dispatch_l4_skill07.md",
+      "description": "L4-SKILL-07 任务分派文档，定义执行合同"
+    },
+    {
+      "id": "EV-T81-002",
+      "kind": "FILE",
+      "locator": "docs/EXECUTION_GUARD_A_PROPOSAL_SKILL_v1.md",
+      "description": "Proposal 约束 Skill 宪法"
+    },
+    {
+      "id": "EV-T81-003",
+      "kind": "FILE",
+      "locator": "docs/EXECUTION_GUARD_B_EXECUTION_SKILL_v1.md",
+      "description": "Execution 合规约束 Skill 宪法"
+    },
+    {
+      "id": "EV-T81-004",
+      "kind": "FILE",
+      "locator": "skills/p2-final-gate-aggregate-skill/aggregate_final_gate.py",
+      "description": "待改动的聚合脚本 (当前版本 v1.1.0)"
+    },
+    {
+      "id": "EV-T81-005",
+      "kind": "FILE",
+      "locator": "scripts/verify_guard_signature.py",
+      "description": "待改动的签名验证脚本"
+    },
+    {
+      "id": "EV-T81-006",
+      "kind": "FILE",
+      "locator": "docs/2026-02-22/verification/L4-SKILL-06.1_gate_decision.json",
+      "description": "L4-SKILL-06.1 严格决策规则基线"
+    }
+  ],
+
+  "acceptance_tests_required": [
+    {
+      "id": "AT-T83-001",
+      "assertion": "--require-crypto-signature 可触发严格验签",
+      "test_method": "命令行参数测试"
+    },
+    {
+      "id": "AT-T83-002",
+      "assertion": "缺签名文件可被拦截 => REQUIRES_CHANGES",
+      "test_method": "负向测试用例"
+    },
+    {
+      "id": "AT-T83-003",
+      "assertion": "验签失败可被拦截 => DENY",
+      "test_method": "签名篡改测试"
+    },
+    {
+      "id": "AT-T83-004",
+      "assertion": "非法 signer_id 可被拦截 => DENY",
+      "test_method": "非法身份测试"
+    },
+    {
+      "id": "AT-T83-005",
+      "assertion": "保持 L4-SKILL-06.1 strict decision 规则",
+      "test_method": "代码审查 + 回归测试"
+    }
+  ],
+
+  "compliance_checklist": {
+    "contract_schema_valid": true,
+    "three_roles_defined": true,
+    "side_effects_declared": true,
+    "acceptance_tests_defined": true,
+    "evidence_requirements_defined": true,
+    "no_bypass_intents_detected": true
+  },
+
+  "required_changes": []
+}

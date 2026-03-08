@@ -1,0 +1,72 @@
+name: GM-SkillForge CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'skillforge-spec-pack/**'
+      - 'skills/**'
+      - 'ci/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'skillforge-spec-pack/**'
+      - 'skills/**'
+      - 'ci/**'
+  workflow_dispatch:
+
+jobs:
+  contract-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: skillforge-spec-pack
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -e .
+
+      - name: Validate all examples
+        run: python tools/validate.py --all
+
+      - name: Run contract tests
+        run: pytest -q
+
+  # ============================================================================
+  # Skill 化门禁 (REQUIRED)
+  # 触发条件: skills/ 或 ci/ 目录变更
+  # 阻断条件: 任一检查失败
+  # ============================================================================
+  skillization-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: always()  # 即使 contract-tests 失败也运行（独立门禁）
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install PowerShell
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y powershell
+
+      - name: Run Skillization Gate
+        run: |
+          pwsh -File ci/run_skillization_gate.ps1 -RepoRoot "$(pwd)"
+
+      - name: Upload Gate Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: skillization-gate-report
+          path: ci/out/
+          retention-days: 30

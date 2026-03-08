@@ -1,0 +1,227 @@
+{
+  "test_id": "C_incremental_delta_enforced",
+  "timestamp_utc": "2026-02-25T10:11:26Z",
+  "workspace": "C:\\Users\\Aorus\\AppData\\Local\\Temp\\l3-delta-iwqmft1q",
+  "commands": [
+    {
+      "round": 1,
+      "command": [
+        "D:\\GM-SkillForge\\.venv\\Scripts\\python.exe",
+        "-m",
+        "skillforge.src.cli",
+        "refine",
+        "--mode",
+        "nl",
+        "--output",
+        "C:\\Users\\Aorus\\AppData\\Local\\Temp\\l3-delta-iwqmft1q\\round1.json",
+        "生成一个量化交易系统Skill蓝图"
+      ],
+      "returncode": 0,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    },
+    {
+      "round": 2,
+      "command": [
+        "D:\\GM-SkillForge\\.venv\\Scripts\\python.exe",
+        "-m",
+        "skillforge.src.cli",
+        "refine",
+        "--mode",
+        "nl",
+        "--output",
+        "C:\\Users\\Aorus\\AppData\\Local\\Temp\\l3-delta-iwqmft1q\\round2.json",
+        "在已有量化交易系统Skill基础上新增实时风险监控"
+      ],
+      "returncode": 0,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    },
+    {
+      "round": 3,
+      "command": [
+        "D:\\GM-SkillForge\\.venv\\Scripts\\python.exe",
+        "-m",
+        "skillforge.src.cli",
+        "refine",
+        "--mode",
+        "nl",
+        "--output",
+        "C:\\Users\\Aorus\\AppData\\Local\\Temp\\l3-delta-iwqmft1q\\round3.json",
+        "在已有量化交易系统Skill基础上新增实时风险监控并升级异常告警"
+      ],
+      "returncode": 0,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    }
+  ],
+  "round_outputs_snapshot": [
+    {
+      "round": 1,
+      "status": "completed",
+      "publish_result": {
+        "skill_id": "skill-general-skill",
+        "version": "0.1.0",
+        "status": "published",
+        "registry_url": "http://localhost:8080/skills/skill-general-skill/0.1.0",
+        "timestamp": "2026-02-25T10:11:15Z"
+      },
+      "gate_decisions": [
+        {
+          "schema_version": "0.1.0",
+          "gate_id": "constitution_risk_gate",
+          "node_id": "constitution_risk_gate",
+          "decision": "ALLOW",
+          "reason": "Risk score 0.00 is within acceptable limits",
+          "details": {
+            "risk_score": 0.0,
+            "risk_categories": [],
+            "mitigations_required": [],
+            "constitution_version": "constitution_v1.md",
+            "constitution_hash": "17ce83276c6e4f42c1a5becbc348a614bfdab3783f0ac854f1cb2a040f88a5f6"
+          },
+          "ruling": {
+            "verdict": "ALLOW",
+            "rule_id": "RISK_SCORE_ACCEPTABLE",
+            "evidence_ref": "risk_score=0.00, categories=[]",
+            "blocked": false
+          },
+          "timestamp": "2026-02-25T10:11:10Z"
+        }
+      ],
+      "error": null
+    },
+    {
+      "round": 2,
+      "status": "completed",
+      "publish_result": {
+        "skill_id": "skill-general-skill",
+        "version": "audit-175e191d",
+        "status": "rejected",
+        "registry_url": "http://localhost:8080/skills/skill-general-skill/audit-175e191d",
+        "timestamp": "2026-02-25T10:11:20Z",
+        "ruling": {
+          "verdict": "DENY",
+          "rule_id": "INTEGRITY_TAMPER_DETECTED",
+          "description": "Registry/graph integrity verification failed - tampering detected",
+          "evidence": {
+            "tampering_detected": true,
+            "stored_hash": "a5a784a5fa320d3369f099ca0d9f81067384e69195f4c20a9164e9ccb03bf91d",
+            "computed_hash": "d1d305b45ddff598cd252a7f7fad3007a0737767be124e462d5656e20bea3691",
+            "chain_type": "registry",
+            "entity_id": "skill-general-skill",
+            "timestamp": "2026-02-25T10:11:20Z"
+          },
+          "blocked": true,
+          "remediation": "Restore original registry state or reset integrity chain"
+        }
+      },
+      "gate_decisions": [
+        {
+          "schema_version": "0.1.0",
+          "gate_id": "constitution_risk_gate",
+          "node_id": "constitution_risk_gate",
+          "decision": "ALLOW",
+          "reason": "Risk score 0.00 is within acceptable limits",
+          "details": {
+            "risk_score": 0.0,
+            "risk_categories": [],
+            "mitigations_required": [],
+            "constitution_version": "constitution_v1.md",
+            "constitution_hash": "17ce83276c6e4f42c1a5becbc348a614bfdab3783f0ac854f1cb2a040f88a5f6"
+          },
+          "ruling": {
+            "verdict": "ALLOW",
+            "rule_id": "RISK_SCORE_ACCEPTABLE",
+            "evidence_ref": "risk_score=0.00, categories=[]",
+            "blocked": false
+          },
+          "timestamp": "2026-02-25T10:11:15Z"
+        }
+      ],
+      "error": null
+    },
+    {
+      "round": 3,
+      "status": "completed",
+      "publish_result": {
+        "skill_id": "skill-general-skill",
+        "version": "audit-84425259",
+        "status": "rejected",
+        "registry_url": "http://localhost:8080/skills/skill-general-skill/audit-84425259",
+        "timestamp": "2026-02-25T10:11:26Z",
+        "ruling": {
+          "verdict": "DENY",
+          "rule_id": "INTEGRITY_TAMPER_DETECTED",
+          "description": "Registry/graph integrity verification failed - tampering detected",
+          "evidence": {
+            "tampering_detected": true,
+            "stored_hash": "a5a784a5fa320d3369f099ca0d9f81067384e69195f4c20a9164e9ccb03bf91d",
+            "computed_hash": "a0a98dce90851a946c71bc524d6cd035e31e0a3299a45b44b4cb847628a9ca6e",
+            "chain_type": "registry",
+            "entity_id": "skill-general-skill",
+            "timestamp": "2026-02-25T10:11:26Z"
+          },
+          "blocked": true,
+          "remediation": "Restore original registry state or reset integrity chain"
+        }
+      },
+      "gate_decisions": [
+        {
+          "schema_version": "0.1.0",
+          "gate_id": "constitution_risk_gate",
+          "node_id": "constitution_risk_gate",
+          "decision": "ALLOW",
+          "reason": "Risk score 0.00 is within acceptable limits",
+          "details": {
+            "risk_score": 0.0,
+            "risk_categories": [],
+            "mitigations_required": [],
+            "constitution_version": "constitution_v1.md",
+            "constitution_hash": "17ce83276c6e4f42c1a5becbc348a614bfdab3783f0ac854f1cb2a040f88a5f6"
+          },
+          "ruling": {
+            "verdict": "ALLOW",
+            "rule_id": "RISK_SCORE_ACCEPTABLE",
+            "evidence_ref": "risk_score=0.00, categories=[]",
+            "blocked": false
+          },
+          "timestamp": "2026-02-25T10:11:20Z"
+        }
+      ],
+      "error": null
+    }
+  ],
+  "evaluation": {
+    "passed": true,
+    "checks": {
+      "version_or_skill_evolves": true,
+      "graph_update_exposed": true,
+      "release_manifest_or_rollback_exposed": true
+    },
+    "observed": {
+      "skill_ids": [
+        "skill-general-skill",
+        "skill-general-skill",
+        "skill-general-skill"
+      ],
+      "versions": [
+        "0.1.0",
+        "audit-175e191d",
+        "audit-84425259"
+      ],
+      "unique_skill_id_count": 1,
+      "unique_version_count": 3,
+      "graph_signals_by_round": [
+        true,
+        true,
+        true
+      ],
+      "manifest_signals_by_round": [
+        true,
+        true,
+        true
+      ]
+    }
+  }
+}

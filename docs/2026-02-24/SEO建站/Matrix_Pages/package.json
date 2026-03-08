@@ -1,0 +1,10 @@
+{
+    "name": "aio-checker-matrix",
+    "version": "1.0.0",
+    "description": "pSEO Matrix for AI Search Visibility Audits",
+    "scripts": {
+        "build": "echo 'Building static pages...'"
+    },
+    "author": "OpenClaw SEO Factory",
+    "license": "MIT"
+}

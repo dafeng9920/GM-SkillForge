@@ -1,0 +1,99 @@
+# cognition_10d Intent Contract
+# Extracted from: docs/2026-02-17/GM-SkillForge · cognition_10d 四件套.md
+
+# Meta information
+intent_id: cognition_10d
+version: "1.0.0"
+owner: gm-skillforge
+fail_mode: CLOSED
+
+# Request Schema (all fields required)
+request:
+  repo_url:
+    type: string
+    format: uri
+    required: true
+  commit_sha:
+    type: string
+    pattern: "^[0-9a-f]{40}$"
+    required: true
+  at_time:
+    type: string
+    format: date-time
+    required: true
+  rubric_version:
+    type: string
+    pattern: "^\\d+\\.\\d+\\.\\d+$"
+    required: true
+  requester_id:
+    type: string
+    required: true
+
+# Response Schema
+response:
+  intent_id:
+    type: string
+    const: cognition_10d
+  status:
+    type: string
+    enum: [PASSED, REJECTED]
+  repo_url:
+    type: string
+  commit_sha:
+    type: string
+  at_time:
+    type: string
+  rubric_version:
+    type: string
+  dimensions:
+    type: array
+    minItems: 10
+    maxItems: 10
+    items:
+      type: object
+      required: [dim_id, label, score, threshold, verdict, evidence_ref]
+      properties:
+        dim_id:
+          type: string
+        label:
+          type: string
+        score:
+          type: number
+          minimum: 0
+          maximum: 100
+        threshold:
+          type: number
+        verdict:
+          type: string
+          enum: [PASS, FAIL]
+        evidence_ref:
+          type: string
+  overall_pass_count:
+    type: integer
+    minimum: 0
+    maximum: 10
+  rejection_reasons:
+    type: array
+    items:
+      type: string
+  audit_pack_ref:
+    type: string
+  generated_at:
+    type: string
+    format: date-time
+
+# Fail-Closed Rules
+fail_closed:
+  FC-1: "repo_url invalid -> REJECTED"
+  FC-2: "commit_sha not 40-char hex -> REJECTED"
+  FC-3: "at_time not ISO-8601 -> REJECTED"
+  FC-4: "rubric_version not registered -> REJECTED"
+  FC-5: "dimensions count != 10 -> REJECTED"
+  FC-6: "any evidence_ref empty/unparseable -> REJECTED"
+  FC-7: "any dimension missing required field -> REJECTED"
+
+# Governance Boundary
+governance:
+  n8n: "orchestration only (trigger/route/retry/notify)"
+  skillforge: "judgment and evidence"
+  no_permit: "publish/tag/release prohibited"

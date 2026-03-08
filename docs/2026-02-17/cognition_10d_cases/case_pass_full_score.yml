@@ -1,0 +1,16 @@
+case_id: case_pass_full_score
+description: "All 10 dimensions pass with high scores"
+input:
+  repo_url: "https://github.com/example/repo"
+  commit_sha: "a1b2c3d4e5f6789012345678901234567890abcd"
+  at_time: "2026-02-17T12:00:00Z"
+  rubric_version: "1.0.0"
+  requester_id: "test_runner"
+expected:
+  status: PASSED
+  overall_pass_count: 10
+  rejection_reasons: []
+assertions:
+  - 'len(dimensions) == 10'
+  - 'all(d.evidence_ref != "" for d in dimensions)'
+  - 'all(d.verdict == "PASS" for d in dimensions)'

@@ -1,0 +1,73 @@
+# Intake Repo Gate Contract
+# Gate Group: entrance
+# Implements: gate_interface_v1.yaml
+
+gate_id: intake_repo
+gate_group: entrance
+description: "First gate of the migration pipeline - validates repository intake request"
+
+# Input Contract
+input:
+  repo_url:
+    type: string
+    format: uri
+    required: true
+    description: "Repository URL (git https/ssh)"
+  commit_sha:
+    type: string
+    pattern: "^[0-9a-f]{40}$"
+    required: true
+    description: "Git commit SHA (40-char hex)"
+  at_time:
+    type: string
+    format: iso8601
+    required: false
+    description: "Point-in-time checkout (ISO-8601)"
+  issue_key:
+    type: string
+    pattern: "^[A-Z]+-[A-Z0-9]+$"
+    required: false
+    description: "Unique request ID (auto-generated if not provided)"
+
+# Output Contract
+output:
+  gate_name:
+    type: string
+    value: "intake_repo"
+  gate_decision:
+    type: string
+    enum: ["PASSED", "REJECTED"]
+  next_action:
+    type: string
+    enum: ["continue", "halt"]
+  error_code:
+    type: string
+    nullable: true
+  evidence_refs:
+    type: array
+    items:
+      $ref: "gate_interface_v1.yaml#/definitions/EvidenceRef"
+
+# Evidence Produced
+evidence:
+  type: IntakeManifest
+  fields:
+    repo_url: string
+    commit_sha: string
+    at_time: string
+    intake_timestamp: string
+    status: string
+
+# Fail-Closed Rules
+fail_closed_rules:
+  FC-INTAKE-1:
+    condition: "commit_sha is null or empty"
+    action: "REJECTED"
+    error_code: "ERR_COMMIT_SHA_MISSING"
+  FC-INTAKE-2:
+    condition: "repo_url is null or empty"
+    action: "REJECTED"
+    error_code: "ERR_REPO_URL_INVALID"
+
+# Tool Metadata
+tool_revision: "v1.0.0"

@@ -1,0 +1,211 @@
+# Multi-Factor Strategy Intent Contract
+# Migration: NEW-GM -> SkillForge
+# Source: D:\NEW-GM\strategies\template_multi_factor.py
+
+intent_name: multi_factor
+version: "1.0.0"
+migration_id: A7
+
+description: |
+  基于多因子综合评分的量化投资策略
+  通过 Momentum/Value/Quality/LowVol/Growth/Liquidity 等因子的加权综合
+  生成组合权重分配信号
+
+# Input Schema
+input_schema:
+  name: FactorData
+  fields:
+    - name: price_data
+      type: DataFrame
+      required: true
+      description: 股票价格数据 (open, high, low, close, volume)
+
+    - name: fundamental_data
+      type: DataFrame
+      required: false
+      description: 基本面数据 (PE, PB, ROE, etc.)
+
+    - name: universe
+      type: List[str]
+      required: false
+      description: 股票池列表
+
+# Output Schema
+output_schema:
+  name: PortfolioWeights
+  fields:
+    - name: composite_score
+      type: float
+      description: 综合因子评分
+
+    - name: signal
+      type: int
+      enum: [-1, 0, 1]
+      description: 交易信号 (-1=卖出, 0=持有, 1=买入)
+
+    - name: factor_exposures
+      type: Dict[str, float]
+      description: 各因子暴露值
+
+# Factor Definitions
+factors:
+  momentum:
+    description: 价格趋势动量因子
+    indicators:
+      - momentum_20d  # 20日收益率
+      - momentum_60d  # 60日收益率
+      - momentum_120d # 120日收益率
+    source_ref: "template_multi_factor.py:67-70"
+    weight_default: 0.20
+
+  value:
+    description: 估值因子
+    indicators:
+      - value_pe  # 市盈率
+      - value_pb  # 市净率
+      - value_ps  # 市销率
+    source_ref: "template_multi_factor.py:72-75"
+    weight_default: 0.20
+
+  quality:
+    description: 财务质量因子
+    indicators:
+      - quality_roe         # 净资产收益率
+      - quality_roa         # 总资产收益率
+      - quality_debt_ratio  # 负债率
+    source_ref: "template_multi_factor.py:77-80"
+    weight_default: 0.15
+
+  lowvol:
+    description: 低波动因子
+    indicators:
+      - lowvol_volatility  # 年化波动率
+      - lowvol_beta        # Beta系数
+    source_ref: "template_multi_factor.py:82-85"
+    weight_default: 0.15
+
+  growth:
+    description: 成长因子
+    indicators:
+      - growth_revenue   # 营收增长率
+      - growth_earnings  # 盈利增长率
+    source_ref: "template_multi_factor.py:87-89"
+    weight_default: 0.15
+
+  liquidity:
+    description: 流动性因子
+    indicators:
+      - liquidity_turnover  # 换手率
+      - liquidity_amihud    # Amihud非流动性指标
+    source_ref: "template_multi_factor.py:91-93"
+    weight_default: 0.15
+
+  technical:
+    description: 技术因子
+    indicators:
+      - technical_rsi               # RSI指标
+      - technical_macd              # MACD指标
+      - technical_bollinger_position # 布林带位置
+    source_ref: "template_multi_factor.py:96-98"
+
+# Core Logic Flow
+logic_flow:
+  - step: 1
+    name: factor_calculation
+    description: 计算各类因子原始值
+    source_ref: "template_multi_factor.py:63-100"
+
+  - step: 2
+    name: factor_neutralization
+    description: 因子中性化处理（行业/规模）
+    source_ref: "template_multi_factor.py:127-149"
+    params:
+      neutralize_industry: true
+      neutralize_size: true
+
+  - step: 3
+    name: factor_scoring
+    description: 标准化并计算加权综合评分
+    source_ref: "template_multi_factor.py:151-177"
+    formula: |
+      CompositeScore = Σ(factor_i * weight_i)
+      其中 factors 经过 StandardScaler 标准化
+
+  - step: 4
+    name: signal_generation
+    description: 根据综合评分生成交易信号
+    source_ref: "template_multi_factor.py:179-261"
+    rules:
+      - condition: "composite_score > min_score_threshold"
+        signal: 1  # BUY
+      - condition: "composite_score < -min_score_threshold"
+        signal: -1 # SELL
+      - condition: "otherwise"
+        signal: 0  # HOLD
+
+# Evidence Requirements
+evidence_required:
+  - type: BacktestRef
+    description: 必须提供回测验证引用
+    min_requirements:
+      - backtest_period: ">=1 year"
+      - sharpe_ratio: ">0.5"
+      - max_drawdown: "<30%"
+
+  - type: FactorIC
+    description: 因子IC检验
+    min_requirements:
+      - ic_mean: ">0.02"
+      - ic_ir: ">0.5"
+
+# Configuration Parameters
+config_params:
+  rebalance_frequency:
+    type: string
+    default: "monthly"
+    enum: ["daily", "weekly", "monthly", "quarterly"]
+    description: 调仓频率
+
+  top_n_stocks:
+    type: int
+    default: 10
+    min: 1
+    max: 100
+    description: 选股数量
+
+  min_score_threshold:
+    type: float
+    default: 0.3
+    min: 0.0
+    max: 1.0
+    description: 最小评分阈值
+
+  lookback_period:
+    type: int
+    default: 252
+    description: 回看期（交易日）
+
+# Validation Rules
+validation:
+  - rule: signals_not_empty
+    severity: error
+    description: 信号不能为空
+
+  - rule: factor_balance
+    severity: warning
+    description: 检查买入/卖出信号比例
+    threshold: "buy_ratio in [0.3, 0.7]"
+
+  - rule: score_neutrality
+    severity: warning
+    description: 检查因子评分是否存在偏差
+    threshold: "|score_mean| < 0.1"
+
+# Migration Metadata
+migration_metadata:
+  source_project: "D:\\NEW-GM"
+  source_file: "strategies\\template_multi_factor.py"
+  target_project: "D:\\GM-SkillForge"
+  target_path: "skillforge/src/skills/strategies/multi_factor.py"
+  migrated_by: "Antigravity-1"
+  wave: "Wave 4 Batch 1"

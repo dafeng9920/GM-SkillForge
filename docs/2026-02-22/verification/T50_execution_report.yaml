@@ -1,0 +1,71 @@
+task_id: "T50"
+executor: "vs--cc1"
+status: "完成"
+job_id: "L3-CLOSING-20260222-001"
+task_scope: "P0-2"
+
+deliverables:
+  - path: "configs/audit_policy_v1.json"
+    action: "新建"
+    lines_changed: 93
+    description: "5-Layer审计策略配置文件，包含L1-L5权重、阈值、Gate规则"
+  - path: "scripts/run_skill_5layer_audit.py"
+    action: "无修改"
+    lines_changed: 0
+    note: "脚本已具备policy读取功能，仅需配置文件即可生效"
+
+gate_self_check:
+  - command: "python scripts/run_skill_5layer_audit.py --domains finance,legal --top-n 3"
+    expect: "exit 0"
+    result: "PASS"
+    exit_code: 0
+    output_summary: |
+      run_id=L5S-20260222045353Z-83529CA2
+      policy_version=v1.0.0-20260222
+      sample_size=3
+      gate_counts: PASS=3, WARN=0, FAIL=0
+
+manual_checks:
+  - check: "json输出包含summary.policy_version"
+    result: "PASS"
+    evidence: "reports/skill-audit/finance_legal_top3_l5-static_2026-02-22.json line 6"
+
+evidence_refs:
+  - id: "EV-T50-001"
+    kind: "FILE"
+    locator: "configs/audit_policy_v1.json"
+    sha256: "pending"
+    description: "新建的审计策略配置文件"
+  - id: "EV-T50-002"
+    kind: "LOG"
+    locator: "gate_self_check output above"
+    description: "gate自检命令执行成功，exit_code=0"
+  - id: "EV-T50-003"
+    kind: "FILE"
+    locator: "reports/skill-audit/finance_legal_top3_l5-static_2026-02-22.json:6"
+    description: "JSON报告包含summary.policy_version字段"
+
+constraints_verified:
+  - constraint: "报告summary必须出现policy_version"
+    status: "已验证"
+    evidence_ref: "EV-T50-003"
+  - constraint: "阈值可改配置，不改代码"
+    status: "已验证"
+    note: "configs/audit_policy_v1.json包含所有阈值，脚本通过load_policy()读取"
+
+deny_list_checked:
+  - rule: "不得跳过policy版本字段"
+    status: "合规"
+    evidence: "policy_version=v1.0.0-20260222在报告中正确输出"
+  - rule: "不得删除现有审计输出字段"
+    status: "合规"
+    note: "未修改脚本，仅新增配置文件"
+
+notes: |
+  T50任务完成。创建了configs/audit_policy_v1.json策略配置文件，
+  包含完整的L1-L5权重、阈值和Gate规则。脚本run_skill_5layer_audit.py
+  已具备policy读取功能，无需代码修改即可通过配置调整阈值。
+
+  gate自检通过，JSON报告正确包含summary.policy_version字段。
+
+generated_at: "2026-02-22T04:53:53Z"

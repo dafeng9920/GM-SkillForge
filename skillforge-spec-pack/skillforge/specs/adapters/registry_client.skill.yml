@@ -1,0 +1,69 @@
+schema_version: "0.1.0"
+skill_id: "registry_client"
+name: "Registry Client Adapter"
+description: "Publish skills to and query the GM OS skill registry"
+version: "0.1.0"
+
+# 输入合同
+input:
+  required:
+    - action:
+        type: "string"
+        description: "Action to perform: publish or check_exists"
+    - params:
+        type: "object"
+        description: "Action-specific parameters"
+
+# 输出合同
+output:
+  required:
+    - result:
+        type: "object"
+        description: "Action result payload"
+  optional:
+    - schema_version:
+        type: "string"
+        description: "Schema version for publish results"
+    - skill_id:
+        type: "string"
+        description: "Published skill identifier"
+    - version:
+        type: "string"
+        description: "Published skill version"
+    - status:
+        type: "string"
+        description: "Publish status: published or rejected"
+    - registry_url:
+        type: "string"
+        description: "Registry URL"
+    - timestamp:
+        type: "string"
+        description: "Publication timestamp"
+
+# 能力声明
+capabilities:
+  network: true
+  filesystem: false
+  subprocess: false
+  gpu: false
+
+# 风险等级
+risk_tier: "L1"
+
+# 依赖
+dependencies:
+  adapters: []
+  schemas: ["registry_publish"]
+  error_codes: ["REG_DUPLICATE", "REG_VALIDATION_FAILED", "SYS_ADAPTER_UNAVAILABLE"]
+
+# 错误处理
+errors:
+  - code: "REG_DUPLICATE"
+    retryable: false
+    description: "Skill already exists in registry"
+  - code: "REG_VALIDATION_FAILED"
+    retryable: false
+    description: "Skill validation failed"
+  - code: "SYS_ADAPTER_UNAVAILABLE"
+    retryable: true
+    description: "Registry service is unavailable"

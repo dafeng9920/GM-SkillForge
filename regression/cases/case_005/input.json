@@ -1,0 +1,15 @@
+{
+  "case_id": "case_005",
+  "description": "Usage Meter - Quota accounting on enqueue",
+  "category": "usage_meter",
+  "input": {
+    "account_id": "ACC-REGRESSION-005",
+    "action": "AUDIT_L3",
+    "units": 1,
+    "job_id": "JOB-REGRESSION-005"
+  },
+  "expected_record_success": true,
+  "expected_append_only": true,
+  "expected_queryable_by_account": true,
+  "notes": "Verifies that usage is recorded on enqueue (not completion) with append-only behavior."
+}

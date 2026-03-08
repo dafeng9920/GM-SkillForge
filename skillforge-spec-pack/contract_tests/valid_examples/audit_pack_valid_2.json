@@ -1,0 +1,79 @@
+{
+    "schema_version": "0.1.0",
+    "audit_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+    "job_id": "660e8400-e29b-41d4-a716-446655440111",
+    "skill_id": "data_transformer",
+    "skill_version": "0.2.0",
+    "created_at": "2026-02-15T14:00:00Z",
+    "provenance": {
+        "source_url": "https://github.com/example/data-transformer",
+        "commit_sha": "bbccddee11223344556677889900aabbccddeeff",
+        "branch": "release/v0.2",
+        "tag": "v0.2.0",
+        "fetched_at": "2026-02-15T13:50:00Z",
+        "author": "dev-team",
+        "license_spdx": "Apache-2.0"
+    },
+    "manifest": {
+        "name": "data_transformer",
+        "version": "0.2.0",
+        "description": "Data transformation and ETL skill",
+        "capabilities": [
+            "file_read",
+            "file_write",
+            "data_transform"
+        ],
+        "schemas": {
+            "input": "data_transformer.input.schema.json",
+            "output": "data_transformer.output.schema.json"
+        },
+        "risk_tier": "L2",
+        "quality_gate_level": 4
+    },
+    "gate_decisions": [
+        {
+            "schema_version": "0.1.0",
+            "gate_id": "cc112233-4455-6677-8899-aabbccddeeff",
+            "node_id": "constitution_risk_gate",
+            "decision": "ALLOW",
+            "risk_tier": "L2",
+            "reasons": [],
+            "required_changes": [],
+            "decided_at": "2026-02-15T13:55:00Z"
+        }
+    ],
+    "test_report": {
+        "total_runs": 25,
+        "passed": 24,
+        "failed": 1,
+        "success_rate": 0.96,
+        "avg_latency_ms": 120.5,
+        "total_cost_usd": 0.03
+    },
+    "trace_summary": {
+        "events_count": 150,
+        "tool_calls": 45,
+        "errors_count": 1
+    },
+    "hashes": {
+        "audit_pack": {
+            "algorithm": "sha256",
+            "value": "aabbccdd11223344556677889900aabbccddeeff11223344556677889900aabb"
+        },
+        "skill_bundle": {
+            "algorithm": "sha256",
+            "value": "1122334455667788990011223344556677889900aabbccddeeff112233445566"
+        }
+    },
+    "license_status": "APPROVED",
+    "signature": {
+        "algorithm": "ed25519",
+        "value": "abcdef1234567890",
+        "signed_at": "2026-02-15T14:01:00Z",
+        "signer": "gm-os-auditor"
+    },
+    "metadata": {
+        "pipeline_version": "0.1.0",
+        "environment": "staging"
+    }
+}

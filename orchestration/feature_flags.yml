@@ -1,0 +1,101 @@
+# Feature Flags - SEEDS P2 Environment Profiles
+# Job ID: L45-D6-SEEDS-P2-20260220-006
+# Skill ID: l45_seeds_p2_operationalization
+#
+# Purpose: Environment-aware feature flag configuration.
+# Each environment (dev/staging/prod) has its own flag profile.
+#
+# IMPORTANT SECURITY CONSTRAINTS:
+# - prod profile must be most restrictive (default deny)
+# - Missing/unknown environment falls back to fail-closed defaults
+# - Environment is determined by SKILLFORGE_ENV env var (not hardcoded)
+#
+# Usage:
+#   export SKILLFORGE_ENV=dev|staging|prod
+#   python -c "from feature_flag_loader import is_enabled; print(is_enabled('enable_n8n_execution'))"
+
+version: 2
+schema_ref: "SEEDS P2-8 feature_flags_env_profiles"
+
+# Default flags used when:
+# 1. Environment profile is not found
+# 2. SKILLFORGE_ENV is not set
+# 3. Config file loading fails
+#
+# DEFAULT POLICY: FAIL-CLOSED (all flags false)
+defaults:
+  enable_sandbox_test: false
+  enable_n8n_execution: false
+  enable_github_intake_external: false
+  enable_advanced_analytics: false
+  enable_beta_features: false
+
+# Environment-specific profiles
+# More restrictive environments should have fewer enabled flags
+profiles:
+  # Development environment - most permissive for development velocity
+  # Still fail-closed for potentially dangerous operations
+  dev:
+    description: "Development environment - permissive but controlled"
+    flags:
+      enable_sandbox_test: true
+      enable_n8n_execution: true
+      enable_github_intake_external: true
+      enable_advanced_analytics: false
+      enable_beta_features: true
+
+  # Staging environment - mirrors production but allows testing
+  staging:
+    description: "Staging environment - production-like with test allowances"
+    flags:
+      enable_sandbox_test: true
+      enable_n8n_execution: true
+      enable_github_intake_external: false
+      enable_advanced_analytics: false
+      enable_beta_features: false
+
+  # Production environment - MOST RESTRICTIVE
+  # Only stable, vetted capabilities are enabled
+  prod:
+    description: "Production environment - maximum security, stable features only"
+    flags:
+      enable_sandbox_test: false
+      enable_n8n_execution: false
+      enable_github_intake_external: false
+      enable_advanced_analytics: false
+      enable_beta_features: false
+
+# Audit policy applies to all environments
+audit_policy:
+  # When any flag is disabled and blocks execution:
+  disabled_flag_behavior: "LOG_AND_BLOCK"
+  evidence_required: true
+  evidence_type: "FEATURE_DISABLED_EVIDENCE"
+
+  # Include environment context in evidence for debugging
+  include_env_context: true
+
+  # Audit event structure when flag blocks:
+  evidence_template:
+    issue_key: "FEATURE-DISABLED-{flag_name}-{run_id}"
+    source_locator: "feature_flag://{flag_name}"
+    action_taken: "BLOCKED_BY_DISABLED_FLAG"
+    reason: "Feature '{flag_name}' is disabled in '{environment}' environment."
+
+# Environment configuration hints
+environment_config:
+  # Environment variable name to check
+  env_var_name: "SKILLFORGE_ENV"
+
+  # Valid environment values
+  valid_environments:
+    - dev
+    - staging
+    - prod
+
+  # Default environment if not specified (must be fail-closed)
+  # Using "unknown" forces fail-closed behavior
+  default_if_missing: "unknown"
+
+  # Whether to log environment detection
+  log_environment_detection: true

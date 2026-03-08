@@ -1,0 +1,300 @@
+# Audit Intent Contract v1
+# 用于审计技能模块的意图合同
+# 遵循 Fail-Closed 原则
+
+# ============================================================
+# 合同基础信息
+# ============================================================
+contract_id: audit_intent_contract_v1
+frozen_at: "2026-02-19T00:00:00Z"
+version: "1.0.0"
+schema_hash: TBD_SHA256
+author: "vs--cc2"
+status: "FROZEN"
+
+# ============================================================
+# 1. 意图ID
+# ============================================================
+intent_id: audit
+description: "审计技能模块，检查代码质量、安全性和合规性"
+
+# ============================================================
+# 2. 意图类型
+# ============================================================
+intent_type: "AUDIT"
+category: "quality_assurance"
+lifecycle_stage: "validation"
+
+# ============================================================
+# 3. 输入 Schema
+# ============================================================
+input_schema:
+  # 必填字段
+  required:
+    - skill_id
+    - target_version
+    - audit_scope
+
+  properties:
+    skill_id:
+      type: string
+      format: "SKILL-{MODULE}-{NAME}"
+      description: "技能模块唯一标识符"
+      example: "SKILL-template_mean_reversion-v1"
+
+    target_version:
+      type: string
+      format: "v{MAJOR}.{MINOR}.{PATCH}"
+      description: "目标审计版本"
+      example: "v1.0.0"
+
+    audit_scope:
+      type: array
+      items:
+        type: string
+        enum: ["code_quality", "security", "compliance", "performance", "documentation"]
+      description: "审计范围"
+
+    repo_url:
+      type: string
+      format: "https://github.com/{org}/{repo}"
+      description: "源代码仓库 URL"
+
+    commit_sha:
+      type: string
+      pattern: "^[a-f0-9]{40}$"
+      description: "Git commit SHA（完整 40 位）"
+
+    entry_path:
+      type: string
+      description: "入口文件路径"
+
+    config_overrides:
+      type: object
+      description: "配置覆盖项"
+
+# ============================================================
+# 4. 输出 Schema
+# ============================================================
+output_schema:
+  properties:
+    audit_id:
+      type: string
+      format: "AUDIT-{YYYYMMDD}-{SEQ}"
+      description: "审计执行 ID"
+
+    status:
+      type: string
+      enum: ["PASSED", "FAILED", "WARNING", "ERROR"]
+      description: "审计状态"
+
+    findings:
+      type: array
+      items:
+        type: object
+        properties:
+          severity:
+            type: string
+            enum: ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"]
+          category:
+            type: string
+          message:
+            type: string
+          location:
+            type: string
+          remediation:
+            type: string
+      description: "审计发现列表"
+
+    metrics:
+      type: object
+      properties:
+        code_quality_score:
+          type: number
+          minimum: 0
+          maximum: 100
+        security_score:
+          type: number
+          minimum: 0
+          maximum: 100
+        compliance_score:
+          type: number
+          minimum: 0
+          maximum: 100
+        total_issues:
+          type: integer
+        critical_issues:
+          type: integer
+      description: "审计指标"
+
+    evidence_refs:
+      type: array
+      items:
+        type: string
+      description: "Evidence 引用列表"
+
+    completed_at:
+      type: string
+      format: ISO8601_UTC
+      description: "审计完成时间"
+
+# ============================================================
+# 5. 错误码映射
+# ============================================================
+error_codes:
+  E_AUDIT_001:
+    description: "技能模块不存在"
+    condition: "skill_id not found in registry"
+    severity: "CRITICAL"
+    recovery_hint: "验证 skill_id 是否正确"
+
+  E_AUDIT_002:
+    description: "版本不匹配"
+    condition: "target_version != current_version"
+    severity: "HIGH"
+    recovery_hint: "更新 target_version 或同步代码"
+
+  E_AUDIT_003:
+    description: "审计范围无效"
+    condition: "audit_scope contains invalid enum value"
+    severity: "MEDIUM"
+    recovery_hint: "使用有效的审计范围值"
+
+  E_AUDIT_004:
+    description: "源代码访问失败"
+    condition: "repo_url unreachable or commit_sha not found"
+    severity: "CRITICAL"
+    recovery_hint: "验证仓库 URL 和 commit SHA"
+
+  E_AUDIT_005:
+    description: "审计超时"
+    condition: "audit execution exceeds timeout limit"
+    severity: "HIGH"
+    recovery_hint: "减少审计范围或增加超时配置"
+
+  E_AUDIT_006:
+    description: "关键安全问题发现"
+    condition: "security audit found CRITICAL severity issues"
+    severity: "CRITICAL"
+    recovery_hint: "修复关键安全问题后重新审计"
+
+  E_AUDIT_007:
+    description: "合规性检查失败"
+    condition: "compliance_score below threshold"
+    severity: "HIGH"
+    recovery_hint: "修复合规性问题"
+
+# ============================================================
+# 6. Fail-Closed 规则
+# ============================================================
+fail_closed_rules:
+  - rule_id: "FC-AUDIT-001"
+    condition: "skill_id == null OR skill_id == ''"
+    result: "AUDIT_BLOCKED"
+    blocked_by: "MISSING_SKILL_ID"
+    description: "缺少技能 ID，禁止审计"
+
+  - rule_id: "FC-AUDIT-002"
+    condition: "target_version == null"
+    result: "AUDIT_BLOCKED"
+    blocked_by: "MISSING_VERSION"
+    description: "缺少目标版本，禁止审计"
+
+  - rule_id: "FC-AUDIT-003"
+    condition: "audit_scope == null OR len(audit_scope) == 0"
+    result: "AUDIT_BLOCKED"
+    blocked_by: "MISSING_AUDIT_SCOPE"
+    description: "缺少审计范围，禁止审计"
+
+  - rule_id: "FC-AUDIT-004"
+    condition: "repo_url unreachable"
+    result: "AUDIT_BLOCKED"
+    blocked_by: "REPO_ACCESS_FAILED"
+    description: "无法访问代码仓库，禁止审计"
+
+  - rule_id: "FC-AUDIT-005"
+    condition: "commit_sha not found in repo"
+    result: "AUDIT_BLOCKED"
+    blocked_by: "COMMIT_NOT_FOUND"
+    description: "Commit 不存在，禁止审计"
+
+  - rule_id: "FC-AUDIT-006"
+    condition: "any finding.severity == 'CRITICAL'"
+    result: "AUDIT_FAILED"
+    blocked_by: "CRITICAL_ISSUES_FOUND"
+    description: "发现关键问题，审计失败"
+
+# ============================================================
+# 7. Evidence 字段
+# ============================================================
+evidence_fields:
+  - field_id: "audit_execution_evidence"
+    type: "object"
+    required: true
+    description: "审计执行证据"
+    schema:
+      audit_id: "string"
+      started_at: "ISO8601_UTC"
+      completed_at: "ISO8601_UTC"
+      executor: "string"
+
+  - field_id: "code_quality_evidence"
+    type: "object"
+    required: true
+    description: "代码质量审计证据"
+    schema:
+      score: "number"
+      issues: "array"
+      recommendations: "array"
+
+  - field_id: "security_audit_evidence"
+    type: "object"
+    required: true
+    description: "安全审计证据"
+    schema:
+      vulnerabilities: "array"
+      score: "number"
+      scan_timestamp: "ISO8601_UTC"
+
+  - field_id: "compliance_evidence"
+    type: "object"
+    required: true
+    description: "合规性审计证据"
+    schema:
+      checks_passed: "array"
+      checks_failed: "array"
+      score: "number"
+
+  - field_id: "findings_summary_evidence"
+    type: "object"
+    required: true
+    description: "发现汇总证据"
+    schema:
+      total_findings: "integer"
+      by_severity: "object"
+      by_category: "object"
+
+# ============================================================
+# 8. 版本
+# ============================================================
+version_info:
+  contract_version: "1.0.0"
+  schema_version: "1.0.0"
+  compatible_intent_versions:
+    - "1.0.0"
+    - "1.0.1"
+
+# ============================================================
+# 9. 冻结时间
+# ============================================================
+frozen_at: "2026-02-19T00:00:00Z"
+
+# ============================================================
+# 附加配置
+# ============================================================
+config:
+  timeout_seconds: 3600
+  max_retries: 3
+  parallel_execution: true
+  cache_results: true
+  cache_ttl_seconds: 86400

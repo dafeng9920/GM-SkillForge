@@ -1,0 +1,163 @@
+# Gate Contract: draft_spec
+# Version: 0.1.0
+# Status: FROZEN
+# Gate Group: logic (squad-b)
+
+gate_name: draft_skill_spec
+gate_version: "0.1.0"
+stage: 3
+
+description: |
+  Draft a skill specification from a repository scan report.
+  This gate transforms raw scan data into a structured SkillSpec.
+
+input_contract:
+  required:
+    - scan_report
+  schema:
+    scan_report:
+      type: object
+      required:
+        - fit_score
+        - language_stack
+      properties:
+        schema_version:
+          type: string
+          description: Schema version of the scan report
+        fit_score:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description: Repository fit score from repo_scan_fit_score gate
+        repo_type:
+          type: string
+          enum: [workflow, cli, lib, service, template]
+          description: Type of repository
+        entry_points:
+          type: array
+          items:
+            type: string
+          description: List of entry point files
+        dependencies:
+          type: object
+          additionalProperties:
+            type: string
+          description: Dependency map
+        language_stack:
+          type: string
+          description: Primary programming language
+        complexity_metrics:
+          type: object
+          description: Code complexity metrics
+
+output_contract:
+  # GateResult per gate_interface_v1.yaml
+  required:
+    - gate_name
+    - gate_decision
+    - next_action
+    - evidence_refs
+  schema:
+    gate_name:
+      type: string
+      const: draft_skill_spec
+    gate_decision:
+      type: string
+      enum: [PASSED, REJECTED]
+    next_action:
+      type: string
+      enum: [continue, halt]
+    error_code:
+      type: string
+      nullable: true
+    evidence_refs:
+      type: array
+      items:
+        $ref: "#/definitions/EvidenceRef"
+    skill_spec:
+      type: object
+      description: Drafted skill specification (Evidence payload)
+      properties:
+        schema_version:
+          type: string
+        name:
+          type: string
+        version:
+          type: string
+        description:
+          type: string
+        skill_md:
+          type: string
+          description: SKILL.md content
+        input_schema:
+          type: object
+          description: JSON Schema for inputs
+        output_schema:
+          type: object
+          description: JSON Schema for outputs
+        capabilities:
+          type: array
+          items:
+            type: string
+            enum: [network, file_read, file_write, shell, database, llm]
+        tools_required:
+          type: array
+          items:
+            type: string
+        constraints:
+          type: array
+          items:
+            type: string
+
+definitions:
+  EvidenceRef:
+    type: object
+    required:
+      - issue_key
+      - source_locator
+      - content_hash
+      - tool_revision
+      - timestamp
+    properties:
+      issue_key:
+        type: string
+        description: Unique ID of the request
+      source_locator:
+        type: string
+        description: URI where evidence is stored
+      content_hash:
+        type: string
+        description: SHA-256 hash of evidence content
+      tool_revision:
+        type: string
+        description: Version of tool that generated evidence
+      timestamp:
+        type: string
+        format: iso8601
+        description: When evidence was generated
+
+behavior:
+  fail_conditions:
+    - scan_report is missing
+    - scan_report.fit_score < 40
+    - scan_report is not a valid dict
+
+  success_conditions:
+    - scan_report is valid
+    - fit_score >= 40
+    - skill_spec is generated with all required fields
+
+error_codes:
+  GATE.DRAFT_SPEC.INPUT_INVALID:
+    description: Input validation failed
+    http_code: 400
+  GATE.DRAFT_SPEC.FIT_SCORE_TOO_LOW:
+    description: Fit score below minimum threshold (40)
+    http_code: 400
+
+implementation_pattern: |
+  class GateDraftSpec:
+      def validate_input(self, input_data) -> list[str]: ...
+      def execute(self, input_data) -> dict: ...
+      def validate_output(self, output) -> list[str]: ...
+      if __name__ == "__main__": main()

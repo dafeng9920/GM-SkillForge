@@ -1,0 +1,74 @@
+{
+  "consistency": {
+    "E003_present_count": 3,
+    "E001_present_count": 3
+  },
+  "passed": true,
+  "timestamp": "2026-02-19T16:06:56Z",
+  "check_name": "error_semantics_consistency",
+  "skills": [
+    {
+      "skill": "permit-governance-skill",
+      "checks": [
+        {
+          "error_code": "E001",
+          "semantics_found": true,
+          "release_allowed_is_false": true
+        },
+        {
+          "error_code": "E003",
+          "semantics_found": true,
+          "release_allowed_is_false": true
+        },
+        {
+          "default_false_found": true,
+          "only_true_with_permit": true,
+          "field": "release_allowed"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "skill": "release-gate-skill",
+      "checks": [
+        {
+          "error_code": "E001",
+          "semantics_found": true,
+          "release_allowed_is_false": true
+        },
+        {
+          "error_code": "E003",
+          "semantics_found": true,
+          "release_allowed_is_false": true
+        },
+        {
+          "default_false_found": true,
+          "only_true_with_permit": false,
+          "field": "release_allowed"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "skill": "rollback-tombstone-skill",
+      "checks": [
+        {
+          "error_code": "E001",
+          "semantics_found": true,
+          "release_allowed_is_false": false
+        },
+        {
+          "error_code": "E003",
+          "semantics_found": true,
+          "release_allowed_is_false": false
+        },
+        {
+          "default_false_found": false,
+          "only_true_with_permit": false,
+          "field": "release_allowed"
+        }
+      ],
+      "passed": true
+    }
+  ]
+}

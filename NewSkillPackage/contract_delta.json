@@ -1,0 +1,71 @@
+{
+  "contract_id": "quant-trading-system-contract",
+  "base_version": "1.0.0",
+  "target_version": "1.1.0",
+  "compatibility": "backward_compatible",
+  "added_interfaces": [
+    {
+      "name": "monitor_realtime_risk",
+      "kind": "function",
+      "input_schema": {
+        "type": "object",
+        "required": ["positions", "market_ticks", "risk_policy", "asof_time"],
+        "properties": {
+          "positions": { "type": "array" },
+          "market_ticks": { "type": "array" },
+          "risk_policy": { "type": "object" },
+          "asof_time": { "type": "string", "format": "date-time" }
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "required": ["risk_snapshot", "anomaly_candidates", "risk_events"],
+        "properties": {
+          "risk_snapshot": { "type": "object" },
+          "anomaly_candidates": { "type": "array" },
+          "risk_events": { "type": "array" }
+        }
+      },
+      "sla": {
+        "max_latency_ms": 500,
+        "min_success_rate": 0.999
+      }
+    },
+    {
+      "name": "dispatch_anomaly_alert",
+      "kind": "function",
+      "input_schema": {
+        "type": "object",
+        "required": ["anomaly_event", "alert_policy", "channels"],
+        "properties": {
+          "anomaly_event": { "type": "object" },
+          "alert_policy": { "type": "object" },
+          "channels": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["email", "slack", "webhook", "pager"] }
+          }
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "required": ["alert_id", "dispatch_status", "dispatched_at"],
+        "properties": {
+          "alert_id": { "type": "string" },
+          "dispatch_status": { "type": "string", "enum": ["sent", "failed", "suppressed"] },
+          "dispatched_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "sla": {
+        "max_latency_ms": 300,
+        "min_success_rate": 0.999
+      }
+    }
+  ],
+  "unchanged_interfaces_assertion": [
+    "ingest_market_data",
+    "generate_signals",
+    "risk_gate_pre_trade",
+    "execute_orders",
+    "evaluate_performance"
+  ]
+}

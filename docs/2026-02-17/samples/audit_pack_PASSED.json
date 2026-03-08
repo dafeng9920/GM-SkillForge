@@ -1,0 +1,94 @@
+{
+  "intent_id": "cognition_10d",
+  "status": "PASSED",
+  "repo_url": "https://github.com/gm-skillforge/cognition-engine",
+  "commit_sha": "a1b2c3d4e5f6789012345678901234567890abcd",
+  "at_time": "2026-02-17T10:30:00Z",
+  "rubric_version": "1.0.0",
+  "dimensions": [
+    {
+      "dim_id": "L1",
+      "label": "事实提取",
+      "score": 85,
+      "threshold": 60,
+      "verdict": "PASS",
+      "evidence_ref": "AuditPack/cognition_10d/a1b2c3d4e5f6789012345678901234567890abcd/dimension_evidence/L1.md"
+    },
+    {
+      "dim_id": "L2",
+      "label": "概念抽象",
+      "score": 72,
+      "threshold": 55,
+      "verdict": "PASS",
+      "evidence_ref": "AuditPack/cognition_10d/a1b2c3d4e5f6789012345678901234567890abcd/dimension_evidence/L2.md"
+    },
+    {
+      "dim_id": "L3",
+      "label": "因果推理",
+      "score": 78,
+      "threshold": 60,
+      "verdict": "PASS",
+      "evidence_ref": "AuditPack/cognition_10d/a1b2c3d4e5f6789012345678901234567890abcd/dimension_evidence/L3.md"
+    },
+    {
+      "dim_id": "L4",
+      "label": "结构解构",
+      "score": 68,
+      "threshold": 55,
+      "verdict": "PASS",
+      "evidence_ref": "AuditPack/cognition_10d/a1b2c3d4e5f6789012345678901234567890abcd/dimension_evidence/L4.md"
+    },
+    {
+      "dim_id": "L5",
+      "label": "风险感知",
+      "score": 82,
+      "threshold": 60,
+      "verdict": "PASS",
+      "evidence_ref": "AuditPack/cognition_10d/a1b2c3d4e5f6789012345678901234567890abcd/dimension_evidence/L5.md"
+    },
+    {
+      "dim_id": "L6",
+      "label": "时序建模",
+      "score": 65,
+      "threshold": 50,
+      "verdict": "PASS",
+      "evidence_ref": "AuditPack/cognition_10d/a1b2c3d4e5f6789012345678901234567890abcd/dimension_evidence/L6.md"
+    },
+    {
+      "dim_id": "L7",
+      "label": "跨域关联",
+      "score": 58,
+      "threshold": 50,
+      "verdict": "PASS",
+      "evidence_ref": "AuditPack/cognition_10d/a1b2c3d4e5f6789012345678901234567890abcd/dimension_evidence/L7.md"
+    },
+    {
+      "dim_id": "L8",
+      "label": "不确定性标注",
+      "score": 70,
+      "threshold": 55,
+      "verdict": "PASS",
+      "evidence_ref": "AuditPack/cognition_10d/a1b2c3d4e5f6789012345678901234567890abcd/dimension_evidence/L8.md"
+    },
+    {
+      "dim_id": "L9",
+      "label": "建议可行性",
+      "score": 62,
+      "threshold": 55,
+      "verdict": "PASS",
+      "evidence_ref": "AuditPack/cognition_10d/a1b2c3d4e5f6789012345678901234567890abcd/dimension_evidence/L9.md"
+    },
+    {
+      "dim_id": "L10",
+      "label": "叙事连贯性",
+      "score": 75,
+      "threshold": 60,
+      "verdict": "PASS",
+      "evidence_ref": "AuditPack/cognition_10d/a1b2c3d4e5f6789012345678901234567890abcd/dimension_evidence/L10.md"
+    }
+  ],
+  "overall_pass_count": 10,
+  "rejection_reasons": [],
+  "audit_pack_ref": "AuditPack/cognition_10d/a1b2c3d4e5f6789012345678901234567890abcd/",
+  "generated_at": "2026-02-17T10:35:00Z"
+}

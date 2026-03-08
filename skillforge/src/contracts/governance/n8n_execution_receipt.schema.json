@@ -1,0 +1,233 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://skillforge.local/schemas/governance/n8n_execution_receipt.schema.json",
+  "title": "n8n Execution Receipt Schema",
+  "description": "Schema for n8n orchestration execution receipts, ensuring audit chain replayability and evidence traceability.",
+  "version": "v1.0",
+  "type": "object",
+  "required": [
+    "receipt_id",
+    "run_id",
+    "evidence_ref",
+    "gate_decision",
+    "executed_at",
+    "skill_id",
+    "workflow_id"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "receipt_id": {
+      "type": "string",
+      "pattern": "^RCP-L45-[A-Z0-9]{8,16}$",
+      "description": "Unique receipt identifier (format: RCP-L45-XXXXXXXX)"
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^RUN-L4-[0-9]+-[A-Z0-9]{8}$",
+      "description": "Execution run ID that chains through the entire workflow (format: RUN-L4-{timestamp}-{uuid8})"
+    },
+    "evidence_ref": {
+      "type": "string",
+      "pattern": "^EV-[A-Z]+-L4-[0-9]+-[A-Z0-9]{8}$",
+      "description": "Primary evidence reference for this execution (format: EV-{prefix}-L4-{timestamp}-{uuid8})"
+    },
+    "gate_decision": {
+      "type": "string",
+      "enum": ["PASSED", "REJECTED", "BLOCKED"],
+      "description": "Gate decision result: PASSED (proceed), REJECTED (explicit denial), BLOCKED (system constraint)"
+    },
+    "error_code": {
+      "type": "string",
+      "nullable": true,
+      "description": "Standardized error code if gate_decision is not PASSED (e.g., 'E001', 'E003')"
+    },
+    "error_message": {
+      "type": "string",
+      "nullable": true,
+      "description": "Human-readable error message when gate_decision is not PASSED"
+    },
+    "executed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp when the execution completed"
+    },
+    "skill_id": {
+      "type": "string",
+      "description": "Identifier of the skill that was executed"
+    },
+    "workflow_id": {
+      "type": "string",
+      "description": "n8n workflow identifier that triggered this execution"
+    },
+    "job_id": {
+      "type": "string",
+      "description": "External job/task identifier for correlation"
+    },
+    "permit_token": {
+      "type": "string",
+      "description": "Permit token that authorized this execution (if applicable)"
+    },
+    "audit_pack_ref": {
+      "type": "string",
+      "description": "Reference to the complete audit pack (REQUIRED when gate_decision is PASSED)"
+    },
+    "replay_pointer": {
+      "type": "object",
+      "description": "Pointer for at-time replay capability (structure is fixed, content may be null)",
+      "nullable": true,
+      "additionalProperties": false,
+      "properties": {
+        "snapshot_ref": {
+          "type": "string",
+          "description": "Reference to the state snapshot for replay",
+          "nullable": true
+        },
+        "at_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp for at-time replay",
+          "nullable": true
+        },
+        "revision": {
+          "type": "string",
+          "description": "Version/revision identifier for deterministic replay",
+          "nullable": true
+        },
+        "evidence_bundle_ref": {
+          "type": "string",
+          "description": "Reference to the complete evidence bundle for replay",
+          "nullable": true
+        }
+      }
+    },
+    "evidence_chain": {
+      "type": "object",
+      "description": "Complete evidence chain for this execution",
+      "required": ["evidence_refs"],
+      "additionalProperties": false,
+      "properties": {
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["ref_id", "type", "source_locator", "content_hash", "timestamp"],
+            "additionalProperties": false,
+            "properties": {
+              "ref_id": {
+                "type": "string",
+                "description": "Evidence reference identifier"
+              },
+              "type": {
+                "type": "string",
+                "enum": ["audit_pack", "log", "artifact", "metric", "screenshot", "report", "signature", "cognition", "permit"],
+                "description": "Type of evidence"
+              },
+              "source_locator": {
+                "type": "string",
+                "description": "URI or path where the evidence is stored"
+              },
+              "content_hash": {
+                "type": "string",
+                "description": "SHA-256 hash of the evidence content"
+              },
+              "timestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When this evidence was generated"
+              },
+              "tool_revision": {
+                "type": "string",
+                "description": "Version of the tool that generated this evidence"
+              }
+            }
+          },
+          "description": "List of evidence references in this chain"
+        },
+        "parent_run_id": {
+          "type": "string",
+          "description": "Parent run ID for nested executions"
+        },
+        "child_run_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Child run IDs for parallel/nested executions"
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "description": "Execution output payload",
+      "additionalProperties": true,
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["success", "failure", "partial"],
+          "description": "Execution status"
+        },
+        "data": {
+          "type": "object",
+          "description": "Output data from the execution"
+        },
+        "metrics": {
+          "type": "object",
+          "description": "Execution metrics",
+          "additionalProperties": {
+            "type": ["string", "number", "boolean"]
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata for the execution",
+      "additionalProperties": true,
+      "properties": {
+        "triggered_by": {
+          "type": "string",
+          "description": "What triggered this execution (manual, webhook, schedule, etc.)"
+        },
+        "environment": {
+          "type": "string",
+          "description": "Execution environment (dev, staging, production)"
+        },
+        "correlation_id": {
+          "type": "string",
+          "description": "Correlation ID for distributed tracing"
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "gate_decision": { "const": "PASSED" }
+        },
+        "required": ["gate_decision"]
+      },
+      "then": {
+        "required": ["audit_pack_ref"],
+        "properties": {
+          "audit_pack_ref": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "gate_decision": { "enum": ["REJECTED", "BLOCKED"] }
+        },
+        "required": ["gate_decision"]
+      },
+      "then": {
+        "required": ["error_code"]
+      }
+    }
+  ]
+}

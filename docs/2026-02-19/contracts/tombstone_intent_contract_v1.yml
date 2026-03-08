@@ -1,0 +1,418 @@
+# Tombstone Intent Contract v1
+# 用于废弃/标记删除技能模块的意图合同
+# 遵循 Fail-Closed 原则
+
+# ============================================================
+# 合同基础信息
+# ============================================================
+contract_id: tombstone_intent_contract_v1
+frozen_at: "2026-02-19T00:00:00Z"
+version: "1.0.0"
+schema_hash: TBD_SHA256
+author: "vs--cc2"
+status: "FROZEN"
+
+# ============================================================
+# 1. 意图ID
+# ============================================================
+intent_id: tombstone
+description: "废弃技能模块，标记为墓碑状态，禁止进一步使用"
+
+# ============================================================
+# 2. 意图类型
+# ============================================================
+intent_type: "TOMBSTONE"
+category: "skill_lifecycle"
+lifecycle_stage: "deprecation"
+
+# ============================================================
+# 3. 输入 Schema
+# ============================================================
+input_schema:
+  # 必填字段
+  required:
+    - skill_id
+    - reason
+    - requested_by
+
+  properties:
+    skill_id:
+      type: string
+      format: "SKILL-{MODULE}-{NAME}"
+      description: "技能模块唯一标识符"
+      example: "SKILL-deprecated_strategy-v1"
+
+    reason:
+      type: string
+      enum: ["security_vulnerability", "performance_issue", "obsolescence", "replaced_by_newer_version", "compliance_requirement", "maintenance_burden", "other"]
+      description: "废弃原因"
+
+    reason_details:
+      type: string
+      maxLength: 1000
+      description: "废弃原因详细说明"
+
+    requested_by:
+      type: string
+      description: "请求者标识（用户 ID 或系统标识）"
+
+    approval_required:
+      type: boolean
+      default: true
+      description: "是否需要审批"
+
+    approved_by:
+      type: string
+      description: "审批者标识（如已审批）"
+
+    deprecation_config:
+      type: object
+      properties:
+        grace_period_days:
+          type: integer
+          minimum: 0
+          maximum: 365
+          default: 30
+          description: "宽限期（天）"
+        soft_delete:
+          type: boolean
+          default: true
+          description: "是否软删除（保留数据）"
+        archive_data:
+          type: boolean
+          default: true
+          description: "是否归档数据"
+        notify_users:
+          type: boolean
+          default: true
+          description: "是否通知用户"
+        redirect_to:
+          type: string
+          description: "替代技能 ID（如有）"
+      description: "废弃配置"
+
+    cleanup_config:
+      type: object
+      properties:
+        remove_from_registry:
+          type: boolean
+          default: false
+        delete_associated_data:
+          type: boolean
+          default: false
+        revoke_permissions:
+          type: boolean
+          default: true
+        cleanup_schedule:
+          type: string
+          format: "cron"
+          description: "清理计划（cron 格式）"
+      description: "清理配置"
+
+# ============================================================
+# 4. 输出 Schema
+# ============================================================
+output_schema:
+  properties:
+    tombstone_id:
+      type: string
+      format: "TOMB-{YYYYMMDD}-{SEQ}"
+      description: "墓碑 ID"
+
+    skill_id:
+      type: string
+      description: "被废弃的技能 ID"
+
+    status:
+      type: string
+      enum: ["TOMBSTONED", "PENDING_APPROVAL", "IN_GRACE_PERIOD", "ARCHIVED", "DELETED", "REJECTED"]
+      description: "废弃状态"
+
+    tombstone_record:
+      type: object
+      properties:
+        tombstoned_at:
+          type: string
+          format: ISO8601_UTC
+        reason:
+          type: string
+        reason_details:
+          type: string
+        requested_by:
+          type: string
+        approved_by:
+          type: string
+        grace_period_ends:
+          type: string
+          format: ISO8601_UTC
+      description: "墓碑记录"
+
+    deprecation_notice:
+      type: object
+      properties:
+        notice_sent:
+          type: boolean
+        recipients:
+          type: array
+          items:
+            type: string
+        sent_at:
+          type: string
+          format: ISO8601_UTC
+      description: "废弃通知"
+
+    archive_info:
+      type: object
+      properties:
+        archived:
+          type: boolean
+        archive_location:
+          type: string
+        archive_size_bytes:
+          type: integer
+        archived_at:
+          type: string
+          format: ISO8601_UTC
+      description: "归档信息"
+
+    redirect_info:
+      type: object
+      properties:
+        has_redirect:
+          type: boolean
+        redirect_target:
+          type: string
+        redirect_message:
+          type: string
+      description: "重定向信息"
+
+    usage_stats:
+      type: object
+      properties:
+        active_users:
+          type: integer
+        recent_executions:
+          type: integer
+        affected_workflows:
+          type: integer
+      description: "使用统计"
+
+    evidence_refs:
+      type: array
+      items:
+        type: string
+      description: "Evidence 引用列表"
+
+    completed_at:
+      type: string
+      format: ISO8601_UTC
+      description: "处理完成时间"
+
+# ============================================================
+# 5. 错误码映射
+# ============================================================
+error_codes:
+  E_TOMB_001:
+    description: "技能不存在"
+    condition: "skill_id not found in registry"
+    severity: "CRITICAL"
+    recovery_hint: "验证 skill_id 是否正确"
+
+  E_TOMB_002:
+    description: "技能已废弃"
+    condition: "skill already tombstoned"
+    severity: "MEDIUM"
+    recovery_hint: "技能已处于废弃状态"
+
+  E_TOMB_003:
+    description: "缺少废弃原因"
+    condition: "reason == null OR reason == ''"
+    severity: "HIGH"
+    recovery_hint: "提供废弃原因"
+
+  E_TOMB_004:
+    description: "缺少请求者"
+    condition: "requested_by == null OR requested_by == ''"
+    severity: "HIGH"
+    recovery_hint: "提供请求者标识"
+
+  E_TOMB_005:
+    description: "审批待定"
+    condition: "approval_required == true AND approved_by == null"
+    severity: "MEDIUM"
+    recovery_hint: "等待审批"
+
+  E_TOMB_006:
+    description: "审批被拒绝"
+    condition: "approval was rejected"
+    severity: "HIGH"
+    recovery_hint: "联系审批者或修改请求"
+
+  E_TOMB_007:
+    description: "有活跃用户"
+    condition: "active_users > threshold"
+    severity: "HIGH"
+    recovery_hint: "通知用户迁移后再废弃"
+
+  E_TOMB_008:
+    description: "依赖技能"
+    condition: "other skills depend on this skill"
+    severity: "HIGH"
+    recovery_hint: "先处理依赖关系"
+
+  E_TOMB_009:
+    description: "归档失败"
+    condition: "archive operation failed"
+    severity: "MEDIUM"
+    recovery_hint: "检查存储空间和权限"
+
+  E_TOMB_010:
+    description: "通知失败"
+    condition: "failed to send deprecation notice"
+    severity: "LOW"
+    recovery_hint: "检查通知服务配置"
+
+# ============================================================
+# 6. Fail-Closed 规则
+# ============================================================
+fail_closed_rules:
+  - rule_id: "FC-TOMB-001"
+    condition: "skill_id == null OR skill_id == ''"
+    result: "TOMBSTONE_BLOCKED"
+    blocked_by: "MISSING_SKILL_ID"
+    description: "缺少技能 ID，禁止废弃"
+
+  - rule_id: "FC-TOMB-002"
+    condition: "reason == null OR reason == ''"
+    result: "TOMBSTONE_BLOCKED"
+    blocked_by: "MISSING_REASON"
+    description: "缺少废弃原因，禁止废弃"
+
+  - rule_id: "FC-TOMB-003"
+    condition: "requested_by == null OR requested_by == ''"
+    result: "TOMBSTONE_BLOCKED"
+    blocked_by: "MISSING_REQUESTER"
+    description: "缺少请求者，禁止废弃"
+
+  - rule_id: "FC-TOMB-004"
+    condition: "skill_id not found"
+    result: "TOMBSTONE_BLOCKED"
+    blocked_by: "SKILL_NOT_FOUND"
+    description: "技能不存在，禁止废弃"
+
+  - rule_id: "FC-TOMB-005"
+    condition: "skill already tombstoned"
+    result: "TOMBSTONE_BLOCKED"
+    blocked_by: "ALREADY_TOMBSTONED"
+    description: "技能已废弃"
+
+  - rule_id: "FC-TOMB-006"
+    condition: "approval_required == true AND approved_by == null"
+    result: "TOMBSTONE_PENDING"
+    blocked_by: "APPROVAL_REQUIRED"
+    description: "需要审批"
+
+  - rule_id: "FC-TOMB-007"
+    condition: "has_dependencies == true"
+    result: "TOMBSTONE_BLOCKED"
+    blocked_by: "HAS_DEPENDENCIES"
+    description: "存在依赖，禁止废弃"
+
+  - rule_id: "FC-TOMB-008"
+    condition: "active_users > 0 AND notify_users == false"
+    result: "TOMBSTONE_BLOCKED"
+    blocked_by: "USERS_NOT_NOTIFIED"
+    description: "有活跃用户但未设置通知，禁止废弃"
+
+# ============================================================
+# 7. Evidence 字段
+# ============================================================
+evidence_fields:
+  - field_id: "tombstone_execution_evidence"
+    type: "object"
+    required: true
+    description: "废弃执行证据"
+    schema:
+      tombstone_id: "string"
+      started_at: "ISO8601_UTC"
+      completed_at: "ISO8601_UTC"
+      executor: "string"
+
+  - field_id: "skill_state_evidence"
+    type: "object"
+    required: true
+    description: "技能状态证据"
+    schema:
+      skill_id: "string"
+      version: "string"
+      previous_status: "string"
+      new_status: "string"
+
+  - field_id: "approval_evidence"
+    type: "object"
+    required: false
+    description: "审批证据（如需要）"
+    schema:
+      approval_required: "boolean"
+      approved: "boolean"
+      approved_by: "string"
+      approved_at: "ISO8601_UTC"
+      rejection_reason: "string"
+
+  - field_id: "usage_analysis_evidence"
+    type: "object"
+    required: true
+    description: "使用分析证据"
+    schema:
+      active_users: "integer"
+      recent_executions: "integer"
+      affected_workflows: "array"
+      last_execution: "ISO8601_UTC"
+
+  - field_id: "notification_evidence"
+    type: "object"
+    required: false
+    description: "通知证据"
+    schema:
+      sent: "boolean"
+      recipients: "array"
+      sent_at: "ISO8601_UTC"
+      delivery_status: "object"
+
+  - field_id: "archive_evidence"
+    type: "object"
+    required: false
+    description: "归档证据"
+    schema:
+      archived: "boolean"
+      archive_location: "string"
+      archive_size: "integer"
+      checksum: "string"
+
+# ============================================================
+# 8. 版本
+# ============================================================
+version_info:
+  contract_version: "1.0.0"
+  schema_version: "1.0.0"
+  compatible_intent_versions:
+    - "1.0.0"
+    - "1.0.1"
+
+# ============================================================
+# 9. 冻结时间
+# ============================================================
+frozen_at: "2026-02-19T00:00:00Z"
+
+# ============================================================
+# 附加配置
+# ============================================================
+config:
+  timeout_seconds: 1800  # 30 minutes
+  max_retries: 3
+  parallel_execution: true
+  cache_results: false
+  default_grace_period_days: 30
+  max_grace_period_days: 365
+  require_reason_details_for: ["security_vulnerability", "compliance_requirement"]
+  protected_skills: []  # 不可废弃的技能列表

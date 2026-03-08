@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://gm-os.dev/orchestration/quality_gate_levels.schema.json",
+  "title": "QualityGateLevels",
+  "description": "5 级质量门禁 Schema",
+  "type": "object",
+  "required": ["schema_version", "levels"],
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^0\\.1\\.\\d+$" },
+    "description": { "type": "string" },
+    "levels": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "required": ["level", "name", "color", "description", "pass_criteria", "fail_actions"],
+        "properties": {
+          "level": { "type": "integer", "minimum": 1, "maximum": 5 },
+          "name": { "type": "string" },
+          "color": { "type": "string", "enum": ["green", "yellow", "orange", "blue", "red"] },
+          "description": { "type": "string" },
+          "pass_criteria": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["criterion", "description", "check"],
+              "properties": {
+                "criterion": { "type": "string" },
+                "description": { "type": "string" },
+                "check": { "type": "string" },
+                "fields": { "type": "array", "items": { "type": "string" } },
+                "target": { "type": "string" },
+                "minimum": { "type": "integer" },
+                "value": {},
+                "operator": { "type": "string" },
+                "expected": {},
+                "allowed": { "type": "array" }
+              }
+            }
+          },
+          "fail_actions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["error_code", "next_action_ref", "required_changes"],
+              "properties": {
+                "error_code": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]*$" },
+                "next_action_ref": {
+                  "type": "object",
+                  "required": ["node_id", "error_code"],
+                  "properties": {
+                    "node_id": { "type": "string" },
+                    "error_code": { "type": "string" }
+                  }
+                },
+                "required_changes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["kind", "description"],
+                    "properties": {
+                      "kind": { "type": "string" },
+                      "description": { "type": "string" },
+                      "patch_hints": { "type": "array", "items": { "type": "string" } }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "error_mapping": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["quality_gate_error", "node_id"],
+        "properties": {
+          "quality_gate_error": { "type": "string" },
+          "node_id": { "type": "string" }
+        }
+      }
+    }
+  },
+  "version": "0.1.0"
+}

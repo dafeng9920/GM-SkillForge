@@ -1,0 +1,63 @@
+schema_version: "0.1.0"
+skill_id: "github_discover"
+name: "GitHub Discovery"
+description: "Search GitHub for candidate repos matching intent"
+version: "0.1.0"
+
+# 所属路径
+paths: ["AB"]
+stage: -1
+
+# 输入合同
+input:
+  required:
+    - search_query:
+        type: "string"
+        description: "GitHub search query"
+    - intent:
+        type: "object"
+        description: "Parsed intent object"
+  optional:
+    - max_results:
+        type: "integer"
+        default: 5
+        description: "Maximum number of candidate repos to return"
+
+# 输出合同
+output:
+  required:
+    - schema_version:
+        type: "string"
+        description: "Schema version (0.1.0)"
+    - candidates:
+        type: "array"
+        description: "List of candidate repos with repo_url, stars, license, fit_score_estimate, match_reason"
+    - fallback_to_generate:
+        type: "boolean"
+        description: "Whether to fallback to generation if no suitable repos found"
+  optional:
+    - selected:
+        type: "object"
+        description: "Selected repo with repo_url and reason"
+
+# 能力声明
+capabilities:
+  network: true
+  filesystem: false
+  subprocess: false
+  gpu: false
+
+# 风险等级
+risk_tier: "L1"
+
+# 依赖
+dependencies:
+  adapters: ["github_fetch"]
+  schemas: []
+  error_codes: []
+
+# 错误处理
+errors:
+  - code: "GITHUB_SEARCH_FAILED"
+    retryable: true
+    description: "GitHub search operation failed"

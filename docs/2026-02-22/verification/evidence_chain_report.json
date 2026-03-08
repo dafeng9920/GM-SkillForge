@@ -1,0 +1,86 @@
+{
+  "chain_id": "evidence-chain-20260222114610",
+  "version": "1.0.0",
+  "hash_algorithm": "SHA256",
+  "genesis": {
+    "hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "created_at": "2026-02-22T11:46:10.735919+00:00",
+    "signed_by": "Kior-C"
+  },
+  "entries": [
+    {
+      "index": 1,
+      "evidence_id": "EV-0001",
+      "evidence_path": "docs\\2026-02-22\\tasks\\T71_Kior-A.md",
+      "evidence_sha256": "sha256:2f14b1b1f3554398c4fe01e4b51d6511f290a3e89481341a0305a91aa6fbc24c",
+      "prev_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+      "timestamp": "2026-02-22T11:46:23.428614+00:00",
+      "metadata": {
+        "task_id": "T71",
+        "executor": "Kior-A",
+        "file_type": "task_document"
+      },
+      "chain_hash": "sha256:73c1fba3f41642d06704f0ce601cb172f51bb24039cd216821f0a671618d76ab"
+    },
+    {
+      "index": 2,
+      "evidence_id": "EV-0002",
+      "evidence_path": "scripts\\verify_evidence_chain.py",
+      "evidence_sha256": "sha256:617fc57c07256e095e4845e06f31d080d6c35f57494ab54bdee66d4a17b4a1d4",
+      "prev_hash": "sha256:73c1fba3f41642d06704f0ce601cb172f51bb24039cd216821f0a671618d76ab",
+      "timestamp": "2026-02-22T11:46:32.938297+00:00",
+      "metadata": {
+        "task_id": "T71",
+        "executor": "Kior-A",
+        "file_type": "python_script"
+      },
+      "chain_hash": "sha256:43d0aa7e6bb8146306c636c485e62d9b3570d0c42f6fe0e9f621683cffe27098"
+    },
+    {
+      "index": 3,
+      "evidence_id": "EV-0003",
+      "evidence_path": "docs\\2026-02-22\\verification\\T71_execution_report.yaml",
+      "evidence_sha256": "sha256:afe6683d4f9bc9e3216e5569c2b527bf4595d00c208c21708b5e36335cc0ede0",
+      "prev_hash": "sha256:43d0aa7e6bb8146306c636c485e62d9b3570d0c42f6fe0e9f621683cffe27098",
+      "timestamp": "2026-02-22T11:46:40.462011+00:00",
+      "metadata": {
+        "task_id": "T71",
+        "executor": "Kior-A",
+        "file_type": "execution_report"
+      },
+      "chain_hash": "sha256:cb9ab400b3cff21e03fd5b609a28c2ff1c0fb4c2a86d2e241b43b29806a40ee7"
+    },
+    {
+      "index": 4,
+      "evidence_id": "EV-0004",
+      "evidence_path": "docs\\2026-02-22\\verification\\T71_gate_decision.json",
+      "evidence_sha256": "sha256:69ff76d8c7a4631014d573ac7d7c0fb788f128afe02f255d9e7270805b12610d",
+      "prev_hash": "sha256:cb9ab400b3cff21e03fd5b609a28c2ff1c0fb4c2a86d2e241b43b29806a40ee7",
+      "timestamp": "2026-02-22T11:46:54.564375+00:00",
+      "metadata": {
+        "task_id": "T71",
+        "reviewer": "vs--cc1",
+        "file_type": "gate_decision"
+      },
+      "chain_hash": "sha256:5cc32fa87ab7b12a336bf01660b7a2cc610996d995872493ac20121344965f0d"
+    },
+    {
+      "index": 5,
+      "evidence_id": "EV-0005",
+      "evidence_path": "docs\\2026-02-22\\verification\\T71_compliance_attestation.json",
+      "evidence_sha256": "sha256:7ea277156d244b04912445d283c30b9ee03a55ea5cd470c73ad791d48108cc73",
+      "prev_hash": "sha256:5cc32fa87ab7b12a336bf01660b7a2cc610996d995872493ac20121344965f0d",
+      "timestamp": "2026-02-22T11:47:26.829246+00:00",
+      "metadata": {
+        "task_id": "T71",
+        "compliance_officer": "Kior-C",
+        "file_type": "compliance_attestation"
+      },
+      "chain_hash": "sha256:4fa8da29dbc9a7f5dc254d93401b769eb4151be78657a888f564bb7da62a7cf9"
+    }
+  ],
+  "metadata": {
+    "created_by": "T71_Kior-A",
+    "purpose": "evidence_sha256 cross-validation chain"
+  }
+}

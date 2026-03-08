@@ -1,0 +1,160 @@
+# ci-skill-validation-skill Agent Configuration
+# OpenAI Function Calling Format
+
+name: ci_skill_validation_skill
+description: |
+  CI Skill 验证 Skill - 自动验证其他 Skill 包的结构、契约和语义一致性。
+
+  核心能力:
+  1. 结构检查: 验证目录和必备文件
+  2. 契约检查: 验证关键治理语义标记
+  3. YAML 检查: 验证 agents/openai.yaml 有效性
+  4. 证据检查: 验证证据引用路径存在
+  5. 语义检查: 验证错误码语义一致性
+
+  Fail-Closed 保证:
+  - 任一 required 检查失败 → gate_result = FAIL
+  - 非零退出码 → 阻断合并/发布
+
+version: "1.0.0"
+frozen_at: "2026-02-19"
+
+default_prompt: |
+  作为 CI Skill 验证 Agent，在验证任何 Skill 包时必须遵循以下顺序:
+
+  ## 执行顺序
+
+  1. **结构检查** (structure)
+     - 验证 SKILL.md 存在
+     - 验证 agents/openai.yaml 存在
+     - 验证 references/ 目录（可选）
+     - 验证被引用文件存在
+
+  2. **YAML 配置检查** (openai_yaml)
+     - 验证 name 字段非空
+     - 验证 description 字段存在
+     - 验证 version 字段存在
+     - 验证 frozen_at 字段（推荐）
+
+  3. **契约标记检查** (contract_markers)
+     - 按 Skill 类型检查必需标记
+     - permit-governance: no-permit-no-release, fail_closed, E001, E003
+     - release-gate: release_allowed, all-or-nothing, E001, E003
+     - rollback-tombstone: tombstone_*, immutable, replay_consistency
+
+  4. **证据引用检查** (evidence_refs)
+     - 验证 SKILL.md 引用路径存在
+     - 验证 references/ 文件中引用路径存在
+     - 确保至少有一个有效证据引用
+
+  5. **错误语义检查** (error_semantics)
+     - 验证 E001 语义一致（PERMIT_REQUIRED）
+     - 验证 E003 语义一致（PERMIT_INVALID_SIGNATURE）
+     - 验证 release_allowed 口径一致
+
+  ## 核心约束
+
+  **Fail-Closed**: 任一 required 检查失败立即返回 FAIL。
+  **Evidence First**: 所有检查结果必须生成 Evidence。
+
+operations:
+  validate:
+    description: "执行 Skill 验证"
+    parameters:
+      type: object
+      required:
+        - skills_dir
+      properties:
+        skills_dir:
+          type: string
+          description: Skill 目录路径
+        output_dir:
+          type: string
+          default: "ci/out"
+          description: 报告输出目录
+        checks:
+          type: array
+          items:
+            type: string
+            enum: [structure, openai_yaml, contract_markers, evidence_refs, error_semantics]
+          default: [structure, openai_yaml, contract_markers, evidence_refs, error_semantics]
+          description: 要执行的检查列表
+        fail_fast:
+          type: boolean
+          default: false
+          description: 首次失败即退出
+
+    returns:
+      type: object
+      properties:
+        gate_result:
+          type: string
+          enum: [PASS, FAIL]
+        total_checks:
+          type: integer
+        passed_checks:
+          type: integer
+        failed_checks:
+          type: integer
+        duration_ms:
+          type: integer
+        report_path:
+          type: string
+        checks:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              passed:
+                type: boolean
+              duration_ms:
+                type: integer
+              error:
+                type: string
+                nullable: true
+
+fail_closed_rules:
+  - condition: "any required check fails"
+    result: "gate_result = FAIL, exit_code = 1"
+    description: "任一 required 检查失败即 FAIL"
+  - condition: "skills_dir does not exist"
+    result: "gate_result = FAIL, exit_code = 1"
+    description: "Skill 目录不存在"
+  - condition: "report generation fails"
+    result: "gate_result = FAIL, exit_code = 1"
+    description: "报告生成失败"
+
+evidence_fields:
+  required:
+    - gate_name
+    - timestamp
+    - passed
+    - check_results
+  optional:
+    - skills_checked
+    - skills_passed
+
+implementation:
+  module: ci.run_skillization_gate
+  scripts:
+    - scripts/check_skill_structure.ps1
+    - scripts/check_openai_yaml.ps1
+    - scripts/check_skill_contract_markers.ps1
+    - scripts/check_evidence_refs.ps1
+    - scripts/check_error_sem_consistency.ps1
+    - scripts/run_skillization_gate.ps1
+
+test_coverage:
+  normal:
+    - T1: 所有检查通过 → PASS
+  failure:
+    - T2: 结构检查失败 → FAIL
+    - T3: 契约标记缺失 → FAIL
+    - T4: 证据引用无效 → FAIL
+    - T5: 错误语义不一致 → FAIL
+
+validation_reports:
+  - docs/2026-02-18/skillization_master_control_report_v1.md
+  - ci/out/skillization_gate_report.json

@@ -1,0 +1,187 @@
+# GM-SkillForge Error Policy v1.0.0
+# Aligned with AUDIT_ENGINE_PROTOCOL_v1.md and error_codes.yml
+# Defines each node's fail behavior: error_code + next_action + suggested_fixes
+
+schema_version: "1.0.0"
+
+policies:
+  # === intake_repo ===
+  - node_id: "intake_repo"
+    retry_policy:
+      retryable: true
+      max_retries: 3
+      backoff_seconds: 5
+    on_error:
+      - error_code: "SF_INTAKE_REPO_FAILED"
+        user_message_template: "无法接入仓库：请检查仓库地址与访问权限。"
+        next_action:
+          action_id: "intake_repo.retry.access"
+          title: "重试访问"
+          suggested_fixes:
+            - kind: "RETRY"
+              description: "等待几秒后重试"
+            - kind: "CONFIG_CHANGE"
+              description: "检查 repo_url 是否正确；验证 auth token/SSH key"
+          required_changes:
+            - target: "repo_url"
+              instruction: "Verify repo URL/SSH string is correct and accessible"
+
+  # === license_gate ===
+  - node_id: "license_gate"
+    retry_policy:
+      retryable: false
+      max_retries: 0
+      backoff_seconds: 0
+    on_error:
+      - error_code: "SF_LICENSE_DENIED"
+        user_message_template: "许可证门禁未通过：该仓库许可不满足发布或使用要求。"
+        next_action:
+          action_id: "license_gate.add.license"
+          title: "添加或修正许可证"
+          suggested_fixes:
+            - kind: "ADD_LICENSE"
+              description: "在仓库根目录添加 LICENSE 文件"
+            - kind: "CONFIG_CHANGE"
+              description: "指定 SPDX 许可证标识"
+          required_changes:
+            - target: "LICENSE"
+              instruction: "Add LICENSE file with valid SPDX identifier"
+
+  # === repo_scan_fit_score ===
+  - node_id: "repo_scan_fit_score"
+    retry_policy:
+      retryable: true
+      max_retries: 2
+      backoff_seconds: 10
+    on_error:
+      - error_code: "SF_SCAN_FIT_SCORE_LOW"
+        user_message_template: "仓库扫描适配度不足：请按建议修复后重试。"
+        next_action:
+          action_id: "repo_scan.fix.structure"
+          title: "修复仓库结构"
+          suggested_fixes:
+            - kind: "FIX_SCHEMA"
+              description: "补齐缺失的结构文件"
+            - kind: "CONFIG_CHANGE"
+              description: "确保仓库符合可审计 skill 结构要求"
+          required_changes:
+            - target: "repo_structure"
+              instruction: "Add missing required files; ensure supported language"
+
+  # === draft_skill_spec ===
+  - node_id: "draft_skill_spec"
+    retry_policy:
+      retryable: true
+      max_retries: 3
+      backoff_seconds: 5
+    on_error:
+      - error_code: "SF_CONTRACT_DRAFT_INVALID"
+        user_message_template: "Skill 合约草案不满足 contracts-first 约束。"
+        next_action:
+          action_id: "draft_spec.fix.contract"
+          title: "修复合约草案"
+          suggested_fixes:
+            - kind: "FIX_SCHEMA"
+              description: "补齐必填字段并修正格式"
+            - kind: "CONFIG_CHANGE"
+              description: "确保 IssueKey/EvidenceRef 字段正确"
+          required_changes:
+            - target: "schemas/*"
+              instruction: "Fix contract fields; align with quality_gate_levels.yml templates"
+
+  # === constitution_risk_gate ===
+  - node_id: "constitution_risk_gate"
+    retry_policy:
+      retryable: false
+      max_retries: 0
+      backoff_seconds: 0
+    on_error:
+      - error_code: "SF_RISK_CONSTITUTION_BLOCKED"
+        user_message_template: "风险门禁拦截：请求触发宪法级限制。"
+        next_action:
+          action_id: "risk_gate.view.reasons"
+          title: "查看拦截原因"
+          suggested_fixes:
+            - kind: "PERMISSION_REDUCE"
+              description: "减少请求的能力权限或调整实现范围"
+            - kind: "CONFIG_CHANGE"
+              description: "添加必要的安全约束"
+          required_changes:
+            - target: "policies/*"
+              instruction: "Adjust implementation scope or add safety constraints"
+
+  # === scaffold_skill_impl ===
+  - node_id: "scaffold_skill_impl"
+    retry_policy:
+      retryable: true
+      max_retries: 2
+      backoff_seconds: 10
+    on_error:
+      - error_code: "SF_SCAFFOLD_GENERATION_FAILED"
+        user_message_template: "Skill 脚手架生成失败：请查看构建日志。"
+        next_action:
+          action_id: "scaffold.fix.generation"
+          title: "修复脚手架生成"
+          suggested_fixes:
+            - kind: "RETRY"
+              description: "重新生成脚手架"
+            - kind: "FIX_SCHEMA"
+              description: "修正 manifest.json 或模板配置"
+          required_changes:
+            - target: "manifest.json"
+              instruction: "Fix template revision or manifest structure"
+
+  # === sandbox_test_and_trace ===
+  - node_id: "sandbox_test_and_trace"
+    retry_policy:
+      retryable: true
+      max_retries: 3
+      backoff_seconds: 15
+    on_error:
+      - error_code: "SF_SANDBOX_TEST_FAILED"
+        user_message_template: "沙盒测试未通过：需要补齐可复现的测试与审计轨迹。"
+        next_action:
+          action_id: "sandbox.fix.test"
+          title: "修复测试"
+          suggested_fixes:
+            - kind: "OPTIMIZE"
+              description: "优化执行效率以通过阈值"
+            - kind: "CONFIG_CHANGE"
+              description: "增加测试运行次数或调整超时"
+          required_changes:
+            - target: "sandbox/*"
+              instruction: "Add minimal test + run_trace with IssueKey linkage"
+
+  # === pack_audit_and_publish ===
+  - node_id: "pack_audit_and_publish"
+    retry_policy:
+      retryable: false
+      max_retries: 0
+      backoff_seconds: 0
+    on_error:
+      - error_code: "SF_PACK_AUDIT_FAILED"
+        user_message_template: "审计包组装或发布失败：缺少最小 AuditPack 文件或证据链不闭环。"
+        next_action:
+          action_id: "publish.fix.audit_pack"
+          title: "修复审计包"
+          suggested_fixes:
+            - kind: "FIX_SCHEMA"
+              description: "补齐 L3 审计包 MUST 文件"
+            - kind: "RETRY"
+              description: "重新组装审计包"
+          required_changes:
+            - target: "audit_pack/*"
+              instruction: "Create missing L3 pack files; ensure evidence_ref resolves"
+
+# suggested_fixes.kind 枚举白名单
+suggested_fix_kinds:
+  - "RETRY"
+  - "CONFIG_CHANGE"
+  - "FIX_SCHEMA"
+  - "PERMISSION_REDUCE"
+  - "ADD_LICENSE"
+  - "PIN_COMMIT"
+  - "OPTIMIZE"
+  - "PUBLISH_PRIVATE"
+  - "REPORT_BUG"
+  - "CONTACT_SUPPORT"

@@ -1,0 +1,427 @@
+# T96 Execution Report
+# L4.5 Upgrade: Consistency Contract + Reset Semantics Unification
+# Unified semantics for: iterate / rollback_reset / rebase_reset
+
+task_id: T96
+skill_id: L4P5-SKILL-02
+executor: vs--cc1
+execution_role: Execution
+generated_at: 2026-02-24T21:00:00Z
+job_id: L4P5-UPGRADE-20260222-001
+depends_on: [T94=PASS]
+status: COMPLETED
+
+## Execution Summary
+summary: |
+  COMPLETED: Consistency Contract and Reset Semantics unified implementation.
+
+  Three core deliverables:
+  1. ConsistencyContract - Contract-based change validation with invariants/allowed_changes/breaking_triggers
+  2. ResetSemanticsRegistry - Unified handler registry for iterate/rollback_reset/rebase_reset
+  3. Fail-closed policy enforcement - All validation failures result in DENY, no partial acceptance
+
+## PreflightChecklist
+
+preflight_checklist:
+  - id: PC-T96-001
+    description: "Verify T94=PASS prerequisite satisfied"
+    status: PASS
+    evidence: "docs/2026-02-22/verification/T94_compliance_attestation.json confirms T94=PASS, Wave 2 UNBLOCKED"
+    verified_at: "2026-02-24T20:55:00Z"
+  - id: PC-T96-002
+    description: "Verify existing contract infrastructure exists"
+    status: PASS
+    evidence: "skillforge/src/contracts/ directory structure confirmed"
+    verified_at: "2026-02-24T20:55:00Z"
+  - id: PC-T96-003
+    description: "Verify rollback drill skill exists for reference"
+    status: PASS
+    evidence: "skills/rollback-drill-skill/run_rollback_drill.py provides rollback patterns"
+    verified_at: "2026-02-24T20:55:00Z"
+  - id: PC-T96-004
+    description: "Verify provenance loader exists for evidence chain"
+    status: PASS
+    evidence: "skillforge/src/contracts/governance/provenance_loader.py exists"
+    verified_at: "2026-02-24T20:55:00Z"
+
+## ExecutionContract
+
+execution_contract:
+  contract_version: "v1"
+  intent_id: "T96-CONSISTENCY-RESET-SEMANTICS"
+  ruleset_revision: "L4.5-20260222"
+  constitution_ref: "docs/EXECUTION_GUARD_B_EXECUTION_SKILL_v1.md"
+
+  inputs:
+    existing_contracts: "skillforge/src/contracts/"
+    rollback_patterns: "skills/rollback-drill-skill/"
+    provenance_system: "skillforge/src/contracts/governance/provenance_loader.py"
+
+  outputs:
+    consistency_contract_module: "skillforge/src/contracts/consistency/consistency_contract.py"
+    reset_semantics_module: "skillforge/src/contracts/consistency/reset_semantics.py"
+    package_init: "skillforge/src/contracts/consistency/__init__.py"
+    execution_report: "docs/2026-02-22/verification/T96_execution_report.yaml"
+
+  controls:
+    timeout_ms: 600000
+    file_policy: "APPEND_ONLY_NEW_FILES"
+    side_effects_restricted: true
+
+  side_effects:
+    - kind: "FILE"
+      details: "Create new modules under skillforge/src/contracts/consistency/"
+
+  roles:
+    execution:
+      responsibilities:
+        - "Define unified semantics for iterate/rollback_reset/rebase_reset"
+        - "Implement fail-closed validation policy"
+        - "Create compatibility boundary definitions"
+      allowed_actions:
+        - "Create new Python modules"
+        - "Write execution report"
+    review:
+      responsibilities:
+        - "Verify semantic correctness"
+        - "Check fail-closed policy enforcement"
+      checks:
+        - "All three reset types are properly defined"
+        - "Fail-closed returns DENY not ALLOW on error"
+    compliance:
+      responsibilities:
+        - "Verify evidence chain integration"
+        - "Check constitution compliance"
+      must_follow: "docs/EXECUTION_GUARD_B_EXECUTION_SKILL_v1.md"
+
+  acceptance_tests:
+    - id: AT-T96-001
+      assertion: "ConsistencyContract supports invariants/allowed_changes/breaking_triggers"
+      status: PASS
+      evidence:
+        - "Invariant dataclass with validate() method"
+        - "AllowedChange dataclass with validate_change() method"
+        - "BreakingChangeTrigger dataclass with check_trigger() method"
+    - id: AT-T96-002
+      assertion: "Three reset semantics are properly defined and differentiated"
+      status: PASS
+      evidence:
+        - "ITERATE: incremental update preserving history"
+        - "ROLLBACK_RESET: restore to previous checkpoint"
+        - "REBASE_RESET: rebuild based on new baseline"
+    - id: AT-T96-003
+      assertion: "Fail-closed policy is enforced in all handlers"
+      status: PASS
+      evidence:
+        - "IterateHandler: precondition failures return DENY"
+        - "RollbackResetHandler: missing checkpoint returns DENY"
+        - "RebaseResetHandler: incompatible base returns DENY"
+
+  artifacts_expected:
+    - "EXECUTION_REPORT"
+    - "CONSISTENCY_CONTRACT_MODULE"
+    - "RESET_SEMANTICS_MODULE"
+
+## RequiredChanges
+
+required_changes: []
+
+## Section 1: Unified Semantics Definition (统一语义定义)
+
+unified_semantics_definition:
+  overview: |
+    Three reset semantics unified under single contract framework.
+    Each semantic has distinct behavior, compatibility boundary, and fail-closed policy.
+
+  semantics:
+    iterate:
+      definition: "Incremental update preserving full history"
+      behavior:
+        - "Creates new checkpoint on each change"
+        - "Maintains complete audit trail"
+        - "Supports rollback to any historical checkpoint"
+      use_cases:
+        - "Version increment"
+        - "Configuration hot-update"
+        - "Incremental data migration"
+      handler_class: "IterateHandler"
+      checkpoint_policy: "CREATE_NEW"
+
+    rollback_reset:
+      definition: "Restore to previously confirmed stable state"
+      behavior:
+        - "Requires valid checkpoint to exist"
+        - "Verifies checkpoint integrity before restore"
+        - "Preserves rollback record for audit"
+      use_cases:
+        - "Failure recovery"
+        - "Error reversion"
+        - "Disaster recovery"
+      handler_class: "RollbackResetHandler"
+      checkpoint_policy: "RESTORE_EXISTING"
+
+    rebase_reset:
+      definition: "Rebuild state based on new baseline"
+      behavior:
+        - "Discards local uncommitted changes"
+        - "Uses remote/baseline version as source of truth"
+        - "Records rebase source and timestamp"
+      use_cases:
+        - "Sync with remote changes"
+        - "Merge conflict resolution"
+        - "State synchronization"
+      handler_class: "RebaseResetHandler"
+      checkpoint_policy: "REPLACE_WITH_BASE"
+
+## Section 2: Compatibility/Incompatibility Boundaries (兼容/不兼容边界)
+
+compatibility_boundaries:
+  overview: |
+    Each reset type defines explicit compatibility boundaries.
+    Operations crossing incompatible boundaries are DENIED.
+    Operations requiring approval return REQUIRES_APPROVAL.
+
+  iterate_boundaries:
+    compatible:
+      - "incremental_change: Small, additive modifications"
+      - "config_update: Configuration parameter changes"
+      - "version_increment: Minor version bumps"
+    incompatible:
+      - "destructive_deletion: Data loss operations"
+      - "schema_breaking_change: Incompatible schema changes"
+      - "invalid_state_transition: State machine violations"
+    requires_approval:
+      - "major_version_change: Major version bumps"
+      - "security_sensitive_update: Security-related changes"
+
+  rollback_reset_boundaries:
+    compatible:
+      - "valid_checkpoint_exists: Target checkpoint is valid"
+      - "state_recoverable: State can be recovered"
+    incompatible:
+      - "checkpoint_not_found: Target checkpoint missing"
+      - "checkpoint_corrupted: Checkpoint integrity failed"
+      - "version_incompatible: Checkpoint from incompatible version"
+    requires_approval:
+      - "rollback_across_major_version: Rolling back across major versions"
+
+  rebase_reset_boundaries:
+    compatible:
+      - "base_is_newer: Baseline is newer than local"
+      - "no_conflicting_dependencies: No dependency conflicts"
+    incompatible:
+      - "base_is_older: Baseline is older than local"
+      - "base_corrupted: Baseline integrity failed"
+      - "dependency_conflict: Unresolved dependency conflicts"
+    requires_approval:
+      - "destructive_rebase: Rebase that discards significant work"
+      - "rebase_with_uncommitted_work: Rebase with pending changes"
+
+## Section 3: Fail-Closed Strategy (Fail-Closed 策略)
+
+fail_closed_strategy:
+  overview: |
+    All validation failures result in DENY. No partial acceptance.
+    System fails to a closed (safe) state on any error.
+
+  principles:
+    - id: FC-001
+      principle: "Default DENY"
+      description: "Any operation not explicitly ALLOWED is DENIED"
+      enforcement: "All handlers return ResetValidationResult.DENY by default"
+    - id: FC-002
+      principle: "Precondition Required"
+      description: "Missing preconditions result in immediate DENY"
+      enforcement: "validate_preconditions() must return (True, []) before execution"
+    - id: FC-003
+      principle: "Integrity Verification"
+      description: "Failed integrity checks result in DENY"
+      enforcement: "Checkpoint.verify_integrity() must pass"
+    - id: FC-004
+      principle: "No Silent Failures"
+      description: "All failures must produce explicit error code and message"
+      enforcement: "ResetOperationResult.error_code and error_message required on failure"
+    - id: FC-005
+      principle: "Rollback on Failure"
+      description: "Failed operations must not leave system in inconsistent state"
+      enforcement: "checkpoint_before preserved for recovery"
+
+  enforcement_points:
+    - location: "ConsistencyContractValidator.validate_before_change()"
+      behavior: "Returns (False, violations) on any invariant violation"
+    - location: "ConsistencyContractValidator.enforce_or_fail()"
+      behavior: "Throws ContractViolationError on validation failure"
+    - location: "ResetSemanticsHandler.can_execute()"
+      behavior: "Returns DENY for unknown or incompatible operations"
+    - location: "ResetSemanticsHandler.execute()"
+      behavior: "Returns ResetOperationResult(success=False) on any failure"
+    - location: "ResetSemanticsRegistry.execute_reset()"
+      behavior: "Returns DENY result for unknown reset types"
+
+  error_codes:
+    - code: "PRECONDITION_FAILED"
+      description: "Required preconditions not met"
+      severity: "ERROR"
+    - code: "INCOMPATIBLE_OPERATION"
+      description: "Operation denied by compatibility boundary"
+      severity: "ERROR"
+    - code: "CHECKPOINT_CORRUPTED"
+      description: "Checkpoint integrity verification failed"
+      severity: "CRITICAL"
+    - code: "CHECKPOINT_NOT_FOUND"
+      description: "Target checkpoint does not exist"
+      severity: "ERROR"
+    - code: "EXECUTION_FAILED"
+      description: "Execution failed, system rolled back"
+      severity: "ERROR"
+    - code: "UNKNOWN_RESET_TYPE"
+      description: "Reset type not recognized"
+      severity: "CRITICAL"
+    - code: "CONTRACT_VIOLATION"
+      description: "Invariant or constraint violated"
+      severity: "CRITICAL"
+
+## Implementation Details
+
+implementation:
+  - id: IC-T96-001
+    description: "ConsistencyContract module"
+    status: COMPLETED
+    details: |
+      Implemented ConsistencyContract with three core elements:
+      1. Invariant - Must-always-be-true assertions
+      2. AllowedChange - Declared safe modification boundaries
+      3. BreakingChangeTrigger - Conditions requiring special handling
+
+      Fail-closed: ContractViolationError thrown on any violation
+    file: "skillforge/src/contracts/consistency/consistency_contract.py"
+    sha256: "sha256:481445c8b92379830910d78251f36c9a93436368ab7dafca28f6aa5eb0261164"
+
+  - id: IC-T96-002
+    description: "ResetSemantics module"
+    status: COMPLETED
+    details: |
+      Implemented unified reset semantics:
+      1. IterateHandler - Incremental update with history
+      2. RollbackResetHandler - Restore to checkpoint
+      3. RebaseResetHandler - Rebuild from baseline
+
+      All handlers implement ResetSemanticsHandler interface
+    file: "skillforge/src/contracts/consistency/reset_semantics.py"
+    sha256: "sha256:4741ef5230f8555c510010643d0a29694edb775354cf6cb08b1c18c2a4a33e80"
+
+  - id: IC-T96-003
+    description: "Package initialization"
+    status: COMPLETED
+    details: |
+      Created __init__.py with clean exports:
+      - ConsistencyContract and related classes
+      - ResetSemanticsRegistry and handlers
+      - All enums and constants
+    file: "skillforge/src/contracts/consistency/__init__.py"
+    sha256: "sha256:2ce4b8360670e22900553202935d37f62de0676b700eefedc4bb2540fbaafea4"
+
+## Files Created
+
+created_files:
+  - path: skillforge/src/contracts/consistency/consistency_contract.py
+    action: "新建"
+    lines_changed: 450
+    description: "Consistency contract definition with invariants, allowed changes, and breaking triggers"
+  - path: skillforge/src/contracts/consistency/reset_semantics.py
+    action: "新建"
+    lines_changed: 520
+    description: "Unified reset semantics for iterate/rollback_reset/rebase_reset"
+  - path: skillforge/src/contracts/consistency/__init__.py
+    action: "新建"
+    lines_changed: 65
+    description: "Package initialization with clean exports"
+
+## Gate Self-Check
+
+gate_self_check:
+  - command: "python -c \"from skillforge.src.contracts.consistency import ConsistencyContract, ResetSemanticsRegistry, ResetType\""
+    result: "PASS"
+    output: "Import successful"
+    executed_at: "2026-02-24T21:00:00Z"
+  - command: "python -c \"from skillforge.src.contracts.consistency import CONTRACT_VERSION, RESET_SEMANTICS_VERSION; print(CONTRACT_VERSION, RESET_SEMANTICS_VERSION)\""
+    result: "PASS"
+    output: "v1.0.0-20260224 v1.0.0-20260224"
+    executed_at: "2026-02-24T21:00:00Z"
+
+## Evidence References
+
+evidence_refs:
+  - id: EV-T96-001
+    kind: FILE
+    locator: "skillforge/src/contracts/consistency/consistency_contract.py"
+    sha256: "sha256:481445c8b92379830910d78251f36c9a93436368ab7dafca28f6aa5eb0261164"
+    description: "ConsistencyContract implementation with fail-closed validation"
+    verified_at: "2026-02-24T21:00:00Z"
+  - id: EV-T96-002
+    kind: FILE
+    locator: "skillforge/src/contracts/consistency/reset_semantics.py"
+    sha256: "sha256:4741ef5230f8555c510010643d0a29694edb775354cf6cb08b1c18c2a4a33e80"
+    description: "ResetSemantics unified handler registry"
+    verified_at: "2026-02-24T21:00:00Z"
+  - id: EV-T96-003
+    kind: FILE
+    locator: "skillforge/src/contracts/consistency/__init__.py"
+    sha256: "sha256:2ce4b8360670e22900553202935d37f62de0676b700eefedc4bb2540fbaafea4"
+    description: "Package initialization with exports"
+    verified_at: "2026-02-24T21:00:00Z"
+  - id: EV-T96-004
+    kind: FILE
+    locator: "docs/2026-02-22/verification/T94_compliance_attestation.json"
+    description: "Prerequisite T94=PASS verification"
+    verified_at: "2026-02-24T20:55:00Z"
+  - id: EV-T96-005
+    kind: REFERENCE
+    locator: "docs/2026-02-22/L4.5.MD"
+    description: "L4.5 specification defining consistency contract requirements"
+  - id: EV-T96-006
+    kind: REFERENCE
+    locator: "multi-ai-collaboration.md"
+    description: "Multi-AI collaboration workflow v3"
+
+## Constitution Compliance
+
+constitution_refs:
+  - docs/EXECUTION_GUARD_A_PROPOSAL_SKILL_v1.md
+    sha256: "sha256:1ff28e16c05fa367218306599b2b76ca2349362c308d8073716d1fab093054e1"
+  - docs/EXECUTION_GUARD_B_EXECUTION_SKILL_v1.md
+    sha256: "sha256:16956775d1ba801da5aa3980ddd3b15e5be16e73df9792cf87cdfe64810d6fd2"
+
+compliance_checklist:
+  within_allowed_scope: true
+  no_prohibited_modifications: true
+  three_role_separation: true
+  evidence_requirements_met: true
+  no_side_effects_without_declaration: true
+  sha256_verified: true
+  execution_evidence_provided: true
+  fail_closed_enforcement: true
+
+## Handoff
+
+handoff:
+  next_reviewer: Antigravity-2
+  next_compliance: Kior-C
+  wave_2_status: T95/T96/T97 pending T98 review
+  message: |
+    T96 COMPLETED. Consistency contract and reset semantics unified.
+
+    Key deliverables:
+    1. ConsistencyContract - Contract-based change validation
+    2. ResetSemanticsRegistry - Unified reset handler registry
+    3. Fail-closed policy - All failures result in DENY
+
+    Ready for T98 review alongside T95 and T97.
+
+## Next Steps
+
+next_steps:
+  - T95: CI/CD Gate Automation (Antigravity-1) - COMPLETED
+  - T97: Doc-to-Skill Pipeline (Kior-A) - IN_PROGRESS
+  - T98: Review verification (Antigravity-2) - PENDING T95/T96/T97
+  - T99: Compliance attestation (Kior-C) - PENDING T98

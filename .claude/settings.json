@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell -File ./scripts/start.ps1)",
+      "Bash(docker:*)",
+      "Bash(powershell -File ./scripts/health-check.ps1)",
+      "Bash(redis-cli:*)",
+      "Bash(../.venv/Scripts/python.exe:*)",
+      "Bash(d:/GM-SkillForge/.venv/Scripts/python.exe -c \":*)",
+      "Bash(d:/GM-SkillForge/.venv/Scripts/pip install numpy)",
+      "Bash(d:/GM-SkillForge/.venv/Scripts/python.exe:*)",
+      "Bash(git remote add origin https://github.com/genesismind-bot/GM-SkillForge.git)",
+      "Bash(git fetch origin)",
+      "Bash(git push -u origin main)"
+    ]
+  }
+}

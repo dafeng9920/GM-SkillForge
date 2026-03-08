@@ -1,0 +1,129 @@
+schema_version: "0.1.0"
+skill_id: "gate_engine"
+name: "Gate Engine"
+description: "Gate decision evaluator"
+version: "0.1.0"
+
+# 输入合同
+input:
+  required:
+    - node_id:
+        type: "string"
+        description: "Gate node identifier (e.g. license_gate)"
+    - artifacts:
+        type: "object"
+        description: "Accumulated pipeline artifacts up to this stage"
+
+# 输出合同
+output:
+  required:
+    - schema_version:
+        type: "string"
+        description: "Schema version (0.1.0)"
+    - gate_id:
+        type: "string"
+        description: "Gate identifier"
+    - node_id:
+        type: "string"
+        description: "Node identifier"
+    - decision:
+        type: "string"
+        description: "Gate decision: ALLOW, DENY, or REQUIRES_CHANGES"
+    - reason:
+        type: "string"
+        description: "Human-readable reason for the decision"
+    - timestamp:
+        type: "string"
+        description: "ISO-8601 timestamp"
+  optional:
+    - details:
+        type: "object"
+        description: "Additional decision details"
+
+# 评估规则
+evaluation_rules:
+  license_gate:
+    description: "检查技能来源的许可证是否在白名单内"
+    allowed_licenses: ["MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "ISC", "0BSD", "Unlicense"]
+    artifact_sources: ["provenance.license", "build_record.license", "intake_repo.license"]
+    decisions:
+      ALLOW: "license 在白名单内"
+      DENY: "license 不在白名单内 / 无 license 信息"
+
+  constitution_risk_gate:
+    description: "检查技能能力声明是否符合宪法风险约束，并检查 fit_score 阈值"
+    # 外部阈值配置
+    thresholds_config: "orchestration/skill_thresholds.yml"
+    # fit_score 评估规则
+    fit_score_rules:
+      # 从 artifacts 获取 repo_scan_fit_score 的输出
+      artifact_source: "repo_scan_fit_score"
+      score_field: "fit_score"
+      # 阈值在外部配置中定义:
+      # minimum_fit_score: 40  → DENY
+      # review_fit_score: 70   → REQUIRES_CHANGES (40-70)
+      # auto_approve: >= 70    → ALLOW
+      rules:
+        - condition: "fit_score < thresholds.minimum_fit_score"
+          decision: "DENY"
+          reason: "fit_score {fit_score} below minimum {minimum_fit_score}"
+        - condition: "fit_score < thresholds.review_fit_score"
+          decision: "REQUIRES_CHANGES"
+          reason: "fit_score {fit_score} needs review (threshold: {review_fit_score})"
+    # 能力检查规则
+    capability_rules:
+      - condition: "capabilities.network == true AND sandbox_mode == 'strict'"
+        decision: "DENY"
+        reason: "Network access not allowed in strict sandbox"
+      - condition: "capabilities.subprocess == true AND risk_tier in ['L2', 'L3']"
+        decision: "REQUIRES_CHANGES"
+        reason: "Subprocess with high risk tier needs review"
+      - condition: "risk_tier not in ['L0', 'L1', 'L2', 'L3']"
+        decision: "REQUIRES_CHANGES"
+        reason: "Invalid risk tier"
+    default: "ALLOW"
+
+  unknown_gate:
+    decision: "ALLOW"
+    note: "No specialized evaluator; defaulting to ALLOW with warning"
+
+# 能力声明
+capabilities:
+  network: false
+  filesystem: false
+  subprocess: false
+  gpu: false
+
+# 风险等级
+risk_tier: "L0"
+
+# 依赖
+dependencies:
+  adapters: []
+  schemas: ["gate_decision"]
+  error_codes: ["GATE_DENIED", "GATE_REQUIRES_CHANGES", "GATE_EVALUATION_ERROR", "GATE_FIT_SCORE_DENIED", "GATE_FIT_SCORE_REVIEW", "GATE_THRESHOLD_CONFIG_ERROR"]
+  config_files:
+    - path: "orchestration/skill_thresholds.yml"
+      required: true
+      description: "fit_score 阈值配置"
+
+# 错误处理
+errors:
+  - code: "GATE_DENIED"
+    retryable: false
+    description: "Gate evaluator returned DENY (license/constitution violation)"
+  - code: "GATE_REQUIRES_CHANGES"
+    retryable: false
+    description: "Gate evaluator returned REQUIRES_CHANGES (risk adjustment needed)"
+  - code: "GATE_EVALUATION_ERROR"
+    retryable: false
+    description: "Unhandled exception during gate evaluation → auto-DENY"
+  - code: "GATE_FIT_SCORE_DENIED"
+    retryable: false
+    description: "fit_score below minimum threshold - repository not suitable for Skill"
+  - code: "GATE_FIT_SCORE_REVIEW"
+    retryable: false
+    description: "fit_score requires manual review before proceeding"
+  - code: "GATE_THRESHOLD_CONFIG_ERROR"
+    retryable: false
+    description: "Failed to load or parse skill_thresholds.yml config"

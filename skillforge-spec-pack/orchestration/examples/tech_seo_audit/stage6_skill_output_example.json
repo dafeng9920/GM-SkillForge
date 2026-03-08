@@ -1,0 +1,105 @@
+{
+    "node_id": "sandbox_test_and_trace",
+    "stage": 6,
+    "skill_output_example": {
+        "url": "https://example.com",
+        "score": 62,
+        "results": [
+            {
+                "page_url": "https://example.com/",
+                "status_code": 200,
+                "load_time_ms": 2450,
+                "issues": [
+                    {
+                        "issue_key": "MISSING_META_DESCRIPTION",
+                        "severity": "warning",
+                        "message": "首页缺少 meta description",
+                        "suggestion": "添加 <meta name=\"description\" content=\"...\"> 标签"
+                    },
+                    {
+                        "issue_key": "MISSING_STRUCTURED_DATA",
+                        "severity": "info",
+                        "message": "首页缺少 JSON-LD 结构化数据",
+                        "suggestion": "添加 Organization 或 WebSite schema"
+                    }
+                ]
+            },
+            {
+                "page_url": "https://example.com/about",
+                "status_code": 200,
+                "load_time_ms": 1820,
+                "issues": [
+                    {
+                        "issue_key": "MISSING_H1",
+                        "severity": "error",
+                        "message": "关于页面缺少 H1 标题",
+                        "suggestion": "添加一个唯一的 H1 标签描述页面主题"
+                    },
+                    {
+                        "issue_key": "MISSING_CANONICAL",
+                        "severity": "error",
+                        "message": "页面缺少 canonical 标签",
+                        "element": "<head>",
+                        "suggestion": "添加 <link rel=\"canonical\" href=\"https://example.com/about\">"
+                    },
+                    {
+                        "issue_key": "MISSING_ALT_TEXT",
+                        "severity": "warning",
+                        "message": "3 张图片缺少 alt 属性",
+                        "element": "img.team-photo, img.office-1, img.office-2",
+                        "suggestion": "为每张图片添加描述性 alt 文本"
+                    }
+                ]
+            },
+            {
+                "page_url": "https://example.com/blog",
+                "status_code": 200,
+                "load_time_ms": 3200,
+                "issues": [
+                    {
+                        "issue_key": "SLOW_PAGE_LOAD",
+                        "severity": "warning",
+                        "message": "页面加载时间 3200ms 超过 3000ms 阈值",
+                        "suggestion": "优化图片大小、启用缓存、减少 JS 体积"
+                    },
+                    {
+                        "issue_key": "MULTIPLE_H1",
+                        "severity": "warning",
+                        "message": "页面存在 2 个 H1 标签",
+                        "element": "h1.page-title, h1.featured-post",
+                        "suggestion": "保留一个 H1，其余改为 H2"
+                    },
+                    {
+                        "issue_key": "BROKEN_INTERNAL_LINK",
+                        "severity": "error",
+                        "message": "链接 /blog/old-post 返回 404",
+                        "element": "a[href='/blog/old-post']",
+                        "suggestion": "修复或移除死链"
+                    }
+                ]
+            }
+        ],
+        "summary": {
+            "pages_checked": 3,
+            "total_issues": 8,
+            "errors": 3,
+            "warnings": 4,
+            "info": 1,
+            "top_issues": [
+                {
+                    "issue_key": "MISSING_CANONICAL",
+                    "count": 1
+                },
+                {
+                    "issue_key": "MISSING_H1",
+                    "count": 1
+                },
+                {
+                    "issue_key": "BROKEN_INTERNAL_LINK",
+                    "count": 1
+                }
+            ]
+        },
+        "audited_at": "2026-02-15T10:50:00Z"
+    }
+}

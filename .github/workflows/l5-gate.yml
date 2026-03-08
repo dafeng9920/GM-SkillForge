@@ -1,0 +1,56 @@
+
+name: L5 Hard Gate
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  l5-gate:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        
+    - name: G1 - Capability Runnable
+      run: |
+        python -m skillforge.skills.contract_common_builder --help
+        python -m skillforge.skills.contract_module_builder --help
+        python -m skillforge.skills.contract_consistency_auditor --help
+        python -m skillforge.skills.governance_boundary_auditor --help
+
+    - name: G2 - Governance Enforceable
+      run: |
+        python -m skillforge.skills.governance_boundary_auditor --output audit_report_boundary.json
+        # Check total_violations == 0
+        grep '"total_violations": 0' audit_report_boundary.json || exit 1
+
+    - name: G5 - Change Controlled
+      run: |
+        python -m skillforge.skills.contract_consistency_auditor --output audit_report_consistency.json
+        # Check naming_conflicts == 0
+        grep '"naming_conflicts": 0' audit_report_consistency.json || exit 1
+
+    - name: G6 - L5 Static Audit Smoke
+      run: |
+        python scripts/run_skill_5layer_audit.py --domains finance,legal --top-n 3 --out reports/skill-audit
+        # Find the latest generated JSON report and check FAIL count == 0
+        LATEST_REPORT=$(ls -t reports/skill-audit/finance_legal_top3_l5-static_*.json 2>/dev/null | head -1)
+        if [ -z "$LATEST_REPORT" ]; then
+          echo "ERROR: No audit report generated"
+          exit 1
+        fi
+        echo "Checking report: $LATEST_REPORT"
+        # FAIL must be 0, otherwise exit 1 (hard gate)
+        grep '"FAIL": 0' "$LATEST_REPORT" || exit 1

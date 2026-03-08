@@ -1,0 +1,80 @@
+{
+  "passed": true,
+  "timestamp": "2026-02-19T16:06:56Z",
+  "check_name": "skill_contract_markers",
+  "skills": [
+    {
+      "skill": "rollback-tombstone-skill",
+      "checks": [
+        {
+          "found": true,
+          "pattern": "tombstone_schema|tombstone_id|Tombstone",
+          "description": "Tombstone 定义"
+        },
+        {
+          "found": true,
+          "pattern": "immutable|不可篡改|IMMUTABLE",
+          "description": "不可变标记"
+        },
+        {
+          "found": true,
+          "pattern": "replay_consistency|replay_pointer",
+          "description": "Replay 一致性检查"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "skill": "release-gate-skill",
+      "checks": [
+        {
+          "found": true,
+          "pattern": "release_allowed",
+          "description": "release_allowed 字段"
+        },
+        {
+          "found": true,
+          "pattern": "all-or-nothing|ALL_OR_NOTHING",
+          "description": "all-or-nothing 策略"
+        },
+        {
+          "found": true,
+          "pattern": "E001",
+          "description": "E001 错误码"
+        },
+        {
+          "found": true,
+          "pattern": "E003",
+          "description": "E003 错误码"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "skill": "permit-governance-skill",
+      "checks": [
+        {
+          "found": true,
+          "pattern": "no-permit-no-release",
+          "description": "核心约束标记"
+        },
+        {
+          "found": true,
+          "pattern": "fail_closed|Fail-Closed",
+          "description": "Fail-Closed 标记"
+        },
+        {
+          "found": true,
+          "pattern": "E001",
+          "description": "E001 错误码"
+        },
+        {
+          "found": true,
+          "pattern": "E003",
+          "description": "E003 错误码"
+        }
+      ],
+      "passed": true
+    }
+  ]
+}

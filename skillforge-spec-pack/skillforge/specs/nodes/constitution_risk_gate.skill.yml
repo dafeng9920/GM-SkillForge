@@ -1,0 +1,64 @@
+schema_version: "0.1.0"
+skill_id: "constitution_risk_gate"
+name: "Constitution Risk Gate"
+description: "Validates skill against constitutional constraints and risk policies"
+version: "0.1.0"
+
+# 所属路径
+paths: ["A", "B", "AB"]
+stage: 4
+
+# 输入合同
+input:
+  required:
+    - skill_spec:
+        type: "object"
+        description: "Skill specification to validate"
+
+# 输出合同
+output:
+  required:
+    - schema_version:
+        type: "string"
+        description: "Schema version (0.1.0)"
+    - gate_id:
+        type: "string"
+        description: "Gate identifier (constitution_risk_gate)"
+    - node_id:
+        type: "string"
+        description: "Node identifier"
+    - decision:
+        type: "string"
+        description: "Gate decision: ALLOW, DENY, or REQUIRES_CHANGES"
+    - reason:
+        type: "string"
+        description: "Reason for the gate decision"
+    - timestamp:
+        type: "string"
+        description: "ISO-8601 timestamp"
+  optional:
+    - details:
+        type: "object"
+        description: "Additional risk assessment details"
+
+# 能力声明
+capabilities:
+  network: false
+  filesystem: false
+  subprocess: false
+  gpu: false
+
+# 风险等级
+risk_tier: "L0"
+
+# 依赖
+dependencies:
+  adapters: []
+  schemas: ["gate_decision"]
+  error_codes: ["GATE_DENIED"]
+
+# 错误处理
+errors:
+  - code: "GATE_DENIED"
+    retryable: false
+    description: "Constitution risk gate denied access"

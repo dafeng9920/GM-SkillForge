@@ -1,0 +1,24 @@
+{
+    "schema_version": "0.1.0",
+    "execution_id": "e2b3c4d5-e6f7-8901-bcde-f12345678901",
+    "skill_id": "data_transformer",
+    "created_at": "2026-02-15T17:00:00Z",
+    "config": {
+        "timeout_seconds": 60,
+        "max_tool_calls": 10,
+        "max_bytes_io": 1048576,
+        "sandbox_mode": "moderate"
+    },
+    "input": {
+        "source": "s3://bucket/input.csv"
+    },
+    "context": {
+        "job_id": "550e8400-e29b-41d4-a716-446655440000",
+        "caller": "pipeline-orchestrator",
+        "environment": "staging",
+        "trace_enabled": true
+    },
+    "metadata": {
+        "retry_count": 0
+    }
+}

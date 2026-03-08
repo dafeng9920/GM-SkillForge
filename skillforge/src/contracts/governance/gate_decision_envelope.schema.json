@@ -1,0 +1,266 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "gate_decision_envelope.schema.json",
+  "title": "GateDecision Envelope",
+  "description": "Gate decision envelope with mandatory ruleset_revision and provenance.repro_env for SEEDS-P2 compliance",
+  "type": "object",
+  "required": [
+    "job_id",
+    "gate_decision",
+    "ruleset_revision",
+    "timestamp",
+    "evidence_ref",
+    "provenance"
+  ],
+  "properties": {
+    "job_id": {
+      "type": "string",
+      "description": "Unique job identifier",
+      "pattern": "^[A-Z0-9]+-[A-Z0-9]+-[A-Z0-9]+-[0-9]{8}-[0-9]{3}$"
+    },
+    "skill_id": {
+      "type": "string",
+      "description": "Skill identifier that produced this decision"
+    },
+    "task_id": {
+      "type": "string",
+      "description": "Task identifier if applicable"
+    },
+    "executor": {
+      "type": "string",
+      "description": "Executor identifier"
+    },
+    "gate_decision": {
+      "type": "string",
+      "enum": ["ALLOW", "DENY", "REQUIRES_CHANGES", "BLOCKED"],
+      "description": "Gate decision - ALLOW without ruleset_revision is FORBIDDEN"
+    },
+    "ruleset_revision": {
+      "type": "string",
+      "description": "Mandatory ruleset revision for at-time replay consistency",
+      "pattern": "^v[0-9]+$",
+      "minLength": 2
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp of decision"
+    },
+    "evidence_ref": {
+      "type": "string",
+      "description": "Evidence reference for audit trail"
+    },
+    "run_id": {
+      "type": "string",
+      "description": "Run identifier for traceability"
+    },
+    "verdict": {
+      "type": "object",
+      "description": "Verdict details",
+      "properties": {
+        "implementation_ready": {
+          "type": "string",
+          "enum": ["YES", "NO"]
+        },
+        "regression_ready": {
+          "type": "string",
+          "enum": ["YES", "NO"]
+        },
+        "baseline_ready": {
+          "type": "string",
+          "enum": ["YES", "NO"]
+        },
+        "ready_for_next_batch": {
+          "type": "string",
+          "enum": ["YES", "NO"]
+        }
+      }
+    },
+    "verification_summary": {
+      "type": "object",
+      "description": "Summary of verification results",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["COMPLETED", "PENDING", "FAILED", "SKIPPED"]
+          },
+          "gate_check": {
+            "type": "string"
+          },
+          "verdict": {
+            "type": "string",
+            "enum": ["PASS", "FAIL", "SKIP"]
+          }
+        }
+      }
+    },
+    "constraint_verification": {
+      "type": "object",
+      "description": "Constraint verification results",
+      "additionalProperties": {
+        "type": "boolean"
+      }
+    },
+    "baseline_consistency": {
+      "type": "object",
+      "description": "Baseline consistency check results",
+      "properties": {
+        "reference": {
+          "type": "string"
+        },
+        "fail_closed_verified": {
+          "type": "boolean"
+        },
+        "at_time_replay_consistent": {
+          "type": "boolean"
+        },
+        "drift_detected": {
+          "type": "boolean"
+        }
+      }
+    },
+    "blocking_issues": {
+      "type": "array",
+      "description": "List of blocking issues",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"]
+          }
+        }
+      }
+    },
+    "next_actions": {
+      "type": "array",
+      "description": "List of next actions",
+      "items": {
+        "type": "object",
+        "properties": {
+          "priority": {
+            "type": "string",
+            "enum": ["P0", "P1", "P2", "P3"]
+          },
+          "action": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "in_progress", "completed"]
+          }
+        }
+      }
+    },
+    "reason": {
+      "type": "string",
+      "description": "Human-readable reason for the decision"
+    },
+    "manual_checks": {
+      "type": "object",
+      "description": "Manual check results",
+      "additionalProperties": {
+        "type": "boolean"
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "description": "Provenance information for at-time replay - MANDATORY for SEEDS-P2 compliance",
+      "required": ["repro_env"],
+      "properties": {
+        "captured_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "source": {
+          "type": "object",
+          "properties": {
+            "repo_url": {
+              "type": "string"
+            },
+            "commit_sha": {
+              "type": "string"
+            }
+          }
+        },
+        "repro_env": {
+          "type": "object",
+          "description": "Reproducibility environment fingerprint - MANDATORY",
+          "required": ["python_version", "deps_lock_hash", "os", "tool_versions"],
+          "properties": {
+            "python_version": {
+              "type": "string",
+              "description": "Python version used for execution"
+            },
+            "deps_lock_hash": {
+              "type": "string",
+              "description": "Hash of dependencies lock file"
+            },
+            "os": {
+              "type": "string",
+              "description": "Operating system"
+            },
+            "tool_versions": {
+              "type": "object",
+              "description": "Tool versions",
+              "required": ["gm_skillforge"],
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "error_code": {
+      "type": "string",
+      "description": "Error code if gate_decision is not ALLOW"
+    },
+    "error_message": {
+      "type": "string",
+      "description": "Human-readable error message"
+    },
+    "required_changes": {
+      "type": "array",
+      "description": "List of required changes for REQUIRES_CHANGES decision",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": true,
+
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "gate_decision": { "const": "ALLOW" }
+        }
+      },
+      "then": {
+        "required": ["ruleset_revision", "provenance"],
+        "properties": {
+          "ruleset_revision": {
+            "type": "string",
+            "minLength": 2
+          },
+          "provenance": {
+            "type": "object",
+            "required": ["repro_env"]
+          }
+        }
+      }
+    }
+  ]
+}

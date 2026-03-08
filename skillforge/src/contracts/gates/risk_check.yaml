@@ -1,0 +1,223 @@
+# Gate Contract: risk_check (constitution_risk_gate)
+# Version: 0.1.0
+# Status: FROZEN
+# Gate Group: logic (squad-b)
+
+gate_name: constitution_risk_gate
+gate_version: "0.1.0"
+stage: 4
+
+description: |
+  Constitution risk assessment gate for skill safety and alignment.
+  Implements FAIL-CLOSED semantics: any detected risk MUST trigger REJECTED.
+
+  Red Lines (Deny List):
+  - Must NOT allow specs with 'override_governance' flag
+  - Must NOT modify Constitution definitions
+
+input_contract:
+  required:
+    - skill_spec
+  schema:
+    skill_spec:
+      type: object
+      required:
+        - name
+      properties:
+        schema_version:
+          type: string
+        name:
+          type: string
+          description: Skill name
+        version:
+          type: string
+        description:
+          type: string
+        capabilities:
+          type: array
+          items:
+            type: string
+            enum: [network, file_read, file_write, shell, database, llm, authenticated_access]
+          description: Required tool permissions
+        tools_required:
+          type: array
+          items:
+            type: string
+          description: External tools needed
+        constraints:
+          type: array
+          items:
+            type: string
+          description: Skill constraints
+
+output_contract:
+  # GateResult per gate_interface_v1.yaml
+  required:
+    - gate_name
+    - gate_decision
+    - next_action
+    - evidence_refs
+  schema:
+    gate_name:
+      type: string
+      const: constitution_risk_gate
+    gate_decision:
+      type: string
+      enum: [PASSED, REJECTED]
+    next_action:
+      type: string
+      enum: [continue, halt]
+    error_code:
+      type: string
+      nullable: true
+    evidence_refs:
+      type: array
+      items:
+        $ref: "#/definitions/EvidenceRef"
+    risk_assessment:
+      type: object
+      description: Risk assessment evidence payload
+      properties:
+        schema_version:
+          type: string
+        skill_name:
+          type: string
+        risk_score:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          description: Risk score (0.0 = safe, 1.0 = critical)
+        risk_tier:
+          type: string
+          enum: [L0, L1, L2, L3]
+          description: Risk classification tier
+        risk_categories:
+          type: array
+          items:
+            type: string
+          description: Identified risk categories
+        mitigations_required:
+          type: array
+          items:
+            type: string
+          description: Required mitigations if any
+        gate_decision:
+          type: string
+          enum: [PASSED, REJECTED]
+        reason:
+          type: string
+          description: Human-readable explanation
+        constitution_version:
+          type: string
+          description: Reference to constitution SSOT
+        constitution_hash:
+          type: string
+          description: SHA-256 hash of constitution file
+        timestamp:
+          type: string
+          format: iso8601
+
+definitions:
+  EvidenceRef:
+    type: object
+    required:
+      - issue_key
+      - source_locator
+      - content_hash
+      - tool_revision
+      - timestamp
+    properties:
+      issue_key:
+        type: string
+      source_locator:
+        type: string
+      content_hash:
+        type: string
+      tool_revision:
+        type: string
+      timestamp:
+        type: string
+        format: iso8601
+
+behavior:
+  # FAIL-CLOSED semantics
+  fail_closed: true
+
+  # Red Lines - Always REJECT
+  red_lines:
+    - override_governance flag present in skill_spec
+    - prohibited capability detected (authenticated_access, privileged_execution)
+    - risk_score >= 0.7
+
+  fail_conditions:
+    - skill_spec is missing
+    - skill_spec contains override_governance flag
+    - risk_score exceeds deny threshold (0.7)
+
+  success_conditions:
+    - skill_spec is valid
+    - no red line violations
+    - risk_score < 0.7
+
+risk_assessment:
+  capability_weights:
+    shell: 0.3
+    file_write: 0.2
+    database: 0.3
+    network: 0.1
+    llm: 0.1
+
+  prohibited_capabilities:
+    - authenticated_access
+    - privileged_execution
+    - system_modification
+
+  tier_mapping:
+    L0:
+      min: 0.0
+      max: 0.3
+      description: Low risk - safe for auto-approval
+    L1:
+      min: 0.3
+      max: 0.5
+      description: Minor risk - standard review
+    L2:
+      min: 0.5
+      max: 0.7
+      description: Elevated risk - enhanced review required
+    L3:
+      min: 0.7
+      max: 1.0
+      description: Critical risk - manual approval or rejection
+
+  thresholds:
+    deny_threshold: 0.7
+    review_threshold: 0.3
+
+error_codes:
+  GATE.RISK.INPUT_INVALID:
+    description: Input validation failed
+    http_code: 400
+  GATE.RISK.OVERRIDE_GOVERNANCE:
+    description: Red line - override_governance flag detected
+    http_code: 403
+  GATE.RISK.SCORE_EXCEEDED:
+    description: Risk score exceeds deny threshold
+    http_code: 403
+  GATE.RISK.PROHIBITED_CAPABILITY:
+    description: Prohibited capability detected
+    http_code: 403
+
+constitution:
+  ssot: docs/2026-02-16/constitution_v1.md
+  immutable: true
+  description: |
+    The constitution file is the single source of truth for governance rules.
+    This gate MUST NOT modify constitution definitions.
+
+implementation_pattern: |
+  class ConstitutionRiskGate:
+      def validate_input(self, input_data) -> list[str]: ...
+      def execute(self, input_data) -> dict: ...
+      def validate_output(self, output) -> list[str]: ...
+      if __name__ == "__main__": main()

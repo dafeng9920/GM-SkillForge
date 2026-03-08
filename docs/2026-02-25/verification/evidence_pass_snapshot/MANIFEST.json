@@ -1,0 +1,42 @@
+{
+  "generated_at": "2026-02-25 18:17:10",
+  "directory": "d:\\GM-SkillForge\\docs\\2026-02-25\\verification\\evidence_pass_snapshot",
+  "file_count": 5,
+  "files": [
+    {
+      "file": "A_constitution_hard_gate.json",
+      "path": "d:\\GM-SkillForge\\docs\\2026-02-25\\verification\\evidence_pass_snapshot\\A_constitution_hard_gate.json",
+      "sha256": "6236A6BFA5D145873446DED5BBCBC5460B01D33124AAC227F84553999BA28B9E",
+      "last_write_time": "2026-02-25 18:10:43",
+      "size_bytes": 2191
+    },
+    {
+      "file": "B_registry_graph_integrity.json",
+      "path": "d:\\GM-SkillForge\\docs\\2026-02-25\\verification\\evidence_pass_snapshot\\B_registry_graph_integrity.json",
+      "sha256": "81839E32EF32F2144B9BA2C86D7E04F5272548F08192CD96B0B054384D33A2AF",
+      "last_write_time": "2026-02-25 18:11:10",
+      "size_bytes": 3815
+    },
+    {
+      "file": "C_incremental_delta_enforced.json",
+      "path": "d:\\GM-SkillForge\\docs\\2026-02-25\\verification\\evidence_pass_snapshot\\C_incremental_delta_enforced.json",
+      "sha256": "9CC4BD69CF3F5BA1B96E3D280D7D64F496B4E2822D86713F524DA94671151E54",
+      "last_write_time": "2026-02-25 18:11:26",
+      "size_bytes": 7503
+    },
+    {
+      "file": "summary.json",
+      "path": "d:\\GM-SkillForge\\docs\\2026-02-25\\verification\\evidence_pass_snapshot\\summary.json",
+      "sha256": "5B193F3928DFB08753C0D59043C4954C4856061EBC48EF720F0047142834F529",
+      "last_write_time": "2026-02-25 18:11:26",
+      "size_bytes": 1306
+    },
+    {
+      "file": "summary.md",
+      "path": "d:\\GM-SkillForge\\docs\\2026-02-25\\verification\\evidence_pass_snapshot\\summary.md",
+      "sha256": "C5956CC5AF7B9ACF73525EB06FD95EF04F78DC724777DD1E0D7BAA4F4E675EC8",
+      "last_write_time": "2026-02-25 18:11:26",
+      "size_bytes": 550
+    }
+  ]
+}

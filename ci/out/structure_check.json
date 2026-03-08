@@ -1,0 +1,88 @@
+{
+  "passed": true,
+  "timestamp": "2026-02-19T16:06:56Z",
+  "check_name": "skill_structure",
+  "skills": [
+    {
+      "skill": "permit-governance-skill",
+      "checks": [
+        {
+          "passed": true,
+          "path": "D:\\GM-SkillForge\\skills\\permit-governance-skill",
+          "name": "directory_exists"
+        },
+        {
+          "passed": true,
+          "path": "D:\\GM-SkillForge\\skills\\permit-governance-skill\\SKILL.md",
+          "name": "skill_md_exists"
+        },
+        {
+          "passed": true,
+          "path": "D:\\GM-SkillForge\\skills\\permit-governance-skill\\agents\\openai.yaml",
+          "name": "openai_yaml_exists"
+        },
+        {
+          "optional": true,
+          "passed": true,
+          "path": "D:\\GM-SkillForge\\skills\\permit-governance-skill\\references",
+          "name": "references_dir_exists"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "skill": "release-gate-skill",
+      "checks": [
+        {
+          "passed": true,
+          "path": "D:\\GM-SkillForge\\skills\\release-gate-skill",
+          "name": "directory_exists"
+        },
+        {
+          "passed": true,
+          "path": "D:\\GM-SkillForge\\skills\\release-gate-skill\\SKILL.md",
+          "name": "skill_md_exists"
+        },
+        {
+          "passed": true,
+          "path": "D:\\GM-SkillForge\\skills\\release-gate-skill\\agents\\openai.yaml",
+          "name": "openai_yaml_exists"
+        },
+        {
+          "optional": true,
+          "passed": true,
+          "path": "D:\\GM-SkillForge\\skills\\release-gate-skill\\references",
+          "name": "references_dir_exists"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "skill": "rollback-tombstone-skill",
+      "checks": [
+        {
+          "passed": true,
+          "path": "D:\\GM-SkillForge\\skills\\rollback-tombstone-skill",
+          "name": "directory_exists"
+        },
+        {
+          "passed": true,
+          "path": "D:\\GM-SkillForge\\skills\\rollback-tombstone-skill\\SKILL.md",
+          "name": "skill_md_exists"
+        },
+        {
+          "passed": true,
+          "path": "D:\\GM-SkillForge\\skills\\rollback-tombstone-skill\\agents\\openai.yaml",
+          "name": "openai_yaml_exists"
+        },
+        {
+          "optional": true,
+          "passed": true,
+          "path": "D:\\GM-SkillForge\\skills\\rollback-tombstone-skill\\references",
+          "name": "references_dir_exists"
+        }
+      ],
+      "passed": true
+    }
+  ]
+}

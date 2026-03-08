@@ -1,0 +1,35 @@
+{
+  "exercise_id": "L45-DRILL-FAILCLOSED-ATTIME-001",
+  "success_run": {
+    "run_id": "RUN-N8N-1771575612-79D378DC",
+    "evidence_ref": "EV-N8N-INTENT-1771575612-CF977F78",
+    "gate_decision": "ALLOW",
+    "release_allowed": true,
+    "permit_id": "PERMIT-20260220-F3CFBE99",
+    "replay_pointer_at_time": "2026-02-20T14:30:00Z"
+  },
+  "failure_run_membership_or_permit": {
+    "run_id": "RUN-N8N-1771575625-F83CCA6E",
+    "evidence_ref": "EV-N8N-INTENT-1771575625-52EA8383",
+    "error_code": "N8N_MEMBERSHIP_DENIED",
+    "blocked_by": "MEMBERSHIP_CAPABILITY_DENIED"
+  },
+  "failure_run_at_time_drift": {
+    "run_id": "RUN-N8N-1771575679-8333FCB4",
+    "evidence_ref": "EV-N8N-RAG-1771575679-F2E0C7E0",
+    "error_code": "RAG-AT-TIME-DRIFT-FORBIDDEN",
+    "blocked_by": "POLICY_VIOLATION"
+  },
+  "consistency_check": {
+    "expected_at_time": "2026-02-20T14:30:00Z",
+    "actual_at_time": "2026-02-20T14:30:00Z",
+    "consistent": true,
+    "note": "replay_pointer.at_time from query_rag response matches input at_time",
+    "fetch_pack_status": "PACK_NOT_FOUND - AuditPack store not populated for run_intent path"
+  },
+  "verdict": {
+    "fail_closed_verified": true,
+    "at_time_replay_consistent": true,
+    "decision": "PASS"
+  }
+}

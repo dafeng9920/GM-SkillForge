@@ -1,0 +1,211 @@
+# ============================================================
+# Upgrade Skill Intent Contract (Normalized)
+# ============================================================
+# Priority: P0
+# Source: NEW-GM Migration (Task A3)
+# Normalized: 2026-02-18
+# ============================================================
+
+intent_id: upgrade_skill
+summary: |
+  技能升级意图合约 - 实现 DRAFT → ACTIVE 状态升级。
+  核心：revision 自增、Gate 链式验证、evolution.json append-only 历史记录。
+  约束：原子更新（Atomic update only）、Fail-closed 原则。
+contract_version: v1.0.0
+schema_hash: TBD_SHA256
+
+# ============================================================
+# Inputs Schema
+# ============================================================
+inputs_schema:
+  required:
+    - name: repo_url
+      type: string
+      description: "仓库 URL（确定性输入）"
+      pattern: "^(https?|git)://.+$"
+
+    - name: commit_sha
+      type: string
+      description: "Git commit SHA（确定性输入）"
+      pattern: "^[a-f0-9]{7,40}$"
+
+    - name: skill_id
+      type: string
+      description: "技能唯一标识符"
+      pattern: "^[a-z0-9_]+$"
+
+    - name: upgrade_spec
+      type: object
+      description: "升级规格说明"
+      required_fields:
+        - current_revision
+        - change_type
+      properties:
+        current_revision:
+          type: integer
+          minimum: 1
+        change_type:
+          type: string
+          enum: ["canonical_change", "idempotent_update"]
+        change_description:
+          type: string
+          maxLength: 500
+
+  optional:
+    - name: metadata
+      type: object
+      description: "附加元数据"
+
+# ============================================================
+# Required Gates
+# ============================================================
+required_gates:
+  - build_gate             # B1: 检查 risk_level, constraints 存在性
+  - trace_reputation_gate  # B3: 查询 TraceStore 统计，检查失败率
+  - skill_compose          # B2a: 使用 FlowIR 评估 compose 权限 (原 compose_gate)
+  - run_gate               # B2b: 评估 run 执行权限
+
+# ============================================================
+# Minimum Level
+# ============================================================
+minimum_level: L3
+
+# ============================================================
+# Required Evidence
+# ============================================================
+required_evidence:
+  - upgrade_manifest       # 升级清单
+  - gate_results           # Gate 判定结果
+  - evolution_record       # evolution.json 新增记录
+  - release_log            # 审计日志
+  - source_doc_ref         # 源文档引用
+
+# ============================================================
+# Outputs
+# ============================================================
+outputs:
+  - name: audit_pack_ref
+    type: string
+    description: "L3 AuditPack 引用标识"
+
+  - name: gate_decision
+    type: string
+    enum: ["ALLOW_ACTIVE", "DENY", "REQUIRES_HUMAN"]
+    description: "Gate 最终决策"
+
+  - name: revision
+    type: integer
+    description: "升级后版本号"
+
+  - name: upgrade_manifest
+    type: object
+    description: "升级清单"
+    fields:
+      - skill_id: string
+      - old_revision: integer
+      - new_revision: integer
+      - decision: string
+      - evidence_ref: object
+
+  - name: evolution_record
+    type: object
+    description: "evolution.json 新增记录"
+    fields:
+      - timestamp: datetime
+      - revision: integer
+      - change_type: string
+      - change_description: string
+
+# ============================================================
+# Validation Rules
+# ============================================================
+validation_rules:
+  - rule_id: ATOMIC_UPDATE_ONLY
+    description: "每次升级操作必须是原子的"
+    severity: critical
+    check: |
+      upgrade_manifest.decision in ["ALLOW_ACTIVE", "DENY", "REQUIRES_HUMAN"]
+      AND (upgrade_manifest.decision == "ALLOW_ACTIVE" IMPLIES
+        upgrade_manifest.new_revision == upgrade_manifest.old_revision + 1)
+
+  - rule_id: IDEMPOTENT_UPDATE
+    description: "相同 canonical 输入不应触发重复 revision 递增"
+    severity: high
+    check: |
+      upgrade_spec.change_type == "idempotent_update" IMPLIES
+        upgrade_manifest.new_revision == upgrade_manifest.old_revision
+
+  - rule_id: FAIL_CLOSED
+    description: "任何可疑输入阻止升级"
+    severity: critical
+    check: |
+      evidence_ref.gate_results.* != "DENY" IMPLIES
+        upgrade_manifest.decision != "ALLOW_ACTIVE"
+
+  - rule_id: GATE_CHAIN_VALIDATION
+    description: "必须通过 Build → Trace → Compose → Run Gate 链"
+    severity: high
+    check: |
+      upgrade_manifest.decision == "ALLOW_ACTIVE" IMPLIES
+        evidence_ref.gate_results.build_gate == "ALLOW"
+        AND evidence_ref.gate_results.trace_reputation == "OK"
+        AND evidence_ref.gate_results.compose_gate == "ALLOW"
+        AND evidence_ref.gate_results.run_gate == "ALLOW"
+
+  - rule_id: EVIDENCE_REF_REQUIRED
+    description: "所有结论必须有 source_doc_ref + evidence_ref"
+    severity: critical
+    check: |
+      upgrade_manifest.evidence_ref IS NOT NULL
+      AND upgrade_manifest.evidence_ref.source_doc_ref IS NOT NULL
+
+# ============================================================
+# Architecture Boundary
+# ============================================================
+architecture_boundary: |
+  - n8n 仅作为 Orchestrator（触发/路由/通知），不做最终裁决
+  - SkillForge 是 Governor（Gate 判定、Evidence 产出、AuditPack 固化）
+  - 输入确定性：repo_url + commit_sha (+ at_time)
+  - 无 permit 不允许发布/打 tag/release
+  - evolution.json append-only，不可修改历史记录
+
+# ============================================================
+# Source References (Evidence Chain)
+# ============================================================
+source_doc_ref:
+  files:
+    - path: "D:\\NEW-GM\\tests\\orchestration\\test_draft_revision_autoinc.py"
+      lines: "116-136"
+      purpose: "revision 自增与幂等性逻辑"
+
+    - path: "D:\\NEW-GM\\src\\services\\outer_skill_factory\\release_governor.py"
+      lines: "286-616"
+      purpose: "DRAFT→ACTIVE 升级流程"
+
+    - path: "D:\\NEW-GM\\docs\\2026-02-17\\三维RAG与数据飞轮约束_v1.md"
+      lines: "19-24"
+      purpose: "evolution.json 结构定义"
+
+# ============================================================
+# Constraints
+# ============================================================
+constraints:
+  - "原子更新（Atomic update only）"
+  - "Fail-closed 原则"
+  - "Gate 链式验证：B1 → B3 → B2a → B2b"
+  - "evolution.json append-only"
+  - "所有结论必须有证据引用"
+
+# ============================================================
+# Migration Metadata
+# ============================================================
+migration:
+  task_id: A3
+  wave: 4
+  batch: 1
+  priority: P0
+  decision: MIGRATE
+  status: normalized
+  value_score: 8
+  risk_level: Medium
+  mapping_target: skillforge/src/skills/upgrade_skill.py

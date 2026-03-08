@@ -1,0 +1,59 @@
+schema_version: "0.1.0"
+skill_id: "sandbox_runner"
+name: "Sandbox Runner Adapter"
+description: "Runs skill bundles in an isolated sandbox"
+version: "0.1.0"
+
+# 输入合同
+input:
+  required:
+    - action:
+        type: "string"
+        description: "Action to perform: run_in_sandbox"
+    - params:
+        type: "object"
+        description: "Action parameters including bundle_path and config"
+
+# 输出合同
+output:
+  required:
+    - success:
+        type: "boolean"
+        description: "Whether sandbox execution succeeded"
+    - test_report:
+        type: "object"
+        description: "Test execution report with runs, passed, failed, success_rate, avg_latency_ms, total_cost_usd"
+    - trace_events:
+        type: "array"
+        description: "List of trace events from sandbox execution"
+    - sandbox_report:
+        type: "object"
+        description: "Sandbox resource usage report with cpu_time_ms, memory_peak_mb, violations"
+
+# 能力声明
+capabilities:
+  network: true
+  filesystem: true
+  subprocess: true
+  gpu: false
+
+# 风险等级
+risk_tier: "L2"
+
+# 依赖
+dependencies:
+  adapters: []
+  schemas: []
+  error_codes: ["EXEC_SANDBOX_VIOLATION", "EXEC_TIMEOUT", "SYS_ADAPTER_UNAVAILABLE"]
+
+# 错误处理
+errors:
+  - code: "EXEC_SANDBOX_VIOLATION"
+    retryable: false
+    description: "Sandbox security violation detected"
+  - code: "EXEC_TIMEOUT"
+    retryable: false
+    description: "Sandbox execution exceeded timeout"
+  - code: "SYS_ADAPTER_UNAVAILABLE"
+    retryable: true
+    description: "Sandbox runtime is unavailable"

@@ -1,0 +1,64 @@
+schema_version: "0.1.0"
+skill_id: "sandbox_test_and_trace"
+name: "Sandbox Test and Trace"
+description: "Execute skill implementation in sandbox and collect traces"
+version: "0.1.0"
+
+# 所属路径
+paths: ["A", "B", "AB"]
+stage: 6
+
+# 输入合同
+input:
+  required:
+    - bundle_path:
+        type: "string"
+        description: "Path to skill bundle"
+    - implementation:
+        type: "object"
+        description: "Skill implementation details"
+  optional:
+    - sandbox_config:
+        type: "object"
+        description: "Sandbox configuration overrides"
+
+# 输出合同
+output:
+  required:
+    - schema_version:
+        type: "string"
+        description: "Schema version (0.1.0)"
+    - success:
+        type: "boolean"
+        description: "Whether sandbox execution succeeded"
+    - test_report:
+        type: "object"
+        description: "Test execution report"
+    - trace_events:
+        type: "array"
+        description: "Execution trace events"
+    - sandbox_report:
+        type: "object"
+        description: "Sandbox resource usage report"
+
+# 能力声明
+capabilities:
+  network: true
+  filesystem: true
+  subprocess: true
+  gpu: false
+
+# 风险等级
+risk_tier: "L2"
+
+# 依赖
+dependencies:
+  adapters: ["sandbox_runner"]
+  schemas: []
+  error_codes: []
+
+# 错误处理
+errors:
+  - code: "SANDBOX_TEST_FAILED"
+    retryable: false
+    description: "Sandbox testing failed"

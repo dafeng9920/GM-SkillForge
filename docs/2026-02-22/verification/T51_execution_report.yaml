@@ -1,0 +1,54 @@
+# T51 ExecutionReport
+task_id: "T51"
+executor: "vs--cc3"
+status: "完成"
+deliverables:
+  - path: "scripts/skillforge_audit.py"
+    action: "新建"
+    lines_changed: 195
+    description: "Unified CLI entry point for skillforge audit"
+gate_self_check:
+  - command: "python scripts/skillforge_audit.py audit run --profile l5-static --domains finance,legal --top-n 3"
+    result: "exit 0"
+    output: |
+      [audit] run_id=L5S-20260222045716Z-D64DAEDE
+      [audit] evidence_ref=EV-L5S-L5S-20260222045716Z-D64DAEDE
+      [audit] profile=l5-static
+      [audit] policy_version=v1.0.0-20260222
+      [audit] gate_counts: PASS=3 WARN=0 FAIL=0
+  - command: "python scripts/run_skill_5layer_audit.py --domains finance --top-n 1"
+    result: "exit 0"
+    notes: "Verified original script still works independently"
+constraints_satisfied:
+  - "Supports: audit run --profile l5-static --domains --top-n --output-dir"
+  - "Original script run_skill_5layer_audit.py still works directly"
+  - "No hardcoded domains (domains required via --domains flag)"
+  - "Profile parameter preserved (default: l5-static)"
+evidence_refs:
+  - id: "EV-T51-001"
+    kind: "FILE"
+    locator: "scripts/skillforge_audit.py"
+    sha256: "newly created"
+    description: "New unified CLI entry point"
+  - id: "EV-T51-002"
+    kind: "FILE"
+    locator: "reports/skill-audit/finance_legal_top3_l5-static_2026-02-22.json"
+    sha256: "generated"
+    description: "Audit output JSON report"
+  - id: "EV-T51-003"
+    kind: "FILE"
+    locator: "reports/skill-audit/finance_legal_top3_l5-static_2026-02-22.md"
+    sha256: "generated"
+    description: "Audit output Markdown report"
+  - id: "EV-T51-004"
+    kind: "FILE"
+    locator: "reports/skill-audit/runs/L5S-20260222045716Z-D64DAEDE/run_meta.json"
+    sha256: "generated"
+    description: "Run metadata with evidence chain"
+notes: |
+  Created unified CLI entry point `scripts/skillforge_audit.py` that:
+  - Uses subcommands: `skillforge audit run`
+  - Supports all required flags: --profile, --domains, --top-n, --output-dir
+  - Imports and reuses functions from run_skill_5layer_audit.py (no modification to original)
+  - Produces same output format with run_id, evidence_ref, policy_version
+  - Creates traceable run artifacts in runs/<run_id>/ directory

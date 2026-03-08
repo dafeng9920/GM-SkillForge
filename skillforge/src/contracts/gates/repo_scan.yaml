@@ -1,0 +1,90 @@
+# Repo Scan Fit Score Gate Contract
+# Gate Group: entrance
+# Implements: gate_interface_v1.yaml
+
+gate_id: repo_scan_fit_score
+gate_group: entrance
+description: "Second gate of the migration pipeline - evaluates repository fit score for migration"
+
+# Input Contract
+input:
+  repo_path:
+    type: string
+    format: path
+    required: true
+    description: "Local path to the repository"
+  issue_key:
+    type: string
+    pattern: "^[A-Z]+-[A-Z0-9]+$"
+    required: false
+    description: "Unique request ID (auto-generated if not provided)"
+  min_fit_score:
+    type: number
+    minimum: 0.0
+    maximum: 1.0
+    required: false
+    default: 0.6
+    description: "Minimum fit score threshold"
+
+# Output Contract
+output:
+  gate_name:
+    type: string
+    value: "repo_scan_fit_score"
+  gate_decision:
+    type: string
+    enum: ["PASSED", "REJECTED"]
+  next_action:
+    type: string
+    enum: ["continue", "halt"]
+  error_code:
+    type: string
+    nullable: true
+  evidence_refs:
+    type: array
+    items:
+      $ref: "gate_interface_v1.yaml#/definitions/EvidenceRef"
+
+# Evidence Produced
+evidence:
+  type: ScanReport
+  fields:
+    repo_path: string
+    fit_score: number
+    findings: array
+    scan_timestamp: string
+    status: string
+    component_id: string
+
+# Fit Score Calculation
+fit_score_components:
+  has_readme:
+    weight: 0.2
+    check: "README.md exists"
+  has_package_config:
+    weight: 0.3
+    check: "pyproject.toml or setup.py exists"
+  has_src_dir:
+    weight: 0.2
+    check: "src/ directory exists"
+  has_files:
+    weight: 0.3
+    check: "non-hidden files count > 0"
+
+# Fail-Closed Rules
+fail_closed_rules:
+  FC-SCAN-1:
+    condition: "repo_path is null"
+    action: "REJECTED"
+    error_code: "ERR_REPO_NOT_FOUND"
+  FC-SCAN-2:
+    condition: "repo_path does not exist"
+    action: "REJECTED"
+    error_code: "ERR_FIT_SCORE_LOW"
+  FC-SCAN-3:
+    condition: "fit_score < min_fit_score"
+    action: "REJECTED"
+    error_code: "ERR_FIT_SCORE_LOW"
+
+# Tool Metadata
+tool_revision: "v1.0.0"

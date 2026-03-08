@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   openclaw-db:
     image: postgres:15-alpine
@@ -16,43 +18,36 @@ services:
       retries: 5
 
   openclaw-agent:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        OPENCLAW_VERSION: "${OPENCLAW_VERSION:-2026.2.26}"
-    image: openclaw-agent:secure-2026.03
+    # We use the official node image to run the npm install and start the daemon
+    # This ensures maximum compatibility with the CLI
+    image: node:22-bookworm-slim
     container_name: openclaw_core
     restart: unless-stopped
     depends_on:
       openclaw-db:
         condition: service_healthy
-    env_file:
-      - .env
     environment:
-      DATABASE_URL: postgresql://clawuser:clawpassword@openclaw-db:5432/openclaw
-      NODE_ENV: production
-      HOME: /home/node
-      OPENCLAW_HOME: /home/node/.openclaw
-      OPENAI_API_KEY: ${OPENAI_API_KEY:?OPENAI_API_KEY is required}
-      OPENAI_API_BASE: ${OPENAI_API_BASE:?OPENAI_API_BASE is required}
-      DISCORD_TOKEN: ${DISCORD_TOKEN:?DISCORD_TOKEN is required}
-      OPENCLAW_GATEWAY_TOKEN: ${OPENCLAW_GATEWAY_TOKEN:?OPENCLAW_GATEWAY_TOKEN is required}
-      ZAI_API_KEY: ${ZAI_API_KEY:-}
-      OPENCLAW_CONFIG_PATH: /home/node/.openclaw/openclaw.json
+      - DATABASE_URL=${DATABASE_URL}
+      - NODE_ENV=production
+      - ZAI_API_KEY=${ZAI_API_KEY}
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
     ports:
-      - "127.0.0.1:18789:18789"
-    user: "0:0"
-    security_opt:
-      - no-new-privileges:true
-    cap_drop:
-      - ALL
-    read_only: false
+      - "18789:18789" # OpenClaw Dashboard
     volumes:
-      - ./data:/home/node/.openclaw:rw
-      - ./data/logs:/tmp/openclaw:rw
-    working_dir: /home/node
-    command: ["openclaw", "gateway", "run", "--port", "18789", "--bind", "loopback", "--allow-unconfigured"]
+      - ./data:/root/.openclaw # Persist Agent configuration and local files
+      - ./data/logs:/tmp/openclaw # Expose logs for SkillForge monitoring
+    working_dir: /app
+    # The entrypoint installs openclaw globally and starts the daemon
+    command: >
+      sh -c "
+      if [ ! -f /usr/local/bin/openclaw ]; then
+        apt-get update && apt-get install -y git python3 build-essential cmake &&
+        npm config set registry https://registry.npmmirror.com &&
+        npm install -g openclaw@latest
+      fi &&
+      echo 'Starting OpenClaw...' &&
+      openclaw gateway run --port 18789 --allow-unconfigured --bind lan
+      "
 
 volumes:
   openclaw_pgdata:

@@ -1,0 +1,10 @@
+{
+  "receipt_id": "RCP-L45-3BAC642E",
+  "run_id": "RUN-L4-1771606048-TEST0001",
+  "evidence_ref": "EV-EXEC-L4-1771606048-TEST0001",
+  "gate_decision": "PASSED",
+  "executed_at": "2026-02-20T16:47:28Z",
+  "skill_id": "test_skill",
+  "workflow_id": "wf_test",
+  "replay_pointer": null
+}

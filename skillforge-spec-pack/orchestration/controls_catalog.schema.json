@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://gm-os.dev/orchestration/controls_catalog.schema.json",
+  "title": "ControlsCatalog",
+  "description": "控制字段目录 Schema",
+  "type": "object",
+  "required": ["schema_version", "canonical_object", "fields"],
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^0\\.1\\.\\d+$" },
+    "canonical_object": { "const": "controls" },
+    "description": { "type": "string" },
+    "fields": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["type", "description", "default"],
+        "properties": {
+          "type": { "type": "string" },
+          "description": { "type": "string" },
+          "default": {},
+          "minimum": { "type": "number" },
+          "maximum": { "type": "number" },
+          "pattern": { "type": "string" },
+          "enum": { "type": "array" },
+          "items": { "type": "object" },
+          "aliases": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+    "validation_rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "rule": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "examples": { "type": "object" }
+  },
+  "version": "0.1.0"
+}

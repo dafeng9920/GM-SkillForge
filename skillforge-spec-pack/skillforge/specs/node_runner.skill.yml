@@ -1,0 +1,91 @@
+schema_version: "0.1.0"
+skill_id: "node_runner"
+name: "Node Runner"
+description: "Single-node executor with trace, timeout, and retry"
+version: "0.1.0"
+
+# 输入合同
+input:
+  required:
+    - handler:
+        type: "object"
+        description: "NodeHandler instance to execute"
+    - input_data:
+        type: "object"
+        description: "Pre-validated input payload for the node"
+  optional:
+    - timeout_seconds:
+        type: "integer"
+        default: 30
+        description: "Override per-attempt timeout (default: 30s)"
+    - max_retries:
+        type: "integer"
+        default: 3
+        description: "Override max execution attempts (default: 3)"
+
+# 执行行为
+behavior:
+  retry_strategy: "exponential_backoff"
+  backoff_formula: "retry_delay_seconds * 2^retries_used"
+  retry_delay_seconds_default: 1.0
+  trace_lifecycle: ["start", "error (on failure)", "complete (on success)"]
+  execution_flow:
+    - "1. Resolve timeout/max_retries defaults"
+    - "2. Emit trace: start"
+    - "3. Validate input via handler.validate_input()"
+    - "4. Retry loop: handler.execute() with exponential backoff"
+    - "5. Validate output via handler.validate_output()"
+    - "6. Emit trace: complete with duration_ms"
+
+# 输出合同
+output:
+  required:
+    - node_id:
+        type: "string"
+        description: "Identifier of the executed node (from handler.node_id)"
+    - output:
+        type: "object"
+        description: "Node execution output"
+    - trace_events:
+        type: "array"
+        description: "List of trace event objects (start + optional errors + complete)"
+    - duration_ms:
+        type: "integer"
+        description: "Total node execution time in milliseconds"
+    - retries_used:
+        type: "integer"
+        description: "Number of retries used (0 if first attempt succeeded)"
+
+# 能力声明
+capabilities:
+  network: false
+  filesystem: false
+  subprocess: false
+  gpu: false
+
+# 风险等级
+risk_tier: "L0"
+
+# 依赖
+dependencies:
+  adapters: []
+  schemas: ["trace_event"]
+  error_codes: ["EXEC_VALIDATION_FAILED", "EXEC_TIMEOUT", "EXEC_RETRIES_EXHAUSTED", "EXEC_OUTPUT_INVALID"]
+
+# 错误处理
+errors:
+  - code: "EXEC_VALIDATION_FAILED"
+    retryable: false
+    raises: "ValueError"
+    description: "Input validation failed (handler.validate_input raised exception)"
+  - code: "EXEC_TIMEOUT"
+    retryable: true
+    description: "Single attempt exceeded timeout_seconds"
+  - code: "EXEC_RETRIES_EXHAUSTED"
+    retryable: false
+    raises: "RuntimeError"
+    description: "All retry attempts failed"
+  - code: "EXEC_OUTPUT_INVALID"
+    retryable: false
+    raises: "RuntimeError"
+    description: "Output validation failed (handler.validate_output raised exception)"

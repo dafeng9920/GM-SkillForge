@@ -1,0 +1,123 @@
+.workbench-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+    background-color: var(--gm-color-base-100);
+    color: var(--gm-color-text-primary);
+    overflow: hidden;
+    /* Prevent body scroll, manage scroll inside channels */
+}
+
+.workbench-header {
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--gm-color-border-subtle);
+    background-color: var(--gm-color-base-000);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    /* Visual constraints: solid background, high contrast */
+}
+
+.workbench-main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+    /* Prevent scrolling here, scroll happens in continuous children */
+}
+
+.workbench-channel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    /* Prevent flex box blowout */
+    height: 100%;
+    background-color: var(--gm-color-base-100);
+}
+
+.channel-cognition {
+    /* Subtle distinction for the analysis side if desired, matching dark mode */
+}
+
+.channel-execution {
+    /* Keep it stark for execution */
+    background-color: var(--gm-color-base-000);
+}
+
+.channel-divider {
+    width: 1px;
+    background-color: var(--gm-color-border-subtle);
+    flex-shrink: 0;
+}
+
+.channel-header {
+    flex-shrink: 0;
+    padding: var(--gm-space-4) var(--gm-space-6);
+    border-bottom: 1px solid var(--gm-color-border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.channel-header h2 {
+    font-family: var(--gm-font-heading);
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: var(--gm-color-text-primary);
+    margin: 0;
+}
+
+.channel-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--gm-color-text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.channel-content {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: var(--gm-space-6);
+
+    /* Prefer reduced motion adherence: Smooth scrolling if allowed */
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .channel-content {
+        scroll-behavior: smooth;
+    }
+}
+
+.workbench-footer {
+    flex-shrink: 0;
+    border-top: 1px solid var(--gm-color-border-subtle);
+    background-color: var(--gm-color-base-000);
+    z-index: 10;
+}
+
+/* Mobile Downgrade Constraint: Tabs instead of dual columns */
+@media (max-width: 1024px) {
+    .workbench-main {
+        flex-direction: column;
+        overflow-y: auto;
+        /* Allow entire main to scroll on mobile if stacked */
+    }
+
+    /* Temporary stacking for PoC. In a full implementation, this might use JS for actual tab switching */
+    .workbench-channel {
+        height: auto;
+        overflow-y: visible;
+    }
+
+    .channel-content {
+        overflow-y: visible;
+    }
+
+    .channel-divider {
+        width: 100%;
+        height: 1px;
+        margin: var(--gm-space-4) 0;
+    }
+}

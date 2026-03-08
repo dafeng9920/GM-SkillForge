@@ -1,0 +1,94 @@
+{
+  "intent_id": "cognition_10d",
+  "status": "REJECTED",
+  "repo_url": "https://github.com/gm-skillforge/cognition-engine",
+  "commit_sha": "abcdef1234567890abcd",
+  "at_time": "2026-02-17T10:30:00Z",
+  "rubric_version": "1.0.0",
+  "dimensions": [
+    {
+      "dim_id": "L1",
+      "label": "事实提取",
+      "score": 0,
+      "threshold": 60,
+      "verdict": "FAIL",
+      "evidence_ref": "N/A:input_validation_failed"
+    },
+    {
+      "dim_id": "L2",
+      "label": "概念抽象",
+      "score": 0,
+      "threshold": 55,
+      "verdict": "FAIL",
+      "evidence_ref": "N/A:input_validation_failed"
+    },
+    {
+      "dim_id": "L3",
+      "label": "因果推理",
+      "score": 0,
+      "threshold": 60,
+      "verdict": "FAIL",
+      "evidence_ref": "N/A:input_validation_failed"
+    },
+    {
+      "dim_id": "L4",
+      "label": "结构解构",
+      "score": 0,
+      "threshold": 55,
+      "verdict": "FAIL",
+      "evidence_ref": "N/A:input_validation_failed"
+    },
+    {
+      "dim_id": "L5",
+      "label": "风险感知",
+      "score": 0,
+      "threshold": 60,
+      "verdict": "FAIL",
+      "evidence_ref": "N/A:input_validation_failed"
+    },
+    {
+      "dim_id": "L6",
+      "label": "时序建模",
+      "score": 0,
+      "threshold": 50,
+      "verdict": "FAIL",
+      "evidence_ref": "N/A:input_validation_failed"
+    },
+    {
+      "dim_id": "L7",
+      "label": "跨域关联",
+      "score": 0,
+      "threshold": 50,
+      "verdict": "FAIL",
+      "evidence_ref": "N/A:input_validation_failed"
+    },
+    {
+      "dim_id": "L8",
+      "label": "不确定性标注",
+      "score": 0,
+      "threshold": 55,
+      "verdict": "FAIL",
+      "evidence_ref": "N/A:input_validation_failed"
+    },
+    {
+      "dim_id": "L9",
+      "label": "建议可行性",
+      "score": 0,
+      "threshold": 55,
+      "verdict": "FAIL",
+      "evidence_ref": "N/A:input_validation_failed"
+    },
+    {
+      "dim_id": "L10",
+      "label": "叙事连贯性",
+      "score": 0,
+      "threshold": 60,
+      "verdict": "FAIL",
+      "evidence_ref": "N/A:input_validation_failed"
+    }
+  ],
+  "overall_pass_count": 0,
+  "rejection_reasons": ["FC-2:commit_sha_invalid"],
+  "audit_pack_ref": null,
+  "generated_at": "2026-02-17T10:35:00Z"
+}

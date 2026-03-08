@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://skillforge.local/schemas/cognition/10d_schema.json",
+  "title": "10-Dimensional Cognition Output Schema",
+  "description": "Schema for the 10-dimensional cognition output used in SkillForge governance system.",
+  "version": "v1.0",
+  "type": "object",
+  "required": [
+    "intent_id",
+    "status",
+    "repo_url",
+    "commit_sha",
+    "at_time",
+    "rubric_version",
+    "dimensions",
+    "overall_pass_count",
+    "rejection_reasons",
+    "audit_pack_ref",
+    "generated_at"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "intent_id": {
+      "type": "string",
+      "const": "cognition_10d",
+      "description": "Fixed identifier for the cognition_10d intent"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["PASSED", "REJECTED"],
+      "description": "Overall cognition assessment status"
+    },
+    "repo_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Repository URL being assessed"
+    },
+    "commit_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$",
+      "description": "40-character hexadecimal commit SHA"
+    },
+    "at_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp for time-travel queries"
+    },
+    "rubric_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semver version of the rubric used"
+    },
+    "dimensions": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "description": "Array of exactly 10 cognitive dimension assessments",
+      "items": {
+        "type": "object",
+        "required": ["dim_id", "label", "score", "threshold", "verdict", "evidence_ref"],
+        "additionalProperties": false,
+        "properties": {
+          "dim_id": {
+            "type": "string",
+            "enum": ["L1", "L2", "L3", "L4", "L5", "L6", "L7", "L8", "L9", "L10"],
+            "description": "Unique dimension identifier"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Human-readable dimension label"
+          },
+          "score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Score for this dimension (0-100)"
+          },
+          "threshold": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Passing threshold for this dimension"
+          },
+          "verdict": {
+            "type": "string",
+            "enum": ["PASS", "FAIL"],
+            "description": "Dimension pass/fail verdict"
+          },
+          "evidence_ref": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Reference to evidence artifact for this dimension"
+          }
+        }
+      }
+    },
+    "overall_pass_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10,
+      "description": "Number of dimensions that passed"
+    },
+    "rejection_reasons": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "List of reasons if status is REJECTED"
+    },
+    "audit_pack_ref": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Reference to the full audit pack"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp when this assessment was generated"
+    }
+  },
+  "dimension_definitions": {
+    "L1": {"label": "事实提取", "description": "Fact extraction capability"},
+    "L2": {"label": "概念抽象", "description": "Concept abstraction ability"},
+    "L3": {"label": "因果推理", "description": "Causal reasoning capacity"},
+    "L4": {"label": "结构解构", "description": "Structural decomposition skill"},
+    "L5": {"label": "风险感知", "description": "Risk perception awareness"},
+    "L6": {"label": "时序建模", "description": "Temporal modeling proficiency"},
+    "L7": {"label": "跨域关联", "description": "Cross-domain association capability"},
+    "L8": {"label": "不确定性标注", "description": "Uncertainty annotation accuracy"},
+    "L9": {"label": "建议可行性", "description": "Suggestion feasibility assessment"},
+    "L10": {"label": "叙事连贯性", "description": "Narrative coherence quality"}
+  },
+  "overall_policy": {
+    "pass_min_count": 8,
+    "critical_dimensions": ["L1", "L3", "L5", "L10"],
+    "rule": "pass_count >= 8 AND all critical_dimensions must PASS"
+  }
+}

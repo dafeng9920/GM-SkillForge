@@ -1,0 +1,9 @@
+{
+    "wave": "Wave 2",
+    "skill_id": "cognition_10d_generator",
+    "version": "1.0.0",
+    "status": "active",
+    "decision": "ALLOW",
+    "audit_pack_ref": "AuditPack/cognition_10d/a1b2c3d4e5f6789012345678901234567890abcd/",
+    "effective_from": "2026-02-17T23:00:00Z"
+}

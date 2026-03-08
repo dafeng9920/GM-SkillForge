@@ -1,0 +1,25 @@
+{
+  "schema_version": "0.1.0",
+  "gate_id": "550e8400-e29b-41d4-a716-446655440002",
+  "node_id": "license_gate",
+  "job_id": "550e8400-e29b-41d4-a716-446655440000",
+  "decision": "REQUIRES_CHANGES",
+  "risk_tier": "L2",
+  "reasons": [
+    {
+      "code": "AUDIT_LICENSE_UNKNOWN",
+      "message": "未能识别许可证类型",
+      "severity": "warning"
+    }
+  ],
+  "required_changes": [
+    {
+      "kind": "ADD_LICENSE",
+      "description": "在仓库根目录添加 LICENSE 文件",
+      "patch_hints": ["使用 MIT 或 Apache-2.0 许可证"],
+      "target_path": "/LICENSE"
+    }
+  ],
+  "decided_at": "2026-02-15T12:05:00Z",
+  "expires_at": "2026-02-16T12:05:00Z"
+}

@@ -1,0 +1,18 @@
+task_id: "T{N}"
+executor: "{执行者}"
+status: "完成|部分完成|阻塞"
+
+deliverables:
+  - path: "path/to/file"
+    action: "新建|修改"
+    lines_changed: 0
+
+gate_self_check:
+  - command: "python scripts/run_l3_gap_closure.py"
+    result: "PASS|FAIL"
+
+notes: ""
+evidence_refs:
+  - id: "EV-..."
+    kind: "LOG|FILE|DIFF|SNIPPET"
+    locator: "path:line"

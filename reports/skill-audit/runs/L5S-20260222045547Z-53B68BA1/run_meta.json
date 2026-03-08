@@ -1,0 +1,12 @@
+{
+  "run_id": "L5S-20260222045547Z-53B68BA1",
+  "evidence_ref": "EV-L5S-L5S-20260222045547Z-53B68BA1",
+  "policy_version": "v1.0.0-20260222",
+  "profile": "l5-static",
+  "input_hash": "ae2b9c980e9c3d27c5e7d95acc4a883cf5855a59336dffa8a59fdfca8a773a66",
+  "result_hash": "e5c67b18a7438b53274bb2530ed05ac330b9c897924df2ea784ebbe877390506",
+  "report_json": "D:\\GM-SkillForge\\reports\\skill-audit\\finance_legal_top3_l5-static_2026-02-22.json",
+  "report_md": "D:\\GM-SkillForge\\reports\\skill-audit\\finance_legal_top3_l5-static_2026-02-22.md",
+  "run_json": "D:\\GM-SkillForge\\reports\\skill-audit\\runs\\L5S-20260222045547Z-53B68BA1\\report.json",
+  "run_md": "D:\\GM-SkillForge\\reports\\skill-audit\\runs\\L5S-20260222045547Z-53B68BA1\\report.md"
+}

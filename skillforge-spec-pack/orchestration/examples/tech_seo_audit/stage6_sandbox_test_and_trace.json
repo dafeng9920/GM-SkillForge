@@ -1,0 +1,45 @@
+{
+  "node_id": "sandbox_test_and_trace",
+  "stage": 6,
+  "input": {
+    "scaffold_bundle_path": "/skills/tech_seo_audit/550e8400-e29b-41d4-a716-446655440000/",
+    "gate_decision": {
+      "schema_version": "0.1.0",
+      "gate_id": "gate-550e8400-e29b-41d4-a716-446655440000",
+      "node_id": "constitution_risk_gate",
+      "job_id": "550e8400-e29b-41d4-a716-446655440000",
+      "decision": "ALLOW",
+      "risk_tier": "L1",
+      "decided_at": "2026-02-15T10:45:00Z",
+      "expires_at": "2026-02-15T11:45:00Z"
+    },
+    "test_cases": [
+      {
+        "name": "basic_seo_audit",
+        "input": { "url": "https://example.com" },
+        "expected_output": { "score_min": 0, "has_issues": true }
+      },
+      {
+        "name": "deep_crawl_audit",
+        "input": { "url": "https://example.com", "depth": 2 },
+        "expected_output": { "score_min": 0, "has_issues": true }
+      },
+      {
+        "name": "external_link_check",
+        "input": { "url": "https://example.com", "check_external_links": true },
+        "expected_output": { "score_min": 0, "has_issues": true }
+      }
+    ]
+  },
+  "output": {
+    "test_report": {
+      "total_runs": 3,
+      "passed": 3,
+      "failed": 0,
+      "success_rate": 1.0,
+      "avg_latency_ms": 1250.5,
+      "total_cost_usd": 0.0025
+    },
+    "trace_path": "/skills/tech_seo_audit/550e8400-e29b-41d4-a716-446655440000/run_trace.jsonl"
+  }
+}

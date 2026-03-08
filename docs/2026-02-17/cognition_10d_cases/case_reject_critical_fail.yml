@@ -1,0 +1,16 @@
+case_id: case_reject_critical_fail
+description: "9 dimensions pass but L5 (critical) fails - should be REJECTED"
+input:
+  repo_url: "https://github.com/example/repo"
+  commit_sha: "2222222222222222222222222222222222222222"
+  at_time: "2026-02-17T12:00:00Z"
+  rubric_version: "1.0.0"
+  requester_id: "test_runner"
+expected:
+  status: REJECTED
+  overall_pass_count: 9
+  rejection_reasons_contains: ["L5"]
+assertions:
+  - 'L5 verdict == FAIL'
+  - 'len(dimensions) == 10'
+  - 'status == "REJECTED"'

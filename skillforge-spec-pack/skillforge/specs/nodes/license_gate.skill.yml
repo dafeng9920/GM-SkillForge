@@ -1,0 +1,80 @@
+schema_version: "0.1.0"
+skill_id: "license_gate"
+name: "License Gate"
+description: "Validates repository license compatibility"
+version: "0.1.0"
+
+# 所属路径
+paths: ["B", "AB"]
+stage: 1
+
+# 输入合同
+input:
+  required:
+    - intake_repo:
+        type: "object"
+        description: "IntakeRepo 节点的输出（含 repo_info.license）"
+        source: "input_data['intake_repo']"
+
+# 评估规则
+evaluation_rules:
+  allowed_licenses: ["MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "ISC", "0BSD", "Unlicense"]
+  decisions:
+    ALLOW: "license 在白名单内"
+    DENY:
+      - "license 为 None 或空字符串 → 'No license detected'"
+      - "license 不在白名单 → 'License {x} is not approved'"
+
+# 输出合同 (GateDecision)
+output:
+  required:
+    - schema_version:
+        type: "string"
+        value: "0.1.0"
+    - gate_id:
+        type: "string"
+        value: "license_gate"
+    - node_id:
+        type: "string"
+    - decision:
+        type: "string"
+        enum: ["ALLOW", "DENY", "REQUIRES_CHANGES"]
+    - reason:
+        type: "string"
+    - details:
+        type: "object"
+        fields:
+          license_detected: "str | None"
+          compatible: "bool"
+          allowed_licenses: "list[str]"
+    - timestamp:
+        type: "string"
+        format: "ISO-8601"
+
+# 能力声明
+capabilities:
+  network: false
+  filesystem: false
+  subprocess: false
+  gpu: false
+
+# 风险等级
+risk_tier: "L0"
+
+# 依赖
+dependencies:
+  adapters: []
+  schemas: ["gate_decision"]
+  error_codes: ["EXEC_VALIDATION_FAILED", "GATE_INVALID_DECISION", "SCHEMA_INVALID"]
+
+# 错误处理
+errors:
+  - code: "EXEC_VALIDATION_FAILED"
+    retryable: false
+    description: "intake_repo output missing or lacks repo_info"
+  - code: "GATE_INVALID_DECISION"
+    retryable: false
+    description: "Output decision not in [ALLOW, DENY, REQUIRES_CHANGES]"
+  - code: "SCHEMA_INVALID"
+    retryable: false
+    description: "Output missing required GateDecision fields"

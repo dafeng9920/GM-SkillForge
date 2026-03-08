@@ -1,0 +1,29 @@
+# cognition_10d Rubric
+# Extracted from: docs/2026-02-17/GM-SkillForge · cognition_10d 四件套.md
+
+rubric_id: cognition_10d_rubric
+rubric_version: "1.0.0"
+effective_from: "2026-02-17T00:00:00Z"
+schema_compat: "cognition_10d.intent/1.0.0"
+
+dimensions:
+  - { dim_id: L1, label: "事实提取", threshold: 60 }
+  - { dim_id: L2, label: "概念抽象", threshold: 55 }
+  - { dim_id: L3, label: "因果推理", threshold: 60 }
+  - { dim_id: L4, label: "结构解构", threshold: 55 }
+  - { dim_id: L5, label: "风险感知", threshold: 60 }
+  - { dim_id: L6, label: "时序建模", threshold: 50 }
+  - { dim_id: L7, label: "跨域关联", threshold: 50 }
+  - { dim_id: L8, label: "不确定性标注", threshold: 55 }
+  - { dim_id: L9, label: "建议可行性", threshold: 55 }
+  - { dim_id: L10, label: "叙事连贯性", threshold: 60 }
+
+overall_policy:
+  pass_min_count: 8
+  critical_dimensions: [L1, L3, L5, L10]
+  rule: "pass_count >= 8 且 critical_dimensions 全 PASS 才是 PASSED"
+
+meta:
+  created_by: gm-skillforge
+  created_at: "2026-02-17T00:00:00Z"
+  change_policy: "变更必须升级版本并保留旧版以支持 at-time 回放"

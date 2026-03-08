@@ -1,0 +1,317 @@
+{
+  "skill_id": "L4-SKILL-06",
+  "skill_name": "p2-final-gate-aggregate-skill",
+  "decision": "FINAL_PASS",
+  "task_range": "T70-T79",
+  "generated_at": "2026-02-22T12:39:45Z",
+  "reasons": [
+    "所有 10 个任务 triad 文件完整",
+    "所有 gate_decision.decision = ALLOW",
+    "所有 compliance_attestation.decision = PASS",
+    "三权门禁聚合逻辑验证通过"
+  ],
+  "tasks_summary": [
+    {
+      "task_id": "T70",
+      "triad_complete": true,
+      "gate_decision": "ALLOW",
+      "compliance_decision": "PASS"
+    },
+    {
+      "task_id": "T71",
+      "triad_complete": true,
+      "gate_decision": "ALLOW",
+      "compliance_decision": "PASS"
+    },
+    {
+      "task_id": "T72",
+      "triad_complete": true,
+      "gate_decision": "ALLOW",
+      "compliance_decision": "PASS"
+    },
+    {
+      "task_id": "T73",
+      "triad_complete": true,
+      "gate_decision": "ALLOW",
+      "compliance_decision": "PASS"
+    },
+    {
+      "task_id": "T74",
+      "triad_complete": true,
+      "gate_decision": "ALLOW",
+      "compliance_decision": "VERIFIED"
+    },
+    {
+      "task_id": "T75",
+      "triad_complete": true,
+      "gate_decision": "ALLOW",
+      "compliance_decision": "PASS"
+    },
+    {
+      "task_id": "T76",
+      "triad_complete": true,
+      "gate_decision": "ALLOW",
+      "compliance_decision": "PASS"
+    },
+    {
+      "task_id": "T77",
+      "triad_complete": true,
+      "gate_decision": "ALLOW",
+      "compliance_decision": "PASS"
+    },
+    {
+      "task_id": "T78",
+      "triad_complete": true,
+      "gate_decision": "ALLOW",
+      "compliance_decision": "PASS"
+    },
+    {
+      "task_id": "T79",
+      "triad_complete": true,
+      "gate_decision": "ALLOW",
+      "compliance_decision": "PASS"
+    }
+  ],
+  "evidence_refs": [
+    {
+      "id": "EV-T70-REVIEW-001",
+      "kind": "FILE",
+      "locator": "scripts/verify_guard_signature.py",
+      "description": "签名校验脚本存在，含350行完整代码"
+    },
+    {
+      "id": "EV-T70-REVIEW-002",
+      "kind": "SNIPPET",
+      "locator": "scripts/verify_guard_signature.py:45-48",
+      "content": "def compute_signature(content: str, key: bytes) -> str:\n    return hmac.new(key, content.encode('utf-8'), hashlib.sha256).hexdigest()",
+      "description": "HMAC-SHA256 签名算法实现"
+    },
+    {
+      "id": "EV-T70-REVIEW-003",
+      "kind": "SNIPPET",
+      "locator": "scripts/verify_guard_signature.py:23-25",
+      "content": "REPORT_PATTERNS = ['*_execution_report.yaml', '*_gate_decision.json', '*_compliance_attestation.json']",
+      "description": "报告文件模式匹配"
+    },
+    {
+      "id": "EV-T70-REVIEW-004",
+      "kind": "SNIPPET",
+      "locator": "scripts/verify_guard_signature.py:185-195",
+      "description": "验证结果报告生成逻辑"
+    },
+    {
+      "id": "EV-T70-REVIEW-005",
+      "kind": "LOG",
+      "locator": "auto_check execution",
+      "description": "auto_check: verify_guard_signature.py --verify-all exit 0"
+    },
+    {
+      "id": "EV-T70-REVIEW-006",
+      "kind": "FILE",
+      "locator": "docs/2026-02-22/verification/T62_execution_report.yaml",
+      "description": "T62依赖完成"
+    },
+    {
+      "id": "EV-T70-REVIEW-007",
+      "kind": "FILE",
+      "locator": "docs/2026-02-22/verification/signature_verification_report.json",
+      "description": "签名验证报告已生成"
+    },
+    {
+      "id": "EV-T71-001",
+      "kind": "FILE",
+      "locator": "scripts/verify_evidence_chain.py"
+    },
+    {
+      "id": "EV-T71-002",
+      "kind": "FILE",
+      "locator": "docs/2026-02-22/tasks/T71_Kior-A.md"
+    },
+    {
+      "id": "EV-T71-003",
+      "kind": "FILE",
+      "locator": "docs/2026-02-22/verification/T71_execution_report.yaml"
+    },
+    {
+      "id": "EV-T72-GATE-001",
+      "kind": "FILE",
+      "locator": "docs/2026-02-22/tasks/T72_Kior-B.md"
+    },
+    {
+      "id": "EV-T72-GATE-002",
+      "kind": "FILE",
+      "locator": "docs/2026-02-22/verification/T72_execution_report.yaml"
+    },
+    {
+      "id": "EV-T72-GATE-003",
+      "kind": "FILE",
+      "locator": "docs/2026-02-22/verification/rollback_drill.md"
+    },
+    {
+      "id": "EV-T72-GATE-004",
+      "kind": "FILE",
+      "locator": "docs/2026-02-22/verification/rollback_tombstone.json"
+    },
+    {
+      "id": "EV-T72-GATE-005",
+      "kind": "DECISION",
+      "locator": "docs/2026-02-22/verification/T60_gate_decision.json",
+      "content_snippet": "T60 ALLOW"
+    },
+    {
+      "id": "EV-T72-GATE-006",
+      "kind": "DECISION",
+      "locator": "docs/2026-02-22/verification/T61_gate_decision.json",
+      "content_snippet": "T61 ALLOW"
+    },
+    {
+      "id": "EV-T73-001",
+      "task_id": "T73"
+    },
+    {
+      "id": "EV-T73-002",
+      "task_id": "T73"
+    },
+    {
+      "id": "EV-T73-003",
+      "task_id": "T73"
+    },
+    {
+      "id": "EV-T73-004",
+      "task_id": "T73"
+    },
+    {
+      "id": "EV-T75-001",
+      "task_id": "T75"
+    },
+    {
+      "id": "EV-T75-002",
+      "task_id": "T75"
+    },
+    {
+      "id": "EV-T75-003",
+      "task_id": "T75"
+    },
+    {
+      "id": "EV-T75-004",
+      "task_id": "T75"
+    },
+    {
+      "id": "EV-T75-005",
+      "task_id": "T75"
+    },
+    {
+      "id": "EV-T75-006",
+      "task_id": "T75"
+    },
+    {
+      "id": "EV-T76-GATE-001",
+      "kind": "FILE",
+      "locator": "docs/2026-02-22/tasks/T76_vs--cc3.md"
+    },
+    {
+      "id": "EV-T76-GATE-002",
+      "kind": "FILE",
+      "locator": "docs/2026-02-22/verification/n8n_probe_report.json"
+    },
+    {
+      "id": "EV-T76-GATE-003",
+      "kind": "SNIPPET",
+      "locator": "ui/app/src/pages/execute/RunIntentPage.tsx:69-73"
+    },
+    {
+      "id": "EV-T76-GATE-004",
+      "kind": "SNIPPET",
+      "locator": "ui/app/src/mocks/orchestrationProjection.mock.ts:74-81"
+    },
+    {
+      "id": "EV-T77-001",
+      "kind": "FILE",
+      "locator": "docs/2026-02-22/verification/l3_auditpack_report.json"
+    },
+    {
+      "id": "EV-T77-002",
+      "kind": "FILE",
+      "locator": "docs/2026-02-22/tasks/T77_Kior-A.md"
+    },
+    {
+      "id": "EV-T77-003",
+      "kind": "FILE",
+      "locator": "docs/2026-02-22/verification/T77_execution_report.yaml"
+    },
+    {
+      "id": "EV-T78-REVIEW-001",
+      "kind": "FILE",
+      "locator": "docs/2026-02-22/verification/skills_test_coverage.json",
+      "description": "覆盖率基线报告存在，含350行完整JSON"
+    },
+    {
+      "id": "EV-T78-REVIEW-002",
+      "kind": "INVENTORY",
+      "locator": "skills_test_coverage.json:skills_inventory",
+      "content": "14 skills with has_tests, test_count, priority fields",
+      "description": "完整 skills 清单"
+    },
+    {
+      "id": "EV-T78-REVIEW-003",
+      "kind": "SNIPPET",
+      "locator": "skills_test_coverage.json:summary",
+      "content": "\"total_skills\": 14, \"skills_with_tests\": 0, \"current_coverage_percent\": 0.0",
+      "description": "覆盖率汇总统计"
+    },
+    {
+      "id": "EV-T78-REVIEW-004",
+      "kind": "SNIPPET",
+      "locator": "skills_test_coverage.json:threshold_policy",
+      "content": "\"minimum_coverage_percent\": 60.0, \"critical_skills_minimum\": 80.0",
+      "description": "阈值策略定义"
+    },
+    {
+      "id": "EV-T78-REVIEW-005",
+      "kind": "SNIPPET",
+      "locator": "skills_test_coverage.json:improvement_roadmap",
+      "description": "三阶段改进路线图"
+    },
+    {
+      "id": "EV-T78-REVIEW-006",
+      "kind": "LOG",
+      "locator": "auto_check execution",
+      "description": "auto_check: skills_test_coverage.json JSON valid"
+    },
+    {
+      "id": "EV-T78-REVIEW-007",
+      "kind": "FILE",
+      "locator": "docs/2026-02-22/verification/T76_execution_report.yaml",
+      "description": "T76依赖完成"
+    },
+    {
+      "id": "EV-T78-REVIEW-008",
+      "kind": "DIRECTORY_SCAN",
+      "locator": "skills/*",
+      "description": "14 skill 目录已验证"
+    },
+    {
+      "id": "EV-T79-001",
+      "task_id": "T79"
+    },
+    {
+      "id": "EV-T79-002",
+      "task_id": "T79"
+    },
+    {
+      "id": "EV-T79-003",
+      "task_id": "T79"
+    }
+  ],
+  "aggregation_summary": {
+    "total_tasks": 10,
+    "complete_triads": 10,
+    "all_allow": true,
+    "all_pass": true,
+    "has_missing": false
+  },
+  "constitution_refs": [
+    "docs/EXECUTION_GUARD_A_PROPOSAL_SKILL_v1.md",
+    "docs/EXECUTION_GUARD_B_EXECUTION_SKILL_v1.md"
+  ]
+}

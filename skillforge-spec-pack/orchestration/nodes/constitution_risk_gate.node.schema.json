@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://gm-os.dev/orchestration/nodes/constitution_risk_gate.schema.json",
+  "title": "ConstitutionRiskGateNode",
+  "description": "Stage 4: 宪法门禁与风险分级",
+  "type": "object",
+  "required": ["node_id", "input", "output"],
+  "properties": {
+    "node_id": { "const": "constitution_risk_gate" },
+    "stage": { "const": 4 },
+    "input": {
+      "type": "object",
+      "required": ["capabilities", "scan_report"],
+      "properties": {
+        "capabilities": { "type": "array", "items": { "type": "string" } },
+        "scan_report": { "type": "object" }
+      }
+    },
+    "output": {
+      "type": "object",
+      "required": ["gate_decision", "risk_tier"],
+      "properties": {
+        "gate_decision": {
+          "type": "object",
+          "required": ["decision"],
+          "properties": {
+            "decision": { "type": "string", "enum": ["ALLOW", "DENY", "REQUIRES_CHANGES"] },
+            "reasons": { "type": "array", "items": { "type": "object" } },
+            "required_changes": { "type": "array", "items": { "type": "object" } }
+          }
+        },
+        "risk_tier": {
+          "type": "string",
+          "enum": ["L0", "L1", "L2", "L3"],
+          "description": "风险分级"
+        }
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["GATE_POLICY_DENY", "GATE_REQUIRES_CHANGES"]
+      }
+    }
+  },
+  "version": "0.1.0"
+}

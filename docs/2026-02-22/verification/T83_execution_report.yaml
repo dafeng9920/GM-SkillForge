@@ -1,0 +1,139 @@
+# T83 Execution Report
+# L4-SKILL-07: 密码学签名门禁实施 (Fail-Closed)
+
+task_id: T83
+skill_id: L4-SKILL-07
+executor: Antigravity-1
+execution_role: Execution
+generated_at: 2026-02-22T22:00:00Z
+depends_on:
+  - T81 (Pre-review: ALLOW)
+  - T82 (Compliance: PASS)
+
+## Execution Summary
+summary: |
+  实现 L4-SKILL-07 密码学签名硬门禁 (Fail-Closed)。
+  将"时间戳签署"升级为"密码学验签"，确保：
+  - 缺失签名 => REQUIRES_CHANGES
+  - 验签失败 => DENY
+  - 非法 signer_id => DENY
+  - 保持 L4-SKILL-06.1 strict decision 规则
+
+## Implementation Details
+
+### 1. --require-crypto-signature 参数 (IC-T84-001)
+status: COMPLETED
+file: skills/p2-final-gate-aggregate-skill/aggregate_final_gate.py
+changes:
+  - 新增 --require-crypto-signature 命令行参数
+  - 参数与 --require-signatures 区分，独立控制密码学验签
+  - 更新 FinalGateAggregator 类支持新参数
+evidence:
+  - locator: aggregate_final_gate.py:773-777
+    description: 新增 --require-crypto-signature 参数定义
+
+### 2. signer_id 允许名单机制 (IC-T84-003)
+status: COMPLETED
+file: scripts/verify_guard_signature.py
+changes:
+  - 新增 ALLOWED_SIGNER_IDS 配置集合
+  - 新增 validate_signer_id() 验证函数
+  - 新增 get_allowed_signer_ids() 获取允许名单
+  - 允许的 signer_id: Antigravity-1, Antigravity-2, Kior-C, Codex, vs--cc2, vs--cc3
+evidence:
+  - locator: verify_guard_signature.py:37-53
+    description: ALLOWED_SIGNER_IDS 配置和告警代码定义
+  - locator: verify_guard_signature.py:68-81
+    description: validate_signer_id() 函数实现
+
+### 3. 集成验签逻辑 (IC-T84-002, IC-T84-004, IC-T84-005)
+status: COMPLETED
+file: skills/p2-final-gate-aggregate-skill/aggregate_final_gate.py
+changes:
+  - 新增 check_crypto_signatures() 方法到 TriadFiles 类
+  - 新增 verify_triad_crypto_signatures() 集成验证
+  - 实现 Fail-Closed 决策逻辑:
+    - has_invalid_crypto_signature or has_invalid_signer_id => DENY
+    - has_missing_crypto_signature => REQUIRES_CHANGES
+  - 更新 aggregate() 方法集成密码学验签
+evidence:
+  - locator: aggregate_final_gate.py:268-332
+    description: check_crypto_signatures() 方法实现
+  - locator: aggregate_final_gate.py:484-506
+    description: Fail-Closed 决策逻辑
+
+### 4. 更新 SKILL.md 文档 (IC-T84-006)
+status: COMPLETED
+file: skills/p2-final-gate-aggregate-skill/SKILL.md
+changes:
+  - 添加 L4-SKILL-07 密码学签名门禁说明
+  - 添加允许的 signer_id 列表
+  - 添加 --require-crypto-signature 使用说明
+  - 添加告警代码说明表
+  - 更新版本号为 v1.2.0
+evidence:
+  - locator: SKILL.md:47-98
+    description: L4-SKILL-07 密码学签名门禁完整说明
+
+## Files Modified
+
+modified_files:
+  - path: skills/p2-final-gate-aggregate-skill/aggregate_final_gate.py
+    sha256: pending_calculation
+    lines_added: 150
+    lines_modified: 30
+    description: 添加 --require-crypto-signature 和集成验签逻辑
+  - path: scripts/verify_guard_signature.py
+    sha256: pending_calculation
+    lines_added: 180
+    lines_modified: 10
+    description: 添加 signer_id 允许名单和密码学验签函数
+  - path: skills/p2-final-gate-aggregate-skill/SKILL.md
+    sha256: pending_calculation
+    lines_added: 80
+    lines_modified: 15
+    description: 更新文档说明密码学签名门禁
+
+## Acceptance Tests Status
+
+acceptance_tests:
+  - id: AT-T83-001
+    requirement: "--require-crypto-signature 可触发严格验签"
+    status: IMPLEMENTED
+    evidence: "aggregate_final_gate.py:773-777 --require-crypto-signature 参数"
+  - id: AT-T83-002
+    requirement: "缺签名文件可被拦截 => REQUIRES_CHANGES"
+    status: IMPLEMENTED
+    evidence: "aggregate_final_gate.py:497-498 has_missing_crypto_signature => REQUIRES_CHANGES"
+  - id: AT-T83-003
+    requirement: "验签失败可被拦截 => DENY"
+    status: IMPLEMENTED
+    evidence: "aggregate_final_gate.py:494-496 has_invalid_crypto_signature => DENY"
+  - id: AT-T83-004
+    requirement: "非法 signer_id 可被拦截 => DENY"
+    status: IMPLEMENTED
+    evidence: "aggregate_final_gate.py:494-496 has_invalid_signer_id => DENY"
+  - id: AT-T83-005
+    requirement: "保持 L4-SKILL-06.1 strict decision 规则"
+    status: MAINTAINED
+    evidence: "aggregate_final_gate.py:197-215 get_compliance_decision_value_strict() 未修改"
+
+## Constitution Compliance
+
+constitution_refs:
+  - docs/EXECUTION_GUARD_A_PROPOSAL_SKILL_v1.md
+  - docs/EXECUTION_GUARD_B_EXECUTION_SKILL_v1.md
+
+compliance_checklist:
+  within_allowed_scope: true
+  no_prohibited_modifications: true
+  three_role_separation: true
+  fail_closed_logic: true
+  evidence_requirements_met: true
+
+## Next Steps
+
+next_steps:
+  - T84: Review 验收 (Antigravity-2)
+  - T85: Compliance 终审 (Kior-C)
+  - T86: Final Gate (Codex)

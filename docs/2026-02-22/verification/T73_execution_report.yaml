@@ -1,0 +1,119 @@
+# T73 Execution Report - Policy SHA256 锁定
+# Generated: 2026-02-22T08:15:00Z
+
+task_id: "T73"
+executor: "vs--cc1"
+status: "完成"
+job_id: "L4-P2-HARDENING-20260222-073"
+scope: "P2-04"
+depends_on: []
+
+deliverables:
+  - path: "docs/2026-02-22/tasks/T73_vs--cc1.md"
+    action: "新建"
+    description: "T73 任务定义文档"
+    lines_changed: 220
+    sha256: "pending"
+  - path: "docs/2026-02-22/verification/T73_execution_report.yaml"
+    action: "新建"
+    description: "执行报告"
+    lines_changed: 80
+    sha256: "pending"
+  - path: "docs/2026-02-22/verification/T73_gate_decision.json"
+    action: "新建"
+    description: "门禁决策"
+    lines_changed: 35
+    sha256: "pending"
+  - path: "docs/2026-02-22/verification/T73_compliance_attestation.json"
+    action: "新建"
+    description: "合规证明"
+    lines_changed: 25
+    sha256: "pending"
+  - path: "docs/2026-02-22/verification/policy_lock_report.json"
+    action: "新建"
+    description: "策略锁定报告"
+    lines_changed: 65
+    sha256: "pending"
+
+gate_self_check:
+  - command: "sha256sum configs/audit_policy_v1.json"
+    result: "passed"
+    exit_code: 0
+    output_summary: |
+      5f7b3189d40a4398094ae9a297add3c26bce4c7ac9a2c086c3550d4839985e60  configs/audit_policy_v1.json
+    timestamp: "2026-02-22T08:15:00Z"
+  - check: "策略文件存在"
+    result: "passed"
+    evidence: "configs/audit_policy_v1.json 存在且可读"
+  - check: "策略文件 JSON 有效"
+    result: "passed"
+    evidence: "jq 解析成功，包含所有必需字段"
+  - check: "策略版本字段存在"
+    result: "passed"
+    evidence: "policy_version = v1.0.0-20260222"
+  - check: "冻结索引已创建"
+    result: "passed"
+    evidence: "policy_lock_report.json 包含 frozen_policies 条目"
+
+constraints_verified:
+  - constraint: "策略哈希已计算并固化"
+    status: "PASS"
+    evidence: "SHA256=5f7b3189d40a4398094ae9a297add3c26bce4c7ac9a2c086c3550d4839985e60"
+  - constraint: "冻结索引可被门控系统校验"
+    status: "PASS"
+    evidence: "policy_lock_report.json 包含完整验证结构"
+  - constraint: "A/B Guard 结构完整"
+    status: "PASS"
+    evidence: "任务文档包含 PreflightChecklist/ExecutionContract/RequiredChanges (A) + Decision/Violations/EvidenceRef (B)"
+
+dependency_status: {}
+
+evidence_refs:
+  - id: "EV-T73-001"
+    kind: "FILE"
+    locator: "configs/audit_policy_v1.json"
+    description: "原始策略文件"
+    sha256: "5f7b3189d40a4398094ae9a297add3c26bce4c7ac9a2c086c3550d4839985e60"
+    timestamp: "2026-02-22T08:15:00Z"
+  - id: "EV-T73-002"
+    kind: "LOG"
+    locator: "sha256sum command output"
+    description: "哈希计算命令输出"
+    timestamp: "2026-02-22T08:15:00Z"
+  - id: "EV-T73-003"
+    kind: "FILE"
+    locator: "docs/2026-02-22/verification/policy_lock_report.json"
+    description: "策略锁定报告"
+    timestamp: "2026-02-22T08:15:00Z"
+  - id: "EV-T73-004"
+    kind: "FILE"
+    locator: "docs/2026-02-22/tasks/T73_vs--cc1.md"
+    description: "任务定义文档"
+    timestamp: "2026-02-22T08:15:00Z"
+
+artifacts_produced:
+  - type: "TASK_DOC"
+    path: "docs/2026-02-22/tasks/T73_vs--cc1.md"
+  - type: "EXECUTION_REPORT"
+    path: "docs/2026-02-22/verification/T73_execution_report.yaml"
+  - type: "GATE_DECISION"
+    path: "docs/2026-02-22/verification/T73_gate_decision.json"
+  - type: "COMPLIANCE_ATTESTATION"
+    path: "docs/2026-02-22/verification/T73_compliance_attestation.json"
+  - type: "POLICY_LOCK_REPORT"
+    path: "docs/2026-02-22/verification/policy_lock_report.json"
+
+manual_checks_required:
+  - check: "验证冻结索引与策略文件一致性"
+    instructions: |
+      1. 执行 sha256sum configs/audit_policy_v1.json
+      2. 对比 policy_lock_report.json 中的 frozen_policies[0].sha256
+      3. 确认两者完全匹配
+
+notes: |
+  T73 任务完成:
+  - 计算并固化 audit_policy_v1.json 的 SHA256 哈希值
+  - 创建 policy_lock_report.json 冻结索引
+  - 形成完整的 A/B Guard 结构证据链
+  - 所有验收标准已满足
+  - 无副作用操作，无需 permit

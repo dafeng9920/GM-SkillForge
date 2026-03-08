@@ -1,0 +1,27 @@
+task_id: "T53"
+executor: "vs--cc2"
+status: "完成"
+deliverables:
+  - path: ".github/workflows/l5-gate.yml"
+    action: "修改"
+    lines_changed: 13
+gate_self_check:
+  - command: "python scripts/run_skill_5layer_audit.py --domains finance,legal --top-n 3"
+    result: "exit 0"
+    output_summary: "run_id=L5S-20260222050203Z-D8DE95B3, gate_counts: PASS=3, WARN=0, FAIL=0"
+  - command: "grep '\"FAIL\": 0' reports/skill-audit/finance_legal_top3_l5-static_2026-02-22.json"
+    result: "exit 0 (found)"
+evidence_refs:
+  - id: "EV-T53-WORKFLOW-MOD"
+    kind: "DIFF"
+    locator: ".github/workflows/l5-gate.yml:45-56"
+    description: "New G6 step added for l5-static audit smoke gate"
+  - id: "EV-T53-AUDIT-RUN"
+    kind: "LOG"
+    locator: "reports/skill-audit/finance_legal_top3_l5-static_2026-02-22.json"
+    sha256: "3dda3c34482e1d7d908130b3d06ab8e1cb60f6e9bea3550258b00b5d1976c345"
+notes: |
+  - Added G6 step to l5-gate.yml workflow
+  - Step runs l5-static audit with --domains finance,legal --top-n 3
+  - Hard gate: FAIL > 0 triggers exit 1 (not soft-fail)
+  - Verified locally: audit runs successfully with FAIL=0

@@ -1,0 +1,283 @@
+# orchestration/membership_tiers.yml
+# Purpose: Machine-readable membership policy for GM-SkillForge.
+# - Enforced by: membership_policy_enforcer.py + policy middleware
+# - Hard rule: membership NEVER changes GateDecision; it only controls access/quotas/retention/throughput.
+#
+# Terminology alignment:
+# - GateDecision / IssueKey / EvidenceRef / AuditPack / Revision / Tombstone
+# - L3 is commercial baseline for publish/listing.
+
+version: "v1"
+updated_at: "2026-02-19"
+
+enums:
+  tiers: [FREE, PRO, STUDIO, ENTERPRISE]
+  actions:
+    # governance / lifecycle
+    - AUDIT_L3
+    - AUDIT_L4
+    - AUDIT_L5
+    - PUBLISH_LISTING
+    - UPGRADE_AND_REAUDIT
+    - TOMBSTONE
+    - EXPORT_WHITELIST
+    # ops / execution
+    - EXECUTE_VIA_N8N
+    # collaboration / api
+    - CREATE_ORG
+    - INVITE_MEMBER
+    - ISSUE_API_TOKEN
+  visibility: [PRIVATE, PUBLIC]
+  audit_levels: [L1, L2, L3, L4, L5]
+
+# ---- Global invariants (non-negotiable) ----
+required_checks:
+  # Publishing/listing rules (apply to ALL tiers)
+  publish_listing:
+    must_have:
+      - "gate_decision.decision: PASS"
+      - "gate_decision.level_min: L3"
+      - "permit.status: VALID"
+      - "audit_pack.present: true"
+      - "audit_pack.hash_present: true"
+      - "provenance.present: true"
+    must_not_have:
+      - "tombstone.state: TOMBSTONED"
+  # Execution rules (apply to ALL tiers)
+  execute_via_n8n:
+    must_have:
+      - "permit.status: VALID"
+      - "execution_contract.present: true"
+    must_not_have:
+      - "tombstone.state: TOMBSTONED"
+
+# ---- Default rate limits (per user unless stated) ----
+rate_limit_defaults:
+  # Applies to API/CLI calls that enqueue work in the system
+  api_requests_per_minute: 30
+  audit_jobs_per_hour: 5
+  publish_ops_per_day: 10
+
+# ---- Quota accounting keys ----
+quota_keys:
+  - l3_audit_runs_per_month
+  - l4_audit_runs_per_month
+  - l5_audit_runs_per_month
+  - listing_slots
+  - max_concurrent_audit_jobs
+  - max_concurrent_exec_jobs
+  - retention_days_audit_packs
+
+# ---- Tier definitions ----
+tiers:
+  FREE:
+    description: "Trial tier: small quotas, no hosted execution."
+    quotas:
+      l3_audit_runs_per_month: 1
+      l4_audit_runs_per_month: 0
+      l5_audit_runs_per_month: 0
+      listing_slots: 1
+      max_concurrent_audit_jobs: 1
+      max_concurrent_exec_jobs: 0
+      retention_days_audit_packs: 7
+    capabilities:
+      AUDIT_L3: true
+      AUDIT_L4: false
+      AUDIT_L5: false
+      PUBLISH_LISTING: true
+      UPGRADE_AND_REAUDIT: false
+      TOMBSTONE: true
+      EXECUTE_VIA_N8N: false
+      EXPORT_WHITELIST: false
+      CREATE_ORG: false
+      INVITE_MEMBER: false
+      ISSUE_API_TOKEN: true
+    retention:
+      audit_packs_days: 7
+      logs_days: 7
+    rate_limit:
+      api_requests_per_minute: 20
+      audit_jobs_per_hour: 2
+      publish_ops_per_day: 3
+    required_checks_overrides: {}
+
+  PRO:
+    description: "Creator tier: higher L3 quota, upgrade/re-audit enabled, optional hosted execution add-on."
+    quotas:
+      l3_audit_runs_per_month: 20
+      l4_audit_runs_per_month: 0
+      l5_audit_runs_per_month: 0
+      listing_slots: 20
+      max_concurrent_audit_jobs: 2
+      max_concurrent_exec_jobs: 0
+      retention_days_audit_packs: 90
+    capabilities:
+      AUDIT_L3: true
+      AUDIT_L4: false
+      AUDIT_L5: false
+      PUBLISH_LISTING: true
+      UPGRADE_AND_REAUDIT: true
+      TOMBSTONE: true
+      EXECUTE_VIA_N8N: false       # can be enabled via add-on flag (see addons)
+      EXPORT_WHITELIST: false
+      CREATE_ORG: false
+      INVITE_MEMBER: false
+      ISSUE_API_TOKEN: true
+    retention:
+      audit_packs_days: 90
+      logs_days: 30
+    rate_limit:
+      api_requests_per_minute: 60
+      audit_jobs_per_hour: 10
+      publish_ops_per_day: 20
+    required_checks_overrides: {}
+
+  STUDIO:
+    description: "Team tier: org/RBAC, higher quotas, hosted execution enabled."
+    quotas:
+      l3_audit_runs_per_month: 100
+      l4_audit_runs_per_month: 10
+      l5_audit_runs_per_month: 0
+      listing_slots: 200
+      max_concurrent_audit_jobs: 5
+      max_concurrent_exec_jobs: 5
+      retention_days_audit_packs: 365
+    capabilities:
+      AUDIT_L3: true
+      AUDIT_L4: true
+      AUDIT_L5: false
+      PUBLISH_LISTING: true
+      UPGRADE_AND_REAUDIT: true
+      TOMBSTONE: true
+      EXECUTE_VIA_N8N: true
+      EXPORT_WHITELIST: true
+      CREATE_ORG: true
+      INVITE_MEMBER: true
+      ISSUE_API_TOKEN: true
+    retention:
+      audit_packs_days: 365
+      logs_days: 90
+    rate_limit:
+      api_requests_per_minute: 120
+      audit_jobs_per_hour: 30
+      publish_ops_per_day: 100
+    required_checks_overrides: {}
+
+  ENTERPRISE:
+    description: "Enterprise tier: customizable quotas/retention, strongest throughput, private marketplaces."
+    quotas:
+      l3_audit_runs_per_month: 500
+      l4_audit_runs_per_month: 50
+      l5_audit_runs_per_month: 10
+      listing_slots: 2000
+      max_concurrent_audit_jobs: 20
+      max_concurrent_exec_jobs: 50
+      retention_days_audit_packs: 1825  # 5 years
+    capabilities:
+      AUDIT_L3: true
+      AUDIT_L4: true
+      AUDIT_L5: true
+      PUBLISH_LISTING: true
+      UPGRADE_AND_REAUDIT: true
+      TOMBSTONE: true
+      EXECUTE_VIA_N8N: true
+      EXPORT_WHITELIST: true
+      CREATE_ORG: true
+      INVITE_MEMBER: true
+      ISSUE_API_TOKEN: true
+    retention:
+      audit_packs_days: 1825
+      logs_days: 365
+    rate_limit:
+      api_requests_per_minute: 600
+      audit_jobs_per_hour: 200
+      publish_ops_per_day: 1000
+    required_checks_overrides: {}
+
+# ---- Optional add-ons (toggle per account) ----
+addons:
+  hosted_execution:
+    description: "Enable hosted n8n execution for tiers where EXECUTE_VIA_N8N is false by default."
+    applies_to_tiers: [PRO]
+    toggles:
+      capabilities:
+        EXECUTE_VIA_N8N: true
+      quotas:
+        max_concurrent_exec_jobs: 2
+    required_checks:
+      execute_via_n8n:
+        must_have:
+          - "permit.status: VALID"
+          - "execution_contract.present: true"
+          - "org_or_user_secrets.bound: true"
+
+# ---- Enforcement mapping (how middleware should decide) ----
+enforcement:
+  # If any required check fails, deny with the mapped error_code.
+  deny_error_codes:
+    quota_exceeded: "MEMBERSHIP_QUOTA_EXCEEDED"
+    rate_limited: "MEMBERSHIP_RATE_LIMITED"
+    capability_missing: "MEMBERSHIP_CAPABILITY_DENIED"
+    required_check_failed: "MEMBERSHIP_REQUIRED_CHECK_FAILED"
+
+  # Detailed error codes per benefit (M-01~M-16)
+  # See: docs/contracts/membership_benefits_mapping_v1.md
+  benefit_error_codes:
+    # M-01: L3 审计额度（月）
+    M-01:
+      action: AUDIT_L3
+      quota_key: l3_audit_runs_per_month
+      on_exceeded: MEMBERSHIP_QUOTA_EXCEEDED
+      evidence: "billing/usage.jsonl + GateDecision"
+    # M-02: 并发/队列优先级
+    M-02:
+      quota_key: max_concurrent_audit_jobs
+      on_exceeded: MEMBERSHIP_QUOTA_EXCEEDED
+      evidence: "provenance/run_meta.json"
+    # M-04: 上架位（可售商品数量）
+    M-04:
+      action: PUBLISH_LISTING
+      quota_key: listing_slots
+      on_exceeded: MEMBERSHIP_QUOTA_EXCEEDED
+      evidence: "market/listings.json"
+    # M-05: 仅 L3 PASS 可上架
+    M-05:
+      check: publish_listing
+      on_failed: MEMBERSHIP_REQUIRED_CHECK_FAILED
+      evidence: "permit.json + audit_pack_hash"
+    # M-09: 一键升级重审
+    M-09:
+      action: UPGRADE_AND_REAUDIT
+      on_denied: MEMBERSHIP_CAPABILITY_DENIED
+      evidence: "diff_summary + new AuditPack"
+    # M-12: 托管执行臂（n8n 执行）
+    M-12:
+      action: EXECUTE_VIA_N8N
+      on_denied: MEMBERSHIP_CAPABILITY_DENIED
+      on_check_failed: MEMBERSHIP_REQUIRED_CHECK_FAILED
+      evidence: "execution_trace.jsonl"
+    # M-14: 团队协作/RBAC
+    M-14:
+      action: CREATE_ORG
+      on_denied: MEMBERSHIP_CAPABILITY_DENIED
+      evidence: "org_audit_log.jsonl"
+    # M-15: 私有市场/企业白名单导出
+    M-15:
+      action: EXPORT_WHITELIST
+      on_denied: MEMBERSHIP_CAPABILITY_DENIED
+      evidence: "whitelist.json"
+    # M-16: API/CI 集成
+    M-16:
+      on_rate_limited: MEMBERSHIP_RATE_LIMITED
+      evidence: "api_access_log.jsonl"
+
+  # Usage counters are incremented when a job is accepted/enqueued, not when finished.
+  accounting:
+    increment_on_accept:
+      AUDIT_L3: l3_audit_runs_per_month
+      AUDIT_L4: l4_audit_runs_per_month
+      AUDIT_L5: l5_audit_runs_per_month
+      PUBLISH_LISTING: publish_ops_per_day
+    concurrency_keys:
+      audits: max_concurrent_audit_jobs
+      executions: max_concurrent_exec_jobs

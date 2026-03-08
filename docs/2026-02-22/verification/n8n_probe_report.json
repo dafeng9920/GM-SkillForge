@@ -1,0 +1,133 @@
+{
+  "probe_id": "N8N-PROBE-20260222-001",
+  "probe_type": "integration_status_and_fail_closed",
+  "executor": "vs--cc3",
+  "probed_at": "2026-02-22T05:15:00Z",
+  "job_id": "L3-P2-HARDENING-20260222-001",
+  "scope": "P2-07",
+
+  "summary": {
+    "total_endpoints": 3,
+    "verified": 0,
+    "not_implemented": 3,
+    "unknown": 0,
+    "fail_closed_verified": true
+  },
+
+  "endpoints": [
+    {
+      "id": "EP-N8N-001",
+      "name": "run_intent",
+      "path": "/api/v1/n8n/run_intent",
+      "method": "POST",
+      "status": "NOT_IMPLEMENTED",
+      "evidence": {
+        "frontend_caller": "ui/app/src/pages/execute/RunIntentPage.tsx:69-73",
+        "note": "API call is TODO-commented out, using mock simulation",
+        "code_snippet": "// const response = await fetch('/api/v1/n8n/run_intent', {\n//   method: 'POST',\n//   headers: { 'Content-Type': 'application/json' },\n//   body: JSON.stringify(form),\n// });"
+      },
+      "repro_steps": [
+        "1. Open RunIntentPage.tsx",
+        "2. Check handleSubmit function around line 67",
+        "3. Observe TODO comment and mock simulation"
+      ]
+    },
+    {
+      "id": "EP-N8N-002",
+      "name": "fetch_pack",
+      "path": "/api/v1/n8n/fetch_pack",
+      "method": "GET/POST",
+      "status": "NOT_IMPLEMENTED",
+      "evidence": {
+        "mock_reference": "ui/app/src/mocks/orchestrationProjection.mock.ts:106",
+        "note": "Only exists in mock data, no actual API implementation found",
+        "code_snippet": "payload: { endpoint: '/api/v1/n8n/fetch_pack' }"
+      },
+      "repro_steps": [
+        "1. Grep for '/api/v1/n8n/fetch_pack' in ui/app/src",
+        "2. Only found in mock file orchestrationProjection.mock.ts"
+      ]
+    },
+    {
+      "id": "EP-N8N-003",
+      "name": "query_rag",
+      "path": "/api/v1/n8n/query_rag",
+      "method": "POST",
+      "status": "NOT_IMPLEMENTED",
+      "evidence": {
+        "mock_reference": "ui/app/src/mocks/orchestrationProjection.mock.ts:114",
+        "note": "Only exists in mock data, no actual API implementation found",
+        "code_snippet": "payload: { endpoint: '/api/v1/n8n/query_rag' }"
+      },
+      "repro_steps": [
+        "1. Grep for '/api/v1/n8n/query_rag' in ui/app/src",
+        "2. Only found in mock file orchestrationProjection.mock.ts"
+      ]
+    }
+  ],
+
+  "fail_closed_verification": {
+    "verified": true,
+    "mechanism": "Gate-based blocking with error codes",
+    "evidence_refs": [
+      {
+        "id": "FC-N8N-001",
+        "kind": "SNIPPET",
+        "locator": "ui/app/src/mocks/orchestrationProjection.mock.ts:74-81",
+        "description": "mockRunIntentBlocked demonstrates fail-closed behavior",
+        "code_snippet": "export const mockRunIntentBlocked: RunIntentResponse = {\n  ok: false,\n  error_code: 'N8N_MEMBERSHIP_DENIED',\n  blocked_by: 'MEMBERSHIP_CAPABILITY_DENIED',\n  message: 'Membership policy denied execution',\n  evidence_ref: 'EV-N8N-INTENT-1771575625-52EA8383',\n  run_id: 'RUN-N8N-1771575625-F83CCA6E',\n};"
+      },
+      {
+        "id": "FC-N8N-002",
+        "kind": "SNIPPET",
+        "locator": "ui/app/src/mocks/orchestrationProjection.mock.ts:199-204",
+        "description": "Deliver stage blocked by membership policy",
+        "code_snippet": "{\n  id: 'deliver',\n  title: 'Deliver',\n  status: 'blocked',\n  summary: 'Blocked by membership policy',\n  refs: ['N8N_MEMBERSHIP_DENIED'],\n  payload: { blocked_by: 'MEMBERSHIP_CAPABILITY_DENIED' },\n}"
+      },
+      {
+        "id": "FC-N8N-003",
+        "kind": "SNIPPET",
+        "locator": "ui/app/src/pages/execute/RunIntentPage.tsx:131-140",
+        "description": "BlockReasonCard renders blocked state to user",
+        "code_snippet": "return (\n  <BlockReasonCard\n    errorCode=\"GATE_BLOCKED\"\n    blockedBy=\"GateCheck\"\n    message=\"Request was blocked by gate decision\"\n    evidenceRef={result.evidence_ref}\n    runId={result.run_id}\n  />\n);"
+      }
+    ],
+    "error_codes_documented": [
+      "N8N_MEMBERSHIP_DENIED",
+      "MEMBERSHIP_CAPABILITY_DENIED",
+      "GATE_BLOCKED"
+    ]
+  },
+
+  "design_compliance": {
+    "n8n_nav_hidden": true,
+    "evidence": {
+      "locator": "ui/app/src/app/layout/AppShell.tsx:10",
+      "comment": "设计规范：不出现 n8n 顶层一级导航"
+    }
+  },
+
+  "recommendations": [
+    {
+      "priority": "P1",
+      "item": "Implement actual /api/v1/n8n/run_intent backend endpoint",
+      "reason": "Currently only mock exists"
+    },
+    {
+      "priority": "P2",
+      "item": "Implement actual /api/v1/n8n/fetch_pack backend endpoint",
+      "reason": "Currently only mock exists"
+    },
+    {
+      "priority": "P2",
+      "item": "Implement actual /api/v1/n8n/query_rag backend endpoint",
+      "reason": "Currently only mock exists"
+    }
+  ],
+
+  "conclusion": {
+    "overall_status": "NOT_IMPLEMENTED",
+    "fail_closed_status": "VERIFIED_IN_MOCK",
+    "next_steps": "Backend API implementation required to promote endpoints from NOT_IMPLEMENTED to VERIFIED"
+  }
+}

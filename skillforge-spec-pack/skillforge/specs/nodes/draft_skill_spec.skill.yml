@@ -1,0 +1,90 @@
+schema_version: "0.1.0"
+skill_id: "draft_skill_spec"
+name: "Draft Skill Spec"
+description: "Generate skill specification from repository analysis"
+version: "0.1.0"
+
+# 所属路径
+paths: ["B", "AB"]
+stage: 3
+
+# 输入合同
+input:
+  required:
+    - intake_repo:
+        type: "object"
+        description: "IntakeRepo 节点输出（含 repo_info）"
+        source: "input_data['intake_repo']"
+    - repo_scan_fit_score:
+        type: "object"
+        description: "RepoScan 节点输出（含 fit_score, entry_points, language_stack）"
+        source: "input_data['repo_scan_fit_score']"
+  conditional:
+    - input:
+        type: "object"
+        description: "Pipeline 原始输入（含 repo_url，用于 derived_from）"
+
+# 构筑规则
+construction_rules:
+  skill_spec:
+    name: "skill-{repo_info.name}"
+    version: "0.1.0"
+    description: "Auto-drafted skill from {owner}/{name}"
+    inputs: "基于 entry_points → [{name, type:'file', required:true}]"
+    outputs: "[{name:'result', type:'object'}]"
+    tools_required: "基于 language_stack 推断"
+    steps: "[{id:'step_1', action:'execute', description:'Run {entry_points[0]}'}]"
+    constraints: "['risk_tier: L1', 'fit_score >= 40 (actual: {fit_score})']"
+  tools_inference:
+    Python: ["python3", "pip"]
+    JavaScript: ["node", "npm"]
+    TypeScript: ["node", "npm", "tsc"]
+    Go: ["go"]
+    Rust: ["cargo"]
+  confidence_formula: "min(fit_score / 100, 0.95)"
+
+# 输出合同
+output:
+  required:
+    - schema_version:
+        type: "string"
+        value: "0.1.0"
+    - skill_spec:
+        type: "object"
+        required_fields: ["name", "version", "description", "inputs", "outputs", "tools_required", "steps", "constraints"]
+    - source:
+        type: "string"
+        value: "repo"
+    - derived_from:
+        type: "object"
+        fields:
+          repo_url: "str"
+          commit_sha: "str"
+    - confidence:
+        type: "number"
+        range: [0, 0.95]
+
+# 能力声明
+capabilities:
+  network: false
+  filesystem: false
+  subprocess: false
+  gpu: false
+
+# 风险等级
+risk_tier: "L1"
+
+# 依赖
+dependencies:
+  adapters: []
+  schemas: ["skill_spec"]
+  error_codes: ["EXEC_VALIDATION_FAILED", "SCHEMA_INVALID"]
+
+# 错误处理
+errors:
+  - code: "EXEC_VALIDATION_FAILED"
+    retryable: false
+    description: "intake_repo or repo_scan_fit_score output missing"
+  - code: "SCHEMA_INVALID"
+    retryable: false
+    description: "Output missing schema_version/skill_spec/source or source != 'repo'"

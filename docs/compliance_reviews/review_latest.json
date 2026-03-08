@@ -1,0 +1,129 @@
+{
+  "generated_at": "2026-02-24T14:34:27Z",
+  "summary": {
+    "total": 13,
+    "passed": 13,
+    "failed": 0,
+    "critical_or_high_failed": 0,
+    "overall": "PASS"
+  },
+  "checks": [
+    {
+      "check_id": "CR-001",
+      "severity": "HIGH",
+      "passed": true,
+      "summary": "Execution guard policy docs exist",
+      "evidence": "D:\\GM-SkillForge\\docs\\EXECUTION_GUARD_A_PROPOSAL_SKILL_v1.md exists=True, D:\\GM-SkillForge\\docs\\EXECUTION_GUARD_B_EXECUTION_SKILL_v1.md exists=True",
+      "required_change": "Restore A/B policy docs as immutable reference sources",
+      "location": "D:\\GM-SkillForge\\docs\\EXECUTION_GUARD_A_PROPOSAL_SKILL_v1.md | D:\\GM-SkillForge\\docs\\EXECUTION_GUARD_B_EXECUTION_SKILL_v1.md"
+    },
+    {
+      "check_id": "CR-002",
+      "severity": "CRITICAL",
+      "passed": true,
+      "summary": "n8n entrypoints enforce execution guard hard intercept",
+      "evidence": "missing_patterns=[]",
+      "required_change": "Reinstate hard intercept in run_intent/import_external_skill before execution",
+      "location": "D:\\GM-SkillForge\\skillforge\\src\\api\\routes\\n8n_orchestration.py:390"
+    },
+    {
+      "check_id": "CR-003",
+      "severity": "HIGH",
+      "passed": true,
+      "summary": "Forbidden n8n override fields remain blocked",
+      "evidence": "missing_fields=[]",
+      "required_change": "Restore forbidden field denylist and rejection evidence flow",
+      "location": "D:\\GM-SkillForge\\skillforge\\src\\api\\routes\\n8n_orchestration.py:86"
+    },
+    {
+      "check_id": "CR-004",
+      "severity": "CRITICAL",
+      "passed": true,
+      "summary": "Permit signature verification has no downgrade bypass",
+      "evidence": "risky_pattern_hits=[]",
+      "required_change": "Remove signature downgrade path; enforce hard fail when unverifiable",
+      "location": "D:\\GM-SkillForge\\skillforge\\src\\skills\\gates\\gate_permit.py:81"
+    },
+    {
+      "check_id": "CR-005",
+      "severity": "CRITICAL",
+      "passed": true,
+      "summary": "Production path does not auto-inject sample data",
+      "evidence": "{\"has_env_guard\": true, \"has_unconditional_sample_creation\": false}",
+      "required_change": "Gate sample creation behind SKILLFORGE_ENV in {dev,test} only",
+      "location": "D:\\GM-SkillForge\\skillforge\\src\\storage\\audit_pack_store.py:77"
+    },
+    {
+      "check_id": "CR-006",
+      "severity": "HIGH",
+      "passed": true,
+      "summary": "Registry supports dual-track migration controls",
+      "evidence": "missing_signals=[]",
+      "required_change": "Implement dual-write/shadow-read feature flags before cutover",
+      "location": "D:\\GM-SkillForge\\skillforge\\src\\storage\\registry_store.py:23"
+    },
+    {
+      "check_id": "CR-008",
+      "severity": "CRITICAL",
+      "passed": true,
+      "summary": "L4-SKILL-07 crypto signature fail-closed gate exists in aggregator",
+      "evidence": "missing_patterns=[]",
+      "required_change": "Reinstate --require-crypto-signature and fail-closed decision path in aggregate_final_gate.py",
+      "location": "D:\\GM-SkillForge\\skills\\p2-final-gate-aggregate-skill\\aggregate_final_gate.py:15"
+    },
+    {
+      "check_id": "CR-009",
+      "severity": "CRITICAL",
+      "passed": true,
+      "summary": "L4-SKILL-07 signer allowlist and validation are implemented",
+      "evidence": "missing_patterns=[]",
+      "required_change": "Restore ALLOWED_SIGNER_IDS and validate_signer_id fail-closed checks in verify_guard_signature.py",
+      "location": "D:\\GM-SkillForge\\scripts\\verify_guard_signature.py:41"
+    },
+    {
+      "check_id": "CR-010",
+      "severity": "HIGH",
+      "passed": true,
+      "summary": "L4-SKILL-07 triad evidence chain and final gate decisions are complete",
+      "evidence": "{\"missing_files\": [], \"t83_task_id_ok\": true, \"decisions\": {\"T84\": \"ALLOW\", \"T85\": \"PASS\", \"T86\": \"ALLOW\"}, \"parse_errors\": []}",
+      "required_change": "Restore T83/T84/T85/T86 artifacts and ensure T84=ALLOW, T85=PASS, T86=ALLOW",
+      "location": "D:\\GM-SkillForge\\docs\\2026-02-22\\verification"
+    },
+    {
+      "check_id": "CR-011",
+      "severity": "HIGH",
+      "passed": true,
+      "summary": "Governance dispatch core assets and compatibility alias are present",
+      "evidence": "{\"missing_files\": [], \"registry_has_governance_skill\": true, \"registry_has_trinity_alias\": true, \"registry_parse_error\": \"\"}",
+      "required_change": "Restore governance-orchestrator skill, dispatch registry mapping, and gate_final_decision entrypoint",
+      "location": "D:\\GM-SkillForge\\skills\\governance-orchestrator-skill\\SKILL.md | D:\\GM-SkillForge\\configs\\dispatch_skill_registry.json | D:\\GM-SkillForge\\scripts\\gate_final_decision.py"
+    },
+    {
+      "check_id": "CR-012",
+      "severity": "MEDIUM",
+      "passed": true,
+      "summary": "Governance orchestrator skill has cross-platform openai.yaml metadata",
+      "evidence": "D:\\GM-SkillForge\\skills\\governance-orchestrator-skill\\agents\\openai.yaml exists=True",
+      "required_change": "Add skills/governance-orchestrator-skill/agents/openai.yaml with minimal metadata fields",
+      "location": "D:\\GM-SkillForge\\skills\\governance-orchestrator-skill\\agents\\openai.yaml"
+    },
+    {
+      "check_id": "CR-013",
+      "severity": "HIGH",
+      "passed": true,
+      "summary": "L4P5 triad closure chain and final gate decision are complete",
+      "evidence": "{\"missing_files\": [], \"decisions\": {\"T93\": \"ALLOW\", \"T94\": \"PASS\", \"T98\": \"ALLOW\", \"T99\": \"PASS\", \"L4P5\": \"ALLOW\"}, \"t100_task_id_ok\": true}",
+      "required_change": "Restore T93/T94/T98/T99/T100/L4P5 artifacts and required ALLOW/PASS decisions",
+      "location": "D:\\GM-SkillForge\\docs\\2026-02-22\\verification"
+    },
+    {
+      "check_id": "CR-007",
+      "severity": "MEDIUM",
+      "passed": true,
+      "summary": "Compliance review cadence is within target window",
+      "evidence": "latest_report_date=2026-02-24, gap_days=0, max_gap_days=3",
+      "required_change": "Run review now and keep cadence <= 3 days",
+      "location": "D:\\GM-SkillForge\\docs\\compliance_reviews"
+    }
+  ]
+}

@@ -1,0 +1,197 @@
+# GM OS SkillForge - Tech SEO Audit Issue Catalog
+# 定义 tech_seo_audit skill 可检出的所有问题类型
+# 所有 examples 中使用的 issue_key 必须在此表中注册
+
+schema_version: 1
+catalog_version: "1.0.0"
+effective_from: "2026-02-16T00:00:00Z"
+skill_id: "tech_seo_audit"
+
+issues:
+  # === 元标签类 ===
+  - issue_key: "MISSING_TITLE_TAG"
+    severity: "error"
+    category: "meta"
+    description: "页面缺少 <title> 标签"
+    impact: "搜索引擎无法正确索引页面标题"
+    added_in: "1.0.0"
+    deprecated_in: null
+    rule_source: "semgrep"
+
+  - issue_key: "MISSING_META_DESCRIPTION"
+    severity: "warning"
+    category: "meta"
+    description: "页面缺少 meta description"
+    impact: "搜索结果中不显示摘要，影响点击率"
+    added_in: "1.0.0"
+    deprecated_in: null
+    rule_source: "semgrep"
+
+  - issue_key: "DUPLICATE_TITLE"
+    severity: "warning"
+    category: "meta"
+    description: "多个页面使用相同的 title"
+    impact: "搜索引擎可能视为重复内容"
+    added_in: "1.0.0"
+    deprecated_in: null
+    rule_source: "semgrep"
+
+  # === 结构类 ===
+  - issue_key: "MISSING_H1"
+    severity: "error"
+    category: "structure"
+    description: "页面缺少 H1 标题"
+    impact: "搜索引擎无法确定页面主题"
+    added_in: "1.0.0"
+    deprecated_in: null
+    rule_source: "semgrep"
+
+  - issue_key: "MULTIPLE_H1"
+    severity: "warning"
+    category: "structure"
+    description: "页面有多个 H1 标题"
+    impact: "搜索引擎难以判断页面主要主题"
+    added_in: "1.0.0"
+    deprecated_in: null
+    rule_source: "semgrep"
+
+  - issue_key: "MISSING_ALT_TEXT"
+    severity: "warning"
+    category: "structure"
+    description: "图片缺少 alt 属性"
+    impact: "影响图片搜索排名和可访问性"
+    added_in: "1.0.0"
+    deprecated_in: null
+    rule_source: "semgrep"
+
+  # === 链接类 ===
+  - issue_key: "BROKEN_INTERNAL_LINK"
+    severity: "error"
+    category: "links"
+    description: "内部链接返回 404"
+    impact: "用户体验差，浪费爬虫预算"
+    added_in: "1.0.0"
+    deprecated_in: null
+    rule_source: "semgrep"
+
+  - issue_key: "REDIRECT_CHAIN"
+    severity: "warning"
+    category: "links"
+    description: "存在多级重定向链"
+    impact: "增加页面加载时间，浪费爬虫预算"
+    added_in: "1.0.0"
+    deprecated_in: null
+    rule_source: "semgrep"
+
+  - issue_key: "BROKEN_EXTERNAL_LINK"
+    severity: "info"
+    category: "links"
+    description: "外部链接不可达"
+    impact: "影响用户体验和站点权威性"
+    added_in: "1.0.0"
+    deprecated_in: null
+    rule_source: "semgrep"
+
+  # === 规范化类 ===
+  - issue_key: "MISSING_CANONICAL"
+    severity: "error"
+    category: "canonical"
+    description: "页面缺少 canonical 标签"
+    impact: "搜索引擎可能将不同 URL 视为重复内容"
+    added_in: "1.0.0"
+    deprecated_in: null
+    rule_source: "semgrep"
+
+  - issue_key: "BROKEN_HREFLANG"
+    severity: "error"
+    category: "canonical"
+    description: "hreflang 标签配置错误或目标不可达"
+    impact: "多语言页面无法正确呈现给对应语言用户"
+    added_in: "1.0.0"
+    deprecated_in: null
+    rule_source: "semgrep"
+
+  - issue_key: "SELF_CANONICAL_MISSING"
+    severity: "warning"
+    category: "canonical"
+    description: "页面的 canonical 未指向自身"
+    impact: "可能导致爬虫索引非预期版本"
+    added_in: "1.0.0"
+    deprecated_in: null
+    rule_source: "semgrep"
+
+  # === 性能类 ===
+  - issue_key: "SLOW_PAGE_LOAD"
+    severity: "warning"
+    category: "performance"
+    description: "页面加载时间超过阈值"
+    impact: "影响用户体验和搜索排名"
+    added_in: "1.0.0"
+    deprecated_in: null
+    rule_source: "semgrep"
+
+  - issue_key: "LARGE_PAGE_SIZE"
+    severity: "info"
+    category: "performance"
+    description: "页面总大小超过推荐值"
+    impact: "移动端用户体验差"
+    added_in: "1.0.0"
+    deprecated_in: null
+    rule_source: "semgrep"
+
+  # === 安全/协议类 ===
+  - issue_key: "MIXED_CONTENT"
+    severity: "error"
+    category: "security"
+    description: "HTTPS 页面加载了 HTTP 资源"
+    impact: "浏览器可能阻止资源加载，显示安全警告"
+    added_in: "1.0.0"
+    deprecated_in: null
+    rule_source: "semgrep"
+
+  # === 结构化数据类 ===
+  - issue_key: "MISSING_STRUCTURED_DATA"
+    severity: "info"
+    category: "structured_data"
+    description: "页面缺少 JSON-LD/Microdata 结构化数据"
+    impact: "搜索结果中不显示富媒体摘要"
+    added_in: "1.0.0"
+    deprecated_in: null
+    rule_source: "semgrep"
+
+  - issue_key: "INVALID_STRUCTURED_DATA"
+    severity: "warning"
+    category: "structured_data"
+    description: "结构化数据格式不符合 schema.org 规范"
+    impact: "搜索引擎无法解析结构化数据"
+    added_in: "1.0.0"
+    deprecated_in: null
+    rule_source: "semgrep"
+
+  # === 爬虫可访问性 ===
+  - issue_key: "MISSING_ROBOTS_TXT"
+    severity: "warning"
+    category: "crawlability"
+    description: "站点根目录缺少 robots.txt"
+    impact: "爬虫无法获取爬取指引"
+    added_in: "1.0.0"
+    deprecated_in: null
+    rule_source: "semgrep"
+
+  - issue_key: "MISSING_SITEMAP"
+    severity: "warning"
+    category: "crawlability"
+    description: "站点缺少 XML sitemap"
+    impact: "爬虫发现新页面效率降低"
+    added_in: "1.0.0"
+    deprecated_in: null
+    rule_source: "semgrep"
+
+  - issue_key: "NOINDEX_ON_IMPORTANT_PAGE"
+    severity: "error"
+    category: "crawlability"
+    description: "关键页面被 noindex 标签阻止索引"
+    impact: "页面不会出现在搜索结果中"
+    added_in: "1.0.0"
+    deprecated_in: null
+    rule_source: "semgrep"

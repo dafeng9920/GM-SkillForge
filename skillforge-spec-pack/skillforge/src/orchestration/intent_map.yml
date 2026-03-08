@@ -1,0 +1,62 @@
+# Intent Migration Map (Wave 4)
+# Source: Library Migration Plan v2
+
+schema_version: "1.0.0"
+migration_status: "in_progress"
+
+intents:
+  # Core Intent 1: Audit Repo
+  audit_repo_skill:
+    old_gm_name: "Audit Tool"
+    intent_id: "audit_repo_skill"
+    summary: "Scan a repository against Constitution and L5 Gates."
+    migration_status: "mapped"
+    required_evidence:
+      - "scan_report"
+      - "audit_pack_manifest"
+    gates:
+      - "intake_repo"
+      - "repo_scan_fit_score"
+      - "pack_audit_and_publish"
+
+  # Core Intent 2: Generate Skill
+  generate_skill_from_repo:
+    old_gm_name: "Skill Generator"
+    intent_id: "generate_skill_from_repo"
+    summary: "Generate a SkillForge skill from a target repository."
+    migration_status: "mapped"
+    required_evidence:
+      - "skill_spec"
+      - "generated_code_diff"
+    gates:
+      - "license_gate"
+      - "draft_skill_spec"
+      - "scaffold_skill_impl"
+      - "sandbox_test_and_trace"
+
+  # Core Intent 3: Upgrade Skill
+  upgrade_skill_revision:
+    old_gm_name: "Revision Manager"
+    intent_id: "upgrade_skill_revision"
+    summary: "Upgrade an existing skill to a new revision (with evolution)."
+    migration_status: "mapped"
+    required_evidence:
+      - "evolution_diff"
+      - "regression_test_report"
+    gates:
+      - "intake_repo"
+      - "draft_skill_spec"
+      - "pack_audit_and_publish"
+
+  # Core Intent 4: Tombstone
+  tombstone_skill:
+    old_gm_name: "Tombstone Enforcer"
+    intent_id: "tombstone_skill"
+    summary: "Mark a specific artifact or skill revision as dead (security revocation)."
+    migration_status: "mapped"
+    required_evidence:
+      - "tombstone_record"
+      - "revocation_notice"
+    gates:
+      - "constitution_risk_gate"
+      - "pack_audit_and_publish"

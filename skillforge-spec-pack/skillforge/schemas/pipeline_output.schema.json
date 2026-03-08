@@ -1,0 +1,109 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://gm-os.dev/schemas/skillforge/pipeline_output.schema.json",
+  "title": "PipelineOutput",
+  "description": "Output contract for the SkillForge dual-path pipeline engine.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "job_id",
+    "status",
+    "path_taken",
+    "stages_completed",
+    "gate_decisions",
+    "trace_events",
+    "duration_ms"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "0.1.0"
+    },
+    "job_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique pipeline execution identifier."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["completed", "failed", "gate_denied"]
+    },
+    "path_taken": {
+      "type": "string",
+      "enum": ["A", "B", "AB"]
+    },
+    "stages_completed": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "gate_decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["schema_version", "gate_id", "node_id", "decision", "reason", "timestamp"],
+        "properties": {
+          "schema_version": { "type": "string", "const": "0.1.0" },
+          "gate_id": { "type": "string" },
+          "node_id": { "type": "string" },
+          "decision": { "type": "string", "enum": ["ALLOW", "DENY", "REQUIRES_CHANGES"] },
+          "reason": { "type": "string" },
+          "details": { "type": "object" },
+          "timestamp": { "type": "string", "format": "date-time" }
+        }
+      }
+    },
+    "audit_pack_path": {
+      "type": ["string", "null"],
+      "description": "File path to the generated audit pack."
+    },
+    "publish_result": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "required": ["skill_id", "version", "status", "registry_url", "timestamp"],
+          "properties": {
+            "skill_id": { "type": "string" },
+            "version": { "type": "string" },
+            "status": { "type": "string", "enum": ["published", "rejected"] },
+            "registry_url": { "type": "string", "format": "uri" },
+            "timestamp": { "type": "string", "format": "date-time" }
+          }
+        }
+      ]
+    },
+    "trace_events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["schema_version", "trace_id", "node_id", "event_type", "timestamp"],
+        "properties": {
+          "schema_version": { "type": "string", "const": "0.1.0" },
+          "trace_id": { "type": "string" },
+          "node_id": { "type": "string" },
+          "event_type": { "type": "string" },
+          "timestamp": { "type": "string", "format": "date-time" },
+          "detail": { "type": "object" }
+        }
+      }
+    },
+    "duration_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "error": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "required": ["code", "message"],
+          "properties": {
+            "code": { "type": "string" },
+            "message": { "type": "string" }
+          }
+        }
+      ]
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,166 @@
+# GM OS Error Codes v0.1.0
+# 错误码定义 - 所有 policy/schema/examples 引用的错误码必须在此定义
+
+schema_version: "0.1.0"
+
+codes:
+  # === SCHEMA 类 (Schema 验证错误) ===
+  SCHEMA_INVALID:
+    code: "SCHEMA_INVALID"
+    http_status: 400
+    retryable: false
+    user_action: "检查输入数据格式是否符合要求"
+    operator_action: "验证 JSON Schema 合规性"
+
+  SCHEMA_REF_NOT_FOUND:
+    code: "SCHEMA_REF_NOT_FOUND"
+    http_status: 400
+    retryable: false
+    user_action: "引用的 Schema 不存在，请检查配置"
+    operator_action: "检查 schema 引用路径是否存在"
+
+  SCHEMA_REQUIRED_FIELD_MISSING:
+    code: "SCHEMA_REQUIRED_FIELD_MISSING"
+    http_status: 400
+    retryable: false
+    user_action: "缺少必填字段，请补充完整"
+    operator_action: "检查 required 字段定义"
+
+  # === SYS 类 (系统内部错误) ===
+  SYS_INTERNAL:
+    code: "SYS_INTERNAL"
+    http_status: 500
+    retryable: true
+    user_action: "系统暂时不可用，请稍后重试"
+    operator_action: "检查服务日志，排查内部错误"
+
+  SYS_DEPENDENCY_FAILURE:
+    code: "SYS_DEPENDENCY_FAILURE"
+    http_status: 502
+    retryable: true
+    user_action: "依赖服务暂时不可用，请稍后重试"
+    operator_action: "检查外部依赖服务状态"
+
+  SYS_TIMEOUT:
+    code: "SYS_TIMEOUT"
+    http_status: 504
+    retryable: true
+    user_action: "操作超时，请稍后重试"
+    operator_action: "检查网络连接和服务响应时间"
+
+  # === GATE 类 (门禁裁决错误) ===
+  GATE_POLICY_DENY:
+    code: "GATE_POLICY_DENY"
+    http_status: 403
+    retryable: false
+    user_action: "操作被安全策略拒绝，请联系管理员"
+    operator_action: "检查宪法策略配置和触发条件"
+
+  GATE_REQUIRES_CHANGES:
+    code: "GATE_REQUIRES_CHANGES"
+    http_status: 403
+    retryable: false
+    user_action: "需要修改后重新提交"
+    operator_action: "检查 required_changes 字段，提供修改指导"
+
+  # === AUDIT 类 (审计错误) ===
+  AUDIT_LICENSE_UNKNOWN:
+    code: "AUDIT_LICENSE_UNKNOWN"
+    http_status: 400
+    retryable: false
+    user_action: "无法识别许可证类型，将限制为私有使用"
+    operator_action: "检查 LICENSE 文件，补充 SPDX 标识"
+
+  AUDIT_PROVENANCE_INCOMPLETE:
+    code: "AUDIT_PROVENANCE_INCOMPLETE"
+    http_status: 400
+    retryable: false
+    user_action: "溯源信息不完整，请补充来源信息"
+    operator_action: "检查 provenance.json 必填字段"
+
+  AUDIT_LINT_FAILED:
+    code: "AUDIT_LINT_FAILED"
+    http_status: 400
+    retryable: false
+    user_action: "审计校验失败，请检查数据完整性"
+    operator_action: "运行 lint 工具检查问题"
+
+  AUDIT_HASH_MISMATCH:
+    code: "AUDIT_HASH_MISMATCH"
+    http_status: 400
+    retryable: false
+    user_action: "文件校验失败，内容可能被篡改"
+    operator_action: "重新生成文件或检查传输完整性"
+
+  # === REG 类 (注册发布错误) ===
+  REG_REJECTED_INVALID_AUDIT:
+    code: "REG_REJECTED_INVALID_AUDIT"
+    http_status: 400
+    retryable: false
+    user_action: "审计包无效，无法发布"
+    operator_action: "检查 audit_pack 完整性和签名"
+
+  REG_PUBLISH_VISIBILITY_DENIED:
+    code: "REG_PUBLISH_VISIBILITY_DENIED"
+    http_status: 403
+    retryable: false
+    user_action: "当前许可证不允许公开发布"
+    operator_action: "检查 license_status 和 visibility 配置"
+
+  REG_VERSION_CONFLICT:
+    code: "REG_VERSION_CONFLICT"
+    http_status: 409
+    retryable: false
+    user_action: "版本号冲突，请更新版本号"
+    operator_action: "检查版本号唯一性"
+
+  # === EXEC 类 (执行错误) ===
+  EXEC_TIMEOUT:
+    code: "EXEC_TIMEOUT"
+    http_status: 504
+    retryable: true
+    user_action: "执行超时，请简化任务或增加超时时间"
+    operator_action: "检查执行配置 timeout_seconds"
+
+  EXEC_TEST_INSUFFICIENT_RUNS:
+    code: "EXEC_TEST_INSUFFICIENT_RUNS"
+    http_status: 400
+    retryable: false
+    user_action: "测试运行次数不足，无法验证质量"
+    operator_action: "检查 Level4 需要 >=20 次，Level5 需要 >=1000 次"
+
+  EXEC_METRICS_THRESHOLD_FAILED:
+    code: "EXEC_METRICS_THRESHOLD_FAILED"
+    http_status: 400
+    retryable: false
+    user_action: "性能指标未达标，请优化后重试"
+    operator_action: "检查成功率、延迟、成本等指标"
+
+  EXEC_CAPABILITY_EXCEEDED:
+    code: "EXEC_CAPABILITY_EXCEEDED"
+    http_status: 403
+    retryable: false
+    user_action: "执行超出授权能力范围"
+    operator_action: "检查 capabilities 配置与实际调用"
+
+  EXEC_SANDBOX_VIOLATION:
+    code: "EXEC_SANDBOX_VIOLATION"
+    http_status: 403
+    retryable: false
+    user_action: "沙箱安全策略违规"
+    operator_action: "检查沙箱配置和实际操作"
+
+  # === INPUT 类 (输入错误) ===
+  INPUT_INVALID:
+    code: "INPUT_INVALID"
+    http_status: 400
+    retryable: false
+    user_action: "输入参数无效，请检查格式"
+    operator_action: "验证输入 Schema"
+
+  INPUT_VALIDATION_FAILED:
+    code: "INPUT_VALIDATION_FAILED"
+    http_status: 400
+    retryable: false
+    user_action: "输入验证失败"
+    operator_action: "检查验证规则和输入数据"

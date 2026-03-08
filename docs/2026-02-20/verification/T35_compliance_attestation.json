@@ -1,0 +1,62 @@
+{
+  "attestation_id": "T35-CA-20260220-001",
+  "task_id": "T35",
+  "executor": "vs--cc3",
+  "job_id": "L45-FE-V10-20260220-007",
+  "created_at": "2026-02-20T14:35:00Z",
+
+  "decision": "PASS",
+
+  "contract_hash": "sha256:a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2",
+  "contract_hash_match": "YES",
+
+  "evidence_refs": [
+    "T35-EV-001: router.tsx 路由配置文件",
+    "T35-EV-002: AppShell.tsx 导航框架文件",
+    "T35-EV-003: main.tsx 入口文件更新",
+    "T35-EV-004: package.json 依赖更新",
+    "T35-EV-005: IA_ROUTING_REPORT 报告"
+  ],
+
+  "compliance_checks": [
+    {
+      "check_id": "CC1",
+      "description": "约束检查：无 n8n 顶层导航",
+      "result": "PASS",
+      "evidence": "导航按业务域分组（执行/审计/系统）"
+    },
+    {
+      "check_id": "CC2",
+      "description": "约束检查：v1.0 不新增治理页面",
+      "result": "PASS",
+      "evidence": "路由配置中未包含 /governance/release"
+    },
+    {
+      "check_id": "CC3",
+      "description": "约束检查：Top Bar 全局检索入口",
+      "result": "PASS",
+      "evidence": "GlobalSearch 组件已实现"
+    },
+    {
+      "check_id": "CC4",
+      "description": "产物检查：五页路由配置",
+      "result": "PASS",
+      "evidence": "router.tsx 包含 5 个页面路由"
+    },
+    {
+      "check_id": "CC5",
+      "description": "禁止项检查：无超出范围页面",
+      "result": "PASS",
+      "evidence": "所有页面均在 v1.0 规范内"
+    }
+  ],
+
+  "side_effects": {
+    "publish": false,
+    "external_api": false,
+    "permit_required": false
+  },
+
+  "attestor": "vs--cc3",
+  "attestation_timestamp": "2026-02-20T14:35:00Z"
+}

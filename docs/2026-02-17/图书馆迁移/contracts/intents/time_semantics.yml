@@ -1,0 +1,229 @@
+# ============================================================
+# Time Semantics Intent Contract (Normalized)
+# ============================================================
+# Priority: P1
+# Source: NEW-GM/AUDIT/CONSTITUTION.md (Section 4: Time Semantics)
+# Migration: A9 - Wave 4 Batch 1
+# Normalized: 2026-02-18
+# ============================================================
+
+intent_id: time_semantics
+summary: |
+  时间语义内核模块 - 定义 EventTime/AvailableTime/DecisionTime 核心约束。
+  核心规则：决策只能使用 available_time <= decision_time 的数据。
+  防止 Look-Ahead Bias（前视偏差），确保回测和实时决策的可靠性。
+contract_version: v1.0.0
+schema_hash: TBD_SHA256
+
+# ============================================================
+# Inputs Schema
+# ============================================================
+inputs_schema:
+  required:
+    - name: repo_url
+      type: string
+      description: "仓库 URL（确定性输入）"
+      pattern: "^(https?|git)://.+$"
+
+    - name: commit_sha
+      type: string
+      description: "Git commit SHA（确定性输入）"
+      pattern: "^[a-f0-9]{7,40}$"
+
+    - name: event_time
+      type: string
+      format: ISO8601
+      description: "事件实际发生时间"
+
+    - name: available_time
+      type: string
+      format: ISO8601
+      description: "数据可用时间"
+
+    - name: decision_time
+      type: string
+      format: ISO8601
+      description: "决策时间"
+
+  optional:
+    - name: max_lag
+      type: string
+      format: duration
+      default: "PT5M"
+      description: "最大允许延迟（实时场景）"
+
+# ============================================================
+# Required Gates
+# ============================================================
+required_gates:
+  - time_constraint_gate   # 时间约束验证
+  - data_freshness_gate    # 数据新鲜度检查
+  - look_ahead_prevention  # 前视偏差防护
+
+# ============================================================
+# Minimum Level
+# ============================================================
+minimum_level: L3
+
+# ============================================================
+# Required Evidence
+# ============================================================
+required_evidence:
+  - time_chain_record      # 时间链记录
+  - constraint_validation  # 约束验证结果
+  - source_doc_ref         # 源文档引用
+
+# ============================================================
+# Outputs
+# ============================================================
+outputs:
+  - name: audit_pack_ref
+    type: string
+    description: "L3 AuditPack 引用标识"
+
+  - name: gate_decision
+    type: string
+    enum: ["VALID", "INVALID", "LOOK_AHEAD_DETECTED"]
+    description: "Gate 最终决策"
+
+  - name: revision
+    type: integer
+    description: "合约版本号"
+
+  - name: time_chain_valid
+    type: boolean
+    description: "时间链是否有效"
+
+  - name: violation_type
+    type: string
+    enum: ["NONE", "LOOK_AHEAD_BIAS", "DATA_STALE", "TIME_TRAVEL"]
+    description: "违规类型（如有）"
+
+  - name: filtered_data_count
+    type: integer
+    description: "通过时间过滤的数据条目数"
+
+# ============================================================
+# Core Concept Definitions
+# ============================================================
+core_concepts:
+  event_time:
+    definition: "When an event actually occurred"
+    example: "财报发布日期 2024-01-15"
+    role: "事实时间锚点"
+
+  available_time:
+    definition: "When the information became available to the system"
+    example: "数据入库时间 2024-01-20"
+    role: "数据可访问时间点"
+
+  decision_time:
+    definition: "When the decision is made"
+    example: "交易决策时间 2024-01-21"
+    role: "决策执行时间点"
+
+# ============================================================
+# Core Invariant
+# ============================================================
+invariant:
+  assertion: "EventTime <= AvailableTime <= DecisionTime"
+  violation_consequence: "Look-Ahead Bias (前视偏差)"
+  description: |
+    违反此约束将导致使用未来数据，造成：
+    1. 回测失真（Backtest Distortion）
+    2. 策略过度拟合
+    3. 生产环境崩溃
+
+# ============================================================
+# Use Cases
+# ============================================================
+use_cases:
+  rag:
+    description: "检索时只能使用 decision_time 之前的数据"
+    constraint: "filter by available_time <= current_decision_time"
+    interface: "filter_by_availability(data, decision_time)"
+
+  backtest:
+    description: "模拟历史决策时严格遵守时间约束"
+    constraint: "simulate data availability at each historical point"
+    interface: "validate_time_constraint(event, available, decision)"
+
+  real_time:
+    description: "实时决策时验证数据可用性"
+    constraint: "validate data freshness before decision"
+    interface: "check_data_freshness(available_time, current_time, max_lag)"
+
+# ============================================================
+# Validation Rules
+# ============================================================
+validation_rules:
+  - rule_id: TIME-CHAIN-001
+    description: "时间链完整性验证"
+    severity: critical
+    check: |
+      event_time <= available_time AND available_time <= decision_time
+
+  - rule_id: TIME-CHAIN-002
+    description: "前视偏差检测"
+    severity: critical
+    check: |
+      available_time <= decision_time
+      ON VIOLATION: LOOK_AHEAD_DETECTED
+
+  - rule_id: TIME-CHAIN-003
+    description: "数据新鲜度检查（实时场景）"
+    severity: high
+    check: |
+      current_time - available_time <= max_lag
+      ON VIOLATION: DATA_STALE
+
+# ============================================================
+# Architecture Boundary
+# ============================================================
+architecture_boundary: |
+  - n8n 仅作为 Orchestrator（触发/路由/通知），不做最终裁决
+  - SkillForge 是 Governor（Gate 判定、Evidence 产出、AuditPack 固化）
+  - 此模块是 Kernel 级别基础设施，被所有 RAG/Backtest 技能使用
+  - 必须高度可靠，无外部依赖
+
+# ============================================================
+# Source References (Evidence Chain)
+# ============================================================
+source_doc_ref:
+  file: "D:\\NEW-GM\\AUDIT\\CONSTITUTION.md"
+  section: "Section 4: Time Semantics"
+  lines: "17-21"
+  evidence_refs:
+    - id: "EVID-A9-001"
+      source: "CONSTITUTION.md L17"
+      quote: "**Event Time**: When an event actually occurred."
+    - id: "EVID-A9-002"
+      source: "CONSTITUTION.md L18-19"
+      quote: "**Available Time**: When the information became available to the system."
+    - id: "EVID-A9-003"
+      source: "CONSTITUTION.md L20-21"
+      quote: "**No Time Travel**: Decisions must only use data where `available_time <= decision_time`."
+
+# ============================================================
+# Mapping Target
+# ============================================================
+mapping_target:
+  primary: "skillforge/src/kernel/time_manager.py"
+  interfaces:
+    - "validate_time_constraint(event_time, available_time, decision_time)"
+    - "filter_by_availability(data, decision_time)"
+    - "check_data_freshness(available_time, current_time, max_lag)"
+
+# ============================================================
+# Migration Metadata
+# ============================================================
+migration:
+  task_id: A9
+  wave: 4
+  batch: 1
+  priority: P1
+  decision: MIGRATE
+  status: normalized
+  value_score: 9
+  risk_level: Low
+  mapping_target: skillforge/src/kernel/time_manager.py

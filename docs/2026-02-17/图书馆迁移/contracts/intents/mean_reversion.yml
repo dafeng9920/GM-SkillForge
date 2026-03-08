@@ -1,0 +1,173 @@
+# Mean Reversion Strategy Intent Contract
+# 迁移自: D:\NEW-GM\strategies\template_mean_reversion.py
+# 迁移日期: 2026-02-18
+
+intent_name: mean_reversion
+version: "1.0.0"
+source_doc_ref: "D:\\NEW-GM\\strategies\\template_mean_reversion.py"
+
+description: |
+  均值回归策略意图，基于RSI和布林带指标，适用于震荡市场。
+  核心逻辑：当价格偏离均值过大时，预期回归均值。
+
+# 输入数据模式
+input_schema:
+  market_data:
+    type: DataFrame
+    required_columns:
+      - close    # 收盘价
+      - volume   # 成交量
+    description: "市场OHLCV数据"
+
+  volume_data:
+    type: Series
+    required: true
+    description: "成交量数据，用于volume_threshold约束"
+
+# 输出信号模式
+output_schema:
+  signal:
+    type: Signal
+    enum:
+      - LONG    # 做多信号 (RSI < 30 + BB下轨附近)
+      - SHORT   # 做空信号 (RSI > 70 + BB上轨附近)
+      - FLAT    # 平仓信号 (止损/止盈)
+    confidence_range: [0.0, 1.0]
+
+# 策略参数
+parameters:
+  rsi:
+    period:
+      type: int
+      default: 14
+      source_ref: "template_mean_reversion.py:55"
+    overbought:
+      type: float
+      default: 70.0
+      source_ref: "template_mean_reversion.py:30"
+      description: "超买阈值"
+    oversold:
+      type: float
+      default: 30.0
+      source_ref: "template_mean_reversion.py:31"
+      description: "超卖阈值"
+
+  bollinger_bands:
+    period:
+      type: int
+      default: 20
+      source_ref: "template_mean_reversion.py:32"
+    std_dev:
+      type: float
+      default: 2.0
+      source_ref: "template_mean_reversion.py:33"
+    lower_threshold:
+      type: float
+      default: 0.2
+      source_ref: "template_mean_reversion.py:65"
+      description: "BB Position < 0.2 视为接近下轨"
+    upper_threshold:
+      type: float
+      default: 0.8
+      source_ref: "template_mean_reversion.py:73"
+      description: "BB Position > 0.8 视为接近上轨"
+
+  risk_management:
+    stop_loss:
+      type: float
+      default: 0.05
+      source_ref: "template_mean_reversion.py:35"
+      description: "止损比例 5%"
+    take_profit:
+      type: float
+      default: 0.08
+      source_ref: "template_mean_reversion.py:36"
+      description: "止盈比例 8%"
+
+# 核心约束
+constraints:
+  - id: volume_threshold
+    type: mandatory
+    description: "成交量必须达到阈值才确认信号"
+    logic: "volume_ratio = current_volume / rolling_mean_20 > threshold"
+    default_value: 1.2
+    source_ref: "template_mean_reversion.py:34,57,66,74"
+    evidence_ref: "L62-68: 买入条件; L70-76: 卖出条件"
+
+  - id: signal_generation_rules
+    type: mandatory
+    description: "信号生成必须同时满足三个条件"
+    buy_signal:
+      - rsi < oversold_threshold
+      - bb_position < lower_threshold
+      - volume_ratio > volume_threshold
+    sell_signal:
+      - rsi > overbought_threshold
+      - bb_position > upper_threshold
+      - volume_ratio > volume_threshold
+    source_ref: "template_mean_reversion.py:63-76"
+
+  - id: risk_control
+    type: mandatory
+    description: "必须实现止损止盈机制"
+    source_ref: "template_mean_reversion.py:78-92"
+
+# 意图映射
+intent_mapping:
+  component_id: "A6_mean_reversion"
+  target_path: "skillforge/src/skills/strategies/mean_reversion.py"
+  dependencies:
+    - factor_engine (RSI_14, BB_Position)
+    - data_loader (market data)
+    - backtest_engine
+  value_score: 8
+  risk_level: Medium
+
+# 验证规则
+validation_rules:
+  - id: data_completeness
+    check: "data.empty == False"
+    source_ref: "template_mean_reversion.py:113-115"
+
+  - id: signal_completeness
+    check: "signals.empty == False"
+    source_ref: "template_mean_reversion.py:118-120"
+
+  - id: signal_balance
+    check: "0.3 <= buy_ratio <= 0.7"
+    warning: "信号不平衡可能存在偏差"
+    source_ref: "template_mean_reversion.py:136-141"
+
+  - id: signal_frequency
+    check: "5 <= avg_signal_interval <= 60"
+    source_ref: "template_mean_reversion.py:144-148"
+
+# 证据追踪
+evidence:
+  - id: E1
+    type: source_code
+    location: "template_mean_reversion.py:25-48"
+    description: "MeanReversionStrategy 类定义及参数"
+
+  - id: E2
+    type: source_code
+    location: "template_mean_reversion.py:49-100"
+    description: "generate_signals 核心信号生成逻辑"
+
+  - id: E3
+    type: source_code
+    location: "template_mean_reversion.py:102-150"
+    description: "validate_strategy 策略验证逻辑"
+
+  - id: E4
+    type: source_code
+    location: "template_mean_reversion.py:153-241"
+    description: "run_mean_reversion_backtest 回测执行逻辑"
+
+# 元数据
+metadata:
+  migrated_from: "D:\\NEW-GM\\strategies\\template_mean_reversion.py"
+  migration_date: "2026-02-18"
+  executor: "Kiro-3"
+  wave: "Wave 4 Batch 1"
+  task_id: "A6"

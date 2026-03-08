@@ -1,0 +1,103 @@
+{
+  "task_id": "T-W3-C",
+  "timestamp": "2026-02-17T12:00:00Z",
+  "total_tests": 9,
+  "passed": 9,
+  "failed": 0,
+  "tests": [
+    {
+      "name": "At-Time Replay Success (Valid at_time ref -> PASS)",
+      "passed": true,
+      "expected": "status: PASSED, entries_written: 1",
+      "actual": "status: PASSED, entries_written: 1",
+      "details": [
+        "Validation errors: []",
+        "Output: {\n  \"status\": \"PASSED\",\n  \"entries_written\": 1,\n  \"entries_skipped\": 0,\n  \"evolution_ref\": \"AuditPack/experience/a1b2c3d4e5f6789012345678901234567890abcd/evolution.json\",\n  \"audit_pack_ref\": \"AuditPack/cognition_10d/a1b2c3d4e5f6789012345678901234567890abcd/\",\n  \"rejection_reasons\": []\n}",
+        "PASS: Valid input produced PASSED status",
+        "evolution.json created with 1 entries"
+      ]
+    },
+    {
+      "name": "Tombstone Interception (tombstone=true -> REJECT)",
+      "passed": true,
+      "expected": "REJECTED via validate_input() returning FC-ATR-5 error",
+      "actual": "Validation errors: ['FC-ATR-5: tombstone=true']",
+      "details": [
+        "Validation errors: ['FC-ATR-5: tombstone=true']",
+        "PASS: tombstone=true correctly detected by validate_input()",
+        "PASS: FC-ATR-5 rule enforced at validation stage",
+        "Expected caller behavior: {\n  \"status\": \"REJECTED\",\n  \"entries_written\": 0,\n  \"entries_skipped\": 0,\n  \"evolution_ref\": null,\n  \"audit_pack_ref\": null,\n  \"rejection_reasons\": [\n    \"FC-ATR-5: tombstone=true\"\n  ]\n}"
+      ]
+    },
+    {
+      "name": "Auto Extraction (Valid inputs -> evolution.json updated)",
+      "passed": true,
+      "expected": "Entries: 1 -> 2 (append, no overwrite)",
+      "actual": "Entries: 1 -> 2, keys: ['GATE.FC-2', 'RISK.L5']",
+      "details": [
+        "First write output: {\n  \"status\": \"PASSED\",\n  \"entries_written\": 1,\n  \"entries_skipped\": 0,\n  \"evolution_ref\": \"AuditPack/experience/a1b2c3d4e5f6789012345678901234567890abcd/evolution.json\",\n  \"audit_pack_ref\": \"AuditPack/cognition_10d/a1b2c3d4e5f6789012345678901234567890abcd/\",\n  \"rejection_reasons\": []\n}",
+        "After first write: 1 entries",
+        "Second write output: {\n  \"status\": \"PASSED\",\n  \"entries_written\": 1,\n  \"entries_skipped\": 0,\n  \"evolution_ref\": \"AuditPack/experience/a1b2c3d4e5f6789012345678901234567890abcd/evolution.json\",\n  \"audit_pack_ref\": \"AuditPack/cognition_10d/a1b2c3d4e5f6789012345678901234567890abcd/\",\n  \"rejection_reasons\": []\n}",
+        "After second write: 2 entries",
+        "PASS: Second entry appended correctly",
+        "PASS: Both entries preserved (no overwrite)",
+        "Duplicate write output: {\n  \"status\": \"PASSED\",\n  \"entries_written\": 0,\n  \"entries_skipped\": 1,\n  \"evolution_ref\": \"AuditPack/experience/a1b2c3d4e5f6789012345678901234567890abcd/evolution.json\",\n  \"audit_pack_ref\": \"AuditPack/cognition_10d/a1b2c3d4e5f6789012345678901234567890abcd/\",\n  \"rejection_reasons\": []\n}",
+        "PASS: Duplicate correctly skipped (deduplication works)"
+      ]
+    },
+    {
+      "name": "FC-ATR-1: Invalid URI -> REJECTED",
+      "passed": true,
+      "expected": null,
+      "actual": null,
+      "details": [
+        "Errors: ['FC-ATR-1: uri must be a valid URI']"
+      ]
+    },
+    {
+      "name": "FC-ATR-2: Invalid commit_sha -> REJECTED",
+      "passed": true,
+      "expected": null,
+      "actual": null,
+      "details": [
+        "Errors: ['FC-ATR-2: commit_sha must be 40-char hex string']"
+      ]
+    },
+    {
+      "name": "FC-ATR-3: Invalid at_time -> REJECTED",
+      "passed": true,
+      "expected": null,
+      "actual": null,
+      "details": [
+        "Errors: ['FC-ATR-3: at_time must be ISO-8601 format']"
+      ]
+    },
+    {
+      "name": "FC-ATR-4: Missing tombstone -> REJECTED",
+      "passed": true,
+      "expected": null,
+      "actual": null,
+      "details": [
+        "Errors: ['FC-ATR-4: tombstone is required']"
+      ]
+    },
+    {
+      "name": "FC-EXP-1: Invalid issue_key -> REJECTED",
+      "passed": true,
+      "expected": null,
+      "actual": null,
+      "details": [
+        "Errors: ['FC-EXP-1: entry[0] issue_key must match pattern ^[A-Z]+\\\\.[A-Z0-9-]+$', 'FC-EXP-5: entry[0] content_hash verification failed']"
+      ]
+    },
+    {
+      "name": "FC-EXP-3: Invalid source_stage -> REJECTED",
+      "passed": true,
+      "expected": null,
+      "actual": null,
+      "details": [
+        "Errors: [\"FC-EXP-3: entry[0] source_stage must be one of {'fix', 'audit', 'test'}\", 'FC-EXP-5: entry[0] content_hash verification failed']"
+      ]
+    }
+  ]
+}

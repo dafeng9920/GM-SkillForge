@@ -1,0 +1,20 @@
+{
+  "task_id": "T{N}",
+  "reviewer": "{审查者}",
+  "decision": "ALLOW|REQUIRES_CHANGES|DENY",
+  "reasons": ["string"],
+  "evidence_refs": [
+    {
+      "id": "EV-...",
+      "kind": "LOG|FILE|DIFF|SNIPPET",
+      "locator": "path:line"
+    }
+  ],
+  "required_changes": [
+    {
+      "issue_key": "SF-...",
+      "reason": "string",
+      "next_action": "string"
+    }
+  ]
+}

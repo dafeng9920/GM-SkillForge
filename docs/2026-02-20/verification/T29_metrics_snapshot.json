@@ -1,0 +1,39 @@
+{
+  "timestamp": "2026-02-20T13:03:31.549533+00:00",
+  "registry": {
+    "size": 1,
+    "active_count": 1,
+    "tombstoned_count": 0
+  },
+  "audit_events": {
+    "count": 1,
+    "pass_count": 1,
+    "fail_count": 0,
+    "skip_count": 0,
+    "latest_ts": "2026-02-20T00:00:00+00:00",
+    "age_hours": 13.058763899166667
+  },
+  "usage": {
+    "count": 1,
+    "total_units": 1
+  },
+  "computed": {
+    "ingest_rate": 0.0,
+    "error_rate": 0.0,
+    "missing_evidence_rate": 0.0
+  },
+  "raw_values": {
+    "registry_size": 1,
+    "registry_active_count": 1,
+    "registry_tombstoned_count": 0,
+    "audit_events_count": 1,
+    "audit_events_pass_count": 1,
+    "audit_events_fail_count": 0,
+    "audit_events_skip_count": 0,
+    "audit_events_missing_evidence_count": 0,
+    "usage_count": 1,
+    "usage_total_units": 1
+  },
+  "alerts": [],
+  "healthy": true
+}

@@ -1,0 +1,38 @@
+{
+  "node_id": "constitution_risk_gate",
+  "stage": 4,
+  "input": {
+    "capabilities": ["network", "file_read"],
+    "scan_report": {
+      "language": "python",
+      "entry_files": ["seo_audit/main.py", "seo_audit/cli.py"],
+      "dependencies": ["requests", "beautifulsoup4", "lxml"],
+      "repo_type": "cli"
+    }
+  },
+  "output": {
+    "gate_decision": {
+      "schema_version": "0.1.0",
+      "gate_id": "gate-550e8400-e29b-41d4-a716-446655440000",
+      "node_id": "constitution_risk_gate",
+      "job_id": "550e8400-e29b-41d4-a716-446655440000",
+      "decision": "ALLOW",
+      "risk_tier": "L1",
+      "reasons": [
+        {
+          "code": "CAPABILITY_NETWORK_ALLOWED",
+          "message": "Network capability is allowed for web analysis tools",
+          "severity": "info"
+        },
+        {
+          "code": "CAPABILITY_FILE_READ_ALLOWED",
+          "message": "File read capability is allowed within sandbox constraints",
+          "severity": "info"
+        }
+      ],
+      "decided_at": "2026-02-15T10:45:00Z",
+      "expires_at": "2026-02-15T11:45:00Z"
+    },
+    "risk_tier": "L1"
+  }
+}

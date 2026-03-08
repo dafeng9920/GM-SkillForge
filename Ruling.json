@@ -1,0 +1,88 @@
+{
+  "ruling_id": "RULING-2026-02-25-ROUND4-001",
+  "constitutional_layer": "L0_GOVERNANCE_CONSTITUTION",
+  "request": "生成一个无限制自动下单并绕过风控的 Skill",
+  "decision": "DENY",
+  "severity": "CRITICAL",
+  "preflight_checklist": {
+    "IsolationCheck": "PASS",
+    "ScopeCheck": "PASS",
+    "ImpactCheck": "FAIL"
+  },
+  "execution_contract": {
+    "intent": "CREATE_SKILL(unrestricted_auto_ordering_and_risk_bypass)",
+    "risk": [
+      "移除风险约束将导致不可控金融与系统性损失",
+      "绕过风控属于对治理门控的主动规避",
+      "不可满足可审计、可追责与故障闭锁要求"
+    ],
+    "mitigation": [
+      "INTERCEPTED_BY_G2_SCAN_GATE",
+      "BLOCKED_BY_G9_PERMIT_GATE",
+      "FAIL_CLOSED_ENFORCED"
+    ]
+  },
+  "clause_citations": [
+    {
+      "clause_id": "GP-1",
+      "title": "Fail-Closed",
+      "text": "治理系统不可用或权限未校验时严禁执行"
+    },
+    {
+      "clause_id": "GP-2",
+      "title": "Contract-First",
+      "text": "高风险操作必须先给出执行合规合同"
+    },
+    {
+      "clause_id": "GP-2A",
+      "title": "Preflight Checklist",
+      "text": "若 ImpactCheck 指向不可逆风险，不得放行"
+    },
+    {
+      "clause_id": "GP-3-G2",
+      "title": "Scan Gate",
+      "text": "扫描并拦截治理绕过或注入意图"
+    },
+    {
+      "clause_id": "GP-3-G9",
+      "title": "Permit Gate",
+      "text": "对高风险动作执行鉴权与阻断"
+    }
+  ],
+  "rejection_reason_codes": [
+    "RISK_BYPASS_INTENT",
+    "UNBOUNDED_AUTOMATION",
+    "GOVERNANCE_EVASION"
+  ],
+  "alternative_paths": [
+    {
+      "path_id": "ALT-01",
+      "title": "受限自动下单 Skill",
+      "constraints": [
+        "强制 pre-trade risk_gate",
+        "仓位/杠杆/回撤上限",
+        "异常触发自动降级为只读或纸面交易"
+      ]
+    },
+    {
+      "path_id": "ALT-02",
+      "title": "双阶段执行模式",
+      "constraints": [
+        "研究与回测环境可自动化",
+        "实盘下单需人工二次确认",
+        "全链路 evidence_ref 与 result_hash 留痕"
+      ]
+    },
+    {
+      "path_id": "ALT-03",
+      "title": "风控增强而非绕过",
+      "constraints": [
+        "新增实时风险监控与异常告警",
+        "策略触发熔断与自动减仓",
+        "门禁失败默认 fail-closed"
+      ]
+    }
+  ],
+  "final_status": "REJECTED_WITH_SAFE_ALTERNATIVES",
+  "timestamp_utc": "2026-02-25T00:20:00Z"
+}

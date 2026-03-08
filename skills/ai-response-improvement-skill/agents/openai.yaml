@@ -1,0 +1,45 @@
+name: ai-response-improvement-skill
+description: 智能AI回复改进系统，提供语义理解和上下文感知的对话能力
+version: v1.0.0
+frozen_at: 2026-02-20
+
+capabilities:
+  - intent_detection
+  - semantic_understanding
+  - context_awareness
+  - personalized_responses
+  - quality_assessment
+
+input_schema:
+  user_message:
+    type: string
+    required: true
+    description: 用户输入的消息内容
+  conversation_history:
+    type: array
+    required: false
+    description: 对话历史记录
+  user_context:
+    type: object
+    required: false
+    description: 用户上下文信息
+
+output_schema:
+  response_content:
+    type: string
+    description: 生成的智能回复内容
+  confidence_score:
+    type: number
+    description: 回复质量置信度 (0-1)
+  intent_detected:
+    type: string
+    description: 检测到的用户意图
+  follow_up_suggestions:
+    type: array
+    description: 后续对话建议
+
+constraints:
+  real_time: true
+  context_aware: true
+  personalized: true
+  fail_graceful: true

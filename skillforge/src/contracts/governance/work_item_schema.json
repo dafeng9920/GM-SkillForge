@@ -1,0 +1,338 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://skillforge.local/schemas/governance/work_item_schema.json",
+  "title": "Work Item Schema",
+  "description": "Schema for the strict Work Item structure used in SkillForge governance migration from Reason Cards.",
+  "version": "v1.0",
+  "type": "object",
+  "required": [
+    "work_item_id",
+    "intent",
+    "inputs",
+    "constraints",
+    "acceptance",
+    "evidence",
+    "adopted_from"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "work_item_id": {
+      "type": "string",
+      "pattern": "^WI-[A-Z0-9]{8,16}$",
+      "description": "Unique work item identifier (format: WI-XXXXXXXX)"
+    },
+    "intent": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500,
+      "description": "Clear statement of the work item's purpose and goal"
+    },
+    "inputs": {
+      "type": "object",
+      "description": "Required inputs for this work item",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["type", "required"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["string", "number", "boolean", "object", "array", "uri", "datetime"],
+            "description": "Data type of the input"
+          },
+          "required": {
+            "type": "boolean",
+            "description": "Whether this input is required"
+          },
+          "default": {
+            "description": "Default value if not provided"
+          },
+          "validation": {
+            "type": "string",
+            "description": "Validation pattern or rule"
+          },
+          "description": {
+            "type": "string",
+            "description": "Human-readable description of the input"
+          }
+        }
+      }
+    },
+    "constraints": {
+      "type": "object",
+      "description": "Constraints and limitations for this work item",
+      "required": ["timeout_seconds", "max_retries"],
+      "additionalProperties": false,
+      "properties": {
+        "timeout_seconds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3600,
+          "description": "Maximum execution time in seconds"
+        },
+        "max_retries": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Maximum number of retry attempts"
+        },
+        "fail_mode": {
+          "type": "string",
+          "enum": ["OPEN", "CLOSED"],
+          "default": "CLOSED",
+          "description": "Failure mode: CLOSED (fail-safe) or OPEN"
+        },
+        "blocking": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether this work item blocks downstream execution"
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^WI-[A-Z0-9]{8,16}$"
+          },
+          "description": "List of work item IDs this item depends on"
+        },
+        "custom_constraints": {
+          "type": "object",
+          "additionalProperties": {
+            "type": ["string", "number", "boolean", "array", "object"]
+          },
+          "description": "Additional custom constraints"
+        }
+      }
+    },
+    "acceptance": {
+      "type": "object",
+      "description": "Acceptance criteria for this work item",
+      "required": ["criteria"],
+      "additionalProperties": false,
+      "properties": {
+        "criteria": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["criterion_id", "description", "validation"],
+            "additionalProperties": false,
+            "properties": {
+              "criterion_id": {
+                "type": "string",
+                "pattern": "^AC-[0-9]{2}$",
+                "description": "Unique criterion identifier (format: AC-XX)"
+              },
+              "description": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Description of the acceptance criterion"
+              },
+              "validation": {
+                "type": "object",
+                "required": ["type"],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": ["schema", "regex", "range", "custom", "manual"],
+                    "description": "Type of validation"
+                  },
+                  "schema_ref": {
+                    "type": "string",
+                    "description": "Reference to JSON schema for schema validation"
+                  },
+                  "pattern": {
+                    "type": "string",
+                    "description": "Regex pattern for regex validation"
+                  },
+                  "min": {
+                    "type": "number",
+                    "description": "Minimum value for range validation"
+                  },
+                  "max": {
+                    "type": "number",
+                    "description": "Maximum value for range validation"
+                  },
+                  "validator_ref": {
+                    "type": "string",
+                    "description": "Reference to custom validator for custom validation"
+                  }
+                }
+              },
+              "mandatory": {
+                "type": "boolean",
+                "default": true,
+                "description": "Whether this criterion is mandatory for acceptance"
+              }
+            }
+          },
+          "description": "List of acceptance criteria"
+        },
+        "min_pass_count": {
+          "type": "integer",
+          "description": "Minimum number of criteria that must pass (defaults to all mandatory)"
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "description": "Evidence requirements and references",
+      "required": ["evidence_refs"],
+      "additionalProperties": false,
+      "properties": {
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["ref_id", "type", "path"],
+            "additionalProperties": false,
+            "properties": {
+              "ref_id": {
+                "type": "string",
+                "pattern": "^EV-[A-Z0-9-]+$",
+                "description": "Evidence reference identifier"
+              },
+              "type": {
+                "type": "string",
+                "enum": ["audit_pack", "log", "artifact", "metric", "screenshot", "report", "signature"],
+                "description": "Type of evidence"
+              },
+              "path": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Path or URI to the evidence artifact"
+              },
+              "hash": {
+                "type": "object",
+                "properties": {
+                  "algorithm": {
+                    "type": "string",
+                    "enum": ["SHA-256", "SHA-512", "MD5"],
+                    "default": "SHA-256"
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "Hash value of the evidence"
+                  }
+                }
+              },
+              "generated_at": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When this evidence was generated"
+              }
+            }
+          },
+          "description": "List of evidence references"
+        },
+        "audit_pack_ref": {
+          "type": "string",
+          "description": "Reference to the complete audit pack"
+        },
+        "execution_receipt_ref": {
+          "type": "string",
+          "pattern": "^RCP-L45-[A-Z0-9]{8,16}$",
+          "description": "Reference to n8n execution receipt for orchestration traceability (L4.5+)"
+        },
+        "run_id": {
+          "type": "string",
+          "pattern": "^RUN-L4-[0-9]+-[A-Z0-9]{8}$",
+          "description": "Execution run ID that chains through the entire workflow"
+        },
+        "gate_decision": {
+          "type": "string",
+          "enum": ["PASSED", "REJECTED", "BLOCKED"],
+          "description": "Gate decision result from execution"
+        },
+        "replay_pointer": {
+          "type": "object",
+          "description": "Pointer for at-time replay capability (structure fixed, content nullable)",
+          "nullable": true,
+          "additionalProperties": false,
+          "properties": {
+            "snapshot_ref": {
+              "type": "string",
+              "description": "Reference to the state snapshot for replay",
+              "nullable": true
+            },
+            "at_time": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Timestamp for at-time replay",
+              "nullable": true
+            },
+            "revision": {
+              "type": "string",
+              "description": "Version/revision identifier for deterministic replay",
+              "nullable": true
+            },
+            "evidence_bundle_ref": {
+              "type": "string",
+              "description": "Reference to the complete evidence bundle for replay",
+              "nullable": true
+            }
+          }
+        }
+      }
+    },
+    "adopted_from": {
+      "type": "object",
+      "description": "Source information for migrated work items from Reason Cards",
+      "required": ["reason_card_id", "migration_timestamp"],
+      "additionalProperties": false,
+      "properties": {
+        "reason_card_id": {
+          "type": "string",
+          "pattern": "^RC-[A-Z0-9-]+$",
+          "description": "Original Reason Card identifier"
+        },
+        "migration_timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 timestamp when migration occurred"
+        },
+        "migration_version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "Version of migration tool used"
+        },
+        "original_context": {
+          "type": "object",
+          "description": "Original context from the Reason Card",
+          "properties": {
+            "session_id": {
+              "type": "string",
+              "description": "Original session ID"
+            },
+            "user_id": {
+              "type": "string",
+              "description": "Original user ID"
+            },
+            "trigger_type": {
+              "type": "string",
+              "description": "What triggered the original Reason Card"
+            },
+            "raw_content": {
+              "type": "string",
+              "description": "Raw content from the Reason Card (for audit)"
+            }
+          }
+        },
+        "verified": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether the migration has been verified"
+        },
+        "verified_by": {
+          "type": "string",
+          "description": "ID of the verifier"
+        },
+        "verified_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When verification occurred"
+        }
+      }
+    }
+  }
+}

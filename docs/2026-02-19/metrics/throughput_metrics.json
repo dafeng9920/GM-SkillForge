@@ -1,0 +1,18 @@
+{
+  "throughput_metrics": {
+    "window_days": 7,
+    "window_start": "2026-02-12T00:00:00Z",
+    "window_end": "2026-02-19T00:00:00Z",
+    "total_audits": 24,
+    "audit_breakdown": {
+      "phase1_audits": 8,
+      "l2_audits": 6,
+      "l3_audits": 10
+    },
+    "target": 20,
+    "achieved": true,
+    "margin": 4,
+    "collection_timestamp": "2026-02-19T17:45:00Z"
+  },
+  "evidence_ref": "EV-L3-F1-001"
+}

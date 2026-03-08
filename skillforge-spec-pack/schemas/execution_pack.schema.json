@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://gm-os.dev/schemas/execution_pack.schema.json",
+  "title": "ExecutionPack",
+  "description": "执行包 - 四大硬合同之一，包含执行配置与约束",
+  "type": "object",
+  "required": ["schema_version", "execution_id", "skill_id", "created_at"],
+  "properties": {
+    "schema_version": { "$ref": "common.schema.json#/definitions/SchemaVersion" },
+    "execution_id": { "$ref": "common.schema.json#/definitions/UUID" },
+    "skill_id": { "type": "string" },
+    "skill_version": { "type": "string" },
+    "created_at": { "$ref": "common.schema.json#/definitions/Timestamp" },
+    "config": {
+      "type": "object",
+      "properties": {
+        "timeout_seconds": { "type": "integer", "minimum": 1, "maximum": 3600 },
+        "max_tool_calls": { "type": "integer", "minimum": 1, "maximum": 1000 },
+        "max_cost_usd": { "type": "number", "minimum": 0 },
+        "max_bytes_io": { "type": "integer", "minimum": 0 },
+        "allowed_domains": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "sandbox_mode": {
+          "type": "string",
+          "enum": ["strict", "moderate", "permissive"]
+        }
+      }
+    },
+    "input": {
+      "type": "object",
+      "description": "技能输入数据"
+    },
+    "context": {
+      "type": "object",
+      "properties": {
+        "job_id": { "$ref": "common.schema.json#/definitions/UUID" },
+        "caller": { "type": "string" },
+        "environment": { "type": "string" },
+        "trace_enabled": { "type": "boolean" }
+      }
+    },
+    "metadata": { "type": "object" }
+  },
+  "additionalProperties": true,
+  "version": "0.1.0"
+}

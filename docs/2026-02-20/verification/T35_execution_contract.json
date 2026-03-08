@@ -1,0 +1,102 @@
+{
+  "contract_id": "T35-EC-20260220-001",
+  "task_id": "T35",
+  "executor": "vs--cc3",
+  "job_id": "L45-FE-V10-20260220-007",
+  "created_at": "2026-02-20T14:30:00Z",
+  "contract_hash": "sha256:a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2",
+
+  "execution": {
+    "role": "execution",
+    "description": "前端骨架与信息架构收敛：落地 v1.0 五页路由与统一导航框架",
+    "deliverables": [
+      {
+        "path": "ui/app/src/app/router.tsx",
+        "type": "新建",
+        "description": "v1.0 路由配置：五页路由"
+      },
+      {
+        "path": "ui/app/src/app/layout/AppShell.tsx",
+        "type": "新建",
+        "description": "统一导航框架：一级导航 3 组（执行/审计/系统）"
+      },
+      {
+        "path": "ui/app/src/main.tsx",
+        "type": "更新",
+        "description": "入口文件：使用 RouterProvider"
+      },
+      {
+        "path": "ui/app/package.json",
+        "type": "更新",
+        "description": "添加 react-router-dom 依赖"
+      },
+      {
+        "path": "docs/2026-02-20/L45_FE_T35_IA_ROUTING_REPORT_v1.md",
+        "type": "新建",
+        "description": "IA 与路由收敛报告"
+      }
+    ],
+    "constraints": [
+      "不得出现 n8n 顶层一级导航",
+      "v1.0 不新增 /governance/release 页面",
+      "Top Bar 必须预留 run_id 全局检索入口"
+    ]
+  },
+
+  "review": {
+    "role": "review",
+    "criteria": [
+      {
+        "id": "C1",
+        "description": "v1.0 五页路由完成",
+        "status": "PASS"
+      },
+      {
+        "id": "C2",
+        "description": "顶栏预留 run_id 全局检索",
+        "status": "PASS"
+      },
+      {
+        "id": "C3",
+        "description": "无 n8n 顶层导航",
+        "status": "PASS"
+      },
+      {
+        "id": "C4",
+        "description": "路由按业务域分组",
+        "status": "PASS"
+      }
+    ]
+  },
+
+  "compliance": {
+    "role": "compliance",
+    "checklist": [
+      {
+        "id": "CL1",
+        "item": "未引入超出 v1.0 范围的业务页面",
+        "status": "PASS"
+      },
+      {
+        "id": "CL2",
+        "item": "遵循执行法案 A/B 流程",
+        "status": "PASS"
+      },
+      {
+        "id": "CL3",
+        "item": "产物路径符合规范",
+        "status": "PASS"
+      },
+      {
+        "id": "CL4",
+        "item": "无禁止动作触发",
+        "status": "PASS"
+      }
+    ]
+  },
+
+  "signatures": {
+    "executor_signature": "vs--cc3",
+    "timestamp": "2026-02-20T14:30:00Z"
+  }
+}

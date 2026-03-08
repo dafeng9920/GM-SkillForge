@@ -1,0 +1,82 @@
+# Gate Interface Contract v1
+# Status: FROZEN
+# Enforcer: Gemini (Chief Orchestrator)
+
+definitions:
+  GateResult:
+    type: object
+    required: [gate_name, gate_decision, next_action, evidence_refs]
+    properties:
+      gate_name:
+        type: string
+        description: "The canonical name of the gate (e.g., 'intake_repo')"
+      gate_decision:
+        type: string
+        enum: ["PASSED", "REJECTED"]
+        description: "The final verdict of the gate"
+      error_code:
+        type: string
+        nullable: true
+        description: "Standardized error code if REJECTED (e.g., 'ERR_REPO_NOT_FOUND')"
+      evidence_refs:
+        type: array
+        items:
+          $ref: "#/definitions/EvidenceRef"
+        description: "List of evidence references produced by this gate"
+      next_action:
+        type: string
+        enum: ["continue", "halt"]
+        description: "Flow control instruction"
+
+  EvidenceRef:
+    type: object
+    required: [issue_key, source_locator, content_hash, tool_revision, timestamp]
+    properties:
+      issue_key:
+        type: string
+        description: "Unique ID of the request/intent (e.g., 'REQ-123')"
+      source_locator:
+        type: string
+        description: "Where the actual evidence is stored (e.g., 'file:///evidence/scan_123.json')"
+      content_hash:
+        type: string
+        description: "SHA-256 hash of the evidence content"
+      tool_revision:
+        type: string
+        description: "Version of the tool that generated this evidence"
+      timestamp:
+        type: string
+        format: "iso8601"
+        description: "When the evidence was generated"
+
+gates:
+  # squad-a
+  intake_repo:
+    inputs: [repo_url, commit_sha, at_time]
+    outputs: [GateResult]
+  
+  repo_scan_fit_score:
+    inputs: [repo_path]
+    outputs: [GateResult] # Evidence: ScanReport
+
+  # squad-b
+  draft_skill_spec:
+    inputs: [scan_report]
+    outputs: [GateResult] # Evidence: SkillSpec
+
+  constitution_risk_gate:
+    inputs: [skill_spec]
+    outputs: [GateResult] # Evidence: RiskAssessment
+
+  # squad-c
+  scaffold_skill_impl:
+    inputs: [skill_spec]
+    outputs: [GateResult] # Evidence: SourceCode
+
+  sandbox_test_and_trace:
+    inputs: [source_code]
+    outputs: [GateResult] # Evidence: TestResult, TraceLog
+
+  pack_audit_and_publish:
+    inputs: [all_evidence]
+    outputs: [GateResult] # Evidence: AuditPackManifest

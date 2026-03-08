@@ -1,0 +1,56 @@
+{
+  "schema_version": "0.1.0",
+  "gate_id": "L4-SKILL-07-final-gate-20260222",
+  "job_id": "L4-SKILL-07-CRYPTO-SIGNATURE-20260222-001",
+  "skill_id": "L4-SKILL-07",
+  "decision": "ALLOW",
+  "decided_at": "2026-02-22T14:38:29Z",
+  "owner": "Codex",
+  "summary": {
+    "scope": "T83/T84/T85",
+    "total_checks": 3,
+    "passed": 3,
+    "failed": 0
+  },
+  "task_results": [
+    {
+      "task_id": "T83",
+      "artifact": "docs/2026-02-22/verification/T83_execution_report.yaml",
+      "status": "COMPLETED"
+    },
+    {
+      "task_id": "T84",
+      "artifact": "docs/2026-02-22/verification/T84_gate_decision.json",
+      "decision": "ALLOW"
+    },
+    {
+      "task_id": "T85",
+      "artifact": "docs/2026-02-22/verification/T85_compliance_attestation.json",
+      "decision": "PASS"
+    }
+  ],
+  "gate_rules_applied": [
+    "缺少 execution/review/compliance 任一记录 => DENY",
+    "任一 compliance != PASS => REQUIRES_CHANGES",
+    "全部满足 => ALLOW"
+  ],
+  "evidence_refs": [
+    {
+      "id": "EV-T86-001",
+      "kind": "FILE",
+      "locator": "docs/2026-02-22/verification/T83_execution_report.yaml"
+    },
+    {
+      "id": "EV-T86-002",
+      "kind": "FILE",
+      "locator": "docs/2026-02-22/verification/T84_gate_decision.json"
+    },
+    {
+      "id": "EV-T86-003",
+      "kind": "FILE",
+      "locator": "docs/2026-02-22/verification/T85_compliance_attestation.json"
+    }
+  ],
+  "final_status": "FINAL_PASS",
+  "notes": "T84=ALLOW 且 T85=PASS，满足 L4-SKILL-07 Final Gate 放行条件。"
+}

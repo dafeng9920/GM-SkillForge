@@ -1,0 +1,4 @@
+# 预留目录：外部适配器
+# - github_fetch: GitHub 仓库拉取
+# - sandbox_runner: 沙箱执行器
+# - registry_client: Registry 客户端

@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://gm-os.dev/orchestration/nodes/intake_repo.schema.json",
+  "title": "IntakeRepoNode",
+  "description": "Stage 0: 入口与任务建档",
+  "type": "object",
+  "required": ["node_id", "input", "output"],
+  "properties": {
+    "node_id": { "const": "intake_repo" },
+    "stage": { "const": 0 },
+    "input": {
+      "type": "object",
+      "required": ["repo_url"],
+      "properties": {
+        "repo_url": { "type": "string", "format": "uri" },
+        "branch": { "type": "string" },
+        "tag": { "type": "string" },
+        "target_environment": { "type": "string", "enum": ["node", "python", "docker"] },
+        "intended_use": { "type": "string", "enum": ["automation", "data", "web", "ops"] }
+      }
+    },
+    "output": {
+      "type": "object",
+      "required": ["job_id", "build_record"],
+      "properties": {
+        "job_id": { "type": "string", "format": "uuid" },
+        "build_record": {
+          "type": "object",
+          "properties": {
+            "repo_name": { "type": "string" },
+            "repo_owner": { "type": "string" },
+            "default_branch": { "type": "string" },
+            "stars": { "type": "integer" },
+            "last_commit": { "type": "string" },
+            "license_detected": { "type": "string" }
+          }
+        }
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["SYS_DEPENDENCY_FAILURE", "SYS_INTERNAL"]
+      }
+    }
+  },
+  "version": "0.1.0"
+}

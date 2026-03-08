@@ -1,0 +1,51 @@
+schema_version: "0.1.0"
+skill_id: "scaffold_skill_impl"
+name: "Scaffold Skill Implementation"
+description: "Generate executable skill implementation from specification"
+version: "0.1.0"
+
+# 所属路径
+paths: ["A", "B", "AB"]
+stage: 5
+
+# 输入合同
+input:
+  required:
+    - skill_spec:
+        type: "object"
+        description: "Validated skill specification"
+
+# 输出合同
+output:
+  required:
+    - schema_version:
+        type: "string"
+        description: "Schema version (0.1.0)"
+    - implementation:
+        type: "object"
+        description: "Generated skill implementation"
+    - bundle_path:
+        type: "string"
+        description: "Path to skill bundle directory"
+
+# 能力声明
+capabilities:
+  network: false
+  filesystem: true
+  subprocess: false
+  gpu: false
+
+# 风险等级
+risk_tier: "L1"
+
+# 依赖
+dependencies:
+  adapters: []
+  schemas: []
+  error_codes: []
+
+# 错误处理
+errors:
+  - code: "SCAFFOLD_FAILED"
+    retryable: false
+    description: "Failed to scaffold skill implementation"

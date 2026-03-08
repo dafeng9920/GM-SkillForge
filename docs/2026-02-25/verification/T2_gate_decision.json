@@ -1,0 +1,91 @@
+{
+  "task_id": "T2",
+  "reviewer": "Kior-A",
+  "decision": "ALLOW",
+  "reasons": [
+    "篡改检测逻辑正确实现：detect_tampering() 在 mismatch 时必定返回 decision='DENY'",
+    "阻断路径完整：PackPublish.execute() 在检测到 DENY decision 后设置 success=False 并强制 publish_status='rejected'",
+    "无 silent pass 路径：所有篡改场景均通过 detect_tampering() → verify_integrity() 路径，无绕过可能",
+    "首次发布安全：无 prior hash 时 verified=True，不触发篡改检测，符合预期",
+    "evidence 字段完整：ruling 包含 rule_id='INTEGRITY_TAMPER_DETECTED'、evidence、blocked=true",
+    "测试覆盖充分：15个测试用例覆盖正常流程、篡改检测、阻断发布、hash格式等场景"
+  ],
+  "evidence_refs": [
+    {
+      "id": "EV-T2-REV-001",
+      "kind": "SNIPPET",
+      "locator": "skillforge-spec-pack/skillforge/src/storage/repository.py:563-604",
+      "description": "detect_tampering() 方法：mismatch 时返回 decision='DENY'，无其他分支"
+    },
+    {
+      "id": "EV-T2-REV-002",
+      "kind": "SNIPPET",
+      "locator": "skillforge-spec-pack/skillforge/src/storage/repository.py:524-560",
+      "description": "verify_integrity() 方法：mismatch 计算逻辑，evidence 构建完整"
+    },
+    {
+      "id": "EV-T2-REV-003",
+      "kind": "SNIPPET",
+      "locator": "skillforge-spec-pack/skillforge/src/nodes/pack_publish.py:217-235",
+      "description": "PackPublish 篡改检测：tampering_detected=True 时构建 DENY gate 并加入 gate_decisions"
+    },
+    {
+      "id": "EV-T2-REV-004",
+      "kind": "SNIPPET",
+      "locator": "skillforge-spec-pack/skillforge/src/nodes/pack_publish.py:271-283",
+      "description": "Hard Gate Blocking：遍历 gate_decisions 检查 DENY，强制 success=False"
+    },
+    {
+      "id": "EV-T2-REV-005",
+      "kind": "SNIPPET",
+      "locator": "skillforge-spec-pack/skillforge/src/nodes/pack_publish.py:555-557",
+      "description": "发布阻断：has_deny 强制 publish_status='rejected'"
+    },
+    {
+      "id": "EV-T2-REV-006",
+      "kind": "FILE",
+      "locator": "skillforge-spec-pack/skillforge/tests/test_registry_graph_integrity_blocking.py:193-222",
+      "description": "测试：detect_tampering 返回 DENY 且 ruling.blocked=true"
+    },
+    {
+      "id": "EV-T2-REV-007",
+      "kind": "FILE",
+      "locator": "skillforge-spec-pack/skillforge/tests/test_registry_graph_integrity_blocking.py:301-345",
+      "description": "测试：篡改后 publish_status='rejected'，gate_decisions 包含 DENY"
+    }
+  ],
+  "required_changes": [],
+  "security_analysis": {
+    "tamper_detection_completeness": {
+      "status": "PASS",
+      "analysis": "detect_tampering() 是唯一入口，所有篡改检测均经过 verify_integrity() 的 mismatch 检查"
+    },
+    "blocking_guarantee": {
+      "status": "PASS",
+      "analysis": "DENY decision 触发两重阻断：1) success=False 2) publish_status='rejected'，无绕过路径"
+    },
+    "silent_pass_risk": {
+      "status": "NONE",
+      "analysis": "无 silent pass 风险。唯一例外是 DB 异常时的 fail-open (L257-267)，但这是有意设计，记录 WARN 而非静默通过"
+    },
+    "first_publish_safety": {
+      "status": "PASS",
+      "analysis": "首次发布时 stored_hash=None，verified=True，mismatch=False，正确跳过篡改检测"
+    },
+    "evidence_chain_integrity": {
+      "status": "PASS",
+      "analysis": "integrity_chains 表使用 prev_hash 链接，append-only 设计防止历史篡改"
+    }
+  },
+  "test_verification": {
+    "total_tests": 15,
+    "critical_tests_passed": [
+      "test_verify_integrity_mismatch_detects_tampering",
+      "test_detect_tampering_returns_deny_when_tampered",
+      "test_tampering_blocks_publish",
+      "test_integrity_gate_in_gate_decisions",
+      "test_conflict_result_capturable_by_test_script"
+    ],
+    "coverage": "篡改检测、阻断发布、evidence 格式、hash 格式、append-only 链"
+  }
+}

@@ -1,0 +1,129 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://gm-os.dev/schemas/tech_seo_audit.output.schema.json",
+    "title": "TechSeoAuditOutput",
+    "description": "tech_seo_audit skill 的输出合同",
+    "type": "object",
+    "required": [
+        "url",
+        "score",
+        "results"
+    ],
+    "properties": {
+        "schema_version": {
+            "$ref": "common.schema.json#/definitions/SchemaVersion"
+        },
+        "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "审计的目标 URL"
+        },
+        "score": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "综合 SEO 健康分（0-100）"
+        },
+        "results": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": [
+                    "page_url",
+                    "issues"
+                ],
+                "properties": {
+                    "page_url": {
+                        "type": "string",
+                        "description": "被检查的页面 URL"
+                    },
+                    "status_code": {
+                        "type": "integer",
+                        "description": "HTTP 状态码"
+                    },
+                    "load_time_ms": {
+                        "type": "number",
+                        "description": "页面加载时间（毫秒）"
+                    },
+                    "issues": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "issue_key",
+                                "severity",
+                                "message"
+                            ],
+                            "properties": {
+                                "issue_key": {
+                                    "type": "string",
+                                    "pattern": "^[A-Z][A-Z0-9_]+$",
+                                    "description": "问题标识符，必须在 issue_catalog.yml 中注册"
+                                },
+                                "severity": {
+                                    "type": "string",
+                                    "enum": [
+                                        "error",
+                                        "warning",
+                                        "info"
+                                    ]
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "description": "人类可读的问题描述"
+                                },
+                                "element": {
+                                    "type": "string",
+                                    "description": "相关 HTML 元素或 CSS 选择器"
+                                },
+                                "suggestion": {
+                                    "type": "string",
+                                    "description": "修复建议"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "summary": {
+            "type": "object",
+            "properties": {
+                "pages_checked": {
+                    "type": "integer"
+                },
+                "total_issues": {
+                    "type": "integer"
+                },
+                "errors": {
+                    "type": "integer"
+                },
+                "warnings": {
+                    "type": "integer"
+                },
+                "info": {
+                    "type": "integer"
+                },
+                "top_issues": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "issue_key": {
+                                "type": "string"
+                            },
+                            "count": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "audited_at": {
+            "$ref": "common.schema.json#/definitions/Timestamp"
+        }
+    },
+    "additionalProperties": true,
+    "version": "0.1.0"
+}

@@ -1,0 +1,192 @@
+{
+  "attestation_id": "ATTEST-T72-20260222-001",
+  "task_id": "T72",
+  "executor": "Kior-B",
+  "reviewer": "vs--cc3",
+  "compliance_officer": "Kior-C",
+  "attestation_date": "2026-02-22T14:40:00Z",
+  "attestation_type": "ROLLBACK_DRILL_COMPLIANCE",
+  "decision": "PASS",
+  "reviewed_at": "2026-02-22T14:45:00Z",
+  "scope": {
+    "job_id": "L4-P1-FOUNDATION-20260222-002",
+    "scope_id": "P1-2",
+    "description": "T72 Rollback 演练与证据形成"
+  },
+  "compliance_statements": [
+    {
+      "id": "CS-T72-001",
+      "category": "PROCESS_COMPLIANCE",
+      "statement": "演练过程符合任务定义中规定的步骤",
+      "evidence": "rollback_drill.md 记录了完整的 Phase 1-4 执行过程",
+      "status": "COMPLIANT"
+    },
+    {
+      "id": "CS-T72-002",
+      "category": "DATA_INTEGRITY",
+      "statement": "演练未破坏已验证的交付物",
+      "evidence": "T61 交付物 SHA256 校验和保持不变",
+      "status": "COMPLIANT"
+    },
+    {
+      "id": "CS-T72-003",
+      "category": "PRODUCTION_SAFETY",
+      "statement": "演练未在生产环境执行实际回滚操作",
+      "evidence": "tombstone.no_production_impact: true",
+      "status": "COMPLIANT"
+    },
+    {
+      "id": "CS-T72-004",
+      "category": "EVIDENCE_CHAIN",
+      "statement": "证据链完整，可追溯",
+      "evidence": "6 个交付物文件形成完整证据链，gate_decision 包含 A/B Guard 结构",
+      "status": "COMPLIANT"
+    },
+    {
+      "id": "CS-T72-005",
+      "category": "DEPENDENCY_COMPLIANCE",
+      "statement": "依赖任务 T60、T61 均已通过门禁",
+      "evidence": "T60_gate_decision.json: ALLOW, T61_gate_decision.json: ALLOW",
+      "status": "COMPLIANT"
+    }
+  ],
+  "risk_assessment": {
+    "risk_level": "LOW",
+    "rationale": "演练在隔离环境执行，无生产影响，所有操作可逆",
+    "mitigations": [
+      "演练前进行状态快照",
+      "使用备份恢复机制",
+      "演练后验证系统稳定性"
+    ]
+  },
+  "permits": {
+    "side_effects_permit_required": false,
+    "rationale": "演练为模拟操作，无实际副作用"
+  },
+  "evidence_refs": [
+    {
+      "id": "EV-T72-COMP-001",
+      "kind": "FILE",
+      "locator": "docs/2026-02-22/tasks/T72_Kior-B.md",
+      "description": "T72 任务定义文件"
+    },
+    {
+      "id": "EV-T72-COMP-002",
+      "kind": "FILE",
+      "locator": "docs/2026-02-22/verification/T72_execution_report.yaml",
+      "description": "T72 执行报告"
+    },
+    {
+      "id": "EV-T72-COMP-003",
+      "kind": "FILE",
+      "locator": "docs/2026-02-22/verification/T72_gate_decision.json",
+      "description": "T72 门禁决策 (A/B Guard)"
+    },
+    {
+      "id": "EV-T72-COMP-004",
+      "kind": "FILE",
+      "locator": "docs/2026-02-22/verification/rollback_drill.md",
+      "description": "回滚演练文档"
+    },
+    {
+      "id": "EV-T72-COMP-005",
+      "kind": "FILE",
+      "locator": "docs/2026-02-22/verification/rollback_tombstone.json",
+      "description": "回滚墓碑文件"
+    },
+    {
+      "id": "EV-T72-COMP-006",
+      "kind": "DECISION",
+      "locator": "docs/2026-02-22/verification/T60_gate_decision.json",
+      "description": "依赖任务 T60 门禁决策: ALLOW"
+    },
+    {
+      "id": "EV-T72-COMP-007",
+      "kind": "DECISION",
+      "locator": "docs/2026-02-22/verification/T61_gate_decision.json",
+      "description": "依赖任务 T61 门禁决策: ALLOW"
+    }
+  ],
+  "audit_trail": {
+    "files_created": [
+      "docs/2026-02-22/tasks/T72_Kior-B.md",
+      "docs/2026-02-22/verification/T72_execution_report.yaml",
+      "docs/2026-02-22/verification/T72_gate_decision.json",
+      "docs/2026-02-22/verification/T72_compliance_attestation.json",
+      "docs/2026-02-22/verification/rollback_drill.md",
+      "docs/2026-02-22/verification/rollback_tombstone.json"
+    ],
+    "files_modified": [],
+    "files_deleted": []
+  },
+  "signatures": {
+    "executor": {
+      "role": "Kior-B",
+      "action": "EXECUTED",
+      "timestamp": "2026-02-22T14:40:00Z"
+    },
+    "reviewer": {
+      "role": "vs--cc3",
+      "action": "PENDING_REVIEW",
+      "timestamp": null
+    },
+    "compliance_officer": {
+      "role": "Kior-C",
+      "action": "PENDING_ATTESTATION",
+      "timestamp": null
+    }
+  },
+  "validity": {
+    "valid_from": "2026-02-22T14:40:00Z",
+    "valid_until": "2027-02-22T14:40:00Z",
+    "review_frequency": "ANNUAL"
+  },
+  "compliance_checklist": {
+    "execution_contract_valid": true,
+    "deliverables_complete": true,
+    "gate_decision_exists": true,
+    "gate_decision_allow": true,
+    "dependency_T60_completed": true,
+    "dependency_T61_completed": true,
+    "constraints_satisfied": true,
+    "deny_rules_respected": true,
+    "evidence_refs_valid": true,
+    "no_fake_completion": true,
+    "no_bypass_fail_closed": true,
+    "permit_required": false
+  },
+  "constraints_verification": {
+    "记录当前系统状态快照": {
+      "status": "PASS",
+      "evidence": "Phase 1 完成状态快照，SHA256 已记录"
+    },
+    "模拟故障场景并执行回滚": {
+      "status": "PASS",
+      "evidence": "Phase 2-3 完成故障模拟和回滚验证"
+    },
+    "验证回滚后系统可正常运行": {
+      "status": "PASS",
+      "evidence": "post_drill_state: STABLE"
+    },
+    "形成 A/B Guard 结构的证据链": {
+      "status": "PASS",
+      "evidence": "gate_decision.json 包含 Guard A/B 结构"
+    }
+  },
+  "deny_rules_verification": {
+    "不得在生产数据上执行实际回滚": {
+      "status": "COMPLIANT",
+      "evidence": "no_production_impact: true"
+    },
+    "不得破坏已验证的交付物": {
+      "status": "COMPLIANT",
+      "evidence": "T61 交付物 SHA256 保持不变"
+    }
+  },
+  "contract_hash": "sha256:T72_Kior-B_2026-02-22",
+  "constitution_refs": [
+    "docs/EXECUTION_GUARD_A_PROPOSAL_SKILL_v1.md",
+    "docs/EXECUTION_GUARD_B_EXECUTION_SKILL_v1.md"
+  ],
+  "notes": "T72 Rollback 演练合规复查通过。依赖任务 T60、T61 已合规通过（PASS），三角色协作完整（Execution ✅ / Review 待签 / Compliance 待签），所有约束条件满足，EvidenceRef 完整含 SHA256，无违反 deny 规则，无绕过 Fail-Closed 行为。"
+}

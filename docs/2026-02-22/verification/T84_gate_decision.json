@@ -1,0 +1,318 @@
+{
+  "task_id": "T84",
+  "task_name": "L4-SKILL-07 验收 (Crypto Signature Gate Acceptance - Rerun)",
+  "role": "Review (Antigravity-2)",
+  "decision": "ALLOW",
+  "reviewed_at": "2026-02-22T22:15:00Z",
+  "reviewer": "Antigravity-2",
+  "depends_on": ["T83"],
+  "t83_execution_status": "COMPLETED",
+
+  "verification_results": {
+    "verification_scope": "L4-SKILL-07 硬门禁密码学签名验收（重跑）",
+    "files_reviewed": [
+      "skills/p2-final-gate-aggregate-skill/aggregate_final_gate.py",
+      "scripts/verify_guard_signature.py",
+      "skills/p2-final-gate-aggregate-skill/SKILL.md",
+      "docs/2026-02-22/verification/T83_execution_report.yaml"
+    ],
+
+    "acceptance_tests_results": [
+      {
+        "id": "AT-T84-RERUN-001",
+        "requirement": "--require-crypto-signature 参数存在并接入主流程",
+        "expected": "参数定义存在，且传递到 FinalGateAggregator 并在 aggregate() 中使用",
+        "actual": "已实现",
+        "status": "PASS",
+        "evidence": [
+          {
+            "file": "skills/p2-final-gate-aggregate-skill/aggregate_final_gate.py",
+            "line": "633-637",
+            "snippet": "parser.add_argument('--require-crypto-signature', action='store_true', help='L4-SKILL-07: Enable crypto signature verification (fail-closed mode)')",
+            "description": "参数定义"
+          },
+          {
+            "file": "skills/p2-final-gate-aggregate-skill/aggregate_final_gate.py",
+            "line": "348-355",
+            "snippet": "def __init__(self, ..., require_crypto_signature: bool = False, ...): self.require_crypto_signature = require_crypto_signature",
+            "description": "参数传递到 FinalGateAggregator"
+          },
+          {
+            "file": "skills/p2-final-gate-aggregate-skill/aggregate_final_gate.py",
+            "line": "437-441",
+            "snippet": "if self.require_crypto_signature: crypto_valid, decision_override = triad.check_crypto_signatures()",
+            "description": "在 aggregate() 主流程中调用"
+          }
+        ]
+      },
+      {
+        "id": "AT-T84-RERUN-002",
+        "requirement": "缺失密码学签名字段 => REQUIRES_CHANGES",
+        "expected": "has_missing_crypto_signature => REQUIRES_CHANGES",
+        "actual": "已实现",
+        "status": "PASS",
+        "evidence": [
+          {
+            "file": "skills/p2-final-gate-aggregate-skill/aggregate_final_gate.py",
+            "line": "299",
+            "snippet": "self.has_missing_crypto_signature = self.crypto_signature_results.get('has_missing_signature', False)",
+            "description": "缺失签名标志位"
+          },
+          {
+            "file": "skills/p2-final-gate-aggregate-skill/aggregate_final_gate.py",
+            "line": "479-480",
+            "snippet": "if triad.has_missing_crypto_signature: has_crypto_requires_changes = True",
+            "description": "映射到 has_crypto_requires_changes"
+          },
+          {
+            "file": "skills/p2-final-gate-aggregate-skill/aggregate_final_gate.py",
+            "line": "486",
+            "snippet": "elif has_missing or has_crypto_requires_changes: return 'REQUIRES_CHANGES', self.all_alerts",
+            "description": "返回 REQUIRES_CHANGES"
+          }
+        ]
+      },
+      {
+        "id": "AT-T84-RERUN-003",
+        "requirement": "验签失败 => DENY",
+        "expected": "has_invalid_crypto_signature => FINAL_FAIL",
+        "actual": "已实现",
+        "status": "PASS",
+        "evidence": [
+          {
+            "file": "skills/p2-final-gate-aggregate-skill/aggregate_final_gate.py",
+            "line": "300",
+            "snippet": "self.has_invalid_crypto_signature = self.crypto_signature_results.get('has_invalid_signature', False)",
+            "description": "验签失败标志位"
+          },
+          {
+            "file": "skills/p2-final-gate-aggregate-skill/aggregate_final_gate.py",
+            "line": "477-478",
+            "snippet": "if triad.has_invalid_crypto_signature or triad.has_invalid_signer_id: has_crypto_deny = True",
+            "description": "映射到 has_crypto_deny"
+          },
+          {
+            "file": "skills/p2-final-gate-aggregate-skill/aggregate_final_gate.py",
+            "line": "483-485",
+            "snippet": "if has_crypto_deny: return 'FINAL_FAIL', self.all_alerts",
+            "description": "返回 FINAL_FAIL (DENY)"
+          }
+        ]
+      },
+      {
+        "id": "AT-T84-RERUN-004",
+        "requirement": "signer_id 不在允许名单 => DENY",
+        "expected": "has_invalid_signer_id => FINAL_FAIL",
+        "actual": "已实现",
+        "status": "PASS",
+        "evidence": [
+          {
+            "file": "scripts/verify_guard_signature.py",
+            "line": "41-48",
+            "snippet": "ALLOWED_SIGNER_IDS = {'Antigravity-1', 'Antigravity-2', 'Kior-C', 'Codex', 'vs--cc2', 'vs--cc3'}",
+            "description": "允许的 signer_id 列表"
+          },
+          {
+            "file": "scripts/verify_guard_signature.py",
+            "line": "63-70",
+            "snippet": "def validate_signer_id(signer_id): if signer_id not in ALLOWED_SIGNER_IDS: return False, f'Invalid signer_id...'",
+            "description": "signer_id 验证函数"
+          },
+          {
+            "file": "skills/p2-final-gate-aggregate-skill/aggregate_final_gate.py",
+            "line": "301",
+            "snippet": "self.has_invalid_signer_id = self.crypto_signature_results.get('has_invalid_signer', False)",
+            "description": "非法 signer_id 标志位"
+          },
+          {
+            "file": "skills/p2-final-gate-aggregate-skill/aggregate_final_gate.py",
+            "line": "477-478",
+            "snippet": "if triad.has_invalid_crypto_signature or triad.has_invalid_signer_id: has_crypto_deny = True",
+            "description": "非法 signer_id => has_crypto_deny"
+          }
+        ]
+      },
+      {
+        "id": "AT-T84-RERUN-005",
+        "requirement": "禁止'仅 signed_at / timestamp 即通过'",
+        "expected": "--require-crypto-signature 模式下必须有 guard_signature 字段，时间戳不足",
+        "actual": "已实现",
+        "status": "PASS",
+        "evidence": [
+          {
+            "file": "scripts/verify_guard_signature.py",
+            "line": "51",
+            "snippet": "ALERT_MISSING_SIGNATURE = 'MISSING_CRYPTO_SIGNATURE'",
+            "description": "缺失 guard_signature 的告警代码"
+          },
+          {
+            "file": "scripts/verify_guard_signature.py",
+            "line": "52-53",
+            "snippet": "ALERT_SIGNATURE_MISMATCH = 'SIGNATURE_MISMATCH'",
+            "description": "签名不匹配告警码"
+          }
+        ]
+      },
+      {
+        "id": "AT-T84-RERUN-005",
+        "requirement": "禁止'仅 signed_at / timestamp 即通过'",
+        "expected": "--require-crypto-signature 必须检查 guard_signature 字段，不依赖时间戳",
+        "actual": "已实现",
+        "status": "PASS",
+        "evidence": [
+          {
+            "file": "scripts/verify_guard_signature.py",
+            "line": "51",
+            "snippet": "ALERT_MISSING_SIGNATURE = 'MISSING_CRYPTO_SIGNATURE'",
+            "description": "缺失 guard_signature 的告警码"
+          },
+          {
+            "file": "skills/p2-final-gate-aggregate-skill/aggregate_final_gate.py",
+            "line": "274-278",
+            "snippet": "Fail-Closed Logic: - Missing signature => REQUIRES_CHANGES - Signature verification failure => DENY - Invalid signer_id => DENY",
+            "description": "check_crypto_signatures() 文档明确检查 guard_signature"
+          },
+          {
+            "file": "skills/p2-final-gate-aggregate-skill/aggregate_final_gate.py",
+            "line": "309-314",
+            "snippet": "if status == 'NO_SIGNATURE': self.alerts.append(TriadAlert(ALERT_MISSING_CRYPTO_SIGNATURE, ...))",
+            "description": "缺失 guard_signature 时触发告警"
+          }
+        ],
+        "note": "--require-crypto-signature 与 --require-signatures 是独立的两个选项，前者要求 guard_signature，后者仅检查 timestamp"
+      },
+      {
+        "id": "AT-T84-RERUN-006",
+        "requirement": "保持 L4-SKILL-06.1 strict decision 规则",
+        "expected": "不得从非标准字段推导 PASS",
+        "actual": "已保持",
+        "status": "PASS",
+        "evidence": [
+          {
+            "file": "skills/p2-final-gate-aggregate-skill/aggregate_final_gate.py",
+            "line": "201-212",
+            "snippet": "# HARD RULE: Only accept explicit 'decision' field\ndecision = self.compliance.get('decision')\nif decision is None:\n    self.alerts.append(TriadAlert(ALERT_MISSING_DECISION_FIELD, ..., 'fallback derivation is PROHIBITED'))",
+            "description": "strict decision 规则，仅接受显式 decision 字段"
+          },
+          {
+            "file": "skills/p2-final-gate-aggregate-skill/aggregate_final_gate.py",
+            "line": "421-422",
+            "snippet": "# HARD GATE: Get compliance decision (strict mode)\ncompliance_decision = triad.get_compliance_decision_value_strict()",
+            "description": "使用 strict 方法获取 compliance decision"
+          }
+        ],
+        "note": "L4-SKILL-06.1 strict rules 未被修改"
+      }
+    ],
+
+    "summary": {
+      "total_tests": 6,
+      "passed": 6,
+      "failed": 0,
+      "pass_rate_percent": 100.0
+    }
+  },
+
+  "reasons": [
+    "PASS: --require-crypto-signature 参数已定义（行 633-637）并接入主流程（行 348-355, 437-441）",
+    "PASS: 缺失签名字段 => REQUIRES_CHANGES 已实现（行 299, 479-480, 486）",
+    "PASS: 验签失败 => DENY 已实现（行 300, 477-478, 483-485）",
+    "PASS: signer_id 验证机制完整（verify_guard_signature.py:41-48, 63-70；aggregate_final_gate.py:301, 477-478）",
+    "PASS: --require-crypto-signature 独立于 --require-signatures，检查 guard_signature 而非 timestamp",
+    "PASS: L4-SKILL-06.1 strict decision 规则保持（行 201-212），仅接受显式 decision 字段",
+    "版本升级至 v1.2.0，SKILL.md 文档已更新"
+  ],
+
+  "evidence_refs": [
+    {
+      "id": "EV-T84-RERUN-001",
+      "kind": "SNIPPET",
+      "locator": "skills/p2-final-gate-aggregate-skill/aggregate_final_gate.py:633-637",
+      "description": "--require-crypto-signature 参数定义"
+    },
+    {
+      "id": "EV-T84-RERUN-002",
+      "kind": "SNIPPET",
+      "locator": "skills/p2-final-gate-aggregate-skill/aggregate_final_gate.py:348-355",
+      "description": "require_crypto_signature 传递到 FinalGateAggregator"
+    },
+    {
+      "id": "EV-T84-RERUN-003",
+      "kind": "SNIPPET",
+      "locator": "skills/p2-final-gate-aggregate-skill/aggregate_final_gate.py:437-441",
+      "description": "aggregate() 中调用 check_crypto_signatures()"
+    },
+    {
+      "id": "EV-T84-RERUN-004",
+      "kind": "SNIPPET",
+      "locator": "skills/p2-final-gate-aggregate-skill/aggregate_final_gate.py:274-278",
+      "description": "Fail-Closed 逻辑文档"
+    },
+    {
+      "id": "EV-T84-RERUN-005",
+      "kind": "SNIPPET",
+      "locator": "skills/p2-final-gate-aggregate-skill/aggregate_final_gate.py:471-493",
+      "description": "Fail-Closed 决策逻辑完整实现"
+    },
+    {
+      "id": "EV-T84-RERUN-006",
+      "kind": "SNIPPET",
+      "locator": "skills/p2-final-gate-aggregate-skill/aggregate_final_gate.py:299-301",
+      "description": "状态标志位提取"
+    },
+    {
+      "id": "EV-T84-RERUN-007",
+      "kind": "SNIPPET",
+      "locator": "scripts/verify_guard_signature.py:41-48",
+      "description": "ALLOWED_SIGNER_IDS 允许名单"
+    },
+    {
+      "id": "EV-T84-RERUN-008",
+      "kind": "SNIPPET",
+      "locator": "scripts/verify_guard_signature.py:63-70",
+      "description": "validate_signer_id() 函数"
+    },
+    {
+      "id": "EV-T84-RERUN-009",
+      "kind": "SNIPPET",
+      "locator": "skills/p2-final-gate-aggregate-skill/aggregate_final_gate.py:201-212",
+      "description": "L4-SKILL-06.1 strict decision 规则（仅接受显式 decision 字段）"
+    },
+    {
+      "id": "EV-T84-RERUN-010",
+      "kind": "FILE",
+      "locator": "docs/2026-02-22/verification/T83_execution_report.yaml",
+      "description": "T83 执行报告（实施完成）"
+    },
+    {
+      "id": "EV-T84-RERUN-011",
+      "kind": "FILE",
+      "locator": "skills/p2-final-gate-aggregate-skill/SKILL.md",
+      "description": "SKILL.md 文档 v1.2.0（含 L4-SKILL-07 说明）"
+    }
+  ],
+
+  "required_changes": [],
+
+  "compliance_checklist": {
+    "all_acceptance_tests_passed": true,
+    "fail_closed_logic_implemented": true,
+    "signer_id_allowlist_implemented": true,
+    "strict_decision_rules_maintained": true,
+    "no_timestamp_only_pass": true,
+    "documentation_updated": true,
+    "within_allowed_modification_scope": true
+  },
+
+  "constitution_refs": [
+    "docs/EXECUTION_GUARD_A_PROPOSAL_SKILL_v1.md",
+    "docs/EXECUTION_GUARD_B_EXECUTION_SKILL_v1.md"
+  ],
+
+  "summary": {
+    "total_tests": 6,
+    "passed": 6,
+    "failed": 0,
+    "pass_rate_percent": 100.0
+  }
+}

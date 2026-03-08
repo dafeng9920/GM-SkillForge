@@ -1,0 +1,54 @@
+{
+  "knife1": {
+    "workspace": "C:\\Users\\Aorus\\AppData\\Local\\Temp\\l3-forward-4a5f323e45f143edaeb1830becd45142",
+    "rounds": [
+      {
+        "round": "r1",
+        "status": "completed",
+        "skill_id": "skill-general-skill",
+        "version": "0.1.0",
+        "publish_status": "published",
+        "registry_url": "http://localhost:8080/skills/skill-general-skill/0.1.0",
+        "gate_decisions_count": 1
+      },
+      {
+        "round": "r2",
+        "status": "completed",
+        "skill_id": "skill-general-skill",
+        "version": "0.1.0",
+        "publish_status": "published",
+        "registry_url": "http://localhost:8080/skills/skill-general-skill/0.1.0",
+        "gate_decisions_count": 1
+      },
+      {
+        "round": "r3",
+        "status": "completed",
+        "skill_id": "skill-general-skill",
+        "version": "0.1.0",
+        "publish_status": "published",
+        "registry_url": "http://localhost:8080/skills/skill-general-skill/0.1.0",
+        "gate_decisions_count": 1
+      }
+    ]
+  },
+  "knife2": {
+    "workspace": "C:\\Users\\Aorus\\AppData\\Local\\Temp\\l3-multi-cd739064d19149c7884f0efda97e2e85",
+    "mode": "auto",
+    "evil": {
+      "exit_code": 1,
+      "status": "failed",
+      "publish_result": null,
+      "gate_decisions_count": 0,
+      "ruling": null,
+      "constitution": null
+    },
+    "normal": {
+      "exit_code": 1,
+      "status": "failed",
+      "publish_result": null,
+      "gate_decisions_count": 0,
+      "ruling": null,
+      "constitution": null
+    }
+  }
+}

@@ -1,0 +1,76 @@
+schema_version: "0.1.0"
+skill_id: "intake_repo"
+name: "Intake Repository"
+description: "Fetch and validate GitHub repository for skill extraction"
+version: "0.1.0"
+
+# 所属路径
+paths: ["B", "AB"]
+stage: 0
+
+# 输入合同
+input:
+  required:
+    - repo_url:
+        type: "string"
+        description: "GitHub repository URL"
+        validation:
+          - "must not be empty"
+          - "must contain 'github.com' OR start with 'git://' or 'https://'"
+  optional:
+    - branch:
+        type: "string"
+        default: "main"
+        description: "Git branch to process"
+
+# 数据来源
+data_source: "input_data['input']"
+note: "从 pipeline artifacts 的 'input' key 获取 repo_url 和 branch"
+
+# 输出合同
+output:
+  required:
+    - schema_version:
+        type: "string"
+        value: "0.1.0"
+    - repo_info:
+        type: "object"
+        fields:
+          name: "从 URL 路径解析的仓库名"
+          owner: "从 URL 路径解析的所有者"
+          default_branch: "branch 参数（默认 main）"
+          stars: "int（mock: 0）"
+          license: "str | None（mock: None）"
+          last_commit_sha: "mock-sha-{uuid4_hex[:8]}"
+          languages: "dict（mock: {Python: 100}）"
+    - fetch_status:
+        type: "string"
+        enum: ["ok", "error"]
+    - local_path:
+        type: "string | null"
+        description: "本地路径（mock: None）"
+
+# 能力声明
+capabilities:
+  network: true
+  filesystem: false
+  subprocess: false
+  gpu: false
+
+# 风险等级
+risk_tier: "L1"
+
+# 依赖
+dependencies:
+  adapters: ["github_fetch"]
+  schemas: []
+  error_codes: ["EXEC_VALIDATION_FAILED", "SCHEMA_INVALID"]
+
+# 错误处理
+errors:
+  - code: "EXEC_VALIDATION_FAILED"
+    retryable: false
+    description: "repo_url missing, empty, or malformed"
+  - code: "SCHEMA_INVALID"
+    retryable: false
+    description: "Output validation failed (missing schema_version/repo_info/fetch_status)"

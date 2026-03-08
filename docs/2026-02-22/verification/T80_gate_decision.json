@@ -1,0 +1,32 @@
+{
+  "schema_version": "0.1.0",
+  "task_id": "T80",
+  "decision": "ALLOW",
+  "reviewer": "Codex",
+  "decided_at": "2026-02-22T18:30:00Z",
+  "reason": "All T70-T79 tasks passed gate checks with complete evidence chain",
+  "aggregated_results": {
+    "total_tasks": 10,
+    "allowed": 10,
+    "denied": 0,
+    "pass_rate_percent": 100
+  },
+  "interception_status": {
+    "missing_gate_decision": false,
+    "missing_compliance_attestation": false,
+    "missing_evidence_ref": false,
+    "side_effect_without_permit": false
+  },
+  "evidence_refs": [
+    {"id": "EV-T80-001", "locator": "T70_gate_decision.json"},
+    {"id": "EV-T80-002", "locator": "T71_gate_decision.json"},
+    {"id": "EV-T80-003", "locator": "T72_gate_decision.json"},
+    {"id": "EV-T80-004", "locator": "T73_gate_decision.json"},
+    {"id": "EV-T80-005", "locator": "T74_gate_decision.json"},
+    {"id": "EV-T80-006", "locator": "T75_gate_decision.json"},
+    {"id": "EV-T80-007", "locator": "T76_gate_decision.json"},
+    {"id": "EV-T80-008", "locator": "T77_gate_decision.json"},
+    {"id": "EV-T80-009", "locator": "T78_gate_decision.json"},
+    {"id": "EV-T80-010", "locator": "T79_gate_decision.json"}
+  ]
+}

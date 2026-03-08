@@ -1,0 +1,7 @@
+# Test Report - TAMPERED CONTENT
+task_id: "TEST-VALID-001"
+executor: "ATTACKER"
+status: "compromised"
+timestamp: "2026-02-22T09:15:00Z"
+
+guard_signature: "e529717a31f558b707a56d882d12f183963f09a4f0c848c05ce5bb27ef0599da"

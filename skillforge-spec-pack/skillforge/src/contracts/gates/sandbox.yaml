@@ -1,0 +1,87 @@
+# Sandbox Gate Contract
+# Gate Group: delivery (Squad C)
+# Position: G6
+# Status: FROZEN
+
+gate_name: sandbox_test_and_trace
+description: |
+  Evaluates sandbox_test_and_trace output with FAIL-CLOSED behavior.
+  Any test failure, violation, or critical finding MUST trigger REJECTED.
+
+inputs:
+  - name: source_code
+    type: object
+    required: true
+    description: "Scaffolded source code from scaffold_skill_impl"
+  - name: scaffold_skill_impl
+    type: object
+    required: false
+    description: "G5 gate decision (should be PASSED)"
+  - name: prior_evidence_refs
+    type: array
+    required: false
+    description: "Evidence refs from G1-G5 to chain"
+
+outputs:
+  - name: gate_result
+    type: GateResult
+    description: "Gate decision with evidence refs"
+
+fail_closed_rules:
+  - id: FC-SANDBOX-001
+    description: "success=false MUST trigger REJECTED"
+    on_fail: REJECTED
+    error_code: ERR_TESTS_FAILED
+    critical: true
+
+  - id: FC-SANDBOX-002
+    description: "Missing success status MUST trigger REJECTED"
+    on_fail: REJECTED
+    error_code: ERR_TEST_STATUS_UNKNOWN
+    critical: true
+
+  - id: FC-SANDBOX-003
+    description: "Any test failures (failed > 0) MUST trigger REJECTED"
+    on_fail: REJECTED
+    error_code: ERR_TEST_FAILURES
+    critical: true
+
+  - id: FC-SANDBOX-004
+    description: "Any sandbox violations MUST trigger REJECTED"
+    on_fail: REJECTED
+    error_code: ERR_SANDBOX_VIOLATIONS
+    critical: true
+
+  - id: FC-SANDBOX-005
+    description: "Critical severity static analysis findings MUST trigger REJECTED"
+    on_fail: REJECTED
+    error_code: ERR_CRITICAL_FINDINGS
+    critical: true
+    severities: [error, ERROR, critical, CRITICAL, blocker, BLOCKER]
+
+evidence_types:
+  - type: TEST_RESULT
+    description: "Sandbox test execution results"
+    required_fields:
+      - total_runs
+      - passed
+      - failed
+      - success_rate
+
+  - type: TRACE_LOG
+    description: "Execution trace events"
+    required_fields:
+      - event_id
+      - event_type
+      - timestamp
+
+  - type: STATIC_ANALYSIS
+    description: "Static analysis findings"
+    required_fields:
+      - tool
+      - version
+      - findings
+
+chaining:
+  prior_gates: [intake_repo, license_gate, repo_scan_fit_score, constitution_risk_gate, scaffold_skill_impl]
+  description: "Must chain evidence refs from G1-G5"

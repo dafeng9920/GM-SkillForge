@@ -1,0 +1,15 @@
+case_id: case_reject_input_invalid
+description: "Input validation fails - commit_sha is not 40-char hex"
+input:
+  repo_url: "https://github.com/example/repo"
+  commit_sha: "abcdef1234567890abcd"
+  at_time: "2026-02-17T12:00:00Z"
+  rubric_version: "1.0.0"
+  requester_id: "test_runner"
+expected:
+  status: REJECTED
+  overall_pass_count: 0
+  rejection_reasons_contains: ["FC-2"]
+assertions:
+  - 'status == "REJECTED"'
+  - '"FC-2" in str(rejection_reasons)'

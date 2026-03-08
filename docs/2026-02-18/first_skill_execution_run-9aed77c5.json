@@ -1,0 +1,722 @@
+{
+  "run_id": "run-9aed77c5",
+  "timestamp": "2026-02-18T08:41:18Z",
+  "final_decision": "PASSED",
+  "fail_closed_triggered": false,
+  "stop_gate": null,
+  "gate_results": [
+    {
+      "gate": "intake_repo",
+      "status": "PASSED",
+      "decision": "ALLOW",
+      "evidence_ref": "ev-97a10570"
+    },
+    {
+      "gate": "license_gate",
+      "status": "PASSED",
+      "decision": "ALLOW",
+      "evidence_ref": "ev-38242858"
+    },
+    {
+      "gate": "repo_scan_fit_score",
+      "status": "PASSED",
+      "decision": "ALLOW",
+      "fit_score": 70,
+      "evidence_ref": "ev-c23250c8"
+    },
+    {
+      "gate": "draft_skill_spec",
+      "status": "PASSED",
+      "decision": "ALLOW",
+      "skill_name": "skill-NEW-GM",
+      "evidence_ref": "ev-0aefa9bd"
+    },
+    {
+      "gate": "constitution_risk_gate",
+      "status": "PASSED",
+      "decision": "ALLOW",
+      "evidence_ref": "ev-94bf0b74"
+    },
+    {
+      "gate": "scaffold_skill_impl",
+      "status": "PASSED",
+      "decision": "ALLOW",
+      "bundle_path": "/tmp/skillforge/bundles/skill-NEW-GM",
+      "evidence_ref": "ev-dc1d4399"
+    },
+    {
+      "gate": "sandbox_test_and_trace",
+      "status": "PASSED",
+      "decision": "ALLOW",
+      "success_rate": 1.0,
+      "evidence_ref": "ev-a1b84fc9"
+    },
+    {
+      "gate": "pack_audit_and_publish",
+      "status": "PASSED",
+      "decision": "ALLOW",
+      "audit_pack_path": "/tmp/skillforge/audit/audit-10465f76",
+      "evidence_ref": "ev-820cd163"
+    }
+  ],
+  "evidence_refs": [
+    {
+      "evidence_id": "ev-97a10570",
+      "gate_id": "intake_repo",
+      "sha256": "2e1406db17ddc6c1fae7f4164c39024103de9e49af105681a571c8fc6e8f1768",
+      "timestamp": "2026-02-18T08:41:10Z",
+      "source_locator": "gate/intake_repo/output.json"
+    },
+    {
+      "evidence_id": "ev-38242858",
+      "gate_id": "license_gate",
+      "sha256": "3c7e9a92ed5a455d66259c57661234459bfe357b60c69b42171b8a894fd6d2f1",
+      "timestamp": "2026-02-18T08:41:10Z",
+      "source_locator": "gate/license_gate/output.json"
+    },
+    {
+      "evidence_id": "ev-c23250c8",
+      "gate_id": "repo_scan_fit_score",
+      "sha256": "9eb0e483f0938e70634a0a93a96969bb8b438c5e0791a32a5eb00c9edabeb882",
+      "timestamp": "2026-02-18T08:41:10Z",
+      "source_locator": "gate/repo_scan_fit_score/output.json"
+    },
+    {
+      "evidence_id": "ev-0aefa9bd",
+      "gate_id": "draft_skill_spec",
+      "sha256": "cacd0f45fe7124131b5ba8f1f20d53a7d7007b7286a92c50b6b3fde77ff1a24a",
+      "timestamp": "2026-02-18T08:41:10Z",
+      "source_locator": "gate/draft_skill_spec/output.json"
+    },
+    {
+      "evidence_id": "ev-94bf0b74",
+      "gate_id": "constitution_risk_gate",
+      "sha256": "3944c8c94e081a63ae6052f7a06982b1e2aa2efcbcd4e3b9eeb7fc293f1ede78",
+      "timestamp": "2026-02-18T08:41:10Z",
+      "source_locator": "gate/constitution_risk_gate/output.json"
+    },
+    {
+      "evidence_id": "ev-dc1d4399",
+      "gate_id": "scaffold_skill_impl",
+      "sha256": "e23950b2bc0224728ec5eed2fa13a756eca8b569352fe68d5036bf7ce7760140",
+      "timestamp": "2026-02-18T08:41:10Z",
+      "source_locator": "gate/scaffold_skill_impl/output.json"
+    },
+    {
+      "evidence_id": "ev-a1b84fc9",
+      "gate_id": "sandbox_test_and_trace",
+      "sha256": "52023864f525445a4f821988692e387dac517bd69ba6b5fb7bc00bceb81c4e26",
+      "timestamp": "2026-02-18T08:41:18Z",
+      "source_locator": "gate/sandbox_test_and_trace/output.json"
+    },
+    {
+      "evidence_id": "ev-820cd163",
+      "gate_id": "pack_audit_and_publish",
+      "sha256": "7fb4001e4146a8987e79514fb5aff6669ef6dff71dd40ce6b02df4614482f7f3",
+      "timestamp": "2026-02-18T08:41:18Z",
+      "source_locator": "gate/pack_audit_and_publish/output.json"
+    }
+  ],
+  "skill_artifact": {
+    "name": "skill-NEW-GM",
+    "version": "0.1.0",
+    "description": "Auto-drafted skill from local/NEW-GM",
+    "inputs": [
+      {
+        "name": "main.py",
+        "type": "file",
+        "required": true
+      }
+    ],
+    "outputs": [
+      {
+        "name": "result",
+        "type": "object"
+      }
+    ],
+    "tools_required": [
+      "python3",
+      "pip"
+    ],
+    "steps": [
+      {
+        "id": "step_1",
+        "action": "execute",
+        "description": "Run main.py"
+      }
+    ],
+    "constraints": [
+      "risk_tier: L1",
+      "fit_score >= 40 (actual: 70)"
+    ]
+  },
+  "audit_pack": {
+    "audit_id": "audit-10465f76",
+    "skill_id": "skill-NEW-GM",
+    "version": "0.1.0",
+    "quality_level": "L3",
+    "gate_decisions": [
+      {
+        "gate_id": "gate-3e45ac43",
+        "node_id": "license_gate",
+        "decision": "ALLOW",
+        "reason": "Local file reference - license check bypassed",
+        "details": {
+          "license": "LOCAL",
+          "mode": "file"
+        },
+        "timestamp": "2026-02-18T08:41:10Z"
+      },
+      {
+        "schema_version": "0.1.0",
+        "gate_id": "constitution_risk_gate",
+        "node_id": "constitution_risk_gate",
+        "decision": "ALLOW",
+        "reason": "Risk score 0.00 is within acceptable limits",
+        "details": {
+          "risk_score": 0.0,
+          "risk_categories": [],
+          "mitigations_required": [],
+          "constitution_version": "constitution_v1.md",
+          "constitution_hash": "17ce83276c6e4f42c1a5becbc348a614bfdab3783f0ac854f1cb2a040f88a5f6"
+        },
+        "timestamp": "2026-02-18T08:41:10Z"
+      }
+    ],
+    "test_report": {
+      "total_runs": 3,
+      "passed": 3,
+      "failed": 0,
+      "success_rate": 1.0,
+      "avg_latency_ms": 42.5,
+      "total_cost_usd": 0.001
+    },
+    "trace_summary": {
+      "total_events": 1,
+      "node_id": "pack_audit_and_publish"
+    },
+    "created_at": "2026-02-18T08:41:18Z",
+    "files": {
+      "manifest": {
+        "schema_version": "1.0.0",
+        "audit_id": "audit-10465f76",
+        "skill_id": "skill-NEW-GM",
+        "pack_version": "0.1.0",
+        "quality_level": "L3",
+        "build_time": "2026-02-18T08:41:18Z",
+        "provenance": {
+          "source": "github",
+          "id": "https://github.com/unknown/repo",
+          "commit_sha": "4ea179d31a66fc2616f0cf953cd0e5c5c43d8ea8",
+          "version": "4ea179d31a66fc2616f0cf953cd0e5c5c43d8ea8",
+          "fetched_at": "2026-02-18T08:41:18Z",
+          "license_hint": "unknown",
+          "snapshot_hash": "fab6774977483f896421d490c4a491aa3a77e1002660cf71811e24c6afbc0a36",
+          "constitution_ref": "constitution_v1.md",
+          "constitution_hash": "17ce83276c6e4f42c1a5becbc348a614bfdab3783f0ac854f1cb2a040f88a5f6",
+          "issue_catalog_version": "1.0.0"
+        },
+        "files": [
+          {
+            "file": "policy_matrix.json",
+            "sha256": "d0bbbe5bc939213154d106e4260f2eb940106cc0129323af3395be4d1a6c0b07",
+            "bytes": 614
+          },
+          {
+            "file": "static_analysis.log",
+            "sha256": "c787fd4dd6f617f8ccb77f2c32f53815f8642388a707a3d902e42a3e565dbf6c",
+            "bytes": 261
+          },
+          {
+            "file": "original_repo_snapshot.json",
+            "sha256": "f1a7c6c6d2b2d54740199857041f03cd0009081f46fd9d62be33b0c14e2b806c",
+            "bytes": 324
+          },
+          {
+            "file": "repro_env.yml",
+            "sha256": "a6a200619af63eea64ff56b1aa794b4d2a0537c23986343fece33bff2cbbd481",
+            "bytes": 247
+          },
+          {
+            "file": "evidence.jsonl",
+            "sha256": "cf1cc681bfda41918e62a2e0df70041380b6e74fdcd26240284e5e3b51e6ae66",
+            "bytes": 1195
+          },
+          {
+            "file": "source_lineage.diff",
+            "sha256": "b229b792072871fc580d09eb2edc8406dddc09051f870e6165e8cbfceb9b3d05",
+            "bytes": 43
+          }
+        ]
+      },
+      "policy_matrix": {
+        "schema_version": "1.0.0",
+        "audit_id": "audit-10465f76",
+        "skill_id": "skill-NEW-GM",
+        "quality_level": "L3",
+        "findings": [
+          {
+            "rule_id": "POL-LICENSE-GATE",
+            "description": "Gate decision from license_gate",
+            "result": "pass",
+            "issue_key": "GATE_LICENSE-GATE_CHECK",
+            "evidence_ref": "ev-553e0191",
+            "rule_version": "unknown"
+          },
+          {
+            "rule_id": "POL-CONSTITUTION-RISK-GATE",
+            "description": "Gate decision from constitution_risk_gate",
+            "result": "pass",
+            "issue_key": "GATE_CONSTITUTION-RISK-GATE_CHECK",
+            "evidence_ref": "ev-1cc52c48",
+            "rule_version": "unknown"
+          }
+        ],
+        "required_changes": [],
+        "generated_at": "2026-02-18T08:41:18Z"
+      },
+      "original_repo_snapshot": {
+        "source": "github",
+        "id": "https://github.com/unknown/repo",
+        "commit_sha": "4ea179d31a66fc2616f0cf953cd0e5c5c43d8ea8",
+        "version": "4ea179d31a66fc2616f0cf953cd0e5c5c43d8ea8",
+        "fetched_at": "2026-02-18T08:41:18Z",
+        "license_hint": "unknown",
+        "snapshot_hash": "fab6774977483f896421d490c4a491aa3a77e1002660cf71811e24c6afbc0a36"
+      },
+      "repro_env": {
+        "python_version": "3.11",
+        "timeout_s": 120,
+        "max_concurrency": 4,
+        "max_runs": 100,
+        "isolation": "container",
+        "network_policy": "deny-by-default",
+        "source_mount": "read-only",
+        "tools": [
+          "semgrep",
+          "pytest"
+        ],
+        "generated_at": "2026-02-18T08:41:18Z"
+      },
+      "evidence": [
+        {
+          "evidence_id": "ev-ddd19fd8",
+          "type": "intake_provenance",
+          "sha256": "fab6774977483f896421d490c4a491aa3a77e1002660cf71811e24c6afbc0a36",
+          "source": "intake_repo",
+          "created_at": "2026-02-18T08:41:18Z",
+          "repo_url": "unknown",
+          "commit_sha": "4ea179d31a66fc2616f0cf953cd0e5c5c43d8ea8"
+        },
+        {
+          "evidence_id": "ev-553e0191",
+          "type": "gate_decision",
+          "sha256": "25a2778c67ba986882a577479bff5aa3a854b34635d6647cdf11e08550169503",
+          "source": "license_gate",
+          "created_at": "2026-02-18T08:41:18Z",
+          "gate": "license_gate",
+          "decision": "ALLOW"
+        },
+        {
+          "evidence_id": "ev-1cc52c48",
+          "type": "gate_decision",
+          "sha256": "25a2778c67ba986882a577479bff5aa3a854b34635d6647cdf11e08550169503",
+          "source": "constitution_risk_gate",
+          "created_at": "2026-02-18T08:41:18Z",
+          "gate": "constitution_risk_gate",
+          "decision": "ALLOW"
+        },
+        {
+          "evidence_id": "ev-c95f11a6",
+          "type": "scan_log",
+          "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "source": "repo_scan_fit_score",
+          "created_at": "2026-02-18T08:41:18Z"
+        },
+        {
+          "evidence_id": "ev-8d302f88",
+          "type": "runtime_event",
+          "sha256": "9dbe9aa2483524854086da5f8909a5ac1b4a1e0ae05d076e2821270cb28cdf6b",
+          "source": "sandbox_test_and_trace",
+          "created_at": "2026-02-18T08:41:18Z"
+        }
+      ],
+      "evidence_count": 5,
+      "static_analysis_lines": 2,
+      "source_lineage_present": false
+    }
+  },
+  "permit_token": null,
+  "release_allowed": false,
+  "artifacts": {
+    "input": {
+      "repo_url": "https://github.com/local/NEW-GM",
+      "commit_sha": "4ea179d31a66fc2616f0cf953cd0e5c5c43d8ea8",
+      "branch": "main",
+      "entry_path": "strategies/template_mean_reversion.py",
+      "options": {
+        "sandbox_mode": "strict",
+        "local_path": "D:/NEW-GM"
+      }
+    },
+    "intake_repo": {
+      "schema_version": "0.1.0",
+      "repo_info": {
+        "name": "NEW-GM",
+        "owner": "local",
+        "default_branch": "main",
+        "stars": 0,
+        "license": null,
+        "last_commit_sha": "4ea179d31a66fc2616f0cf953cd0e5c5c43d8ea8",
+        "languages": {
+          "Python": 100
+        }
+      },
+      "commit_sha": "4ea179d31a66fc2616f0cf953cd0e5c5c43d8ea8",
+      "fetch_status": "ok",
+      "local_path": null
+    },
+    "license_gate": {
+      "gate_id": "gate-3e45ac43",
+      "node_id": "license_gate",
+      "decision": "ALLOW",
+      "reason": "Local file reference - license check bypassed",
+      "details": {
+        "license": "LOCAL",
+        "mode": "file"
+      },
+      "timestamp": "2026-02-18T08:41:10Z"
+    },
+    "repo_scan_fit_score": {
+      "schema_version": "0.1.0",
+      "fit_score": 70,
+      "repo_type": "lib",
+      "entry_points": [
+        "main.py"
+      ],
+      "dependencies": {},
+      "language_stack": "Python",
+      "complexity_metrics": {
+        "total_files": 1,
+        "total_loc": 0,
+        "avg_function_length": 0.0
+      }
+    },
+    "draft_skill_spec": {
+      "schema_version": "0.1.0",
+      "skill_spec": {
+        "name": "skill-NEW-GM",
+        "version": "0.1.0",
+        "description": "Auto-drafted skill from local/NEW-GM",
+        "inputs": [
+          {
+            "name": "main.py",
+            "type": "file",
+            "required": true
+          }
+        ],
+        "outputs": [
+          {
+            "name": "result",
+            "type": "object"
+          }
+        ],
+        "tools_required": [
+          "python3",
+          "pip"
+        ],
+        "steps": [
+          {
+            "id": "step_1",
+            "action": "execute",
+            "description": "Run main.py"
+          }
+        ],
+        "constraints": [
+          "risk_tier: L1",
+          "fit_score >= 40 (actual: 70)"
+        ]
+      },
+      "source": "repo",
+      "derived_from": {
+        "repo_url": "https://github.com/local/NEW-GM",
+        "commit_sha": "4ea179d31a66fc2616f0cf953cd0e5c5c43d8ea8"
+      },
+      "confidence": 0.7
+    },
+    "constitution_risk_gate": {
+      "schema_version": "0.1.0",
+      "gate_id": "constitution_risk_gate",
+      "node_id": "constitution_risk_gate",
+      "decision": "ALLOW",
+      "reason": "Risk score 0.00 is within acceptable limits",
+      "details": {
+        "risk_score": 0.0,
+        "risk_categories": [],
+        "mitigations_required": [],
+        "constitution_version": "constitution_v1.md",
+        "constitution_hash": "17ce83276c6e4f42c1a5becbc348a614bfdab3783f0ac854f1cb2a040f88a5f6"
+      },
+      "timestamp": "2026-02-18T08:41:10Z"
+    },
+    "scaffold_skill_impl": {
+      "schema_version": "0.1.0",
+      "bundle_path": "/tmp/skillforge/bundles/skill-NEW-GM",
+      "files_generated": [
+        "skill-NEW-GM/main.py",
+        "skill-NEW-GM/manifest.json",
+        "skill-NEW-GM/README.md"
+      ],
+      "entry_point": "main.py",
+      "language": "Python",
+      "test_file": "skill-NEW-GM/test_skill.py",
+      "manifest": {
+        "skill_id": "skill-NEW-GM",
+        "version": "0.1.0",
+        "checksum": "d6c9182cdbd7c068"
+      }
+    },
+    "sandbox_test_and_trace": {
+      "schema_version": "0.1.0",
+      "success": true,
+      "test_report": {
+        "total_runs": 3,
+        "passed": 3,
+        "failed": 0,
+        "success_rate": 1.0,
+        "avg_latency_ms": 42.5,
+        "total_cost_usd": 0.001
+      },
+      "trace_events": [
+        {
+          "event_id": "ef2a0ca1-5f38-45f6-ac69-fe35beae2bc2",
+          "event_type": "sandbox_run",
+          "timestamp": "2026-02-18T08:41:10Z",
+          "node_id": "sandbox_test_and_trace",
+          "status": "completed",
+          "duration_ms": 42.5
+        }
+      ],
+      "sandbox_report": {
+        "cpu_time_ms": 85,
+        "memory_peak_mb": 12.3,
+        "violations": []
+      },
+      "static_analysis": {
+        "tool": "semgrep",
+        "version": "1.144.0",
+        "findings": [],
+        "raw_output": "{\"version\":\"1.144.0\",\"results\":[],\"errors\":[{\"code\":2,\"level\":\"error\",\"type\":\"SemgrepError\",\"message\":\"Invalid scanning root: \\\\tmp\\\\skillforge\\\\bundles\\\\skill-NEW-GM\"}],\"paths\":{\"scanned\":[]},\"engine_requested\":\"OSS\",\"skipped_rules\":[],\"profiling_results\":[]}\n",
+        "error_message": "",
+        "analyzed_at": "2026-02-18T08:41:10Z"
+      }
+    },
+    "pack_audit_and_publish": {
+      "schema_version": "1.0.0",
+      "audit_pack": {
+        "audit_id": "audit-10465f76",
+        "skill_id": "skill-NEW-GM",
+        "version": "0.1.0",
+        "quality_level": "L3",
+        "gate_decisions": [
+          {
+            "gate_id": "gate-3e45ac43",
+            "node_id": "license_gate",
+            "decision": "ALLOW",
+            "reason": "Local file reference - license check bypassed",
+            "details": {
+              "license": "LOCAL",
+              "mode": "file"
+            },
+            "timestamp": "2026-02-18T08:41:10Z"
+          },
+          {
+            "schema_version": "0.1.0",
+            "gate_id": "constitution_risk_gate",
+            "node_id": "constitution_risk_gate",
+            "decision": "ALLOW",
+            "reason": "Risk score 0.00 is within acceptable limits",
+            "details": {
+              "risk_score": 0.0,
+              "risk_categories": [],
+              "mitigations_required": [],
+              "constitution_version": "constitution_v1.md",
+              "constitution_hash": "17ce83276c6e4f42c1a5becbc348a614bfdab3783f0ac854f1cb2a040f88a5f6"
+            },
+            "timestamp": "2026-02-18T08:41:10Z"
+          }
+        ],
+        "test_report": {
+          "total_runs": 3,
+          "passed": 3,
+          "failed": 0,
+          "success_rate": 1.0,
+          "avg_latency_ms": 42.5,
+          "total_cost_usd": 0.001
+        },
+        "trace_summary": {
+          "total_events": 1,
+          "node_id": "pack_audit_and_publish"
+        },
+        "created_at": "2026-02-18T08:41:18Z",
+        "files": {
+          "manifest": {
+            "schema_version": "1.0.0",
+            "audit_id": "audit-10465f76",
+            "skill_id": "skill-NEW-GM",
+            "pack_version": "0.1.0",
+            "quality_level": "L3",
+            "build_time": "2026-02-18T08:41:18Z",
+            "provenance": {
+              "source": "github",
+              "id": "https://github.com/unknown/repo",
+              "commit_sha": "4ea179d31a66fc2616f0cf953cd0e5c5c43d8ea8",
+              "version": "4ea179d31a66fc2616f0cf953cd0e5c5c43d8ea8",
+              "fetched_at": "2026-02-18T08:41:18Z",
+              "license_hint": "unknown",
+              "snapshot_hash": "fab6774977483f896421d490c4a491aa3a77e1002660cf71811e24c6afbc0a36",
+              "constitution_ref": "constitution_v1.md",
+              "constitution_hash": "17ce83276c6e4f42c1a5becbc348a614bfdab3783f0ac854f1cb2a040f88a5f6",
+              "issue_catalog_version": "1.0.0"
+            },
+            "files": [
+              {
+                "file": "policy_matrix.json",
+                "sha256": "d0bbbe5bc939213154d106e4260f2eb940106cc0129323af3395be4d1a6c0b07",
+                "bytes": 614
+              },
+              {
+                "file": "static_analysis.log",
+                "sha256": "c787fd4dd6f617f8ccb77f2c32f53815f8642388a707a3d902e42a3e565dbf6c",
+                "bytes": 261
+              },
+              {
+                "file": "original_repo_snapshot.json",
+                "sha256": "f1a7c6c6d2b2d54740199857041f03cd0009081f46fd9d62be33b0c14e2b806c",
+                "bytes": 324
+              },
+              {
+                "file": "repro_env.yml",
+                "sha256": "a6a200619af63eea64ff56b1aa794b4d2a0537c23986343fece33bff2cbbd481",
+                "bytes": 247
+              },
+              {
+                "file": "evidence.jsonl",
+                "sha256": "cf1cc681bfda41918e62a2e0df70041380b6e74fdcd26240284e5e3b51e6ae66",
+                "bytes": 1195
+              },
+              {
+                "file": "source_lineage.diff",
+                "sha256": "b229b792072871fc580d09eb2edc8406dddc09051f870e6165e8cbfceb9b3d05",
+                "bytes": 43
+              }
+            ]
+          },
+          "policy_matrix": {
+            "schema_version": "1.0.0",
+            "audit_id": "audit-10465f76",
+            "skill_id": "skill-NEW-GM",
+            "quality_level": "L3",
+            "findings": [
+              {
+                "rule_id": "POL-LICENSE-GATE",
+                "description": "Gate decision from license_gate",
+                "result": "pass",
+                "issue_key": "GATE_LICENSE-GATE_CHECK",
+                "evidence_ref": "ev-553e0191",
+                "rule_version": "unknown"
+              },
+              {
+                "rule_id": "POL-CONSTITUTION-RISK-GATE",
+                "description": "Gate decision from constitution_risk_gate",
+                "result": "pass",
+                "issue_key": "GATE_CONSTITUTION-RISK-GATE_CHECK",
+                "evidence_ref": "ev-1cc52c48",
+                "rule_version": "unknown"
+              }
+            ],
+            "required_changes": [],
+            "generated_at": "2026-02-18T08:41:18Z"
+          },
+          "original_repo_snapshot": {
+            "source": "github",
+            "id": "https://github.com/unknown/repo",
+            "commit_sha": "4ea179d31a66fc2616f0cf953cd0e5c5c43d8ea8",
+            "version": "4ea179d31a66fc2616f0cf953cd0e5c5c43d8ea8",
+            "fetched_at": "2026-02-18T08:41:18Z",
+            "license_hint": "unknown",
+            "snapshot_hash": "fab6774977483f896421d490c4a491aa3a77e1002660cf71811e24c6afbc0a36"
+          },
+          "repro_env": {
+            "python_version": "3.11",
+            "timeout_s": 120,
+            "max_concurrency": 4,
+            "max_runs": 100,
+            "isolation": "container",
+            "network_policy": "deny-by-default",
+            "source_mount": "read-only",
+            "tools": [
+              "semgrep",
+              "pytest"
+            ],
+            "generated_at": "2026-02-18T08:41:18Z"
+          },
+          "evidence": [
+            {
+              "evidence_id": "ev-ddd19fd8",
+              "type": "intake_provenance",
+              "sha256": "fab6774977483f896421d490c4a491aa3a77e1002660cf71811e24c6afbc0a36",
+              "source": "intake_repo",
+              "created_at": "2026-02-18T08:41:18Z",
+              "repo_url": "unknown",
+              "commit_sha": "4ea179d31a66fc2616f0cf953cd0e5c5c43d8ea8"
+            },
+            {
+              "evidence_id": "ev-553e0191",
+              "type": "gate_decision",
+              "sha256": "25a2778c67ba986882a577479bff5aa3a854b34635d6647cdf11e08550169503",
+              "source": "license_gate",
+              "created_at": "2026-02-18T08:41:18Z",
+              "gate": "license_gate",
+              "decision": "ALLOW"
+            },
+            {
+              "evidence_id": "ev-1cc52c48",
+              "type": "gate_decision",
+              "sha256": "25a2778c67ba986882a577479bff5aa3a854b34635d6647cdf11e08550169503",
+              "source": "constitution_risk_gate",
+              "created_at": "2026-02-18T08:41:18Z",
+              "gate": "constitution_risk_gate",
+              "decision": "ALLOW"
+            },
+            {
+              "evidence_id": "ev-c95f11a6",
+              "type": "scan_log",
+              "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+              "source": "repo_scan_fit_score",
+              "created_at": "2026-02-18T08:41:18Z"
+            },
+            {
+              "evidence_id": "ev-8d302f88",
+              "type": "runtime_event",
+              "sha256": "9dbe9aa2483524854086da5f8909a5ac1b4a1e0ae05d076e2821270cb28cdf6b",
+              "source": "sandbox_test_and_trace",
+              "created_at": "2026-02-18T08:41:18Z"
+            }
+          ],
+          "evidence_count": 5,
+          "static_analysis_lines": 2,
+          "source_lineage_present": false
+        }
+      },
+      "audit_pack_path": "/tmp/skillforge/audit/audit-10465f76",
+      "publish_result": {
+        "skill_id": "skill-NEW-GM",
+        "version": "0.1.0",
+        "status": "published",
+        "registry_url": "http://localhost:8080/skills/skill-NEW-GM/0.1.0",
+        "timestamp": "2026-02-18T08:41:18Z"
+      }
+    }
+  }
+}

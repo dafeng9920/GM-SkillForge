@@ -1,0 +1,16 @@
+{
+  "captured_at": "2026-02-20T00:00:00Z",
+  "source": {
+    "repo_url": "REPO_URL",
+    "commit_sha": "COMMIT_SHA"
+  },
+  "ruleset_revision": "v1",
+  "repro_env": {
+    "python_version": "3.11",
+    "deps_lock_hash": "LOCKHASH-PLACEHOLDER",
+    "os": "OS-PLACEHOLDER",
+    "tool_versions": {
+      "gm_skillforge": "0.0.1"
+    }
+  }
+}

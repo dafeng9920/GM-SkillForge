@@ -1,0 +1,59 @@
+{
+  "summary": {
+    "run_date": "2026-02-22",
+    "generated_at": "2026-02-22T04:57:24Z",
+    "profile": "l5-static",
+    "policy_version": "v1.0.0-20260222",
+    "policy_path": "D:\\GM-SkillForge\\configs\\audit_policy_v1.json",
+    "scope": "domains=finance top_n=1 size_rank=chars",
+    "run_id": "L5S-20260222045724Z-56E64A7F",
+    "evidence_ref": "EV-L5S-L5S-20260222045724Z-56E64A7F",
+    "input_hash": "8b9ee8ff5424a45b2b01b8f34c78cc492d95899875b3d421b1c0d6a400a1b1c7",
+    "sample_size": 1,
+    "gate_counts": {
+      "PASS": 1,
+      "WARN": 0,
+      "FAIL": 0
+    },
+    "avg_overall_score": 74.0,
+    "avg_est_tokens": 4158.0,
+    "high_cost_count_ge_3000_tokens": 1,
+    "high_redundancy_count_ge_0.26": 0,
+    "result_hash": "2b3be2e37930567b3193e7d8b96bdebd9cc5df5c9da78f7c3915b00cda3ab83f"
+  },
+  "results": [
+    {
+      "domain": "finance",
+      "skill": "audit-support",
+      "path": "D:\\GM-SkillForge\\git-Claude仓库\\knowledge-work-plugins\\finance\\skills\\audit-support\\SKILL.md",
+      "source_sha256": "1675e1e5d7367633902561dcd905939ec467c93498b712045d79d1f4364359a7",
+      "evidence_ref": "EV-L5S-L5S-20260222045724Z-56E64A7F-finance-audit-support",
+      "chars": 16633,
+      "est_tokens": 4158,
+      "repeat_ratio": 0.035,
+      "broken_links": 0,
+      "checklist_items": 0,
+      "numbered_steps": 33,
+      "tables": 7,
+      "sensitive_hits": 1,
+      "has_disclaimer": false,
+      "has_review_warning": true,
+      "layer_scores": {
+        "L1_cost": 40,
+        "L2_redundancy": 100,
+        "L3_safety": 60,
+        "L4_structure": 100,
+        "L5_evidence_ready": 80
+      },
+      "layer_status": {
+        "L1_cost": "WARN",
+        "L2_redundancy": "PASS",
+        "L3_safety": "WARN",
+        "L4_structure": "PASS",
+        "L5_evidence_ready": "PASS"
+      },
+      "overall_score": 74.0,
+      "gate": "PASS"
+    }
+  ]
+}

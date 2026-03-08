@@ -1,0 +1,60 @@
+schema_version: "0.1.0"
+skill_id: "pack_audit_and_publish"
+name: "Pack Audit and Publish"
+description: "Package skill bundle, perform audit, and publish to registry"
+version: "0.1.0"
+
+# 所属路径
+paths: ["A", "B", "AB"]
+stage: 7
+
+# 输入合同
+input:
+  required:
+    - bundle_path:
+        type: "string"
+        description: "Path to skill bundle"
+    - test_report:
+        type: "object"
+        description: "Sandbox test results"
+    - trace_events:
+        type: "array"
+        description: "Execution trace events"
+
+# 输出合同
+output:
+  required:
+    - schema_version:
+        type: "string"
+        description: "Schema version (0.1.0)"
+    - audit_pack_path:
+        type: "string"
+        description: "Path to generated audit pack"
+    - publish_result:
+        type: "object"
+        description: "Registry publish result"
+
+# 能力声明
+capabilities:
+  network: true
+  filesystem: true
+  subprocess: false
+  gpu: false
+
+# 风险等级
+risk_tier: "L1"
+
+# 依赖
+dependencies:
+  adapters: ["registry_client"]
+  schemas: ["registry_publish"]
+  error_codes: []
+
+# 错误处理
+errors:
+  - code: "AUDIT_FAILED"
+    retryable: false
+    description: "Skill audit failed"
+  - code: "PUBLISH_FAILED"
+    retryable: true
+    description: "Registry publish failed"

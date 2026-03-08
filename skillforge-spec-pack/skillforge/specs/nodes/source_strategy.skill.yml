@@ -1,0 +1,64 @@
+schema_version: "0.1.0"
+skill_id: "source_strategy"
+name: "Source Strategy"
+description: "Decides whether to generate from scratch or search GitHub"
+version: "0.1.0"
+
+# 所属路径
+paths: ["A", "AB"]
+stage: -1
+
+# 输入合同
+input:
+  required:
+    - intent:
+        type: "object"
+        description: "Parsed intent from IntentParser"
+    - mode:
+        type: "string"
+        description: "Pipeline mode: nl or auto"
+    - confidence:
+        type: "number"
+        description: "Intent parsing confidence"
+
+# 输出合同
+output:
+  required:
+    - schema_version:
+        type: "string"
+        description: "Schema version (0.1.0)"
+    - strategy:
+        type: "string"
+        description: "Source strategy: generate, search_github, or hybrid"
+    - reason:
+        type: "string"
+        description: "Reason for strategy selection"
+  optional:
+    - search_query:
+        type: "string"
+        description: "GitHub search query (when strategy includes github search)"
+    - generation_hints:
+        type: "object"
+        description: "Hints for code generation (when strategy includes generation)"
+
+# 能力声明
+capabilities:
+  network: false
+  filesystem: false
+  subprocess: false
+  gpu: false
+
+# 风险等级
+risk_tier: "L0"
+
+# 依赖
+dependencies:
+  adapters: []
+  schemas: []
+  error_codes: []
+
+# 错误处理
+errors:
+  - code: "STRATEGY_DECISION_FAILED"
+    retryable: false
+    description: "Failed to determine source strategy"

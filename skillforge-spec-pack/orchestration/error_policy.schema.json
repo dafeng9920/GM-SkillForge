@@ -1,0 +1,78 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://gm-os.dev/orchestration/error_policy.schema.json",
+  "title": "ErrorPolicy",
+  "description": "错误策略配置 Schema",
+  "type": "object",
+  "required": ["schema_version", "policies"],
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^0\\.1\\.\\d+$" },
+    "policies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["node_id", "retry_policy", "on_error"],
+        "properties": {
+          "node_id": {
+            "type": "string",
+            "enum": ["intake_repo", "license_gate", "repo_scan_fit_score", "draft_skill_spec", "constitution_risk_gate", "scaffold_skill_impl", "sandbox_test_and_trace", "pack_audit_and_publish"]
+          },
+          "retry_policy": {
+            "type": "object",
+            "required": ["retryable", "max_retries", "backoff_seconds"],
+            "properties": {
+              "retryable": { "type": "boolean" },
+              "max_retries": { "type": "integer", "minimum": 0, "maximum": 10 },
+              "backoff_seconds": { "type": "integer", "minimum": 0, "maximum": 300 }
+            }
+          },
+          "on_error": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["error_code", "user_message_template", "next_action"],
+              "properties": {
+                "error_code": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]*$" },
+                "user_message_template": { "type": "string", "maxLength": 500 },
+                "next_action": {
+                  "type": "object",
+                  "required": ["action_id", "title", "suggested_fixes"],
+                  "properties": {
+                    "action_id": {
+                      "type": "string",
+                      "pattern": "^[a-z_]+\\.[a-z_]+\\.[a-z_]+$",
+                      "description": "格式: <node>.<verb>.<object>"
+                    },
+                    "title": { "type": "string", "maxLength": 40 },
+                    "suggested_fixes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": ["kind", "description"],
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "enum": ["RETRY", "CONFIG_CHANGE", "FIX_SCHEMA", "PERMISSION_REDUCE", "ADD_LICENSE", "PIN_COMMIT", "OPTIMIZE", "PUBLISH_PRIVATE", "REPORT_BUG", "CONTACT_SUPPORT"]
+                          },
+                          "description": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "suggested_fix_kinds": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["RETRY", "CONFIG_CHANGE", "FIX_SCHEMA", "PERMISSION_REDUCE", "ADD_LICENSE", "PIN_COMMIT", "OPTIMIZE", "PUBLISH_PRIVATE", "REPORT_BUG", "CONTACT_SUPPORT"]
+      }
+    }
+  },
+  "version": "0.1.0"
+}

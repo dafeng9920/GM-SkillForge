@@ -1,0 +1,217 @@
+.card {
+    background-color: var(--gm-color-card-solid);
+    border: 1px solid var(--gm-color-card-border);
+    border-radius: var(--gm-radius-lg);
+    box-shadow: var(--gm-shadow-md);
+    padding: var(--gm-space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--gm-space-6);
+    margin-bottom: var(--gm-space-4);
+    /* Constraint: No Glassmorphism on primary cards */
+}
+
+/* ==========================================================================
+   Hero Header Section
+   ========================================================================== */
+.hero-header {
+    display: flex;
+    align-items: center;
+    gap: var(--gm-space-4);
+}
+
+.icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    font-size: var(--gm-text-2xl);
+}
+
+.status-allowed .icon-container {
+    background-color: var(--gm-color-state-pass-bg);
+    color: var(--gm-color-state-pass);
+    box-shadow: 0 0 12px var(--gm-color-state-pass-bg);
+    /* Constraint: Authorized Neon usage */
+}
+
+.status-blocked .icon-container {
+    background-color: var(--gm-color-state-block-bg);
+    color: var(--gm-color-state-block);
+    box-shadow: 0 0 12px var(--gm-color-state-block-bg);
+}
+
+.status-warning .icon-container {
+    background-color: var(--gm-color-state-warning-bg);
+    color: var(--gm-color-state-warning);
+}
+
+.status-pending .icon-container {
+    background-color: var(--gm-color-base-300);
+    color: var(--gm-color-text-secondary);
+}
+
+.hero-title-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.hero-title {
+    font-family: var(--gm-font-header);
+    font-size: var(--gm-text-3xl);
+    font-weight: var(--gm-font-weight-black);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+}
+
+.status-allowed .hero-title {
+    color: var(--gm-color-state-pass);
+}
+
+.status-blocked .hero-title {
+    color: var(--gm-color-state-block);
+}
+
+.status-warning .hero-title {
+    color: var(--gm-color-state-warning);
+}
+
+.status-pending .hero-title {
+    color: var(--gm-color-text-secondary);
+}
+
+.hero-subtitle {
+    font-size: var(--gm-text-sm);
+    color: var(--gm-color-text-secondary);
+    margin-top: var(--gm-space-1);
+}
+
+/* ==========================================================================
+   Metrics Grid (Gate Decision, Release, Permit)
+   ========================================================================== */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: var(--gm-space-4);
+    background-color: var(--gm-color-base-100);
+    border: 1px solid var(--gm-color-base-300);
+    border-radius: var(--gm-radius-md);
+    padding: var(--gm-space-4);
+}
+
+.metric-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gm-space-1);
+}
+
+.metric-label {
+    font-size: var(--gm-text-xs);
+    color: var(--gm-color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: var(--gm-font-weight-bold);
+}
+
+.metric-value {
+    font-size: var(--gm-text-base);
+    font-weight: var(--gm-font-weight-bold);
+    color: var(--gm-color-text-primary);
+}
+
+.metric-value-mono {
+    font-family: var(--gm-font-mono);
+    font-weight: var(--gm-font-weight-regular);
+    font-size: var(--gm-text-sm);
+}
+
+.badge-allow {
+    color: var(--gm-color-state-pass);
+}
+
+.badge-block,
+.badge-deny {
+    color: var(--gm-color-state-block);
+}
+
+.badge-requires-changes {
+    color: var(--gm-color-state-warning);
+}
+
+/* ==========================================================================
+   Evidence Footer
+   ========================================================================== */
+.evidence-footer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gm-space-3);
+    padding-top: var(--gm-space-4);
+    border-top: 1px dashed var(--gm-color-base-400);
+}
+
+.evidence-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--gm-space-2);
+}
+
+.evidence-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--gm-space-2);
+}
+
+.mono-link {
+    font-family: var(--gm-font-mono);
+    font-size: var(--gm-text-sm);
+    color: var(--gm-color-primary);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    transition: text-decoration-color var(--gm-transition-fast);
+}
+
+.mono-link:hover,
+.mono-link:focus-visible {
+    text-decoration-color: var(--gm-color-primary);
+    outline: none;
+}
+
+.mono-link:focus-visible {
+    box-shadow: var(--gm-focus-ring);
+}
+
+.copy-btn {
+    background-color: var(--gm-color-base-200);
+    border: 1px solid var(--gm-color-base-400);
+    color: var(--gm-color-text-secondary);
+    font-size: var(--gm-text-xs);
+    padding: 4px 8px;
+    border-radius: var(--gm-radius-sm);
+    cursor: pointer;
+    transition: all var(--gm-transition-fast);
+}
+
+.copy-btn:hover {
+    background-color: var(--gm-color-base-300);
+    color: var(--gm-color-text-primary);
+}
+
+.copy-btn:focus-visible {
+    outline: none;
+    box-shadow: var(--gm-focus-ring);
+}
+/* Utility classes to replace inline styles */
+.metric-pass { color: var(--gm-color-state-pass); }
+.metric-block { color: var(--gm-color-state-block); }
+.min-w-100 { min-width: 100px; }
+
+.text-muted { color: var(--gm-color-text-muted); }
+.text-secondary { color: var(--gm-color-text-secondary); }

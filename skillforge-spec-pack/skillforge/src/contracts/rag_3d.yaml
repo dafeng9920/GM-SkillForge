@@ -1,0 +1,327 @@
+# 3D RAG Contract
+# Wave 3: at-time 引用化 + Experience Capture
+# Constitution SSOT: docs/2026-02-16/constitution_v1.md
+
+# Meta information
+contract_id: rag_3d
+version: "1.0.0"
+owner: gm-skillforge
+wave: "3"
+fail_mode: CLOSED
+
+# ============================================================
+# Schema: AtTimeReference
+# 用途: 3D RAG 时间点引用，确保历史可复现
+# ============================================================
+schemas:
+  AtTimeReference:
+    description: "时间点引用结构，用于 RAG 检索的历史复现"
+    type: object
+    required: [uri, commit_sha, at_time, tombstone]
+    properties:
+      uri:
+        type: string
+        format: uri
+        description: "资源定位符（repo_url 或资源路径）"
+        examples:
+          - "https://github.com/org/repo"
+          - "file://local/path/to/resource"
+      commit_sha:
+        type: string
+        pattern: "^[0-9a-f]{40}$"
+        description: "Git commit 指纹（40 位十六进制）"
+        examples:
+          - "a1b2c3d4e5f6789012345678901234567890abcd"
+      at_time:
+        type: string
+        format: date-time
+        description: "时间点锚定（ISO-8601 格式）"
+        examples:
+          - "2026-02-17T10:30:00Z"
+          - "2026-02-17T18:30:00+08:00"
+      tombstone:
+        type: boolean
+        default: false
+        description: "下架标记（true 表示已下架，不可用于生产）"
+
+  # ============================================================
+  # Schema: ExperienceEntry
+  # 用途: Experience Capture 产物，记录审计/修复/测试经验
+  # ============================================================
+  ExperienceEntry:
+    description: "经验条目结构，用于 Experience Capture 和 evolution.json"
+    type: object
+    required: [issue_key, evidence_ref, source_stage, summary, action, revision, created_at, content_hash]
+    properties:
+      issue_key:
+        type: string
+        pattern: "^[A-Z]+\\.[A-Z0-9-]+$"
+        description: "问题键（如 GATE.FC-2 / RISK.L5）"
+        examples:
+          - "GATE.FC-2"
+          - "RISK.L5"
+          - "SCAN.DEP-1"
+      evidence_ref:
+        type: string
+        description: "证据引用路径或 URI"
+        examples:
+          - "audit_pack://L3/2026-02-17/evidence/scan_report.json"
+          - "file://evidence/constitution_gate.json"
+      source_stage:
+        type: string
+        enum: [audit, fix, test]
+        description: "来源阶段"
+      summary:
+        type: string
+        minLength: 10
+        maxLength: 500
+        description: "经验摘要"
+      action:
+        type: string
+        minLength: 10
+        maxLength: 1000
+        description: "修复/防御动作描述"
+      revision:
+        type: string
+        pattern: "^rev-[0-9a-f]{8}$"
+        description: "绑定的 skill revision"
+        examples:
+          - "rev-a1b2c3d4"
+      created_at:
+        type: string
+        format: date-time
+        description: "创建时间（ISO-8601）"
+      content_hash:
+        type: string
+        pattern: "^sha256:[0-9a-f]{64}$"
+        description: "经验内容哈希（用于去重）"
+        examples:
+          - "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+
+  # ============================================================
+  # Schema: EvolutionFile
+  # 用途: evolution.json 结构定义
+  # ============================================================
+  EvolutionFile:
+    description: "evolution.json 文件结构（append-only）"
+    type: object
+    required: [skill_id, repo_url, commit_sha, revision, entries]
+    properties:
+      skill_id:
+        type: string
+        description: "Skill 唯一标识"
+      repo_url:
+        type: string
+        format: uri
+        description: "仓库地址"
+      commit_sha:
+        type: string
+        pattern: "^[0-9a-f]{40}$"
+        description: "Git commit 指纹"
+      revision:
+        type: string
+        pattern: "^rev-[0-9a-f]{8}$"
+        description: "系统版本指纹"
+      entries:
+        type: array
+        items:
+          $ref: "#/schemas/ExperienceEntry"
+        minItems: 0
+        description: "经验条目列表（append-only）"
+
+# ============================================================
+# RAG Query Request/Response
+# ============================================================
+request:
+  description: "3D RAG 检索请求"
+  type: object
+  required: [query, at_time_ref, requester_id]
+  properties:
+    query:
+      type: string
+      description: "检索查询文本"
+    at_time_ref:
+      $ref: "#/schemas/AtTimeReference"
+    requester_id:
+      type: string
+      description: "请求者标识"
+    filters:
+      type: object
+      properties:
+        exclude_tombstone:
+          type: boolean
+          default: true
+          description: "是否排除已下架条目"
+        source_stages:
+          type: array
+          items:
+            type: string
+            enum: [audit, fix, test]
+          description: "限定来源阶段"
+    limit:
+      type: integer
+      minimum: 1
+      maximum: 100
+      default: 10
+
+response:
+  description: "3D RAG 检索响应"
+  type: object
+  required: [status, at_time_ref, results]
+  properties:
+    status:
+      type: string
+      enum: [PASSED, REJECTED]
+    at_time_ref:
+      $ref: "#/schemas/AtTimeReference"
+    results:
+      type: array
+      items:
+        type: object
+        required: [entry, relevance_score, traceable]
+        properties:
+          entry:
+            $ref: "#/schemas/ExperienceEntry"
+          relevance_score:
+            type: number
+            minimum: 0
+            maximum: 1
+          traceable:
+            type: boolean
+            description: "是否可追溯至原始证据"
+          tombstone_warning:
+            type: boolean
+            description: "是否为已下架条目"
+    total_count:
+      type: integer
+    rejection_reasons:
+      type: array
+      items:
+        type: string
+
+# ============================================================
+# Experience Capture Request/Response
+# ============================================================
+experience_capture:
+  request:
+    description: "Experience Capture 请求"
+    type: object
+    required: [at_time_ref, entries]
+    properties:
+      at_time_ref:
+        $ref: "#/schemas/AtTimeReference"
+      entries:
+        type: array
+        items:
+          $ref: "#/schemas/ExperienceEntry"
+        minItems: 1
+      overwrite_protection:
+        type: boolean
+        default: true
+        description: "覆盖保护（强制 append-only）"
+
+  response:
+    description: "Experience Capture 响应"
+    type: object
+    required: [status, entries_written, evolution_ref]
+    properties:
+      status:
+        type: string
+        enum: [PASSED, REJECTED]
+      entries_written:
+        type: integer
+        description: "成功写入的条目数"
+      entries_skipped:
+        type: integer
+        description: "去重跳过的条目数"
+      evolution_ref:
+        type: string
+        description: "evolution.json 引用路径"
+      audit_pack_ref:
+        type: string
+        description: "L3 AuditPack 引用（如已固化）"
+      rejection_reasons:
+        type: array
+        items:
+          type: string
+
+# ============================================================
+# Fail-Closed Rules
+# ============================================================
+fail_closed:
+  # AtTimeReference 规则
+  FC-ATR-1: "uri 无效 -> REJECTED"
+  FC-ATR-2: "commit_sha 非 40 位十六进制 -> REJECTED"
+  FC-ATR-3: "at_time 非 ISO-8601 格式 -> REJECTED"
+  FC-ATR-4: "tombstone 字段缺失 -> REJECTED"
+  FC-ATR-5: "tombstone=true 条目用于生产 -> REJECTED"
+
+  # ExperienceEntry 规则
+  FC-EXP-1: "issue_key 缺失或格式错误 -> REJECTED"
+  FC-EXP-2: "evidence_ref 缺失或无效 -> REJECTED"
+  FC-EXP-3: "source_stage 非枚举值 -> REJECTED"
+  FC-EXP-4: "revision 不匹配当前 skill -> REJECTED"
+  FC-EXP-5: "content_hash 校验失败 -> REJECTED"
+  FC-EXP-6: "summary/action 长度超限 -> REJECTED"
+
+  # evolution.json 规则
+  FC-EVO-1: "检测到覆盖操作 -> REJECTED"
+  FC-EVO-2: "去重逻辑失效（重复插入） -> REJECTED"
+  FC-EVO-3: "固化进 AuditPack 失败 -> REJECTED"
+  FC-EVO-4: "evolution.json 必填字段缺失 -> REJECTED"
+
+  # 闭环规则
+  FC-LOOP-1: "AtTimeReference 不可追溯 -> REJECTED"
+  FC-LOOP-2: "EvidenceRef 链断裂 -> REJECTED"
+  FC-LOOP-3: "回灌数据校验失败 -> REJECTED"
+
+# ============================================================
+# Governance Boundary
+# ============================================================
+governance:
+  kernel:
+    - at-time 复现口径
+    - tombstone 语义与执行
+    - system-of-record 索引 schema
+    - Experience Capture 固化
+    - permit 签发
+  skill_replaceable:
+    - 抽取/切分策略
+    - 索引构建/更新
+    - 检索策略/重排
+    - 评测/优化
+  orchestrator:
+    - 触发/路由/重试/通知
+    - 外部系统集成
+  prohibited:
+    - "n8n 参与裁决"
+    - "无 permit 发布"
+    - "绕过 tombstone"
+    - "覆盖 evolution.json 历史条目"
+
+# ============================================================
+# Acceptance Criteria Mapping
+# ============================================================
+acceptance_criteria:
+  AC-1:
+    name: "AtTimeReference 完整性"
+    rules: [FC-ATR-1, FC-ATR-2, FC-ATR-3, FC-ATR-4, FC-ATR-5]
+  AC-2:
+    name: "ExperienceEntry 结构合规"
+    rules: [FC-EXP-1, FC-EXP-2, FC-EXP-3, FC-EXP-4, FC-EXP-5, FC-EXP-6]
+  AC-3:
+    name: "evolution.json 写入规则"
+    rules: [FC-EVO-1, FC-EVO-2, FC-EVO-3, FC-EVO-4]
+  AC-4:
+    name: "闭环完整性"
+    rules: [FC-LOOP-1, FC-LOOP-2, FC-LOOP-3]
+
+# ============================================================
+# Version History
+# ============================================================
+history:
+  - version: "1.0.0"
+    date: "2026-02-17"
+    author: "vs--cc1"
+    task_ref: "T-W3-A"
+    description: "初始冻结：AtTimeReference + ExperienceEntry schemas"

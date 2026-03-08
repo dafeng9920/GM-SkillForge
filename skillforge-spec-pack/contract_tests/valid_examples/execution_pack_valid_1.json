@@ -1,0 +1,25 @@
+{
+    "schema_version": "0.1.0",
+    "execution_id": "e1a2b3c4-d5e6-7890-abcd-ef1234567890",
+    "skill_id": "tech_seo_audit",
+    "skill_version": "0.1.0",
+    "created_at": "2026-02-15T16:00:00Z",
+    "config": {
+        "timeout_seconds": 300,
+        "max_tool_calls": 50,
+        "max_cost_usd": 0.10,
+        "allowed_domains": [
+            "example.com",
+            "test.org"
+        ],
+        "sandbox_mode": "strict"
+    },
+    "input": {
+        "target_url": "https://example.com",
+        "checks": [
+            "canonical",
+            "hreflang",
+            "structured_data"
+        ]
+    }
+}

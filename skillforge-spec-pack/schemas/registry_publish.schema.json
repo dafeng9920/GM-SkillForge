@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://gm-os.dev/schemas/registry_publish.schema.json",
+  "title": "RegistryPublish",
+  "description": "注册发布请求与结果 - 四大硬合同之一",
+  "definitions": {
+    "PublishRequest": {
+      "type": "object",
+      "required": ["schema_version", "request_id", "skill_id", "audit_id", "visibility"],
+      "properties": {
+        "schema_version": { "$ref": "common.schema.json#/definitions/SchemaVersion" },
+        "request_id": { "$ref": "common.schema.json#/definitions/UUID" },
+        "skill_id": { "type": "string" },
+        "skill_version": { "type": "string" },
+        "audit_id": { "$ref": "common.schema.json#/definitions/UUID" },
+        "visibility": {
+          "type": "string",
+          "enum": ["public", "private", "team"]
+        },
+        "bundle_path": { "type": "string" },
+        "metadata": { "type": "object" }
+      },
+      "additionalProperties": true
+    },
+    "PublishResult": {
+      "type": "object",
+      "required": ["schema_version", "request_id", "status", "published_at"],
+      "properties": {
+        "schema_version": { "$ref": "common.schema.json#/definitions/SchemaVersion" },
+        "request_id": { "$ref": "common.schema.json#/definitions/UUID" },
+        "skill_id": { "type": "string" },
+        "skill_version": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": ["published", "rejected", "pending", "failed"]
+        },
+        "registry_url": { "type": "string", "format": "uri" },
+        "published_at": { "$ref": "common.schema.json#/definitions/Timestamp" },
+        "rejection_reasons": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": { "$ref": "common.schema.json#/definitions/ErrorCode" },
+              "message": { "type": "string" }
+            }
+          }
+        },
+        "hash": { "$ref": "common.schema.json#/definitions/Hash" },
+        "metadata": { "type": "object" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "type": "object",
+  "oneOf": [
+    { "$ref": "#/definitions/PublishRequest" },
+    { "$ref": "#/definitions/PublishResult" }
+  ],
+  "version": "0.1.0"
+}

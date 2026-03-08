@@ -1,0 +1,75 @@
+{
+  "job_id": "L45-FE-V10-20260220-007",
+  "task_id": "T38",
+  "executor": "Kior-B",
+  "attestation": {
+    "version": "1.0",
+    "timestamp": "2026-02-21T00:00:00Z",
+    "decision": "PASS",
+    "summary": "T38 审计与查询页面实现完成，满足所有约束条件"
+  },
+  "compliance_checks": [
+    {
+      "check_id": "CC-001",
+      "description": "AuditPacksPage 创建完成",
+      "status": "PASS",
+      "evidence_ref": "EV-T38-AUDIT-PACK-PAGE-001"
+    },
+    {
+      "check_id": "CC-002",
+      "description": "RagQueryPage 创建完成",
+      "status": "PASS",
+      "evidence_ref": "EV-T38-RAG-QUERY-PAGE-001"
+    },
+    {
+      "check_id": "CC-003",
+      "description": "EvidenceDrawer 组件创建完成",
+      "status": "PASS",
+      "evidence_ref": "EV-T38-EVIDENCE-DRAWER-001"
+    },
+    {
+      "check_id": "CC-004",
+      "description": "run_id/evidence_ref 可点击跳转",
+      "status": "PASS",
+      "evidence_ref": "EV-T38-CLICKABLE-REFS-001",
+      "notes": "两个页面均实现了 evidence_ref 点击跳转功能"
+    },
+    {
+      "check_id": "CC-005",
+      "description": "RAG 命中项显示 evidence_ref",
+      "status": "PASS",
+      "evidence_ref": "EV-T38-RAG-EVIDENCE-001",
+      "notes": "ResultItem 组件显示 run_id 和 evidence_ref"
+    },
+    {
+      "check_id": "CC-006",
+      "description": "at_time 漂移错误 Fail-Closed 展示",
+      "status": "PASS",
+      "evidence_ref": "EV-T38-FAIL-CLOSED-001",
+      "notes": "ErrorPanel 组件针对 RAG-AT-TIME-DRIFT-FORBIDDEN 特殊处理"
+    },
+    {
+      "check_id": "CC-007",
+      "description": "evidence_ref 有交互锚点",
+      "status": "PASS",
+      "evidence_ref": "EV-T38-INTERACTIVE-ANCHOR-001",
+      "notes": "所有 evidence_ref 都可点击，无静态展示"
+    }
+  ],
+  "constraint_verification": {
+    "run_id_clickable": true,
+    "evidence_ref_clickable": true,
+    "rag_results_show_evidence_ref": true,
+    "at_time_drift_fail_closed": true,
+    "no_static_evidence_ref": true
+  },
+  "evidence_refs": [
+    "EV-T38-AUDIT-PACK-PAGE-001",
+    "EV-T38-RAG-QUERY-PAGE-001",
+    "EV-T38-EVIDENCE-DRAWER-001",
+    "EV-T38-CLICKABLE-REFS-001",
+    "EV-T38-RAG-EVIDENCE-001",
+    "EV-T38-FAIL-CLOSED-001",
+    "EV-T38-INTERACTIVE-ANCHOR-001"
+  ]
+}

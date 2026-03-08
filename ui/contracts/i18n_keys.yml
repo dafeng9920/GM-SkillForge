@@ -1,0 +1,208 @@
+# UI i18n Keys Contract - 文案映射合同
+# SEEDS-P1-7: UI 文案映射合同（i18n_key）
+# Job ID: L45-D5-SEEDS-P1-20260220-005
+
+version: 1
+description: |
+  UI 文案映射合同，防止硬编码漂移。
+  所有 UI 文案必须通过此合同映射，不得在代码中硬编码。
+
+# ============================================================================
+# Gate Titles (8 Gates)
+# ============================================================================
+gates:
+  intake_repo:
+    title:
+      en: "Repository Intake"
+      zh: "仓库接入"
+    description:
+      en: "Intake and validate repository structure"
+      zh: "接入并验证仓库结构"
+
+  license_gate:
+    title:
+      en: "License Check"
+      zh: "许可证检查"
+    description:
+      en: "Verify license compatibility"
+      zh: "验证许可证兼容性"
+
+  repo_scan_fit_score:
+    title:
+      en: "Repository Scan"
+      zh: "仓库扫描"
+    description:
+      en: "Scan repository for fit score"
+      zh: "扫描仓库计算适配分数"
+
+  draft_skill_spec:
+    title:
+      en: "Draft Skill Spec"
+      zh: "起草技能规范"
+    description:
+      en: "Generate skill specification draft"
+      zh: "生成技能规范草稿"
+
+  constitution_risk_gate:
+    title:
+      en: "Constitution Risk Gate"
+      zh: "宪法风险门禁"
+    description:
+      en: "Check constitutional compliance"
+      zh: "检查宪法合规性"
+
+  scaffold_skill_impl:
+    title:
+      en: "Scaffold Implementation"
+      zh: "脚手架实现"
+    description:
+      en: "Scaffold skill implementation"
+      zh: "生成技能实现脚手架"
+
+  sandbox_test_and_trace:
+    title:
+      en: "Sandbox Test"
+      zh: "沙盒测试"
+    description:
+      en: "Run sandbox tests and trace"
+      zh: "运行沙盒测试并追踪"
+
+  pack_audit_and_publish:
+    title:
+      en: "Pack & Publish"
+      zh: "打包与发布"
+    description:
+      en: "Pack skill and publish to registry"
+      zh: "打包技能并发布到注册表"
+
+# ============================================================================
+# Error Messages
+# ============================================================================
+errors:
+  fallback:
+    title:
+      en: "Error"
+      zh: "错误"
+    message:
+      en: "An unexpected error occurred. Please try again."
+      zh: "发生意外错误，请重试。"
+  validation:
+    title:
+      en: "Validation Error"
+      zh: "验证错误"
+    message:
+      en: "Input validation failed."
+      zh: "输入验证失败。"
+  permission:
+    title:
+      en: "Permission Denied"
+      zh: "权限不足"
+    message:
+      en: "You do not have permission to perform this action."
+      zh: "您没有执行此操作的权限。"
+  not_found:
+    title:
+      en: "Not Found"
+      zh: "未找到"
+    message:
+      en: "The requested resource was not found."
+      zh: "未找到请求的资源。"
+
+# ============================================================================
+# Common Labels
+# ============================================================================
+common:
+  loading:
+    en: "Loading..."
+    zh: "加载中..."
+  saving:
+    en: "Saving..."
+    zh: "保存中..."
+  processing:
+    en: "Processing..."
+    zh: "处理中..."
+  success:
+    en: "Success"
+    zh: "成功"
+  failed:
+    en: "Failed"
+    zh: "失败"
+  retry:
+    en: "Retry"
+    zh: "重试"
+  cancel:
+    en: "Cancel"
+    zh: "取消"
+  confirm:
+    en: "Confirm"
+    zh: "确认"
+  close:
+    en: "Close"
+    zh: "关闭"
+  next:
+    en: "Next"
+    zh: "下一步"
+  previous:
+    en: "Previous"
+    zh: "上一步"
+  submit:
+    en: "Submit"
+    zh: "提交"
+  back:
+    en: "Back"
+    zh: "返回"
+
+# ============================================================================
+# Gate Status Labels
+# ============================================================================
+status:
+  pending:
+    en: "Pending"
+    zh: "待处理"
+  running:
+    en: "Running"
+    zh: "运行中"
+  passed:
+    en: "Passed"
+    zh: "通过"
+  failed:
+    en: "Failed"
+    zh: "失败"
+  skipped:
+    en: "Skipped"
+    zh: "跳过"
+  blocked:
+    en: "Blocked"
+    zh: "已阻断"
+
+# ============================================================================
+# Decision Labels
+# ============================================================================
+decisions:
+  allow:
+    en: "Allow"
+    zh: "允许"
+  deny:
+    en: "Deny"
+    zh: "拒绝"
+  requires_changes:
+    en: "Requires Changes"
+    zh: "需要修改"
+
+# ============================================================================
+# Metadata
+# ============================================================================
+metadata:
+  created_at: "2026-02-20"
+  version: "1.0.0"
+  required_keys:
+    - "gate.intake_repo.title"
+    - "gate.license_gate.title"
+    - "gate.repo_scan_fit_score.title"
+    - "gate.draft_skill_spec.title"
+    - "gate.constitution_risk_gate.title"
+    - "gate.scaffold_skill_impl.title"
+    - "gate.sandbox_test_and_trace.title"
+    - "gate.pack_audit_and_publish.title"
+    - "error.fallback.title"
+    - "error.fallback.message"

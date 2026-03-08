@@ -1,0 +1,94 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://gm-os.dev/schemas/audit_pack.schema.json",
+  "title": "AuditPack",
+  "description": "审计包 - 四大硬合同之一，包含完整的溯源、门禁、测试、执行记录",
+  "type": "object",
+  "required": ["schema_version", "audit_id", "job_id", "created_at", "provenance", "manifest"],
+  "properties": {
+    "schema_version": {
+      "$ref": "common.schema.json#/definitions/SchemaVersion"
+    },
+    "audit_id": {
+      "$ref": "common.schema.json#/definitions/UUID"
+    },
+    "job_id": {
+      "$ref": "common.schema.json#/definitions/UUID"
+    },
+    "skill_id": { "type": "string" },
+    "skill_version": { "type": "string" },
+    "created_at": { "$ref": "common.schema.json#/definitions/Timestamp" },
+    "provenance": {
+      "$ref": "common.schema.json#/definitions/Provenance"
+    },
+    "manifest": {
+      "type": "object",
+      "required": ["name", "version", "capabilities"],
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string" },
+        "description": { "type": "string" },
+        "capabilities": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "schemas": {
+          "type": "object",
+          "properties": {
+            "input": { "type": "string" },
+            "output": { "type": "string" }
+          }
+        },
+        "risk_tier": { "$ref": "common.schema.json#/definitions/RiskTier" },
+        "quality_gate_level": { "$ref": "common.schema.json#/definitions/QualityGateLevel" }
+      }
+    },
+    "gate_decisions": {
+      "type": "array",
+      "items": { "$ref": "gate_decision.schema.json" }
+    },
+    "test_report": {
+      "type": "object",
+      "properties": {
+        "total_runs": { "type": "integer", "minimum": 0 },
+        "passed": { "type": "integer", "minimum": 0 },
+        "failed": { "type": "integer", "minimum": 0 },
+        "success_rate": { "type": "number", "minimum": 0, "maximum": 1 },
+        "avg_latency_ms": { "type": "number", "minimum": 0 },
+        "total_cost_usd": { "type": "number", "minimum": 0 }
+      }
+    },
+    "trace_summary": {
+      "type": "object",
+      "properties": {
+        "events_count": { "type": "integer", "minimum": 0 },
+        "tool_calls": { "type": "integer", "minimum": 0 },
+        "errors_count": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "hashes": {
+      "type": "object",
+      "properties": {
+        "audit_pack": { "$ref": "common.schema.json#/definitions/Hash" },
+        "skill_bundle": { "$ref": "common.schema.json#/definitions/Hash" },
+        "source_code": { "$ref": "common.schema.json#/definitions/Hash" }
+      }
+    },
+    "license_status": {
+      "type": "string",
+      "enum": ["APPROVED", "UNKNOWN", "RESTRICTED", "FORBIDDEN"]
+    },
+    "signature": {
+      "type": "object",
+      "properties": {
+        "algorithm": { "type": "string" },
+        "value": { "type": "string" },
+        "signed_at": { "$ref": "common.schema.json#/definitions/Timestamp" },
+        "signer": { "type": "string" }
+      }
+    },
+    "metadata": { "type": "object" }
+  },
+  "additionalProperties": true,
+  "version": "0.1.0"
+}

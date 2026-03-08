@@ -1,0 +1,23 @@
+{
+  "task_id": "T{N}",
+  "compliance_officer": "{合规官}",
+  "decision": "PASS|FAIL",
+  "reasons": ["string"],
+  "violations": ["string"],
+  "evidence_refs": [
+    {
+      "id": "EV-...",
+      "kind": "LOG|FILE|DIFF|SNIPPET",
+      "locator": "path:line"
+    }
+  ],
+  "contract_hash": "sha256:...",
+  "reviewed_at": "2026-02-25T00:00:00Z",
+  "required_changes": [
+    {
+      "issue_key": "SF-...",
+      "reason": "string",
+      "next_action": "string"
+    }
+  ]
+}

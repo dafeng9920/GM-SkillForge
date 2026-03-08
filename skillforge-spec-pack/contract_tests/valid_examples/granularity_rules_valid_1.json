@@ -1,0 +1,58 @@
+{
+    "schema_version": "0.1.0",
+    "controls_catalog": {
+        "max_timeout_seconds": {
+            "type": "integer",
+            "description": "Maximum execution timeout in seconds",
+            "default": 300,
+            "minimum": 1,
+            "maximum": 3600,
+            "aliases": [
+                "timeout",
+                "max_time"
+            ]
+        },
+        "max_tool_calls": {
+            "type": "integer",
+            "description": "Maximum number of tool calls per execution",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 1000,
+            "aliases": [
+                "tool_limit"
+            ]
+        }
+    },
+    "lint_rules": [
+        {
+            "rule_id": "CTRL_001",
+            "description": "Timeout must be bounded",
+            "severity": "error",
+            "check": {
+                "type": "range_check",
+                "field": "max_timeout_seconds",
+                "operator": "<=",
+                "value": 3600
+            },
+            "required_changes_template": {
+                "kind": "CONFIG_CHANGE",
+                "description": "Reduce timeout to <= 3600 seconds"
+            }
+        }
+    ],
+    "risk_tier_minimums": {
+        "L0": {
+            "required_controls": [
+                "max_timeout_seconds"
+            ],
+            "required_schema_depth": 1
+        },
+        "L1": {
+            "required_controls": [
+                "max_timeout_seconds",
+                "max_tool_calls"
+            ],
+            "required_schema_depth": 2
+        }
+    }
+}

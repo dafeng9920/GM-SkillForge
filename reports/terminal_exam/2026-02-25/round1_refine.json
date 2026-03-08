@@ -1,0 +1,84 @@
+{
+  "schema_version": "0.1.0",
+  "job_id": "f3521e18-09d5-43b8-9f33-417965221414",
+  "run_id": "be5a6787-de5b-4caa-baf2-a735583cce3d",
+  "status": "completed",
+  "path_taken": "A",
+  "stages_completed": 7,
+  "gate_decisions": [],
+  "audit_pack_path": "/tmp/skillforge/audit/audit-114381f7",
+  "publish_result": {
+    "skill_id": "skill-general-skill",
+    "version": "0.1.0",
+    "status": "published",
+    "registry_url": "http://localhost:8080/skills/skill-general-skill/0.1.0",
+    "timestamp": "2026-02-25T07:41:42Z"
+  },
+  "trace_events": [
+    {
+      "schema_version": "0.1.0",
+      "run_id": "be5a6787-de5b-4caa-baf2-a735583cce3d",
+      "trace_id": "trace-79c85307285008022a67d80c5f0a722a",
+      "node_id": "intent_parse",
+      "event_type": "complete",
+      "timestamp": "2026-02-25T07:41:40Z",
+      "detail": {}
+    },
+    {
+      "schema_version": "0.1.0",
+      "run_id": "be5a6787-de5b-4caa-baf2-a735583cce3d",
+      "trace_id": "trace-3847a3a7ea7978144f8c3b6b9e991bf9",
+      "node_id": "source_strategy",
+      "event_type": "complete",
+      "timestamp": "2026-02-25T07:41:40Z",
+      "detail": {}
+    },
+    {
+      "schema_version": "0.1.0",
+      "run_id": "be5a6787-de5b-4caa-baf2-a735583cce3d",
+      "trace_id": "trace-26ea6a15337edd5318072bb3d60ff7e7",
+      "node_id": "skill_compose",
+      "event_type": "complete",
+      "timestamp": "2026-02-25T07:41:40Z",
+      "detail": {}
+    },
+    {
+      "schema_version": "0.1.0",
+      "run_id": "be5a6787-de5b-4caa-baf2-a735583cce3d",
+      "trace_id": "trace-ab7c5d342896f09e4c5953b41be00fe1",
+      "node_id": "constitution_risk_gate",
+      "event_type": "complete",
+      "timestamp": "2026-02-25T07:41:40Z",
+      "detail": {}
+    },
+    {
+      "schema_version": "0.1.0",
+      "run_id": "be5a6787-de5b-4caa-baf2-a735583cce3d",
+      "trace_id": "trace-b46590b6d7e879e35bd4e9519e1d760c",
+      "node_id": "scaffold_skill_impl",
+      "event_type": "complete",
+      "timestamp": "2026-02-25T07:41:40Z",
+      "detail": {}
+    },
+    {
+      "schema_version": "0.1.0",
+      "run_id": "be5a6787-de5b-4caa-baf2-a735583cce3d",
+      "trace_id": "trace-f65c1689090455deab4de3b03a7bf598",
+      "node_id": "sandbox_test_and_trace",
+      "event_type": "complete",
+      "timestamp": "2026-02-25T07:41:42Z",
+      "detail": {}
+    },
+    {
+      "schema_version": "0.1.0",
+      "run_id": "be5a6787-de5b-4caa-baf2-a735583cce3d",
+      "trace_id": "trace-892bbcba0ce7c217037fabe0671dbc12",
+      "node_id": "pack_audit_and_publish",
+      "event_type": "complete",
+      "timestamp": "2026-02-25T07:41:42Z",
+      "detail": {}
+    }
+  ],
+  "duration_ms": 5044,
+  "error": null
+}

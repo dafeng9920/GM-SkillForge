@@ -1,0 +1,20 @@
+{
+  "task_id": "T79",
+  "compliance_officer": "vs--cc1",
+  "decision": "PASS",
+  "reasons": [
+    "无副作用操作 (未修改 .git 目录)",
+    "追溯信息基于实际文件状态",
+    "符合 EXECUTION_GUARD_B 执行约束",
+    "EvidenceRef 齐全"
+  ],
+  "evidence_refs": [
+    "EV-T79-001",
+    "EV-T79-002",
+    "EV-T79-003"
+  ],
+  "contract_hash": "sha256:T79-git-governance-baseline",
+  "reviewed_at": "2026-02-22T19:30:00Z",
+  "side_effects_declared": false,
+  "permit_required": false
+}

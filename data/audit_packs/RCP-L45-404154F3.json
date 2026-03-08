@@ -1,0 +1,37 @@
+{
+  "receipt_id": "RCP-L45-404154F3",
+  "run_id": "RUN-L4-1771562063-A1B2C3D4",
+  "evidence_ref": "EV-EXEC-L4-1771562063-A1B2C3D4",
+  "gate_decision": "PASSED",
+  "executed_at": "2026-02-20T04:34:23Z",
+  "skill_id": "l45_n8n_orchestration_boundary",
+  "workflow_id": "wf_001",
+  "replay_pointer": {
+    "snapshot_ref": "snapshot://L45-D2-1771562063/v1",
+    "at_time": "2026-02-20T04:34:23Z",
+    "revision": "v1.0.0",
+    "evidence_bundle_ref": "evidence://bundles/L45-D2-1771562063"
+  },
+  "job_id": "L45-D2-ORCH-MINCAP-20260220-002",
+  "permit_token": "PERMIT-L4-1739980000-XYZ123",
+  "audit_pack_ref": "audit://packs/L45-D2-1771562063",
+  "evidence_chain": {
+    "evidence_refs": [
+      {
+        "ref_id": "EV-COG-L4-1771562063-A1B2C3D4",
+        "type": "cognition",
+        "source_locator": "cognition://dims/1771562063-A1B2C3D4",
+        "content_hash": "sha256:abc123def456",
+        "timestamp": "2026-02-20T04:34:23Z",
+        "tool_revision": "v1.0.0"
+      }
+    ]
+  },
+  "output": {
+    "status": "success",
+    "data": {
+      "dimensions": 10,
+      "processed": true
+    }
+  }
+}

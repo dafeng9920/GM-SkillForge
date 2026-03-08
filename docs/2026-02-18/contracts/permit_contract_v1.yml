@@ -1,0 +1,453 @@
+# Permit Contract v1
+# 用于 "无 permit 不可发布" 的硬约束落地
+# 遵循 Fail-Closed 原则
+
+contract_id: permit_contract_v1
+version: "1.0.0"
+schema_hash: TBD_SHA256
+created_at: "2026-02-18T12:00:00Z"
+author: "CC-Code"
+status: "DRAFT"
+
+# ============================================================
+# Permit 数据结构定义
+# ============================================================
+permit_schema:
+  # 唯一标识
+  permit_id:
+    type: string
+    format: "PERMIT-{YYYYMMDD}-{SEQ}"
+    required: true
+    description: "Permit 唯一标识符，格式如 PERMIT-20260218-001"
+
+  # 签发者
+  issuer:
+    type: object
+    required: true
+    fields:
+      issuer_id:
+        type: string
+        description: "签发者标识（如 skillforge-permit-service）"
+      issuer_type:
+        type: string
+        enum: ["SYSTEM", "HUMAN_APPROVER", "AUTOMATED_GATE"]
+        description: "签发者类型"
+
+  # 签发时间
+  issued_at:
+    type: string
+    format: ISO8601_UTC
+    required: true
+    description: "签发时间，格式 YYYY-MM-DDTHH:MM:SSZ"
+
+  # 过期时间
+  expires_at:
+    type: string
+    format: ISO8601_UTC
+    required: true
+    description: "过期时间，格式 YYYY-MM-DDTHH:MM:SSZ"
+
+  # 绑定主体
+  subject:
+    type: object
+    required: true
+    fields:
+      repo_url:
+        type: string
+        required: true
+        description: "目标仓库 URL"
+      commit_sha:
+        type: string
+        required: true
+        description: "Git commit SHA（完整 40 位）"
+      run_id:
+        type: string
+        required: true
+        description: "执行 ID（如 RUN-20260218-001）"
+      intent_id:
+        type: string
+        required: true
+        description: "意图 ID（如 generate_skill_from_repo）"
+      entry_path:
+        type: string
+        required: false
+        description: "入口文件路径（可选）"
+
+  # 作用域
+  scope:
+    type: object
+    required: true
+    fields:
+      allowed_actions:
+        type: array
+        required: true
+        items: string
+        description: "允许的动作列表（如 release, deploy, publish）"
+      environment:
+        type: string
+        enum: ["development", "staging", "production"]
+        required: true
+        description: "目标环境"
+      gate_profile:
+        type: string
+        required: true
+        description: "Gate 配置版本（如 batch2_8gate）"
+
+  # 约束条件
+  constraints:
+    type: object
+    required: true
+    fields:
+      at_time:
+        type: string
+        format: ISO8601_UTC
+        required: true
+        description: "时间锚点，确保确定性回放"
+      max_release_count:
+        type: integer
+        required: false
+        default: 1
+        description: "最大发布次数（默认 1）"
+      time_window_seconds:
+        type: integer
+        required: false
+        default: 3600
+        description: "有效时间窗口（秒），与 expires_at 配合使用"
+
+  # 决策绑定
+  decision_binding:
+    type: object
+    required: true
+    fields:
+      final_gate_decision:
+        type: string
+        enum: ["PASSED", "PASSED_NO_PERMIT", "PASSED_WITH_PERMIT", "REJECTED", "REQUIRE_HITL"]
+        required: true
+        description: "Gate 决策结果"
+      gate_count:
+        type: integer
+        required: true
+        description: "执行的 Gate 数量"
+      audit_pack_ref:
+        type: string
+        required: true
+        description: "AuditPack 引用（如 audit-10465f76）"
+      evidence_count:
+        type: integer
+        required: true
+        description: "EvidenceRef 数量"
+
+  # 签名
+  signature:
+    type: object
+    required: true
+    fields:
+      algo:
+        type: string
+        enum: ["RS256", "ES256", "HS256"]
+        required: true
+        description: "签名算法"
+      value:
+        type: string
+        required: true
+        description: "签名值（Base64 编码）"
+      key_id:
+        type: string
+        required: true
+        description: "签名密钥标识"
+      signed_at:
+        type: string
+        format: ISO8601_UTC
+        required: true
+        description: "签名时间"
+
+  # 撤销状态
+  revocation:
+    type: object
+    required: true
+    fields:
+      revoked:
+        type: boolean
+        required: true
+        default: false
+        description: "是否已撤销"
+      revoked_at:
+        type: string
+        format: ISO8601_UTC
+        required: false
+        description: "撤销时间（仅 revoked=true 时有效）"
+      revoked_by:
+        type: string
+        required: false
+        description: "撤销者标识"
+      reason:
+        type: string
+        required: false
+        description: "撤销原因"
+
+# ============================================================
+# 错误码定义（7项）
+# ============================================================
+error_codes:
+  E001:
+    description: "缺少 Permit"
+    condition: "permit_token == null OR permit_token == ''"
+    release_blocked_by: "PERMIT_REQUIRED"
+
+  E002:
+    description: "Permit 格式无效"
+    condition: "JSON 解析失败 / 必填字段缺失"
+    release_blocked_by: "PERMIT_INVALID"
+
+  E003:
+    description: "签名无效"
+    condition: "签名校验失败 / 算法不支持"
+    release_blocked_by: "PERMIT_INVALID"
+
+  E004:
+    description: "Permit 已过期"
+    condition: "current_time > expires_at"
+    release_blocked_by: "PERMIT_EXPIRED"
+
+  E005:
+    description: "作用域不匹配"
+    condition: "requested_action NOT IN allowed_actions"
+    release_blocked_by: "PERMIT_SCOPE_MISMATCH"
+
+  E006:
+    description: "主体不匹配"
+    condition: "repo_url/commit_sha/run_id 不一致"
+    release_blocked_by: "PERMIT_SUBJECT_MISMATCH"
+
+  E007:
+    description: "Permit 已撤销"
+    condition: "revoked == true"
+    release_blocked_by: "PERMIT_REVOKED"
+
+# ============================================================
+# 校验规则
+# ============================================================
+validation_rules:
+  # 必填字段检查
+  required_fields:
+    - permit_id
+    - issuer.issuer_id
+    - issuer.issuer_type
+    - issued_at
+    - expires_at
+    - subject.repo_url
+    - subject.commit_sha
+    - subject.run_id
+    - subject.intent_id
+    - scope.allowed_actions
+    - scope.environment
+    - scope.gate_profile
+    - constraints.at_time
+    - decision_binding.final_gate_decision
+    - decision_binding.audit_pack_ref
+    - signature.algo
+    - signature.value
+    - signature.key_id
+    - revocation.revoked
+
+  # 签名校验
+  signature_required:
+    enabled: true
+    description: "必须持有有效签名"
+    failure_code: "PERMIT_INVALID_SIGNATURE"
+
+  # 过期检查
+  not_expired:
+    enabled: true
+    description: "expires_at 必须大于当前时间"
+    failure_code: "PERMIT_EXPIRED"
+
+  # 作用域匹配
+  scope_match:
+    enabled: true
+    description: "请求的 action 必须在 allowed_actions 列表中"
+    failure_code: "PERMIT_SCOPE_MISMATCH"
+
+  # 主体匹配
+  subject_match:
+    enabled: true
+    description: "repo_url、commit_sha、run_id 必须与执行上下文完全匹配"
+    failure_code: "PERMIT_SUBJECT_MISMATCH"
+
+  # 撤销检查
+  revocation_check:
+    enabled: true
+    description: "revoked 必须为 false"
+    failure_code: "PERMIT_REVOKED"
+
+# ============================================================
+# Fail-Closed 规则
+# ============================================================
+fail_closed_rules:
+  - rule_id: "FC-001"
+    condition: "permit_token == null OR permit_token == ''"
+    result: "RELEASE_BLOCKED"
+    blocked_by: "PERMIT_REQUIRED"
+    description: "缺少 permit，禁止发布"
+
+  - rule_id: "FC-002"
+    condition: "signature validation failed"
+    result: "RELEASE_BLOCKED"
+    blocked_by: "PERMIT_INVALID"
+    description: "签名无效，禁止发布"
+
+  - rule_id: "FC-003"
+    condition: "current_time > expires_at"
+    result: "RELEASE_BLOCKED"
+    blocked_by: "PERMIT_EXPIRED"
+    description: "Permit 已过期，禁止发布"
+
+  - rule_id: "FC-004"
+    condition: "requested_action NOT IN allowed_actions"
+    result: "RELEASE_BLOCKED"
+    blocked_by: "PERMIT_SCOPE_MISMATCH"
+    description: "作用域不匹配，禁止发布"
+
+  - rule_id: "FC-005"
+    condition: "subject mismatch (repo_url/commit_sha/run_id)"
+    result: "RELEASE_BLOCKED"
+    blocked_by: "PERMIT_SUBJECT_MISMATCH"
+    description: "主体不匹配，禁止发布"
+
+  - rule_id: "FC-006"
+    condition: "revoked == true"
+    result: "RELEASE_BLOCKED"
+    blocked_by: "PERMIT_REVOKED"
+    description: "Permit 已撤销，禁止发布"
+
+# ============================================================
+# 输出定义
+# ============================================================
+outputs:
+  permit_validation_status:
+    type: string
+    enum: ["VALID", "INVALID"]
+    description: "Permit 校验状态"
+
+  release_allowed:
+    type: boolean
+    description: "是否允许发布（必须由 permit 校验结果驱动）"
+
+  release_blocked_by:
+    type: string
+    enum: [
+      "PERMIT_REQUIRED",
+      "PERMIT_INVALID",
+      "PERMIT_EXPIRED",
+      "PERMIT_SCOPE_MISMATCH",
+      "PERMIT_SUBJECT_MISMATCH",
+      "PERMIT_REVOKED"
+    ]
+    description: "发布阻止原因（仅 release_allowed=false 时有效）"
+
+  evidence_refs:
+    type: array
+    items: string
+    description: "校验过程产生的 EvidenceRef 列表"
+
+  validation_timestamp:
+    type: string
+    format: ISO8601_UTC
+    description: "校验时间戳"
+
+# ============================================================
+# 状态映射
+# ============================================================
+status_mapping:
+  - gate_decision: "PASSED_NO_PERMIT"
+    permit_status: "MISSING"
+    release_allowed: false
+    release_blocked_by: "PERMIT_REQUIRED"
+    next_state: "PASSED_WITH_PERMIT"
+    description: "Gate 全过但无 permit，需获取 permit 后才能发布"
+
+  - gate_decision: "PASSED"
+    permit_status: "VALID"
+    release_allowed: true
+    release_blocked_by: null
+    next_state: null
+    description: "Gate 全过且有有效 permit，可发布"
+
+  - gate_decision: "PASSED_WITH_PERMIT"
+    permit_status: "VALID"
+    release_allowed: true
+    release_blocked_by: null
+    next_state: null
+    description: "已获得 permit 的通过状态，可发布"
+
+  - gate_decision: "REJECTED"
+    permit_status: "N/A"
+    release_allowed: false
+    release_blocked_by: "GATE_REJECTED"
+    next_state: null
+    description: "Gate 拒绝，permit 无效"
+
+  - gate_decision: "REQUIRE_HITL"
+    permit_status: "N/A"
+    release_allowed: false
+    release_blocked_by: "REQUIRE_HITL"
+    next_state: null
+    description: "需人工审核，permit 暂不签发"
+
+# ============================================================
+# Evidence 绑定
+# ============================================================
+evidence_binding:
+  permit_issuance:
+    required_evidence:
+      - "gate_decision_evidence"
+      - "audit_pack_evidence"
+      - "subject_verification_evidence"
+    output_evidence: "permit_issuance_evidence"
+
+  permit_validation:
+    required_evidence:
+      - "permit_token_evidence"
+      - "signature_verification_evidence"
+      - "subject_match_evidence"
+    output_evidence: "permit_validation_evidence"
+
+# ============================================================
+# 示例 Permit（仅供参考）
+# ============================================================
+example_permit:
+  permit_id: "PERMIT-20260218-001"
+  issuer:
+    issuer_id: "skillforge-permit-service"
+    issuer_type: "AUTOMATED_GATE"
+  issued_at: "2026-02-18T12:00:00Z"
+  expires_at: "2026-02-18T13:00:00Z"
+  subject:
+    repo_url: "https://github.com/local/NEW-GM"
+    commit_sha: "4ea179d31a66fc2616f0cf953cd0e5c5c43d8ea8"
+    run_id: "RUN-20260218-001"
+    intent_id: "generate_skill_from_repo"
+    entry_path: "strategies/template_mean_reversion.py"
+  scope:
+    allowed_actions: ["release"]
+    environment: "development"
+    gate_profile: "batch2_8gate"
+  constraints:
+    at_time: "2026-02-18T08:41:10Z"
+    max_release_count: 1
+    time_window_seconds: 3600
+  decision_binding:
+    final_gate_decision: "PASSED_NO_PERMIT"
+    gate_count: 8
+    audit_pack_ref: "audit-10465f76"
+    evidence_count: 8
+  signature:
+    algo: "RS256"
+    value: "BASE64_ENCODED_SIGNATURE"
+    key_id: "skillforge-permit-key-2026"
+    signed_at: "2026-02-18T12:00:00Z"
+  revocation:
+    revoked: false
+    revoked_at: null
+    revoked_by: null
+    reason: null

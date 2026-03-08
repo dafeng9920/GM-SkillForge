@@ -1,0 +1,40 @@
+{
+  "graph_id": "quant-trading-system-dependency-graph",
+  "version": "1.0.0",
+  "nodes": [
+    { "id": "N1", "name": "MarketDataConnector", "type": "source" },
+    { "id": "N2", "name": "DataQualityValidator", "type": "validator" },
+    { "id": "N3", "name": "FeatureEngine", "type": "compute" },
+    { "id": "N4", "name": "SignalModel", "type": "model" },
+    { "id": "N5", "name": "PortfolioOptimizer", "type": "compute" },
+    { "id": "N6", "name": "RiskGate", "type": "guard" },
+    { "id": "N7", "name": "ExecutionRouter", "type": "execution" },
+    { "id": "N8", "name": "OrderStateStore", "type": "state" },
+    { "id": "N9", "name": "PnLAttributionEngine", "type": "analytics" },
+    { "id": "N10", "name": "MetricsReporter", "type": "sink" }
+  ],
+  "edges": [
+    { "from": "N1", "to": "N2", "contract": "ingest_market_data", "critical": true },
+    { "from": "N2", "to": "N3", "contract": "feature_input", "critical": true },
+    { "from": "N3", "to": "N4", "contract": "generate_signals", "critical": true },
+    { "from": "N4", "to": "N5", "contract": "signal_stream", "critical": true },
+    { "from": "N5", "to": "N6", "contract": "target_orders", "critical": true },
+    { "from": "N6", "to": "N7", "contract": "approved_orders", "critical": true },
+    { "from": "N7", "to": "N8", "contract": "fills_and_rejections", "critical": true },
+    { "from": "N8", "to": "N9", "contract": "trade_ledger", "critical": true },
+    { "from": "N9", "to": "N10", "contract": "evaluation_payload", "critical": true },
+    { "from": "N2", "to": "N10", "contract": "data_quality_events", "critical": false },
+    { "from": "N6", "to": "N10", "contract": "risk_events", "critical": false }
+  ],
+  "execution_order": ["N1", "N2", "N3", "N4", "N5", "N6", "N7", "N8", "N9", "N10"],
+  "failure_propagation": [
+    { "source_node": "N2", "impact_nodes": ["N3", "N4", "N5", "N6", "N7", "N9", "N10"], "severity": "HIGH" },
+    { "source_node": "N6", "impact_nodes": ["N7", "N8", "N9", "N10"], "severity": "CRITICAL" },
+    { "source_node": "N7", "impact_nodes": ["N8", "N9", "N10"], "severity": "HIGH" }
+  ],
+  "external_dependencies": [
+    { "name": "MarketDataAPI", "required_for_nodes": ["N1"], "failure_policy": "fail_closed" },
+    { "name": "BrokerAPI", "required_for_nodes": ["N7"], "failure_policy": "fail_closed_in_live_mode" },
+    { "name": "RiskPolicyRegistry", "required_for_nodes": ["N6"], "failure_policy": "block_all_orders" }
+  ]
+}

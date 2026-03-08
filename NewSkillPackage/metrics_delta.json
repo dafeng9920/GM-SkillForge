@@ -1,0 +1,21 @@
+{
+  "metrics_id": "quant-trading-system-evaluation-metrics",
+  "base_version": "1.0.0",
+  "target_version": "1.1.0",
+  "added_metric_groups": [
+    {
+      "group": "realtime_risk_monitoring",
+      "metrics": [
+        { "name": "monitor_lag_p95_ms", "target": "<= 300", "direction": "lower_better" },
+        { "name": "anomaly_detection_precision", "target": ">= 0.85", "direction": "higher_better" },
+        { "name": "anomaly_detection_recall", "target": ">= 0.80", "direction": "higher_better" },
+        { "name": "alert_dispatch_success_rate", "target": ">= 0.995", "direction": "higher_better" },
+        { "name": "alert_delay_p95_ms", "target": "<= 250", "direction": "lower_better" }
+      ]
+    }
+  ],
+  "aggregation_patch": {
+    "score_formula_append": " + 0.10*realtime_risk_monitoring",
+    "reweighting_note": "Execution quality weight reduced from 0.20 to 0.15 for total weight normalization"
+  }
+}

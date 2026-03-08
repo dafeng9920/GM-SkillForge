@@ -1,0 +1,13 @@
+{
+  "case_id": "case_002",
+  "description": "Permit Required Policy - PUBLISH_LISTING requires valid permit",
+  "category": "permit_required_policy",
+  "input": {
+    "action": "PUBLISH_LISTING",
+    "permit_valid": false,
+    "permit_status": "MISSING"
+  },
+  "expected_requires_permit": true,
+  "expected_error_code": "PERMIT_REQUIRED",
+  "notes": "Verifies that PUBLISH_LISTING action requires permit. When permit is missing, must raise PermitRequiredError with code PERMIT_REQUIRED."
+}

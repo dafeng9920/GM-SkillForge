@@ -1,0 +1,16 @@
+case_id: case_pass_boundary
+description: "Exactly 8 dimensions pass (minimum threshold), all critical dimensions pass"
+input:
+  repo_url: "https://github.com/example/repo"
+  commit_sha: "1111111111111111111111111111111111111111"
+  at_time: "2026-02-17T12:00:00Z"
+  rubric_version: "1.0.0"
+  requester_id: "test_runner"
+expected:
+  status: PASSED
+  overall_pass_count: 8
+  rejection_reasons: []
+assertions:
+  - 'critical(L1,L3,L5,L10) are PASS'
+  - 'len(dimensions) == 10'
+  - 'overall_pass_count >= 8'

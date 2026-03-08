@@ -1,0 +1,129 @@
+{
+  "compliance_attestation": {
+    "task_id": "T77",
+    "compliance_officer": "Kior-C",
+    "decision": "PASS",
+    "reviewed_at": "2026-02-22T10:40:00Z",
+
+    "attestation_summary": "T77 L3 AuditPack 一键生成验证满足所有合规要求",
+
+    "compliance_checks": {
+      "three_powers_separation": {
+        "status": "PASS",
+        "execution": "Kior-A",
+        "review": "vs--cc1",
+        "compliance": "Kior-C",
+        "note": "三权分立，角色不混同"
+      },
+
+      "b_guard_constraints": {
+        "status": "PASS",
+        "checks": [
+          {
+            "rule": "无 Compliance PASS 不得执行放行",
+            "evidence": "Gate Decision 等待本证明签署",
+            "result": "PASS"
+          },
+          {
+            "rule": "需要副作用动作时，无 permit=VALID 直接 FAIL",
+            "evidence": "本任务为只读扫描+报告生成，无外部副作用",
+            "result": "N/A"
+          },
+          {
+            "rule": "无 EvidenceRef 直接 FAIL",
+            "evidence": "执行报告包含 3 个 EvidenceRef",
+            "result": "PASS"
+          }
+        ]
+      },
+
+      "auditpack_requirements": {
+        "status": "PASS",
+        "checks": [
+          {
+            "requirement": "AuditPack 包含所有已完成任务",
+            "evidence": "扫描发现 20 个任务，全部入包",
+            "result": "PASS"
+          },
+          {
+            "requirement": "三权记录完整性验证",
+            "evidence": "20/20 任务三权齐全 (100%)",
+            "result": "PASS"
+          },
+          {
+            "requirement": "SHA256 校验和生成",
+            "evidence": "auditpack_sha256 字段存在",
+            "result": "PASS"
+          },
+          {
+            "requirement": "Evidence Chain 集成",
+            "evidence": "evidence_chain 引用存在且 VALID",
+            "result": "PASS"
+          }
+        ]
+      },
+
+      "deny_list_compliance": {
+        "status": "PASS",
+        "items": [
+          {
+            "deny_rule": "不得遗漏任何已完成的任务",
+            "evidence": "扫描 verification 目录，20 个任务全部入包",
+            "result": "PASS"
+          },
+          {
+            "deny_rule": "不得伪造三权记录",
+            "evidence": "所有记录来自实际文件，未伪造",
+            "result": "PASS"
+          },
+          {
+            "deny_rule": "不得绕过校验失败",
+            "evidence": "所有校验通过，无失败需绕过",
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+
+    "reasons": [
+      "三权分立结构完整：Execution(Kior-A) / Review(vs--cc1) / Compliance(Kior-C)",
+      "A/B Guard 结构已实现：A Guard(提案约束) / B Guard(执行约束)",
+      "AuditPack 包含所有 20 个已完成任务",
+      "三权记录完整性 100% (20/20)",
+      "Evidence Chain 集成验证通过",
+      "无违反 deny list 行为",
+      "EvidenceRef 记录完整"
+    ],
+
+    "evidence_refs": [
+      {
+        "id": "EV-COMP-T77-001",
+        "kind": "FILE",
+        "locator": "docs/2026-02-22/verification/l3_auditpack_report.json"
+      },
+      {
+        "id": "EV-COMP-T77-002",
+        "kind": "FILE",
+        "locator": "docs/2026-02-22/verification/T77_execution_report.yaml"
+      },
+      {
+        "id": "EV-COMP-T77-003",
+        "kind": "FILE",
+        "locator": "docs/2026-02-22/verification/T77_gate_decision.json"
+      },
+      {
+        "id": "EV-COMP-T77-004",
+        "kind": "SCAN",
+        "locator": "docs/2026-02-22/verification/ - 20 个任务三权齐全"
+      }
+    ],
+
+    "contract_hash": "sha256:t77_compliance_attestation_v1_20260222_kiorc",
+
+    "signature": {
+      "compliance_officer": "Kior-C",
+      "signed_at": "2026-02-22T10:40:00Z",
+      "valid_until": "2026-03-22T10:40:00Z"
+    }
+  }
+}

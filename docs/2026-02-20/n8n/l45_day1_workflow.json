@@ -1,0 +1,386 @@
+{
+  "name": "L4.5 Day-1 SkillForge Orchestration Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "webhook/skillforge/run",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "trigger-webhook",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "skillforge-run-trigger",
+      "notes": "接收外部触发请求，仅允许白名单字段通过"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.repo_url }}",
+              "operation": "isNotEmpty"
+            },
+            {
+              "value1": "={{ $json.commit_sha }}",
+              "operation": "isNotEmpty"
+            },
+            {
+              "value1": "={{ $json.at_time }}",
+              "operation": "isNotEmpty"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "validate-input",
+      "name": "Validate Required Fields",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [450, 300],
+      "notes": "校验必填字段：repo_url, commit_sha, at_time"
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SKILLFORGE_API_BASE }}/api/v1/intent/run",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "httpMethod": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"repo_url\": \"{{ $json.repo_url }}\",\n  \"commit_sha\": \"{{ $json.commit_sha }}\",\n  \"at_time\": \"{{ $json.at_time }}\",\n  \"requester_id\": \"{{ $json.requester_id }}\",\n  \"intent_id\": \"{{ $json.intent_id }}\",\n  \"n8n_execution_id\": \"{{ $executionId }}\"\n}",
+        "options": {
+          "timeout": 30000,
+          "retry": {
+            "enabled": true,
+            "maxRetries": 3,
+            "retryInterval": 5000
+          }
+        }
+      },
+      "id": "call-run-intent",
+      "name": "Call run_intent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [650, 200],
+      "notes": "调用 SkillForge run_intent API，仅传递白名单字段",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "skillforge-api-auth",
+          "name": "SkillForge API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SKILLFORGE_API_BASE }}/api/v1/pack/fetch",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "httpMethod": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"run_id\": \"{{ $json.run_id }}\",\n  \"repo_url\": \"{{ $(\"Webhook Trigger\").item.json.repo_url }}\",\n  \"commit_sha\": \"{{ $(\"Webhook Trigger\").item.json.commit_sha }}\"\n}",
+        "options": {
+          "timeout": 60000,
+          "retry": {
+            "enabled": true,
+            "maxRetries": 3,
+            "retryInterval": 5000
+          }
+        }
+      },
+      "id": "call-fetch-pack",
+      "name": "Call fetch_pack",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [850, 200],
+      "notes": "调用 SkillForge fetch_pack API",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "skillforge-api-auth",
+          "name": "SkillForge API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SKILLFORGE_API_BASE }}/api/v1/rag/query",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "httpMethod": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"run_id\": \"{{ $(\"Call run_intent\").item.json.run_id }}\",\n  \"at_time\": \"{{ $(\"Webhook Trigger\").item.json.at_time }}\",\n  \"query_type\": \"audit_pack\"\n}",
+        "options": {
+          "timeout": 45000,
+          "retry": {
+            "enabled": true,
+            "maxRetries": 3,
+            "retryInterval": 5000
+          }
+        }
+      },
+      "id": "call-query-rag",
+      "name": "Call query_rag(at_time)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1050, 200],
+      "notes": "调用 SkillForge query_rag API，使用固定 at_time",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "skillforge-api-auth",
+          "name": "SkillForge API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.gate_decision }}",
+              "value2": "PASS",
+              "operation": "equals"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "route-by-gate-decision",
+      "name": "Route by gate_decision",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1250, 200],
+      "notes": "仅消费 SkillForge 返回的 gate_decision，不自造决策"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.NOTIFICATION_WEBHOOK_SUCCESS }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"status\": \"SUCCESS\",\n  \"run_id\": \"{{ $(\"Call run_intent\").item.json.run_id }}\",\n  \"gate_decision\": \"{{ $(\"Route by gate_decision\").item.json.gate_decision }}\",\n  \"evidence_ref\": \"{{ $(\"Call query_rag(at_time)\").item.json.evidence_ref }}\",\n  \"release_allowed\": \"{{ $(\"Call query_rag(at_time)\").item.json.release_allowed }}\",\n  \"replay_pointer\": \"{{ $(\"Call query_rag(at_time)\").item.json.replay_pointer }}\",\n  \"audit_pack_ref\": \"{{ $(\"Call query_rag(at_time)\").item.json.audit_pack_ref }}\",\n  \"timestamp\": \"{{ $now.toISO() }}\"\n}",
+        "options": {}
+      },
+      "id": "notify-success",
+      "name": "Notify Success",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1450, 100],
+      "notes": "通知成功：包含完整证据链"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.NOTIFICATION_WEBHOOK_FAILURE }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"status\": \"BLOCKED\",\n  \"run_id\": \"{{ $(\"Call run_intent\").item.json.run_id }}\",\n  \"gate_decision\": \"{{ $(\"Route by gate_decision\").item.json.gate_decision }}\",\n  \"error_code\": \"{{ $(\"Call query_rag(at_time)\").item.json.error_code }}\",\n  \"error_message\": \"{{ $(\"Call query_rag(at_time)\").item.json.error_message }}\",\n  \"required_changes\": \"{{ $(\"Call query_rag(at_time)\").item.json.required_changes }}\",\n  \"timestamp\": \"{{ $now.toISO() }}\"\n}",
+        "options": {}
+      },
+      "id": "notify-failure",
+      "name": "Notify Failure",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1450, 300],
+      "notes": "通知失败：fail-closed，包含 required_changes"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.NOTIFICATION_WEBHOOK_ERROR }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"status\": \"VALIDATION_ERROR\",\n  \"error_code\": \"E_VALIDATION\",\n  \"error_message\": \"Missing required fields: repo_url, commit_sha, or at_time\",\n  \"n8n_execution_id\": \"{{ $executionId }}\",\n  \"timestamp\": \"{{ $now.toISO() }}\"\n}",
+        "options": {}
+      },
+      "id": "notify-validation-error",
+      "name": "Notify Validation Error",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [650, 400],
+      "notes": "输入验证失败通知"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.NOTIFICATION_WEBHOOK_ERROR }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"status\": \"API_ERROR\",\n  \"error_code\": \"{{ $json.error?.code || 'E_NETWORK' }}\",\n  \"error_message\": \"{{ $json.error?.message || 'Network or timeout error' }}\",\n  \"retry_count\": \"{{ $json.retry_count || 0 }}\",\n  \"run_id\": \"{{ $(\"Call run_intent\").item.json.run_id }}\",\n  \"n8n_execution_id\": \"{{ $executionId }}\",\n  \"timestamp\": \"{{ $now.toISO() }}\"\n}",
+        "options": {}
+      },
+      "id": "notify-api-error",
+      "name": "Notify API Error",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [850, 400],
+      "notes": "API 调用错误通知（网络/超时）- 仅此类错误允许重试"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.NOTIFICATION_WEBHOOK_ERROR }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"status\": \"BUSINESS_ERROR\",\n  \"error_code\": \"{{ $json.error_code }}\",\n  \"error_message\": \"{{ $json.error_message }}\",\n  \"run_id\": \"{{ $(\"Call run_intent\").item.json.run_id }}\",\n  \"auto_retry\": false,\n  \"note\": \"E001/E003 business errors must not auto-retry\",\n  \"timestamp\": \"{{ $now.toISO() }}\"\n}",
+        "options": {}
+      },
+      "id": "notify-business-error",
+      "name": "Notify Business Error",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1050, 400],
+      "notes": "业务错误通知（E001/E003）- 不允许自动重试"
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Validate Required Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Required Fields": {
+      "main": [
+        [
+          {
+            "node": "Call run_intent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify Validation Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call run_intent": {
+      "main": [
+        [
+          {
+            "node": "Call fetch_pack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call fetch_pack": {
+      "main": [
+        [
+          {
+            "node": "Call query_rag(at_time)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call query_rag(at_time)": {
+      "main": [
+        [
+          {
+            "node": "Route by gate_decision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by gate_decision": {
+      "main": [
+        [
+          {
+            "node": "Notify Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify Failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "L4.5",
+      "createdAt": "2026-02-20T00:00:00.000Z"
+    },
+    {
+      "name": "skillforge-orchestration",
+      "createdAt": "2026-02-20T00:00:00.000Z"
+    }
+  ],
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "skillforge-l45-day1"
+  },
+  "pinData": {},
+  "versionId": "1.0.0",
+  "createdAt": "2026-02-20T00:00:00.000Z",
+  "updatedAt": "2026-02-20T00:00:00.000Z",
+  "workflowMetadata": {
+    "job_id": "L45-D1-N8N-BOUNDARY-20260220-001",
+    "skill_id": "l45_n8n_orchestration_boundary",
+    "responsibilities": ["trigger", "route", "retry", "notify"],
+    "forbidden_actions": [
+      "generate_release_allowed_decision",
+      "bypass_skillforge_api",
+      "direct_registry_write",
+      "modify_backend_code"
+    ],
+    "allowed_input_fields": [
+      "repo_url",
+      "commit_sha",
+      "at_time",
+      "requester_id",
+      "intent_id",
+      "n8n_execution_id"
+    ],
+    "forbidden_input_fields": [
+      "gate_decision",
+      "release_allowed",
+      "evidence_ref",
+      "permit_id"
+    ],
+    "retry_policy": {
+      "allowed_errors": ["E_NETWORK", "E_TIMEOUT"],
+      "forbidden_retry_errors": ["E001", "E003"]
+    }
+  }
+}

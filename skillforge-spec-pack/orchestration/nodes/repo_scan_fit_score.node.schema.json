@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://gm-os.dev/orchestration/nodes/repo_scan_fit_score.schema.json",
+  "title": "RepoScanFitScoreNode",
+  "description": "Stage 2: 结构探测与可转化性评分",
+  "type": "object",
+  "required": ["node_id", "input", "output"],
+  "properties": {
+    "node_id": { "const": "repo_scan_fit_score" },
+    "stage": { "const": 2 },
+    "input": {
+      "type": "object",
+      "required": ["build_record", "provenance"],
+      "properties": {
+        "build_record": { "type": "object" },
+        "provenance": { "type": "object" }
+      }
+    },
+    "output": {
+      "type": "object",
+      "required": ["scan_report", "fit_score"],
+      "properties": {
+        "scan_report": {
+          "type": "object",
+          "properties": {
+            "language": { "type": "string" },
+            "entry_files": { "type": "array", "items": { "type": "string" } },
+            "dependencies": { "type": "array", "items": { "type": "string" } },
+            "repo_type": { "type": "string", "enum": ["workflow", "cli", "lib", "service", "template"] }
+          }
+        },
+        "fit_score": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "可转化性评分，越高越容易 skill 化"
+        }
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["SYS_DEPENDENCY_FAILURE", "SYS_INTERNAL"]
+      }
+    }
+  },
+  "version": "0.1.0"
+}

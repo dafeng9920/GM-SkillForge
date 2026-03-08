@@ -1,0 +1,300 @@
+# release-gate-skill Agent Configuration
+# OpenAI Function Calling Format
+
+name: release_gate_skill
+description: |
+  发布 Gate 校验 Skill。
+  负责 Permit 校验和发布放行决策。
+  支持单目标和批量发布。
+  Fail-Closed: no-permit-no-release (无 permit 禁止发布)
+  Support L4 integration mode: execute 5-step merge flow and return A/B/C/D with evidence refs.
+
+version: "1.1.0"
+frozen_at: "2026-02-18"
+
+parameters:
+  type: object
+  required:
+    - run_id
+    - permit_refs
+    - targets
+    - repo_url
+    - commit_sha
+    - release_type
+  properties:
+    run_id:
+      type: string
+      description: 运行ID，贯穿全链路（格式: run-YYYYMMDD-HHMMSS-xxxx）
+      pattern: "^run-\\d{8}-\\d{6}-[a-f0-9]{4}$"
+
+    permit_refs:
+      type: array
+      description: Permit 引用列表（必填，空数组触发 E001）
+      items:
+        type: object
+        properties:
+          permit_id:
+            type: string
+          issued_at:
+            type: string
+            format: date-time
+          issued_by:
+            type: string
+          scope:
+            type: string
+        required: [permit_id, issued_at, issued_by, scope]
+
+    targets:
+      type: array
+      description: 发布目标列表
+      minItems: 1
+      items:
+        type: object
+        properties:
+          target_id:
+            type: string
+            description: 目标标识符
+          target_type:
+            type: string
+            enum: [skill, service, function]
+          version:
+            type: string
+            description: 目标版本
+        required: [target_id, target_type, version]
+
+    repo_url:
+      type: string
+      description: 仓库URL
+
+    commit_sha:
+      type: string
+      description: 提交SHA
+
+    release_type:
+      type: string
+      enum: [canary, batch, single, hotfix, rollback]
+      description: 发布类型
+
+    strategy:
+      type: string
+      enum: [all-or-nothing, best-effort, canary-first]
+      default: "all-or-nothing"
+      description: "发布策略: all-or-nothing(默认), best-effort, canary-first"
+
+    gate_profile:
+      type: string
+      enum: [standard, fast, comprehensive, custom]
+      default: standard
+      description: 门禁配置文件
+
+    skip_gates:
+      type: array
+      default: []
+      description: 跳过的门禁列表（需要特殊 permit）
+      items:
+        type: string
+
+    timeout_seconds:
+      type: integer
+      default: 300
+      description: 超时时间（秒）
+
+returns:
+  type: object
+  properties:
+    gate_decision:
+      type: object
+      properties:
+        decision_id:
+          type: string
+        decision:
+          type: string
+          enum: [ALLOWED, DENIED, CONDITIONAL]
+        decided_at:
+          type: string
+          format: date-time
+        decided_by:
+          type: string
+
+    release_allowed:
+      type: boolean
+      description: 是否允许发布
+
+    overall_status:
+      type: string
+      enum: [PASS, FAIL, PARTIAL]
+      description: 总体状态
+
+    passed_targets:
+      type: array
+      description: 通过的目标
+      items:
+        type: object
+        properties:
+          target_id:
+            type: string
+          gate_results:
+            type: array
+
+    failed_targets:
+      type: array
+      description: 失败的目标
+      items:
+        type: object
+        properties:
+          target_id:
+            type: string
+          error_code:
+            type: string
+          error_message:
+            type: string
+          gate_failed:
+            type: string
+
+    error_code:
+      type: string
+      enum: [E001, E002, E003, E004, E005, E006, E007, E008, E009]
+      nullable: true
+      description: 主错误码（全局错误）
+
+    release_blocked_by:
+      type: string
+      nullable: true
+      description: 阻断原因
+
+    validation_latency_ms:
+      type: integer
+      description: 校验延迟（毫秒）
+
+    gates_passed:
+      type: integer
+      description: 通过的门禁数
+
+    gates_failed:
+      type: integer
+      description: 失败的门禁数
+
+    evidence_ref:
+      type: string
+      description: 证据引用路径
+
+    execution_report_path:
+      type: string
+      description: 执行报告路径
+
+fail_closed_rules:
+  - condition: "permit_refs is empty"
+    result: "gate_decision=DENIED, error_code=E001, release_allowed=false"
+    description: "无 permit 禁止发布"
+  - condition: "signature_invalid"
+    result: "gate_decision=DENIED, error_code=E003, release_allowed=false"
+    description: "签名无效禁止发布"
+  - condition: "permit_expired"
+    result: "gate_decision=DENIED, error_code=E004, release_allowed=false"
+    description: "Permit 过期禁止发布"
+  - condition: "permit_revoked"
+    result: "gate_decision=DENIED, error_code=E007, release_allowed=false"
+    description: "Permit 已撤销禁止发布"
+
+error_codes:
+  E001:
+    name: PERMIT_REQUIRED
+    description: "Permit 缺失 - 无 permit 禁止发布"
+    release_allowed: false
+    block_type: global
+  E002:
+    name: PERMIT_INVALID_FORMAT
+    description: "Permit 格式无效"
+    release_allowed: false
+    block_type: global
+  E003:
+    name: PERMIT_INVALID_SIGNATURE
+    description: "Permit 签名无效"
+    release_allowed: false
+    block_type: global
+  E004:
+    name: PERMIT_EXPIRED
+    description: "Permit 已过期"
+    release_allowed: false
+    block_type: global
+  E005:
+    name: PERMIT_SCOPE_MISMATCH
+    description: "Permit Scope 不匹配"
+    release_allowed: false
+    block_type: target
+  E006:
+    name: PERMIT_SUBJECT_MISMATCH
+    description: "Permit Subject 不匹配"
+    release_allowed: false
+    block_type: target
+  E007:
+    name: PERMIT_REVOKED
+    description: "Permit 已撤销"
+    release_allowed: false
+    block_type: global
+  E008:
+    name: GATE_CHAIN_FAILED
+    description: "Gate 链执行失败"
+    release_allowed: false
+    block_type: target
+  E009:
+    name: TARGET_NOT_FOUND
+    description: "目标不存在"
+    release_allowed: false
+    block_type: target
+
+gate_chain:
+  order:
+    - gate_permit
+    - gate_risk_level
+    - gate_rollback_ready
+    - gate_monitor_threshold
+    - gate_target_locked
+  fail_closed: true
+  description: "任一 Gate 失败即 DENIED"
+
+strategies:
+  all-or-nothing:
+    description: "全部目标通过才允许发布"
+    behavior: "任一目标失败 -> DENIED"
+    default: true
+  best-effort:
+    description: "部分目标通过也允许发布"
+    behavior: "部分通过 -> CONDITIONAL, 全部失败 -> DENIED"
+    default: false
+  canary-first:
+    description: "Canary 目标必须通过"
+    behavior: "Canary 失败 -> DENIED, Canary 通过 -> 其他目标 best-effort"
+    default: false
+
+evidence_fields:
+  required:
+    - run_id
+    - permit_id
+    - replay_pointer
+    - gate_results
+    - final_decision
+    - strategy_used
+
+implementation:
+  module: skillforge.src.skills.gates.gate_permit
+  class: GatePermit
+  method: execute
+
+contracts:
+  - docs/2026-02-18/contracts/permit_contract_v1.yml
+
+test_coverage:
+  single_target:
+    - T1: "正常路径 ALLOWED"
+    - T2: "E001 无 Permit 阻断"
+    - T3: "E003 签名无效阻断"
+    - T4: "E004 Permit 过期阻断"
+    - T5-T7: "其他错误码"
+  batch_2_targets:
+    - T10: "2目标全部通过 (all-or-nothing)"
+    - T11: "2目标1失败 (all-or-nothing) -> DENIED"
+    - T12: "2目标1失败 (best-effort) -> PARTIAL"
+    - T13: "Canary 失败 (canary-first) -> DENIED"
+    - T14: "目标不存在 E009"
+  total: "19/19 tests"

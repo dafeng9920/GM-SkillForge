@@ -1,0 +1,23 @@
+{
+  "closure_rate_metrics": {
+    "window_days": 7,
+    "window_start": "2026-02-12T00:00:00Z",
+    "window_end": "2026-02-19T00:00:00Z",
+    "fixable_count": 12,
+    "fixed_count": 8,
+    "closure_rate": 0.667,
+    "target": 0.5,
+    "achieved": true,
+    "margin": 0.167,
+    "breakdown": {
+      "phase1_fixable": 4,
+      "phase1_fixed": 3,
+      "l2_fixable": 3,
+      "l2_fixed": 2,
+      "l3_fixable": 5,
+      "l3_fixed": 3
+    },
+    "collection_timestamp": "2026-02-19T17:45:00Z"
+  },
+  "evidence_ref": "EV-L3-F2-001"
+}

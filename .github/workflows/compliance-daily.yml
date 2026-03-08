@@ -1,0 +1,56 @@
+name: Daily Compliance Review
+
+on:
+  schedule:
+    # Daily at 03:00 UTC
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compliance-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          pip install pytest
+
+      - name: Run 3-day compliance review script (daily cadence)
+        id: review
+        run: |
+          python scripts/run_3day_compliance_review.py --run-tests
+
+      - name: Upload compliance review artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: compliance-review-${{ github.run_id }}
+          path: |
+            docs/compliance_reviews/review_*.md
+            docs/compliance_reviews/review_*.json
+          retention-days: 30
+
+      - name: Add workflow summary
+        if: always()
+        run: |
+          echo "## Daily Compliance Review" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- Run ID: \`${{ github.run_id }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Trigger: \`${{ github.event_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Script: \`scripts/run_3day_compliance_review.py --run-tests\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Artifacts: \`docs/compliance_reviews/review_*.md,json\`" >> $GITHUB_STEP_SUMMARY

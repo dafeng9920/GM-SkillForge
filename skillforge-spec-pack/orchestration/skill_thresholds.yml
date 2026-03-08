@@ -1,0 +1,67 @@
+# orchestration/skill_thresholds.yml
+# GM-SkillForge Skill Thresholds v1.0
+# Defines fit_score thresholds for Skill recognition and quality level requirements
+# Used by: repo_scan_fit_score node, gate_engine, and validation
+
+schema_version: 1
+
+# fit_score 是 repo_scan 计算的"该仓库适合做 Skill"的综合分数 [0.0, 1.0]
+# 存储为 0-100 的整数以便序列化
+thresholds:
+  minimum_fit_score: 40       # < 40 → DENY（不适合做 Skill）
+  review_fit_score: 70        # 40-70 → REQUIRES_CHANGES（需人工审查）
+  auto_approve_fit_score: 70  # >= 70 → ALLOW（自动通过）
+
+# 各质量等级对 fit_score 的要求
+quality_level_requirements:
+  L1:
+    min_fit_score: 30
+    description: "Entry level - basic structure validation"
+  L2:
+    min_fit_score: 50
+    description: "Standard level - provenance verified"
+  L3:
+    min_fit_score: 60
+    description: "Trusted level - commercial baseline"
+  L4:
+    min_fit_score: 70
+    description: "Pro level - benchmark harness required"
+  L5:
+    min_fit_score: 80
+    description: "Industrial level - stress vectors required"
+
+# fit_score 计算权重（repo_scan_fit_score 使用）
+# 总和必须为 1.0
+scoring_weights:
+  has_readme: 0.15            # README 文件存在
+  has_license: 0.15           # 许可证文件存在且在白名单
+  has_tests: 0.20             # 测试文件/目录存在
+  has_requirements: 0.10      # 依赖声明文件存在
+  code_quality_lint: 0.15     # 代码质量/静态分析通过
+  single_purpose: 0.15        # 单一目的（非 monorepo）
+  documentation_ratio: 0.10   # 文档比例达标
+
+# 评分细节定义
+scoring_details:
+  has_readme:
+    check: "README.md 或 readme.md 存在"
+    max_points: 15
+  has_license:
+    check: "LICENSE 文件存在且许可证在白名单内"
+    max_points: 15
+    whitelist: ["MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "ISC", "0BSD", "Unlicense"]
+  has_tests:
+    check: "tests/ 或 test/ 目录存在，或包含 test_*.py 文件"
+    max_points: 20
+  has_requirements:
+    check: "requirements.txt, pyproject.toml, 或 setup.py 存在"
+    max_points: 10
+  code_quality_lint:
+    check: "静态分析通过，无 BLOCKER 级别问题"
+    max_points: 15
+  single_purpose:
+    check: "非 monorepo，单一项目目的"
+    max_points: 15
+  documentation_ratio:
+    check: "文档行数 / 代码行数 >= 0.1"
+    max_points: 10

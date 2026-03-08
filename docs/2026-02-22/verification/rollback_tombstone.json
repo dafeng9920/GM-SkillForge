@@ -1,0 +1,60 @@
+{
+  "tombstone_id": "TOMBSTONE-20260222-T72-001",
+  "task_id": "T72",
+  "created_at": "2026-02-22T14:30:00Z",
+  "executor": "Kior-B",
+  "drill_type": "ROLLBACK_SIMULATION",
+  "scope": {
+    "description": "T61 P1-2 契约校验交付物回滚演练",
+    "files": [
+      {
+        "path": "schemas/skill_audit_report.schema.json",
+        "sha256": "55177ec5aa5116a7686294f70205e014a0d6c0a29fd977b314791a46f730b707",
+        "status": "PRESERVED"
+      },
+      {
+        "path": "ui/app/src/pages/audit/SkillAuditPage.tsx",
+        "sha256": "2c47375cacf95604da9ddf21e650f2fd9e716a17faeb20606b42744a8e2ab10d",
+        "status": "PRESERVED"
+      },
+      {
+        "path": "reports/skill-audit/finance_legal_top3_l5-static_2026-02-22.json",
+        "sha256": "d8356770ae8e1ac06e54ecc6a13ee3171503105d26eb56e09b2b818ea568e8a7",
+        "status": "PRESERVED"
+      }
+    ]
+  },
+  "simulation": {
+    "scenario": "DATA_CORRUPTION",
+    "description": "模拟数据文件损坏导致校验失败",
+    "steps_executed": [
+      "BACKUP_ORIGINAL",
+      "CORRUPT_DATA",
+      "VERIFY_ERROR_DISPLAY",
+      "EXECUTE_ROLLBACK",
+      "VERIFY_RECOVERY"
+    ],
+    "all_steps_passed": true
+  },
+  "recovery_metrics": {
+    "detection_time_seconds": 1,
+    "rollback_time_seconds": 1,
+    "verification_time_seconds": 5,
+    "total_rto_seconds": 7,
+    "data_loss": "NONE"
+  },
+  "checkpoint": {
+    "pre_drill_state": "STABLE",
+    "post_drill_state": "STABLE",
+    "files_modified": [],
+    "files_restored": [
+      "reports/skill-audit/finance_legal_top3_l5-static_2026-02-22.json (simulated)"
+    ]
+  },
+  "attestation": {
+    "no_production_impact": true,
+    "all_backups_preserved": true,
+    "system_stability_maintained": true
+  },
+  "next_review_date": "2026-03-22"
+}

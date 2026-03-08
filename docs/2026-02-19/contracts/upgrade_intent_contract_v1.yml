@@ -1,0 +1,424 @@
+# Upgrade Intent Contract v1
+# 用于升级技能模块的意图合同
+# 遵循 Fail-Closed 原则
+
+# ============================================================
+# 合同基础信息
+# ============================================================
+contract_id: upgrade_intent_contract_v1
+frozen_at: "2026-02-19T00:00:00Z"
+version: "1.0.0"
+schema_hash: TBD_SHA256
+author: "vs--cc2"
+status: "FROZEN"
+
+# ============================================================
+# 1. 意图ID
+# ============================================================
+intent_id: upgrade
+description: "升级现有技能模块到新版本"
+
+# ============================================================
+# 2. 意图类型
+# ============================================================
+intent_type: "UPGRADE"
+category: "skill_management"
+lifecycle_stage: "evolution"
+
+# ============================================================
+# 3. 输入 Schema
+# ============================================================
+input_schema:
+  # 必填字段
+  required:
+    - skill_id
+    - current_version
+    - target_version
+    - upgrade_source
+
+  properties:
+    skill_id:
+      type: string
+      format: "SKILL-{MODULE}-{NAME}"
+      description: "技能模块唯一标识符"
+      example: "SKILL-template_mean_reversion-v1"
+
+    current_version:
+      type: string
+      format: "v{MAJOR}.{MINOR}.{PATCH}"
+      description: "当前版本"
+      example: "v1.0.0"
+
+    target_version:
+      type: string
+      format: "v{MAJOR}.{MINOR}.{PATCH}"
+      description: "目标版本"
+      example: "v1.1.0"
+
+    upgrade_source:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: ["repo", "registry", "package"]
+          description: "升级源类型"
+        repo_url:
+          type: string
+          description: "仓库 URL（type=repo 时必填）"
+        commit_sha:
+          type: string
+          description: "Commit SHA（type=repo 时必填）"
+        registry_url:
+          type: string
+          description: "注册表 URL（type=registry 时必填）"
+        package_path:
+          type: string
+          description: "包路径（type=package 时必填）"
+      description: "升级源配置"
+
+    upgrade_strategy:
+      type: string
+      enum: ["in_place", "blue_green", "canary", "fork"]
+      description: "升级策略"
+      default: "in_place"
+
+    migration_config:
+      type: object
+      properties:
+        auto_migrate_data:
+          type: boolean
+          default: true
+        preserve_config:
+          type: boolean
+          default: true
+        rollback_on_failure:
+          type: boolean
+          default: true
+        backup_before_upgrade:
+          type: boolean
+          default: true
+      description: "迁移配置"
+
+    validation_config:
+      type: object
+      properties:
+        pre_upgrade_checks:
+          type: boolean
+          default: true
+        post_upgrade_checks:
+          type: boolean
+          default: true
+        integration_tests:
+          type: boolean
+          default: true
+        smoke_tests:
+          type: boolean
+          default: true
+      description: "验证配置"
+
+# ============================================================
+# 4. 输出 Schema
+# ============================================================
+output_schema:
+  properties:
+    upgrade_id:
+      type: string
+      format: "UPG-{YYYYMMDD}-{SEQ}"
+      description: "升级执行 ID"
+
+    skill_id:
+      type: string
+      description: "技能 ID"
+
+    status:
+      type: string
+      enum: ["UPGRADED", "FAILED", "ROLLED_BACK", "PARTIAL"]
+      description: "升级状态"
+
+    version_transition:
+      type: object
+      properties:
+        from_version:
+          type: string
+        to_version:
+          type: string
+        upgrade_type:
+          type: string
+          enum: ["major", "minor", "patch"]
+      description: "版本转换信息"
+
+    changes:
+      type: object
+      properties:
+        files_modified:
+          type: integer
+        files_added:
+          type: integer
+        files_deleted:
+          type: integer
+        breaking_changes:
+          type: array
+          items:
+            type: string
+        deprecations:
+          type: array
+          items:
+            type: string
+      description: "变更摘要"
+
+    migration_result:
+      type: object
+      properties:
+        data_migrated:
+          type: boolean
+        config_preserved:
+          type: boolean
+        backup_created:
+          type: boolean
+        backup_location:
+          type: string
+      description: "迁移结果"
+
+    validation_result:
+      type: object
+      properties:
+        pre_checks_passed:
+          type: boolean
+        post_checks_passed:
+          type: boolean
+        integration_tests_passed:
+          type: boolean
+        smoke_tests_passed:
+          type: boolean
+        issues:
+          type: array
+          items:
+            type: string
+      description: "验证结果"
+
+    rollback_info:
+      type: object
+      properties:
+        available:
+          type: boolean
+        backup_version:
+          type: string
+        rollback_command:
+          type: string
+      description: "回滚信息"
+
+    evidence_refs:
+      type: array
+      items:
+        type: string
+      description: "Evidence 引用列表"
+
+    completed_at:
+      type: string
+      format: ISO8601_UTC
+      description: "升级完成时间"
+
+# ============================================================
+# 5. 错误码映射
+# ============================================================
+error_codes:
+  E_UPG_001:
+    description: "技能不存在"
+    condition: "skill_id not found in registry"
+    severity: "CRITICAL"
+    recovery_hint: "验证 skill_id 是否正确"
+
+  E_UPG_002:
+    description: "版本不匹配"
+    condition: "current_version != installed_version"
+    severity: "HIGH"
+    recovery_hint: "确认当前安装的版本"
+
+  E_UPG_003:
+    description: "目标版本无效"
+    condition: "target_version <= current_version"
+    severity: "HIGH"
+    recovery_hint: "目标版本必须大于当前版本"
+
+  E_UPG_004:
+    description: "升级源不可访问"
+    condition: "upgrade_source unreachable"
+    severity: "CRITICAL"
+    recovery_hint: "验证升级源配置"
+
+  E_UPG_005:
+    description: "依赖冲突"
+    condition: "dependency version conflict detected"
+    severity: "HIGH"
+    recovery_hint: "解决依赖冲突后重试"
+
+  E_UPG_006:
+    description: "破坏性变更"
+    condition: "breaking changes detected without migration path"
+    severity: "CRITICAL"
+    recovery_hint: "检查迁移指南或手动迁移"
+
+  E_UPG_007:
+    description: "预检查失败"
+    condition: "pre_upgrade_checks failed"
+    severity: "HIGH"
+    recovery_hint: "修复预检查问题后重试"
+
+  E_UPG_008:
+    description: "升级超时"
+    condition: "upgrade exceeds timeout limit"
+    severity: "HIGH"
+    recovery_hint: "增加超时配置或分步升级"
+
+  E_UPG_009:
+    description: "回滚失败"
+    condition: "rollback attempted but failed"
+    severity: "CRITICAL"
+    recovery_hint: "手动恢复或联系支持"
+
+  E_UPG_010:
+    description: "验证失败"
+    condition: "post_upgrade_checks or tests failed"
+    severity: "HIGH"
+    recovery_hint: "检查验证问题，必要时回滚"
+
+# ============================================================
+# 6. Fail-Closed 规则
+# ============================================================
+fail_closed_rules:
+  - rule_id: "FC-UPG-001"
+    condition: "skill_id == null OR skill_id == ''"
+    result: "UPGRADE_BLOCKED"
+    blocked_by: "MISSING_SKILL_ID"
+    description: "缺少技能 ID，禁止升级"
+
+  - rule_id: "FC-UPG-002"
+    condition: "current_version == null OR target_version == null"
+    result: "UPGRADE_BLOCKED"
+    blocked_by: "MISSING_VERSION_INFO"
+    description: "缺少版本信息，禁止升级"
+
+  - rule_id: "FC-UPG-003"
+    condition: "skill_id not found"
+    result: "UPGRADE_BLOCKED"
+    blocked_by: "SKILL_NOT_FOUND"
+    description: "技能不存在，禁止升级"
+
+  - rule_id: "FC-UPG-004"
+    condition: "upgrade_source unreachable"
+    result: "UPGRADE_BLOCKED"
+    blocked_by: "SOURCE_UNREACHABLE"
+    description: "升级源不可访问，禁止升级"
+
+  - rule_id: "FC-UPG-005"
+    condition: "breaking_changes without migration_path"
+    result: "UPGRADE_BLOCKED"
+    blocked_by: "BREAKING_CHANGES"
+    description: "存在破坏性变更且无迁移路径，禁止升级"
+
+  - rule_id: "FC-UPG-006"
+    condition: "pre_upgrade_checks failed"
+    result: "UPGRADE_BLOCKED"
+    blocked_by: "PRE_CHECK_FAILED"
+    description: "预检查失败，禁止升级"
+
+  - rule_id: "FC-UPG-007"
+    condition: "dependency_conflict == true"
+    result: "UPGRADE_BLOCKED"
+    blocked_by: "DEPENDENCY_CONFLICT"
+    description: "依赖冲突，禁止升级"
+
+  - rule_id: "FC-UPG-008"
+    condition: "post_upgrade_checks failed AND rollback_on_failure == true"
+    result: "UPGRADE_ROLLED_BACK"
+    blocked_by: "POST_CHECK_FAILED"
+    description: "后检查失败，自动回滚"
+
+# ============================================================
+# 7. Evidence 字段
+# ============================================================
+evidence_fields:
+  - field_id: "upgrade_execution_evidence"
+    type: "object"
+    required: true
+    description: "升级执行证据"
+    schema:
+      upgrade_id: "string"
+      started_at: "ISO8601_UTC"
+      completed_at: "ISO8601_UTC"
+      executor: "string"
+
+  - field_id: "pre_upgrade_state_evidence"
+    type: "object"
+    required: true
+    description: "升级前状态证据"
+    schema:
+      version: "string"
+      config: "object"
+      data_checksum: "string"
+      backup_location: "string"
+
+  - field_id: "upgrade_source_evidence"
+    type: "object"
+    required: true
+    description: "升级源证据"
+    schema:
+      source_type: "string"
+      source_url: "string"
+      checksum: "string"
+      verified: "boolean"
+
+  - field_id: "migration_evidence"
+    type: "object"
+    required: true
+    description: "迁移证据"
+    schema:
+      data_migrated: "boolean"
+      config_migrated: "boolean"
+      migration_log: "array"
+
+  - field_id: "post_upgrade_validation_evidence"
+    type: "object"
+    required: true
+    description: "升级后验证证据"
+    schema:
+      checks_passed: "array"
+      checks_failed: "array"
+      tests_passed: "boolean"
+
+  - field_id: "rollback_evidence"
+    type: "object"
+    required: false
+    description: "回滚证据（如有）"
+    schema:
+      rolled_back: "boolean"
+      rollback_reason: "string"
+      rollback_timestamp: "ISO8601_UTC"
+
+# ============================================================
+# 8. 版本
+# ============================================================
+version_info:
+  contract_version: "1.0.0"
+  schema_version: "1.0.0"
+  compatible_intent_versions:
+    - "1.0.0"
+    - "1.0.1"
+    - "1.1.0"
+
+# ============================================================
+# 9. 冻结时间
+# ============================================================
+frozen_at: "2026-02-19T00:00:00Z"
+
+# ============================================================
+# 附加配置
+# ============================================================
+config:
+  timeout_seconds: 10800  # 3 hours
+  max_retries: 1
+  parallel_execution: false
+  cache_results: false
+  auto_backup: true
+  auto_rollback: true
+  notification_enabled: true

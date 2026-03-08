@@ -1,0 +1,11 @@
+# Tampered Report for Testing (signature NOT updated)
+task_id: "TEST-001"
+executor: "Antigravity-1"
+status: "TAMPERED_BY_ATTACKER"
+timestamp: "2026-02-22T09:00:00Z"
+
+deliverables:
+  - path: "malicious.py"
+    status: "injected"
+
+guard_signature: "9a768bc0008c002ffc0580bbd5f52e1f7aa86737d57a69849ca12badaa2a31c0"

@@ -1,0 +1,64 @@
+name: example-data-processing-skill
+description: 示例数据处理skill，演示完整的数据验证、转换和清洗功能
+version: v1.0.0
+frozen_at: 2026-02-20
+
+capabilities:
+  - data_validation
+  - data_transformation
+  - data_cleaning
+  - error_handling
+  - batch_processing
+
+input_schema:
+  data_source:
+    type: string
+    required: true
+    description: 数据源路径或URL
+  format:
+    type: string
+    enum: [json, csv, xml]
+    required: true
+    description: 输入数据格式
+  processing_rules:
+    type: array
+    required: false
+    description: 数据处理规则列表
+  output_format:
+    type: string
+    enum: [json, csv, xml]
+    required: true
+    description: 期望的输出格式
+  validation_schema:
+    type: object
+    required: false
+    description: 数据验证模式
+
+output_schema:
+  processed_data:
+    type: object
+    description: 处理后的数据
+  processing_summary:
+    type: object
+    properties:
+      total_records:
+        type: integer
+      processed_records:
+        type: integer
+      error_records:
+        type: integer
+      processing_time_ms:
+        type: integer
+  validation_results:
+    type: array
+    description: 验证结果列表
+  error_log:
+    type: array
+    description: 错误日志
+
+constraints:
+  fail_safe: true
+  data_integrity: true
+  performance_optimized: true
+  max_file_size: "100MB"
+  timeout_ms: 30000

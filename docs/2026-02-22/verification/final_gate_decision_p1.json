@@ -1,0 +1,48 @@
+{
+  "job_id": "L4-P1-FOUNDATION-20260222-002",
+  "task_id": "T63",
+  "date": "2026-02-22",
+  "decision": "ALLOW",
+  "summary": "P1 acceptance complete.",
+  "required_changes": [],
+  "task_matrix": [
+    {
+      "task_id": "T60",
+      "execution_report_exists": true,
+      "execution_status": "完成",
+      "gate_decision_exists": true,
+      "gate_decision": "ALLOW",
+      "compliance_attestation_exists": true,
+      "compliance_decision": "PASS",
+      "task_result": "ALLOW"
+    },
+    {
+      "task_id": "T61",
+      "execution_report_exists": true,
+      "execution_status": "完成",
+      "gate_decision_exists": true,
+      "gate_decision": "ALLOW",
+      "compliance_attestation_exists": true,
+      "compliance_decision": "PASS",
+      "task_result": "ALLOW"
+    },
+    {
+      "task_id": "T62",
+      "execution_report_exists": true,
+      "execution_status": "完成",
+      "gate_decision_exists": true,
+      "gate_decision": "ALLOW",
+      "compliance_attestation_exists": true,
+      "compliance_decision": "PASS",
+      "task_result": "ALLOW"
+    }
+  ],
+  "acceptance_checks": {
+    "all_execution_reports_present": true,
+    "all_gate_decisions_allow": true,
+    "all_compliance_decisions_pass": true,
+    "three_power_separation_verified": true
+  },
+  "generated_at": "2026-02-22T07:20:14Z",
+  "orchestrator": "Codex"
+}

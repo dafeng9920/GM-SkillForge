@@ -1,0 +1,102 @@
+{
+  "job_id": "L45-FE-V10-20260220-007",
+  "task_id": "T38",
+  "executor": "Kior-B",
+  "evidence_refs": [
+    {
+      "ref_id": "EV-T38-AUDIT-PACK-PAGE-001",
+      "type": "source_file",
+      "path": "ui/app/src/pages/audit/AuditPacksPage.tsx",
+      "description": "AuditPacksPage 完整实现",
+      "created_at": "2026-02-21T00:00:00Z",
+      "content_hash": "sha256:auditpacks_page_hash_placeholder"
+    },
+    {
+      "ref_id": "EV-T38-RAG-QUERY-PAGE-001",
+      "type": "source_file",
+      "path": "ui/app/src/pages/audit/RagQueryPage.tsx",
+      "description": "RagQueryPage 完整实现",
+      "created_at": "2026-02-21T00:00:00Z",
+      "content_hash": "sha256:ragquery_page_hash_placeholder"
+    },
+    {
+      "ref_id": "EV-T38-EVIDENCE-DRAWER-001",
+      "type": "source_file",
+      "path": "ui/app/src/components/governance/EvidenceDrawer.tsx",
+      "description": "EvidenceDrawer 组件实现",
+      "created_at": "2026-02-21T00:00:00Z",
+      "content_hash": "sha256:evidence_drawer_hash_placeholder"
+    },
+    {
+      "ref_id": "EV-T38-CLICKABLE-REFS-001",
+      "type": "implementation",
+      "description": "run_id/evidence_ref 点击跳转功能",
+      "locations": [
+        {
+          "file": "ui/app/src/pages/audit/AuditPacksPage.tsx",
+          "function": "handleEvidenceClick",
+          "line_range": "155-160"
+        },
+        {
+          "file": "ui/app/src/pages/audit/RagQueryPage.tsx",
+          "function": "handleEvidenceClick",
+          "line_range": "190-195"
+        }
+      ]
+    },
+    {
+      "ref_id": "EV-T38-RAG-EVIDENCE-001",
+      "type": "implementation",
+      "description": "RAG 结果项显示 evidence_ref",
+      "locations": [
+        {
+          "file": "ui/app/src/pages/audit/RagQueryPage.tsx",
+          "component": "ResultItem",
+          "feature": "resultEvidence section"
+        }
+      ]
+    },
+    {
+      "ref_id": "EV-T38-FAIL-CLOSED-001",
+      "type": "implementation",
+      "description": "at_time 漂移错误 Fail-Closed 展示",
+      "locations": [
+        {
+          "file": "ui/app/src/pages/audit/RagQueryPage.tsx",
+          "component": "ErrorPanel",
+          "feature": "isAtTimeDriftError special handling"
+        },
+        {
+          "file": "ui/app/src/pages/audit/RagQueryPage.tsx",
+          "function": "getAtTimeError",
+          "feature": "DRIFT_VALUES validation"
+        }
+      ]
+    },
+    {
+      "ref_id": "EV-T38-INTERACTIVE-ANCHOR-001",
+      "type": "constraint_verification",
+      "description": "所有 evidence_ref 均有交互锚点",
+      "verification": {
+        "auditpacks_page": {
+          "list_item_evidence": "button element with onClick",
+          "detail_panel_evidence": "button element with onClick"
+        },
+        "ragquery_page": {
+          "result_item_evidence": "button element with onClick",
+          "error_panel_evidence": "button element with onClick"
+        }
+      }
+    },
+    {
+      "ref_id": "EV-T38-REPORT-001",
+      "type": "documentation",
+      "path": "docs/2026-02-20/L45_FE_T38_AUDIT_RAG_REPORT_v1.md",
+      "description": "T38 审计与查询闭环验收报告",
+      "created_at": "2026-02-21T00:00:00Z"
+    }
+  ],
+  "side_effects": [],
+  "permits_required": [],
+  "permit_evidence": []
+}

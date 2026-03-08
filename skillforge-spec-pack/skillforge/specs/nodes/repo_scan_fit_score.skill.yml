@@ -1,0 +1,122 @@
+schema_version: "0.2.0"
+skill_id: "repo_scan_fit_score"
+name: "Repository Scan Fit Score"
+description: "Scan repository structure and compute fit score from external thresholds"
+version: "0.2.0"
+
+# 所属路径
+paths: ["B", "AB"]
+stage: 2
+
+# 输入合同
+input:
+  required:
+    - intake_repo:
+        type: "object"
+        description: "IntakeRepo 节点的输出（含 repo_info.languages, repo_info.license）"
+        source: "input_data['intake_repo']"
+
+# 外部阈值配置引用
+thresholds_config:
+  path: "orchestration/skill_thresholds.yml"
+  description: "外部阈值配置文件，包含 fit_score 阈值和评分权重"
+
+# 评分规则 - 从外部配置读取权重
+scoring_rules:
+  config_source: "orchestration/skill_thresholds.yml"
+  weights_key: "scoring_weights"
+  range: [0, 100]
+  # 评分权重在外部配置中定义:
+  # has_readme: 0.15
+  # has_license: 0.15
+  # has_tests: 0.20
+  # has_requirements: 0.10
+  # code_quality_lint: 0.15
+  # single_purpose: 0.15
+  # documentation_ratio: 0.10
+
+# 类型推断
+type_inference:
+  Python: "lib"
+  JavaScript: "service"
+  TypeScript: "service"
+  Go: "cli"
+  Rust: "cli"
+  Shell: "workflow"
+  Bash: "workflow"
+  default: "template"
+
+# 输出合同
+output:
+  required:
+    - schema_version:
+        type: "string"
+        value: "0.2.0"
+    - fit_score:
+        type: "integer"
+        range: [0, 100]
+        description: "综合适配分数，根据外部权重计算"
+    - fit_score_breakdown:
+        type: "object"
+        description: "评分明细，每项评分的具体得分"
+        fields:
+          has_readme: "float (0-15)"
+          has_license: "float (0-15)"
+          has_tests: "float (0-20)"
+          has_requirements: "float (0-10)"
+          code_quality_lint: "float (0-15)"
+          single_purpose: "float (0-15)"
+          documentation_ratio: "float (0-10)"
+    - threshold_decision:
+        type: "string"
+        enum: ["ALLOW", "REQUIRES_CHANGES", "DENY"]
+        description: "基于 fit_score 的阈值决策"
+    - repo_type:
+        type: "string"
+        enum: ["workflow", "cli", "lib", "service", "template"]
+    - entry_points:
+        type: "array"
+        description: "mock: ['main.py']"
+    - dependencies:
+        type: "object"
+        description: "mock: {}"
+    - language_stack:
+        type: "string"
+        description: "从 languages dict 的第一个 key 取得"
+    - complexity_metrics:
+        type: "object"
+        fields:
+          total_files: "int (mock: 1)"
+          total_loc: "int (mock: 0)"
+          avg_function_length: "float (mock: 0.0)"
+
+# 能力声明
+capabilities:
+  network: true
+  filesystem: false
+  subprocess: false
+  gpu: false
+
+# 风险等级
+risk_tier: "L1"
+
+# 依赖
+dependencies:
+  adapters: ["github_fetch"]
+  schemas: []
+  error_codes: ["EXEC_VALIDATION_FAILED", "SCHEMA_INVALID"]
+
+# 错误处理
+errors:
+  - code: "EXEC_VALIDATION_FAILED"
+    retryable: false
+    description: "intake_repo output missing or lacks repo_info"
+  - code: "SCHEMA_INVALID"
+    retryable: false
+    description: "Output missing required fields or fit_score/repo_type out of range"
+  - code: "THRESHOLD_CONFIG_MISSING"
+    retryable: false
+    description: "skill_thresholds.yml config file not found or invalid"
+  - code: "FIT_SCORE_BELOW_MINIMUM"
+    retryable: false
+    description: "fit_score below minimum threshold (DENY)"

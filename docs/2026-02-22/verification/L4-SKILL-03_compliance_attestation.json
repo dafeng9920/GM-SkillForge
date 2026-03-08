@@ -1,0 +1,184 @@
+{
+  "compliance_attestation": {
+    "task_id": "L4-SKILL-03",
+    "skill_name": "rollback-drill-skill",
+    "compliance_officer": "Kior-C",
+    "decision": "PASS",
+    "reviewed_at": "2026-02-22T11:10:00Z",
+
+    "attestation_summary": "L4-SKILL-03 Rollback Drill Skill 满足所有合规要求",
+
+    "compliance_checks": {
+      "three_powers_separation": {
+        "status": "PASS",
+        "execution": "Kior-B",
+        "review": "vs--cc3",
+        "compliance": "Kior-C",
+        "note": "三权分立，角色不混同"
+      },
+
+      "b_guard_constraints": {
+        "status": "PASS",
+        "checks": [
+          {
+            "rule": "无 Compliance PASS 不得执行放行",
+            "evidence": "Gate Decision 等待本证明签署",
+            "result": "PASS"
+          },
+          {
+            "rule": "需要副作用动作时，无 permit=VALID 直接 FAIL",
+            "evidence": "本 Skill 默认 simulation_mode=true，无实际副作用",
+            "result": "PASS"
+          },
+          {
+            "rule": "无 EvidenceRef 直接 FAIL",
+            "evidence": "执行报告包含 3 个 EvidenceRef",
+            "result": "PASS"
+          }
+        ]
+      },
+
+      "gate_rule_compliance": {
+        "status": "PASS",
+        "rule": "通过条件=回滚与恢复都可复现且有前后状态证据，任一步失败即 DENY",
+        "verification": [
+          {
+            "condition": "回滚可复现",
+            "evidence": "run_rollback_drill.py --scope 可重复执行",
+            "result": "PASS"
+          },
+          {
+            "condition": "恢复可复现",
+            "evidence": "phase_5_verify_recovery() 验证 SHA256 一致",
+            "result": "PASS"
+          },
+          {
+            "condition": "前后状态证据",
+            "evidence": "pre_state.files[].sha256, post_state.files[].sha256",
+            "result": "PASS"
+          },
+          {
+            "condition": "任一步失败即 DENY",
+            "evidence": "DrillError -> sys.exit(1)",
+            "result": "PASS"
+          }
+        ]
+      },
+
+      "production_safety": {
+        "status": "PASS",
+        "checks": [
+          {
+            "requirement": "默认模拟模式",
+            "evidence": "simulation_mode=True by default",
+            "result": "PASS"
+          },
+          {
+            "requirement": "无生产影响声明",
+            "evidence": "attestation.no_production_impact=True in tombstone",
+            "result": "PASS"
+          },
+          {
+            "requirement": "备份完整性保证",
+            "evidence": "phase_2_backup() 验证 SHA256",
+            "result": "PASS"
+          }
+        ]
+      },
+
+      "execution_contract_compliance": {
+        "status": "PASS",
+        "required_elements": [
+          {
+            "element": "controls.timeout_ms",
+            "value": "300000",
+            "result": "PASS"
+          },
+          {
+            "element": "controls.max_targets",
+            "value": "10",
+            "result": "PASS"
+          },
+          {
+            "element": "controls.network_policy",
+            "value": "DENY_BY_DEFAULT",
+            "result": "PASS"
+          },
+          {
+            "element": "controls.simulation_mode",
+            "value": "true",
+            "result": "PASS"
+          }
+        ]
+      },
+
+      "deny_list_compliance": {
+        "status": "PASS",
+        "items": [
+          {
+            "deny_rule": "不得绕过门禁",
+            "evidence": "三角色流程强制执行",
+            "result": "PASS"
+          },
+          {
+            "deny_rule": "不得伪造 EvidenceRef",
+            "evidence": "SHA256 由 hashlib 实际计算",
+            "result": "PASS"
+          },
+          {
+            "deny_rule": "不得隐瞒失败",
+            "evidence": "DrillError 强制抛出并记录",
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+
+    "reasons": [
+      "三权分立结构完整：Execution(Kior-B) / Review(vs--cc3) / Compliance(Kior-C)",
+      "A/B Guard 结构已实现：A Guard(提案约束) / B Guard(执行约束)",
+      "Gate 规则严格执行：回滚/恢复可复现，前后状态有 SHA256 证据",
+      "任一步失败即 DENY：DrillError + sys.exit(1)",
+      "生产安全保障：simulation_mode 默认开启",
+      "ExecutionContract 完整：inputs/outputs/controls/roles/side_effects 齐全",
+      "无违反 deny list 行为",
+      "EvidenceRef 记录完整"
+    ],
+
+    "evidence_refs": [
+      {
+        "id": "EV-COMP-L4-SKILL-03-001",
+        "kind": "FILE",
+        "locator": "skills/rollback-drill-skill/SKILL.md"
+      },
+      {
+        "id": "EV-COMP-L4-SKILL-03-002",
+        "kind": "FILE",
+        "locator": "skills/rollback-drill-skill/run_rollback_drill.py"
+      },
+      {
+        "id": "EV-COMP-L4-SKILL-03-003",
+        "kind": "FILE",
+        "locator": "docs/2026-02-22/verification/L4-SKILL-03_execution_report.yaml"
+      },
+      {
+        "id": "EV-COMP-L4-SKILL-03-004",
+        "kind": "FILE",
+        "locator": "docs/2026-02-22/verification/L4-SKILL-03_gate_decision.json"
+      },
+      {
+        "id": "EV-COMP-L4-SKILL-03-005",
+        "kind": "LOGIC",
+        "locator": "phase_5_verify_recovery() - SHA256 前后对比验证"
+      }
+    ],
+
+    "contract_hash": "sha256:l4_skill_03_compliance_attestation_v1_20260222_kiorc",
+
+    "signature": {
+      "compliance_officer": "Kior-C",
+      "signed_at": "2026-02-22T11:10:00Z",
+      "valid_until": "2026-03-22T11:10:00Z"
+    }
+  }
+}

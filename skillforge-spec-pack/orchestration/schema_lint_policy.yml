@@ -1,0 +1,158 @@
+# GM OS Schema Lint Policy v0.1.0
+# L0-L3 的最低 Schema 颗粒度要求
+
+schema_version: "0.1.0"
+
+description: "定义不同风险等级的 Schema 字段和控制项最低要求"
+
+# 风险分级最低要求
+risk_tier_minimums:
+  L0:
+    description: "低风险 - 只读操作，无外部调用"
+    required_controls: []
+    required_schema_depth: 1
+    examples:
+      - "纯计算函数"
+      - "本地数据转换"
+
+  L1:
+    description: "标准风险 - 有限网络访问"
+    required_controls:
+      - "page_limit"
+    required_schema_depth: 2
+    examples:
+      - "GitHub 仓库搜索"
+      - "API 数据拉取"
+
+  L2:
+    description: "中风险 - 需要预算/范围限制"
+    required_controls:
+      - "page_limit"
+      - "timeout_seconds"
+      - "max_cost_usd"
+    required_schema_depth: 2
+    examples:
+      - "LLM 调用"
+      - "批量数据处理"
+
+  L3:
+    description: "高风险 - 强 Schema + 白名单 + 幂等"
+    required_controls:
+      - "page_limit"
+      - "timeout_seconds"
+      - "max_cost_usd"
+      - "max_tool_calls"
+      - "idempotency_key"
+    required_schema_depth: 3
+    required_features:
+      - "strict_enum_types"
+      - "domain_whitelist"
+      - "idempotency_support"
+    examples:
+      - "支付操作"
+      - "数据库写入"
+      - "文件系统修改"
+
+# Lint 规则定义
+lint_rules:
+  - rule_id: "controls.page_limit.exists"
+    description: "L1+ 必须包含 page_limit 控制字段"
+    severity: "error"
+    check:
+      type: "field_exists"
+      field: "controls.page_limit"
+    applies_to: ["L1", "L2", "L3"]
+    required_changes_template:
+      kind: "FIX_SCHEMA"
+      description: "添加 controls.page_limit 字段"
+
+  - rule_id: "controls.page_limit.range"
+    description: "page_limit 必须 <= 100"
+    severity: "error"
+    check:
+      type: "field_max"
+      field: "controls.page_limit"
+      value: 100
+    applies_to: ["L1", "L2", "L3"]
+    required_changes_template:
+      kind: "FIX_SCHEMA"
+      description: "将 page_limit 设置为 100 或更小"
+
+  - rule_id: "controls.timeout.exists"
+    description: "L2+ 必须包含 timeout_seconds"
+    severity: "error"
+    check:
+      type: "field_exists"
+      field: "controls.timeout_seconds"
+    applies_to: ["L2", "L3"]
+    required_changes_template:
+      kind: "FIX_SCHEMA"
+      description: "添加 controls.timeout_seconds 字段"
+
+  - rule_id: "controls.timeout.range"
+    description: "timeout_seconds 必须 >= 1 且 <= 3600"
+    severity: "error"
+    check:
+      type: "field_range"
+      field: "controls.timeout_seconds"
+      min: 1
+      max: 3600
+    applies_to: ["L2", "L3"]
+    required_changes_template:
+      kind: "FIX_SCHEMA"
+      description: "设置 timeout_seconds 在 1-3600 范围内"
+
+  - rule_id: "controls.max_cost.exists"
+    description: "L2+ 必须包含 max_cost_usd"
+    severity: "error"
+    check:
+      type: "field_exists"
+      field: "controls.max_cost_usd"
+    applies_to: ["L2", "L3"]
+    required_changes_template:
+      kind: "FIX_SCHEMA"
+      description: "添加 controls.max_cost_usd 字段"
+
+  - rule_id: "controls.idempotency.exists"
+    description: "L3 必须包含 idempotency_key"
+    severity: "error"
+    check:
+      type: "field_exists"
+      field: "controls.idempotency_key"
+    applies_to: ["L3"]
+    required_changes_template:
+      kind: "FIX_SCHEMA"
+      description: "添加 controls.idempotency_key 以支持幂等"
+
+  - rule_id: "schema.depth.minimum"
+    description: "Schema 嵌套深度必须满足等级要求"
+    severity: "warning"
+    check:
+      type: "schema_depth"
+      reference: "risk_tier_minimums.required_schema_depth"
+    applies_to: ["L0", "L1", "L2", "L3"]
+    required_changes_template:
+      kind: "FIX_SCHEMA"
+      description: "增加 Schema 字段定义深度"
+
+  - rule_id: "schema.enum.strict"
+    description: "L3 关键字段必须使用枚举类型"
+    severity: "error"
+    check:
+      type: "field_enum"
+      fields: ["action_type", "target_resource"]
+    applies_to: ["L3"]
+    required_changes_template:
+      kind: "FIX_SCHEMA"
+      description: "将关键字段改为枚举类型"
+
+  - rule_id: "alias.target_exists"
+    description: "控制字段别名必须指向 catalog 中存在的字段"
+    severity: "error"
+    check:
+      type: "alias_reference_exists"
+      catalog_file: "controls_catalog.yml"
+    applies_to: ["L0", "L1", "L2", "L3"]
+    required_changes_template:
+      kind: "FIX_SCHEMA"
+      description: "移除无效别名或添加对应字段到 catalog"

@@ -1,0 +1,107 @@
+{
+  "policy_version": "v1.0.0-20260222",
+  "policy_name": "5-Layer Static Audit Policy",
+  "description": "Default audit policy for L1-L5 skill quality assessment. Thresholds and weights can be modified without code changes.",
+
+  "token_estimator": {
+    "chars_per_token": 4
+  },
+
+  "cost": {
+    "thresholds": {
+      "max_pass": 2000,
+      "max_warn": 3000,
+      "max_fail_soft": 5000
+    },
+    "score_map": {
+      "pass": 100,
+      "warn": 75,
+      "fail_soft": 40,
+      "fail_hard": 0
+    }
+  },
+
+  "redundancy": {
+    "thresholds": {
+      "max_pass": 0.15,
+      "max_warn": 0.25,
+      "max_fail_soft": 0.40
+    },
+    "score_map": {
+      "pass": 100,
+      "warn": 70,
+      "fail_soft": 40,
+      "fail_hard": 0
+    }
+  },
+
+  "safety": {
+    "disclaimer_hints": ["disclaimer", "note:", "warning:", "caution:", "limitations"],
+    "review_hints": ["reviewed", "verified", "validated", "approved", "tested"],
+    "sensitive_keywords": ["password", "secret", "api_key", "token", "credential", "private_key"],
+    "sensitive_hits_high": 3,
+    "score_map": {
+      "high_risk_without_disclaimer": 0,
+      "full": 100,
+      "disclaimer_only": 70,
+      "review_only": 60,
+      "none": 40
+    }
+  },
+
+  "structure": {
+    "heading_depth": {
+      "pass": 5,
+      "warn": 3,
+      "min": 1
+    },
+    "weights": {
+      "required_fields": 0.4,
+      "depth": 0.4,
+      "h1": 0.2
+    }
+  },
+
+  "evidence_ready": {
+    "min_checklist": 1,
+    "min_numbered_steps": 2,
+    "min_tables": 1,
+    "base_score": 40,
+    "points_per_signal": 20,
+    "max_broken_link_penalty": 30,
+    "broken_link_penalty_per_item": 5,
+    "min_score": 0,
+    "max_score": 100
+  },
+
+  "levels": {
+    "pass_min": 70,
+    "warn_min": 40
+  },
+
+  "overall_weights": {
+    "L1_cost": 0.2,
+    "L2_redundancy": 0.15,
+    "L3_safety": 0.25,
+    "L4_structure": 0.2,
+    "L5_evidence_ready": 0.2
+  },
+
+  "gate": {
+    "fail_if_fail_count_gte": 2,
+    "warn_if_fail_count_gte": 1,
+    "warn_if_warn_count_gte": 3
+  },
+
+  "metadata": {
+    "created_at": "2026-02-22",
+    "author": "GM-SkillForge",
+    "change_log": [
+      {
+        "version": "v1.0.0-20260222",
+        "date": "2026-02-22",
+        "changes": "Initial policy version for P0-2 implementation"
+      }
+    ]
+  }
+}

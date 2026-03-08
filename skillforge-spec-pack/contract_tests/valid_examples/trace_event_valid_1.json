@@ -1,0 +1,10 @@
+{
+    "schema_version": "0.1.0",
+    "event_id": "ev1a2b3c-d5e6-7890-abcd-ef1234567890",
+    "execution_id": "e1a2b3c4-d5e6-7890-abcd-ef1234567890",
+    "event_type": "start",
+    "timestamp": "2026-02-15T16:00:01Z",
+    "node_id": "intake_repo",
+    "step_name": "fetch_source",
+    "metadata": {}
+}

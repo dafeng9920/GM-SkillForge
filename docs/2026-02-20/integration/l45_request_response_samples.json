@@ -1,0 +1,266 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "L4.5 Request/Response Samples",
+  "description": "成功/失败样例信封，用于前后端 n8n 集成联调验证",
+  "version": "v1.0",
+  "job_id": "L45-D1-N8N-BOUNDARY-20260220-001",
+  "skill_id": "l45_n8n_orchestration_boundary",
+  "generated_at": "2026-02-20T12:00:00Z",
+
+  "samples": {
+    "success_link_1": {
+      "description": "成功链路 - 有 Permit，正常执行",
+      "chain": "Frontend -> n8n -> SkillForge -> Evidence Writeback",
+      "request": {
+        "endpoint": "POST /api/v1/n8n/run_intent",
+        "headers": {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer {skillforge_api_token}"
+        },
+        "body": {
+          "repo_url": "https://github.com/skillforge/workflow-orchestration",
+          "commit_sha": "a1b2c3d4e5f6789012345678901234567890abcd",
+          "at_time": "2026-02-20T12:00:00Z",
+          "requester_id": "user-l45-integration",
+          "intent_id": "intent_release_v1",
+          "tier": "FREE",
+          "permit_token": "{valid_permit_token}"
+        },
+        "n8n_webhook_input": {
+          "repo_url": "https://github.com/skillforge/workflow-orchestration",
+          "commit_sha": "a1b2c3d4e5f6789012345678901234567890abcd",
+          "at_time": "2026-02-20T12:00:00Z",
+          "requester_id": "user-l45-integration",
+          "intent_id": "intent_release_v1",
+          "n8n_execution_id": "n8n-exec-1739980000"
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "ok": true,
+          "data": {
+            "intent_id": "intent_release_v1",
+            "repo_url": "https://github.com/skillforge/workflow-orchestration",
+            "commit_sha": "a1b2c3d4e5f6789012345678901234567890abcd",
+            "at_time": "2026-02-20T12:00:00Z",
+            "execution_status": "COMPLETED",
+            "permit_id": "PERMIT-20260220-A1B2C3D4",
+            "validation_timestamp": "2026-02-20T12:00:00Z",
+            "context": null
+          },
+          "gate_decision": "ALLOW",
+          "release_allowed": true,
+          "evidence_ref": "EV-N8N-INTENT-1739980000-A1B2C3D4",
+          "run_id": "RUN-N8N-1739980000-A1B2C3D4"
+        }
+      },
+      "gate_decision_source": "SkillForge (GatePermit.execute())",
+      "evidence_chain": {
+        "evidence_refs": [
+          {
+            "ref_id": "EV-N8N-INTENT-1739980000-A1B2C3D4",
+            "type": "audit_pack",
+            "source_locator": "AuditPack/n8n/RUN-N8N-1739980000-A1B2C3D4/",
+            "content_hash": "sha256:abc123def456...",
+            "timestamp": "2026-02-20T12:00:00Z"
+          }
+        ]
+      },
+      "replay_pointer": "replay://RUN-N8N-1739980000-A1B2C3D4",
+      "result": "PASS"
+    },
+
+    "failure_link_e001": {
+      "description": "失败链路 E001 - 无 Permit，fail-closed",
+      "chain": "Frontend -> n8n -> SkillForge -> E001 BLOCKED",
+      "request": {
+        "endpoint": "POST /api/v1/n8n/run_intent",
+        "headers": {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer {skillforge_api_token}"
+        },
+        "body": {
+          "repo_url": "https://github.com/skillforge/workflow-orchestration",
+          "commit_sha": "a1b2c3d4e5f6789012345678901234567890abcd",
+          "at_time": "2026-02-20T12:00:00Z",
+          "requester_id": "user-l45-integration",
+          "intent_id": "intent_release_v1",
+          "tier": "FREE",
+          "permit_token": null
+        },
+        "n8n_webhook_input": {
+          "repo_url": "https://github.com/skillforge/workflow-orchestration",
+          "commit_sha": "a1b2c3d4e5f6789012345678901234567890abcd",
+          "at_time": "2026-02-20T12:00:00Z",
+          "requester_id": "user-l45-integration",
+          "intent_id": "intent_release_v1",
+          "n8n_execution_id": "n8n-exec-1739980001"
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "ok": false,
+          "error_code": "E001",
+          "blocked_by": "PERMIT_REQUIRED",
+          "message": "Permit token is required for execution",
+          "evidence_ref": "EV-N8N-INTENT-1739980001-E001DEMO",
+          "run_id": "RUN-N8N-1739980001-E001DEMO"
+        }
+      },
+      "fail_closed_verification": {
+        "ok_is_false": true,
+        "release_allowed_undefined": true,
+        "no_implicit_degradation": true,
+        "n8n_retry_allowed": false
+      },
+      "gate_decision_source": "N/A (blocked before gate)",
+      "replay_pointer": null,
+      "replay_pointer_reason": "No Permit, execution blocked, no replay point generated",
+      "result": "PASS (fail-closed correct)"
+    },
+
+    "failure_link_e003": {
+      "description": "失败链路 E003 - Permit 签名无效，fail-closed",
+      "chain": "Frontend -> n8n -> SkillForge -> E003 BLOCKED",
+      "request": {
+        "endpoint": "POST /api/v1/n8n/run_intent",
+        "headers": {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer {skillforge_api_token}"
+        },
+        "body": {
+          "repo_url": "https://github.com/skillforge/workflow-orchestration",
+          "commit_sha": "a1b2c3d4e5f6789012345678901234567890abcd",
+          "at_time": "2026-02-20T12:00:00Z",
+          "requester_id": "user-l45-integration",
+          "intent_id": "intent_release_v1",
+          "tier": "FREE",
+          "permit_token": "TAMPERED_TOKEN_INVALID_SIGNATURE_XYZ123"
+        },
+        "n8n_webhook_input": {
+          "repo_url": "https://github.com/skillforge/workflow-orchestration",
+          "commit_sha": "a1b2c3d4e5f6789012345678901234567890abcd",
+          "at_time": "2026-02-20T12:00:00Z",
+          "requester_id": "user-l45-integration",
+          "intent_id": "intent_release_v1",
+          "n8n_execution_id": "n8n-exec-1739980002"
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "ok": false,
+          "error_code": "E003",
+          "blocked_by": "PERMIT_INVALID",
+          "message": "Permit signature validation failed",
+          "evidence_ref": "EV-N8N-INTENT-1739980002-E003DEMO",
+          "run_id": "RUN-N8N-1739980002-E003DEMO"
+        }
+      },
+      "fail_closed_verification": {
+        "ok_is_false": true,
+        "release_allowed_undefined": true,
+        "no_implicit_degradation": true,
+        "n8n_retry_allowed": false
+      },
+      "gate_decision_source": "SkillForge (GatePermit.execute() - validation failed)",
+      "replay_pointer": null,
+      "replay_pointer_reason": "Invalid Permit signature, execution blocked, no replay point generated",
+      "result": "PASS (fail-closed correct)"
+    }
+  },
+
+  "envelope_schemas": {
+    "success_envelope": {
+      "description": "成功信封格式",
+      "required_fields": ["ok", "data", "gate_decision", "release_allowed", "evidence_ref", "run_id"],
+      "example": {
+        "ok": true,
+        "data": { "...": "..." },
+        "gate_decision": "ALLOW",
+        "release_allowed": true,
+        "evidence_ref": "EV-N8N-INTENT-{ts}-{uid}",
+        "run_id": "RUN-N8N-{ts}-{uid}"
+      }
+    },
+    "error_envelope": {
+      "description": "失败信封格式",
+      "required_fields": ["ok", "error_code", "blocked_by", "message", "evidence_ref", "run_id"],
+      "example": {
+        "ok": false,
+        "error_code": "E001|E003|...",
+        "blocked_by": "PERMIT_REQUIRED|PERMIT_INVALID|...",
+        "message": "Human readable error message",
+        "evidence_ref": "EV-N8N-INTENT-{ts}-{uid}",
+        "run_id": "RUN-N8N-{ts}-{uid}"
+      }
+    }
+  },
+
+  "at_time_requirements": {
+    "description": "at_time 固定输入要求",
+    "format": "ISO8601",
+    "required": true,
+    "example": "2026-02-20T12:00:00Z",
+    "usage": [
+      "run_intent API - 用于时间点执行",
+      "fetch_pack API - 用于时间点获取 AuditPack",
+      "query_rag API - 用于时间点 RAG 查询"
+    ],
+    "constraint": "at_time 必须在请求中明确指定，不得由 n8n 自动生成"
+  },
+
+  "n8n_boundary_contract": {
+    "allowed_input_fields": [
+      "repo_url",
+      "commit_sha",
+      "at_time",
+      "requester_id",
+      "intent_id",
+      "n8n_execution_id"
+    ],
+    "forbidden_input_fields": [
+      "gate_decision",
+      "release_allowed",
+      "evidence_ref",
+      "permit_id"
+    ],
+    "retry_policy": {
+      "allowed_errors": ["E_NETWORK", "E_TIMEOUT"],
+      "forbidden_retry_errors": ["E001", "E003"]
+    },
+    "n8n_responsibilities": ["trigger", "route", "retry", "notify"],
+    "n8n_forbidden_actions": [
+      "generate_release_allowed_decision",
+      "bypass_skillforge_api",
+      "direct_registry_write",
+      "modify_backend_code"
+    ]
+  },
+
+  "gate_decision_source_verification": {
+    "statement": "gate_decision 来源为 SkillForge，n8n 无最终裁决权",
+    "evidence": {
+      "api_endpoint": "POST /api/v1/n8n/run_intent",
+      "decision_computed_by": "GatePermit.execute()",
+      "n8n_role": "仅消费 SkillForge 返回的 gate_decision，不自造决策",
+      "workflow_node": "Route by gate_decision",
+      "workflow_node_note": "仅消费 SkillForge 返回的 gate_decision，不自造决策"
+    }
+  },
+
+  "metadata": {
+    "created_by": "Kior-A",
+    "task_id": "T5",
+    "wave": "Wave 2",
+    "depends_on": ["T1", "T3", "T4"],
+    "contract_refs": [
+      "skillforge/src/api/l4_api.py",
+      "docs/2026-02-20/n8n/l45_day1_workflow.json",
+      "skillforge/src/contracts/governance/n8n_execution_receipt.schema.json",
+      "docs/2026-02-19/L4/l4_front_backend_integration_report_v1.md"
+    ]
+  }
+}

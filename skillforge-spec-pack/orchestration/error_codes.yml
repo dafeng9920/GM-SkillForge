@@ -1,0 +1,151 @@
+# orchestration/error_codes.yml
+# GM-SkillForge Audit Engine — Standardized Error Codes
+# Aligned with AUDIT_ENGINE_PROTOCOL_v1.md
+# Every Gate fail MUST reference an error_code from this file.
+
+schema_version: 1
+
+# Shared enums for UI / validate.py canonical sets
+enums:
+  category: [INTAKE, LICENSE, SCAN, CONTRACT, RISK, SCAFFOLD, SANDBOX, PACK]
+  severity: [INFO, WARN, ERROR, BLOCKER]
+
+error_codes:
+  # ===== Gate: intake_repo =====
+  SF_INTAKE_REPO_FAILED:
+    code: SF_INTAKE_REPO_FAILED
+    http_status: 400
+    severity: BLOCKER
+    category: INTAKE
+    title: "Repository intake failed"
+    default_user_message: "无法接入仓库：请检查仓库地址与访问权限。"
+    developer_hint: "Validate repo URL/SSH string; check auth token/SSH key; verify network/DNS; ensure repo exists and is reachable."
+    doc: "docs/errors/SF_INTAKE_REPO_FAILED.md"
+    i18n:
+      title_key: "error.SF_INTAKE_REPO_FAILED.title"
+      message_key: "error.SF_INTAKE_REPO_FAILED.message"
+
+  # ===== Gate: license_gate =====
+  SF_LICENSE_DENIED:
+    code: SF_LICENSE_DENIED
+    http_status: 403
+    severity: BLOCKER
+    category: LICENSE
+    title: "License gate denied"
+    default_user_message: "许可证门禁未通过：该仓库许可不满足发布或使用要求。"
+    developer_hint: "Detect license (SPDX); ensure allowed list; if missing/ambiguous, add LICENSE file or explicit SPDX identifier."
+    doc: "docs/errors/SF_LICENSE_DENIED.md"
+    i18n:
+      title_key: "error.SF_LICENSE_DENIED.title"
+      message_key: "error.SF_LICENSE_DENIED.message"
+
+  # ===== Gate: repo_scan_fit_score =====
+  SF_SCAN_FIT_SCORE_LOW:
+    code: SF_SCAN_FIT_SCORE_LOW
+    http_status: 422
+    severity: ERROR
+    category: SCAN
+    title: "Repository scan fit score too low"
+    default_user_message: "仓库扫描适配度不足：请按建议修复后重试。"
+    developer_hint: "Surface scan signals: missing structure, unsupported language, missing required files; include computed fit_score and thresholds in EvidenceRef."
+    doc: "docs/errors/SF_SCAN_FIT_SCORE_LOW.md"
+    i18n:
+      title_key: "error.SF_SCAN_FIT_SCORE_LOW.title"
+      message_key: "error.SF_SCAN_FIT_SCORE_LOW.message"
+
+  # ===== Gate: draft_skill_spec =====
+  SF_CONTRACT_DRAFT_INVALID:
+    code: SF_CONTRACT_DRAFT_INVALID
+    http_status: 422
+    severity: ERROR
+    category: CONTRACT
+    title: "Skill contract draft invalid"
+    default_user_message: "Skill 合约草案不满足 contracts-first 约束：请补齐必填字段并修正格式。"
+    developer_hint: "Validate required contract fields, IssueKey format, EvidenceRef placeholders, and required_changes_templates alignment with quality_gate_levels.yml."
+    doc: "docs/errors/SF_CONTRACT_DRAFT_INVALID.md"
+    i18n:
+      title_key: "error.SF_CONTRACT_DRAFT_INVALID.title"
+      message_key: "error.SF_CONTRACT_DRAFT_INVALID.message"
+
+  # ===== Gate: constitution_risk_gate =====
+  SF_RISK_CONSTITUTION_BLOCKED:
+    code: SF_RISK_CONSTITUTION_BLOCKED
+    http_status: 409
+    severity: BLOCKER
+    category: RISK
+    title: "Constitution risk gate blocked"
+    default_user_message: "风险门禁拦截：请求触发宪法级限制，需要调整实现范围或添加必要的安全约束。"
+    developer_hint: "Attach decision rationale and minimal EvidenceRef pack; map to Level (L3/L4/L5) constraints; ensure denial includes next_action."
+    doc: "docs/errors/SF_RISK_CONSTITUTION_BLOCKED.md"
+    i18n:
+      title_key: "error.SF_RISK_CONSTITUTION_BLOCKED.title"
+      message_key: "error.SF_RISK_CONSTITUTION_BLOCKED.message"
+
+  # ===== Gate: scaffold_skill_impl =====
+  SF_SCAFFOLD_GENERATION_FAILED:
+    code: SF_SCAFFOLD_GENERATION_FAILED
+    http_status: 500
+    severity: ERROR
+    category: SCAFFOLD
+    title: "Skill scaffold generation failed"
+    default_user_message: "Skill 脚手架生成失败：请查看构建日志并按建议修复。"
+    developer_hint: "Include generator trace, template revision, and file diff summary in EvidenceRef; ensure deterministic outputs under Revision."
+    doc: "docs/errors/SF_SCAFFOLD_GENERATION_FAILED.md"
+    i18n:
+      title_key: "error.SF_SCAFFOLD_GENERATION_FAILED.title"
+      message_key: "error.SF_SCAFFOLD_GENERATION_FAILED.message"
+
+  # ===== Gate: sandbox_test_and_trace =====
+  SF_SANDBOX_TEST_FAILED:
+    code: SF_SANDBOX_TEST_FAILED
+    http_status: 422
+    severity: ERROR
+    category: SANDBOX
+    title: "Sandbox test and trace failed"
+    default_user_message: "沙盒测试未通过：需要补齐可复现的测试与审计轨迹。"
+    developer_hint: "Require minimal test + trace; attach failing test output and trace EvidenceRef; ensure trace includes IssueKey linkage."
+    doc: "docs/errors/SF_SANDBOX_TEST_FAILED.md"
+    i18n:
+      title_key: "error.SF_SANDBOX_TEST_FAILED.title"
+      message_key: "error.SF_SANDBOX_TEST_FAILED.message"
+
+  # ===== Gate: pack_audit_and_publish =====
+  SF_PACK_AUDIT_FAILED:
+    code: SF_PACK_AUDIT_FAILED
+    http_status: 422
+    severity: ERROR
+    category: PACK
+    title: "Audit pack assemble/publish failed"
+    default_user_message: "审计包组装或发布失败：缺少最小 AuditPack 文件集合或证据链不闭环。"
+    developer_hint: "Verify required AuditPack files for Level; ensure EvidenceRef resolves; verify snapshot/index revision and tombstone metadata."
+    doc: "docs/errors/SF_PACK_AUDIT_FAILED.md"
+    i18n:
+      title_key: "error.SF_PACK_AUDIT_FAILED.title"
+      message_key: "error.SF_PACK_AUDIT_FAILED.message"
+
+  # ===== Generic codes (allowed extras) =====
+  SF_VALIDATION_ERROR:
+    code: SF_VALIDATION_ERROR
+    http_status: 400
+    severity: ERROR
+    category: CONTRACT
+    title: "Configuration validation error"
+    default_user_message: "配置校验失败：请修正配置文件格式或缺失字段。"
+    developer_hint: "Raised by validate.py on schema mismatch; include file path and JSON-pointer style location."
+    i18n:
+      title_key: "error.SF_VALIDATION_ERROR.title"
+      message_key: "error.SF_VALIDATION_ERROR.message"
+    generic: true
+
+  SF_INTERNAL_ERROR:
+    code: SF_INTERNAL_ERROR
+    http_status: 500
+    severity: BLOCKER
+    category: PACK
+    title: "Internal error"
+    default_user_message: "系统内部错误：请稍后重试或联系维护者。"
+    developer_hint: "Catch-all for unhandled exceptions; must attach stack trace, Revision, and at_time context in EvidenceRef when available."
+    i18n:
+      title_key: "error.SF_INTERNAL_ERROR.title"
+      message_key: "error.SF_INTERNAL_ERROR.message"
+    generic: true

@@ -1,0 +1,78 @@
+# GM Quant System - Python 项目配置
+
+[project]
+name = "gm-quant-system"
+version = "0.1.0"
+description = "AI-powered quantitative trading system with SkillForge orchestration"
+authors = [{name = "GM Team"}]
+requires-python = ">=3.11"
+readme = "README.md"
+
+dependencies = [
+    # Core
+    "pydantic>=2.5.0",
+    "python-dotenv>=1.0.0",
+
+    # Data
+    "pandas>=2.0.0",
+    "numpy>=1.24.0",
+
+    # Database
+    "psycopg2-binary>=2.9.9",
+    "redis>=5.0.0",
+    "taos-ws-py>=0.1.0",
+
+    # OpenBB (可选 - AGPLv3)
+    # "openbb>=4.0.0",
+
+    # Kronos (可选)
+    # "torch>=2.0.0",
+    # "transformers>=4.30.0",
+
+    # VeighNa (可选)
+    # "vnpy>=4.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pytest-asyncio>=0.21.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.7.0",
+]
+
+openbb = ["openbb>=4.0.0"]
+kronos = ["torch>=2.0.0", "transformers>=4.30.0"]
+veighna = ["vnpy>=4.0.0"]
+all = [
+    "gm-quant-system[dev,openbb,kronos,veighna]",
+]
+
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["skills*", "services*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+[tool.ruff]
+line-length = 100
+select = ["E", "F", "W", "I", "N", "UP"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_ignores = true

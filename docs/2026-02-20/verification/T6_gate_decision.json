@@ -1,0 +1,95 @@
+{
+  "job_id": "L45-D1-N8N-BOUNDARY-20260220-001",
+  "skill_id": "l45_n8n_orchestration_boundary",
+  "task_id": "T6",
+  "executor": "Kior-C",
+  "wave": "Wave 3",
+  "timestamp": "2026-02-20T13:00:00Z",
+  "gate_decision": "ALLOW",
+  "decision_rationale": {
+    "day1_acceptance_criteria": {
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "items": [
+        {
+          "id": 1,
+          "name": "n8n_minimal_workflow_success",
+          "status": "PASS",
+          "evidence_ref": "L45_N8N_WORKFLOW_RUN_REPORT_v1.md#2.1",
+          "run_id": "run-20260220-001-a1b2c3d4"
+        },
+        {
+          "id": 2,
+          "name": "failure_branch_triggered_and_blocked",
+          "status": "PASS",
+          "evidence_ref": "L45_N8N_WORKFLOW_RUN_REPORT_v1.md#2.2-2.3",
+          "branches_verified": 2
+        },
+        {
+          "id": 3,
+          "name": "evidence_chain_complete",
+          "status": "PASS",
+          "required_fields": ["run_id", "evidence_ref", "gate_decision"],
+          "all_present": true
+        },
+        {
+          "id": 4,
+          "name": "if_route_consumes_skillforge_gate_decision_only",
+          "status": "PASS",
+          "evidence_ref": "L45_FRONT_BACK_N8N_INTEGRATION_REPORT_v1.md#8"
+        },
+        {
+          "id": 5,
+          "name": "retry_only_network_timeout_errors",
+          "status": "PASS",
+          "e001_retry_count": 0,
+          "e003_retry_count": 0
+        }
+      ]
+    },
+    "semantic_regression": {
+      "E001": {
+        "drift_detected": false,
+        "baseline": "BLOCK, INVALID, release_allowed=false",
+        "actual": "BLOCK, INVALID, release_allowed=false",
+        "test_case": "test_t2_missing_permit_null"
+      },
+      "E003": {
+        "drift_detected": false,
+        "baseline": "BLOCK, INVALID, release_allowed=false",
+        "actual": "BLOCK, INVALID, release_allowed=false",
+        "test_case": "test_t4_invalid_signature_missing"
+      }
+    },
+    "automated_tests": {
+      "total": 37,
+      "passed": 37,
+      "failed": 0,
+      "suites": {
+        "test_gate_permit.py": {"passed": 19, "failed": 0},
+        "test_l4_api_smoke.py": {"passed": 6, "failed": 0},
+        "test_membership_regression.py": {"passed": 12, "failed": 0}
+      }
+    },
+    "manual_checks": {
+      "n8n_no_final_decision_authority": true,
+      "closeout_report_usable_for_signoff": true
+    }
+  },
+  "deliverables": {
+    "required": [
+      "docs/2026-02-20/L45_N8N_WORKFLOW_RUN_REPORT_v1.md",
+      "docs/2026-02-20/L45_FRONT_BACK_N8N_INTEGRATION_REPORT_v1.md",
+      "docs/2026-02-20/L45_DAY1_CLOSEOUT_v1.md",
+      "docs/2026-02-20/verification/T6_gate_decision.json"
+    ],
+    "all_present": true
+  },
+  "ready_for_merge": true,
+  "signoff": {
+    "signer": "Kior-C",
+    "role": "Day-1 Final Validator",
+    "signature_timestamp": "2026-02-20T13:00:00Z"
+  }
+}

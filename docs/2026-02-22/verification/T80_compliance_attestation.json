@@ -1,0 +1,23 @@
+{
+  "schema_version": "0.1.0",
+  "attestation_id": "att-T80-20260222183000",
+  "task_id": "T80",
+  "executor": "vs--cc2",
+  "compliance_officer": "Kior-C",
+  "created_at": "2026-02-22T18:30:00Z",
+  "attestation": {
+    "statement": "T70-T79 aggregation complete, all interception checks passed",
+    "status": "VERIFIED"
+  },
+  "compliance_checks": [
+    {"check": "T70-T79 gate_decision.json present", "status": "PASS"},
+    {"check": "T70-T79 compliance_attestation.json present", "status": "PASS"},
+    {"check": "T70-T79 evidence_refs present", "status": "PASS"},
+    {"check": "No side effects requiring permit", "status": "PASS"}
+  ],
+  "compliance_summary": {"total": 4, "passed": 4, "failed": 0},
+  "signatures": {
+    "executor": {"id": "vs--cc2", "signed_at": "2026-02-22T18:30:00Z"},
+    "compliance_officer": {"id": "Kior-C", "signed_at": "2026-02-22T19:40:00Z"}
+  }
+}

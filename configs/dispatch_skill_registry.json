@@ -1,0 +1,54 @@
+{
+  "version": "2026-02-24",
+  "description": "Dispatch-level skill discovery registry for orchestrated task packs.",
+  "dispatch_skills": [
+    {
+      "name": "governance-orchestrator-skill",
+      "path": "skills/governance-orchestrator-skill/SKILL.md",
+      "owner_role": "Orchestrator",
+      "trigger": "统一调度、校验、返工收敛与 Final Gate 裁决"
+    },
+    {
+      "name": "seed-gate-validator-skill",
+      "path": "skills/seed-gate-validator-skill/SKILL.md",
+      "owner_role": "Orchestrator",
+      "trigger": "批次收口前 strict gate 校验"
+    },
+    {
+      "name": "master-signoff-skill",
+      "path": "skills/master-signoff-skill/SKILL.md",
+      "owner_role": "Orchestrator",
+      "trigger": "主控签核阶段（Txx Master-Control）"
+    },
+    {
+      "name": "task-pack-writer-skill",
+      "path": "skills/task-pack-writer-skill/SKILL.md",
+      "owner_role": "Orchestrator",
+      "trigger": "新批次任务包生成/改版"
+    },
+    {
+      "name": "drill-evidence-collector-skill",
+      "path": "skills/drill-evidence-collector-skill/SKILL.md",
+      "owner_role": "Execution",
+      "trigger": "单次可审计演练收口"
+    },
+    {
+      "name": "experience-template-retriever-skill",
+      "path": "skills/experience-template-retriever-skill/SKILL.md",
+      "owner_role": "Execution",
+      "trigger": "按 IssueKey/FixKind 复用经验模板"
+    },
+    {
+      "name": "trinity-dispatch-orchestrator-skill",
+      "path": "skills/trinity-dispatch-orchestrator-skill/SKILL.md",
+      "owner_role": "Orchestrator",
+      "trigger": "兼容层（建议迁移到 governance-orchestrator-skill）"
+    },
+    {
+      "name": "GOVERNANCE_PROTOCOL",
+      "path": ".agents/skills/governance_protocol/SKILL.md",
+      "owner_role": "Compliance",
+      "trigger": "高风险操作（Shell/File/DB/Network）前强制治理与审计"
+    }
+  ]
+}

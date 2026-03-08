@@ -1,0 +1,487 @@
+# n8n Boundary Contract Definition
+# SkillForge Governance System - n8n Orchestration Boundary API
+# Version: v1.0
+# Job ID: L45-D1-N8N-BOUNDARY-20260220-001
+
+openapi: 3.0.3
+info:
+  title: SkillForge n8n Boundary API
+  description: |
+    API definitions for n8n orchestration boundary adapter.
+
+    This contract enforces strict input/output boundaries between n8n and SkillForge:
+    - **Allowed Inputs**: repo_url, commit_sha, at_time, requester_id, intent_id, n8n_execution_id
+    - **Forbidden Inputs**: gate_decision, release_allowed, evidence_ref, permit_id
+    - **Policy**: at_time must be fixed, no "latest" auto-drift
+
+    **Boundary Rules**:
+    1. n8n can only trigger/route/retry/notify - NO final decision
+    2. SkillForge owns final GateDecision + Permit + EvidenceRef
+    3. All rejections return structured error envelope (fail-closed)
+    4. Forbidden fields trigger immediate rejection with error code N8N-FORBIDDEN-FIELD
+  version: 1.0.0
+  contact:
+    name: SkillForge Team
+  license:
+    name: Proprietary
+
+servers:
+  - url: https://api.skillforge.local/v1/n8n
+    description: Production n8n boundary
+  - url: https://api-staging.skillforge.local/v1/n8n
+    description: Staging n8n boundary
+
+tags:
+  - name: n8n-boundary
+    description: n8n orchestration boundary operations
+
+paths:
+  /run_intent:
+    post:
+      tags:
+        - n8n-boundary
+      summary: Execute an intent via n8n orchestration
+      description: |
+        Triggers an intent execution through n8n orchestration boundary.
+
+        **Input Whitelist** (only these fields are accepted):
+        - `repo_url`: Repository URL (required)
+        - `commit_sha`: 40-character commit SHA (required)
+        - `at_time`: ISO-8601 timestamp - FIXED, no "latest" (required)
+        - `requester_id`: ID of the requesting user/system (required)
+        - `intent_id`: Intent identifier (required)
+        - `n8n_execution_id`: n8n workflow execution ID (optional)
+
+        **Forbidden Fields** (triggers immediate rejection):
+        - `gate_decision`: n8n cannot override gate decision
+        - `release_allowed`: n8n cannot bypass release control
+        - `evidence_ref`: n8n cannot inject fake evidence
+        - `permit_id`: n8n cannot inject permit references
+      operationId: n8nRunIntent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/N8nIntentRequest'
+            examples:
+              valid_request:
+                summary: Valid n8n intent request
+                value:
+                  repo_url: "https://github.com/skillforge/workflow-orchestration"
+                  commit_sha: "a1b2c3d4e5f6789012345678901234567890abcd"
+                  at_time: "2026-02-19T12:00:00Z"
+                  requester_id: "user-kior-b"
+                  intent_id: "cognition_10d"
+                  n8n_execution_id: "n8n-exec-xyz123"
+              forbidden_field_attempt:
+                summary: Forbidden field attempt (will be rejected)
+                value:
+                  repo_url: "https://github.com/skillforge/workflow-orchestration"
+                  commit_sha: "a1b2c3d4e5f6789012345678901234567890abcd"
+                  at_time: "2026-02-19T12:00:00Z"
+                  requester_id: "user-kior-b"
+                  intent_id: "cognition_10d"
+                  gate_decision: "PASS"
+                  release_allowed: true
+      responses:
+        '200':
+          description: Intent execution initiated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/N8nIntentResponse'
+              examples:
+                success:
+                  value:
+                    run_id: "RUN-N8N-20260220-A1B2C3"
+                    status: "ACCEPTED"
+                    intent_id: "cognition_10d"
+                    n8n_execution_id: "n8n-exec-xyz123"
+                    boundary_validated: true
+                    forbidden_fields_detected: []
+                    created_at: "2026-02-20T10:00:00Z"
+        '400':
+          description: Invalid request - whitelist violation or forbidden field
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/N8nBoundaryErrorResponse'
+              examples:
+                forbidden_field:
+                  summary: Forbidden field detected
+                  value:
+                    error_code: "N8N-FORBIDDEN-FIELD"
+                    error_message: "Forbidden field detected: gate_decision. n8n cannot set gate_decision."
+                    forbidden_fields: ["gate_decision", "release_allowed"]
+                    allowed_fields: ["repo_url", "commit_sha", "at_time", "requester_id", "intent_id", "n8n_execution_id"]
+                    timestamp: "2026-02-20T10:00:00Z"
+                unknown_field:
+                  summary: Unknown field detected
+                  value:
+                    error_code: "N8N-WHITELIST-VIOLATION"
+                    error_message: "Unknown field detected: custom_field. Only whitelisted fields are allowed."
+                    unknown_fields: ["custom_field"]
+                    allowed_fields: ["repo_url", "commit_sha", "at_time", "requester_id", "intent_id", "n8n_execution_id"]
+                    timestamp: "2026-02-20T10:00:00Z"
+                at_time_latest:
+                  summary: at_time cannot be 'latest'
+                  value:
+                    error_code: "N8N-AT-TIME-FIXED-REQUIRED"
+                    error_message: "at_time must be a fixed ISO-8601 timestamp. 'latest' auto-drift is not allowed."
+                    timestamp: "2026-02-20T10:00:00Z"
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/N8nBoundaryErrorResponse'
+        '403':
+          description: n8n capability denied by membership policy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/N8nBoundaryErrorResponse'
+              examples:
+                capability_denied:
+                  value:
+                    error_code: "MEMBERSHIP-CAPABILITY-DENIED"
+                    error_message: "EXECUTE_VIA_N8N capability not available for FREE tier."
+                    tier: "FREE"
+                    action: "EXECUTE_VIA_N8N"
+                    timestamp: "2026-02-20T10:00:00Z"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/N8nBoundaryErrorResponse'
+
+  /fetch_pack:
+    get:
+      tags:
+        - n8n-boundary
+      summary: Fetch execution pack by run_id
+      description: |
+        Retrieves the execution pack (evidence, decision, audit) for a completed run.
+
+        **Output** contains:
+        - `run_id`: Execution identifier
+        - `gate_decision`: Final gate decision (SkillForge-generated, NOT n8n)
+        - `evidence_ref`: Evidence references
+        - `audit_pack_ref`: Audit pack location (if PASS)
+        - `replay_pointer`: Pointer for at-time replay
+      operationId: n8nFetchPack
+      parameters:
+        - name: run_id
+          in: query
+          required: true
+          description: Run identifier from run_intent
+          schema:
+            type: string
+            pattern: '^RUN-N8N-\d{8}-[A-Z0-9]{6}$'
+        - name: n8n_execution_id
+          in: query
+          required: false
+          description: n8n workflow execution ID for correlation
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Execution pack retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/N8nFetchPackResponse'
+        '404':
+          description: Run not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/N8nBoundaryErrorResponse'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/N8nBoundaryErrorResponse'
+
+  /query_rag:
+    get:
+      tags:
+        - n8n-boundary
+      summary: Query RAG with at_time replay
+      description: |
+        Queries the RAG system with time-travel capability.
+
+        **Important**: at_time is REQUIRED and must be a fixed timestamp.
+        No "latest" auto-drift is allowed.
+      operationId: n8nQueryRag
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: RAG query string
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 1000
+        - name: at_time
+          in: query
+          required: true
+          description: ISO-8601 timestamp for time-travel query (REQUIRED, no 'latest')
+          schema:
+            type: string
+            format: date-time
+        - name: n8n_execution_id
+          in: query
+          required: false
+          description: n8n workflow execution ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: RAG query result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/N8nRagQueryResponse'
+        '400':
+          description: Invalid query or missing at_time
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/N8nBoundaryErrorResponse'
+
+components:
+  schemas:
+    # --- n8n Request Schemas ---
+    N8nIntentRequest:
+      type: object
+      required:
+        - repo_url
+        - commit_sha
+        - at_time
+        - requester_id
+        - intent_id
+      properties:
+        repo_url:
+          type: string
+          format: uri
+          description: Repository URL to process
+        commit_sha:
+          type: string
+          pattern: '^[0-9a-f]{40}$'
+          description: 40-character commit SHA
+        at_time:
+          type: string
+          format: date-time
+          description: |
+            ISO-8601 timestamp for time-travel query.
+            MUST be a fixed timestamp - "latest" is NOT allowed.
+        requester_id:
+          type: string
+          description: ID of the requesting user or system
+        intent_id:
+          type: string
+          description: Intent identifier (e.g., "cognition_10d")
+        n8n_execution_id:
+          type: string
+          description: Optional n8n workflow execution ID for correlation
+
+    N8nIntentResponse:
+      type: object
+      required:
+        - run_id
+        - status
+        - intent_id
+        - boundary_validated
+        - created_at
+      properties:
+        run_id:
+          type: string
+          description: Unique run identifier
+        status:
+          type: string
+          enum: ["ACCEPTED", "REJECTED"]
+        intent_id:
+          type: string
+        n8n_execution_id:
+          type: string
+        boundary_validated:
+          type: boolean
+          description: Whether input passed boundary validation
+        forbidden_fields_detected:
+          type: array
+          items:
+            type: string
+          description: List of forbidden fields detected (should be empty if ACCEPTED)
+        created_at:
+          type: string
+          format: date-time
+
+    N8nFetchPackResponse:
+      type: object
+      required:
+        - run_id
+        - gate_decision
+        - evidence_ref
+        - generated_at
+      properties:
+        run_id:
+          type: string
+        intent_id:
+          type: string
+        gate_decision:
+          type: object
+          required:
+            - decision
+            - level_min
+          properties:
+            decision:
+              type: string
+              enum: ["PASS", "FAIL", "PENDING"]
+            level_min:
+              type: string
+            rejection_reasons:
+              type: array
+              items:
+                type: string
+        evidence_ref:
+          type: array
+          items:
+            $ref: '#/components/schemas/EvidenceRef'
+        audit_pack_ref:
+          type: string
+          description: Audit pack reference (present if PASS)
+        replay_pointer:
+          type: object
+          description: Pointer for at-time replay
+          properties:
+            at_time:
+              type: string
+              format: date-time
+            commit_sha:
+              type: string
+            revision:
+              type: string
+        generated_at:
+          type: string
+          format: date-time
+
+    N8nRagQueryResponse:
+      type: object
+      required:
+        - query
+        - at_time
+        - results
+        - generated_at
+      properties:
+        query:
+          type: string
+        at_time:
+          type: string
+          format: date-time
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              content:
+                type: string
+              source_ref:
+                type: string
+              relevance_score:
+                type: number
+        replay_pointer:
+          type: object
+          properties:
+            at_time:
+              type: string
+              format: date-time
+        generated_at:
+          type: string
+          format: date-time
+
+    EvidenceRef:
+      type: object
+      required:
+        - ref_id
+        - type
+        - path
+      properties:
+        ref_id:
+          type: string
+        type:
+          type: string
+          enum: ["audit_pack", "log", "artifact", "metric", "screenshot", "report", "signature"]
+        path:
+          type: string
+        hash:
+          type: object
+          properties:
+            algorithm:
+              type: string
+            value:
+              type: string
+        generated_at:
+          type: string
+          format: date-time
+
+    # --- Error Schemas ---
+    N8nBoundaryErrorResponse:
+      type: object
+      required:
+        - error_code
+        - error_message
+        - timestamp
+      properties:
+        error_code:
+          type: string
+          enum:
+            - "N8N-FORBIDDEN-FIELD"
+            - "N8N-WHITELIST-VIOLATION"
+            - "N8N-AT-TIME-FIXED-REQUIRED"
+            - "N8N-MISSING-REQUIRED-FIELD"
+            - "MEMBERSHIP-CAPABILITY-DENIED"
+            - "MEMBERSHIP-QUOTA-EXCEEDED"
+            - "MEMBERSHIP-RATE-LIMITED"
+            - "INTERNAL-ERROR"
+        error_message:
+          type: string
+        details:
+          type: object
+          properties:
+            forbidden_fields:
+              type: array
+              items:
+                type: string
+            unknown_fields:
+              type: array
+              items:
+                type: string
+            allowed_fields:
+              type: array
+              items:
+                type: string
+            tier:
+              type: string
+            action:
+              type: string
+        timestamp:
+          type: string
+          format: date-time
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-N8N-API-Key
+
+security:
+  - BearerAuth: []
+  - ApiKeyAuth: []

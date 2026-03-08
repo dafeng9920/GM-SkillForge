@@ -1,0 +1,224 @@
+# orchestration/quality_gate_levels.yml
+# GM-SkillForge Quality Gate Levels v1.0
+# Aligned with AUDIT_ENGINE_PROTOCOL_v1.md
+# L3 = commercial baseline. Each level defines MUST/SHOULD checks + thresholds + required_changes_templates.
+
+version: "1.0.0"
+title: "GM-SkillForge Quality Gate Levels"
+description: >
+  Defines pass/fail criteria for L1-L5. The Orchestrator MUST evaluate gates and
+  produce required_changes when a level fails. L3 is the commercial baseline.
+commercial_baseline_level: "L3"
+
+levels:
+  L1:
+    title: "Entry"
+    intent: "Structure complete, loadable, zero syntax errors."
+    must:
+      - id: "QG_L1_SCHEMA_VALID"
+        description: "All JSON/YAML schema files are syntactically valid and parseable."
+        check: "schemas_valid"
+      - id: "QG_L1_MIN_DOC"
+        description: "Skill has minimal identity fields."
+        check: "has_min_identity_fields"
+        fields_required: ["skill_id", "name", "description"]
+      - id: "QG_L1_EXAMPLES_PRESENT"
+        description: "At least 1 example input exists for primary capability."
+        check: "examples_count"
+        thresholds: { min_examples: 1 }
+      - id: "QG_L1_ISSUE_KEYS_VALID"
+        description: "Any issue_key appearing in examples/findings must exist in issue_catalog."
+        check: "issue_keys_in_catalog"
+    should:
+      - id: "QG_L1_README_PRESENT"
+        description: "README exists for human context."
+        check: "file_exists"
+        params: { path: "README.md" }
+    thresholds: {}
+    required_changes_templates:
+      - id: "RC_L1_ADD_MIN_FIELDS"
+        when_failed_check: "has_min_identity_fields"
+        message: "Add missing identity fields: {missing_fields}."
+        patch_targets: ["manifest", "skill_spec"]
+      - id: "RC_L1_FIX_SCHEMA"
+        when_failed_check: "schemas_valid"
+        message: "Fix schema parse errors in: {invalid_files}."
+        patch_targets: ["schemas/*"]
+      - id: "RC_L1_ADD_EXAMPLE"
+        when_failed_check: "examples_count"
+        message: "Add at least {min_examples} valid example(s) under examples/."
+        patch_targets: ["examples/*"]
+
+  L2:
+    title: "Standard"
+    intent: "Cross-artifact consistency + basic UX for integrators."
+    must:
+      - id: "QG_L2_CONTRACT_CONSISTENT"
+        description: "input_schema/output_schema/examples are consistent (fields/types)."
+        check: "contract_consistency"
+      - id: "QG_L2_CONTROLS_DECLARED"
+        description: "Control fields adhere to controls_catalog whitelist and defaults."
+        check: "controls_whitelist_and_defaults"
+      - id: "QG_L2_ERROR_POLICY_LINKED"
+        description: "Error policy entries exist for all pipeline nodes used."
+        check: "error_policy_complete_for_nodes"
+        params:
+          nodes_required:
+            - "intake_repo"
+            - "license_gate"
+            - "repo_scan_fit_score"
+            - "draft_skill_spec"
+            - "constitution_risk_gate"
+            - "scaffold_skill_impl"
+            - "sandbox_test_and_trace"
+            - "pack_audit_and_publish"
+    should:
+      - id: "QG_L2_DEPENDENCIES_DECLARED"
+        description: "Dependencies are declared (requirements/lockfile) when code exists."
+        check: "dependencies_declared_if_code"
+    thresholds:
+      max_controls_per_tool: 12
+    required_changes_templates:
+      - id: "RC_L2_FIX_CONTRACT_MISMATCH"
+        when_failed_check: "contract_consistency"
+        message: "Align schemas/examples: {mismatch_summary}."
+        patch_targets: ["schemas/*", "examples/*"]
+      - id: "RC_L2_FIX_CONTROLS"
+        when_failed_check: "controls_whitelist_and_defaults"
+        message: "Replace/Remove non-whitelisted controls: {bad_controls}; apply defaults from controls_catalog."
+        patch_targets: ["orchestration/controls_catalog.yml", "schemas/*"]
+      - id: "RC_L2_ADD_ERROR_POLICY"
+        when_failed_check: "error_policy_complete_for_nodes"
+        message: "Add missing error_policy entries for nodes: {missing_nodes}."
+        patch_targets: ["orchestration/error_policy.yml"]
+
+  L3:
+    title: "Trusted"
+    intent: "Commercial baseline: static risk gates + evidence chain + provenance."
+    must:
+      - id: "QG_L3_PROVENANCE_PRESENT"
+        description: "original_repo_snapshot.json includes source/id/version/fetched_at/snapshot_hash."
+        check: "provenance_present"
+      - id: "QG_L3_STATIC_SCAN_PASS"
+        description: "Static scan completed; no BLOCKER findings remain unresolved."
+        check: "static_scan_no_blockers"
+      - id: "QG_L3_POLICY_MATRIX_PRESENT"
+        description: "policy_matrix.json exists and all findings bind issue_key + evidence_ref."
+        check: "policy_matrix_complete"
+      - id: "QG_L3_EVIDENCE_CLOSED_LOOP"
+        description: "Every evidence_ref resolves to evidence.jsonl (or evidence/)."
+        check: "evidence_refs_resolve"
+      - id: "QG_L3_AUDIT_PACK_MIN"
+        description: "L3 audit pack MUST files present."
+        check: "audit_pack_files_present"
+        params:
+          required_files:
+            - "manifest.json"
+            - "policy_matrix.json"
+            - "static_analysis.log"
+            - "original_repo_snapshot.json"
+            - "repro_env.yml"
+            - "evidence.jsonl"
+    should:
+      - id: "QG_L3_DIFF_PRESENT_IF_PATCHED"
+        description: "If any modifications were made, source_lineage.diff must exist."
+        check: "diff_present_if_patched"
+    thresholds:
+      max_blockers: 0
+      max_high: 5
+    required_changes_templates:
+      - id: "RC_L3_ADD_PROVENANCE"
+        when_failed_check: "provenance_present"
+        message: "Add provenance fields to original_repo_snapshot.json: {missing_fields}."
+        patch_targets: ["original_repo_snapshot.json"]
+      - id: "RC_L3_FIX_BLOCKERS"
+        when_failed_check: "static_scan_no_blockers"
+        message: "Resolve BLOCKER findings: {blocker_list}. Provide evidence for fixes."
+        patch_targets: ["code", "policies", "wrappers"]
+      - id: "RC_L3_CLOSE_EVIDENCE_LOOP"
+        when_failed_check: "evidence_refs_resolve"
+        message: "Add missing evidence records for refs: {missing_evidence_refs}."
+        patch_targets: ["evidence.jsonl", "policy_matrix.json"]
+      - id: "RC_L3_ADD_AUDIT_PACK_FILES"
+        when_failed_check: "audit_pack_files_present"
+        message: "Create missing L3 audit pack files: {missing_files}."
+        patch_targets: ["audit_pack/*"]
+
+  L4:
+    title: "Pro"
+    intent: "Performance transparency + repeatable benchmarks (mid-cost)."
+    must:
+      - id: "QG_L4_SMOKE_EXECUTION"
+        description: "Sandbox smoke test executed with isolation; produces run_trace summary."
+        check: "smoke_run_trace_present"
+      - id: "QG_L4_BENCHMARK_PRESENT"
+        description: "harness_benchmark.json exists with p95/success_rate/resource peaks."
+        check: "benchmark_present_and_valid"
+      - id: "QG_L4_VECTOR_META"
+        description: "vectors_meta.json (or equivalent) describes dataset_type/seed/run_count."
+        check: "vectors_meta_present"
+    should:
+      - id: "QG_L4_CONCURRENCY_CALIBRATION"
+        description: "Calibration report for max_safe_concurrency exists."
+        check: "concurrency_calibration_present"
+    thresholds:
+      min_success_rate: 0.99
+      max_p95_ms: 2000
+      max_error_rate: 0.01
+      min_runs: 20
+      max_runs: 100
+    required_changes_templates:
+      - id: "RC_L4_ADD_SMOKE_TRACE"
+        when_failed_check: "smoke_run_trace_present"
+        message: "Add sandbox smoke test + run_trace summary with isolation config."
+        patch_targets: ["sandbox/*", "run_trace.jsonl"]
+      - id: "RC_L4_FIX_BENCHMARK"
+        when_failed_check: "benchmark_present_and_valid"
+        message: "Generate harness_benchmark.json and meet thresholds (success_rate/p95)."
+        patch_targets: ["benchmarks/*"]
+      - id: "RC_L4_ADD_VECTOR_META"
+        when_failed_check: "vectors_meta_present"
+        message: "Add vectors_meta.json describing dataset_type/seed/run_count."
+        patch_targets: ["vectors_meta.json"]
+
+  L5:
+    title: "Industrial"
+    intent: "High determinism + large sample regression; only for curated targets."
+    must:
+      - id: "QG_L5_STRESS_VECTORS"
+        description: "stress_test_vectors.csv exists with >= min_vectors rows (mock/safe)."
+        check: "stress_vectors_count"
+        thresholds: { min_vectors: 1000 }
+      - id: "QG_L5_LONGRUN_BENCHMARK"
+        description: "Long-run benchmark present (duration, stability, resource fragmentation notes)."
+        check: "longrun_benchmark_present"
+      - id: "QG_L5_DETERMINISM"
+        description: "Determinism check: same input seed yields bounded variance."
+        check: "determinism_within_bounds"
+      - id: "QG_L5_SIGNED_PACK"
+        description: "Audit pack is signed (signature.asc) and manifest contains file hashes."
+        check: "signature_and_manifest_integrity"
+    should:
+      - id: "QG_L5_EDGE_CASES"
+        description: "Edge-case suite >= target count."
+        check: "edge_case_count"
+        thresholds: { min_edge_cases: 200 }
+    thresholds:
+      min_success_rate: 0.9999
+      max_p95_ms: 1500
+      max_trace_variance: 0.01
+      max_crash_rate: 0.0001
+      min_vectors: 1000
+    required_changes_templates:
+      - id: "RC_L5_ADD_STRESS_VECTORS"
+        when_failed_check: "stress_vectors_count"
+        message: "Add stress_test_vectors.csv with >= {min_vectors} safe mock vectors."
+        patch_targets: ["stress_test_vectors.csv"]
+      - id: "RC_L5_ADD_SIGNING"
+        when_failed_check: "signature_and_manifest_integrity"
+        message: "Add signature.asc and ensure manifest.json hashes match files."
+        patch_targets: ["signature.asc", "manifest.json"]
+      - id: "RC_L5_TIGHTEN_DETERMINISM"
+        when_failed_check: "determinism_within_bounds"
+        message: "Reduce variance: pin deps, seed randomness, isolate time/network, add replay harness."
+        patch_targets: ["repro_env.yml", "harness/*"]

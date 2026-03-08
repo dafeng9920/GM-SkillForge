@@ -1,0 +1,17 @@
+{
+  "decision": "PASS",
+  "task_id": "L4-SKILL-04",
+  "policy_id": "POLICY-001",
+  "policy_name": "5-Layer Static Audit Policy",
+  "policy_file": "configs\\audit_policy_v1.json",
+  "expected_hash": "5f7b3189d40a4398094ae9a297add3c26bce4c7ac9a2c086c3550d4839985e60",
+  "actual_hash": "5f7b3189d40a4398094ae9a297add3c26bce4c7ac9a2c086c3550d4839985e60",
+  "hash_match": true,
+  "reasons": [
+    "Policy hash matches frozen index"
+  ],
+  "timestamp": "2026-02-22T11:42:43.689015+00:00",
+  "gate_rule": "通过条件=policy hash 与冻结索引一致；不一致必须阻断发布",
+  "freeze_report": "docs\\2026-02-22\\verification\\policy_lock_report.json",
+  "freeze_index_version": "1.0"
+}

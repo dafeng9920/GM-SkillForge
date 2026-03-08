@@ -1,0 +1,166 @@
+# ============================================================
+# Audit Repo Intent Contract (Normalized)
+# ============================================================
+# Priority: P0
+# Source: NEW-GM/scripts/audit_replay.py
+# Migration: A1 - Wave 4 Batch 1
+# Normalized: 2026-02-18
+# ============================================================
+
+intent_id: audit_repo
+summary: |
+  扫描仓库审计日志，分析统计信息，检测异常，生成审计报告。
+  核心流程：日志输入 → 解析 → 统计分析 → 异常检测 → 报告输出
+contract_version: v1
+schema_hash: TBD_SHA256
+
+# ============================================================
+# Inputs Schema
+# ============================================================
+inputs_schema:
+  required:
+    - name: repo_url
+      type: string
+      description: "仓库 URL（确定性输入）"
+      pattern: "^(https?|git)://.+$"
+
+    - name: commit_sha
+      type: string
+      description: "Git commit SHA（确定性输入）"
+      pattern: "^[a-f0-9]{7,40}$"
+
+    - name: at_time
+      type: string
+      format: ISO8601
+      description: "扫描时间戳"
+
+  optional:
+    - name: audit_log_path
+      type: string
+      description: "审计日志文件路径"
+
+    - name: max_timeline_entries
+      type: integer
+      default: 100
+      description: "时间线最大条目数"
+
+# ============================================================
+# Required Gates
+# ============================================================
+required_gates:
+  - intake_repo           # 接收仓库，验证 repo_url + commit_sha
+  - license_gate          # 许可证检查
+  - repo_scan_fit_score   # 仓库扫描适配度评估
+  - pack_audit_and_publish # 打包审计并发布
+
+# ============================================================
+# Minimum Level
+# ============================================================
+minimum_level: L3
+
+# ============================================================
+# Required Evidence
+# ============================================================
+required_evidence:
+  - audit_log_file          # 审计日志文件
+  - scan_report             # 扫描报告
+  - statistics_summary      # 统计摘要
+  - anomaly_detection_result # 异常检测结果
+  - source_doc_ref          # 源文档引用
+
+# ============================================================
+# Outputs
+# ============================================================
+outputs:
+  - name: audit_pack_ref
+    type: string
+    description: "L3 AuditPack 引用标识"
+
+  - name: gate_decision
+    type: string
+    enum: ["ALLOW", "DENY", "REQUIRE_HITL"]
+    description: "Gate 最终决策"
+
+  - name: revision
+    type: integer
+    description: "合约版本号"
+
+  - name: scan_report
+    type: object
+    description: "详细扫描报告"
+
+  - name: statistics
+    type: object
+    description: "统计信息汇总"
+
+  - name: timeline
+    type: array
+    description: "审计时间线"
+
+  - name: anomalies
+    type: array
+    description: "检测到的异常列表"
+
+  - name: recommendations
+    type: array
+    description: "改进建议"
+
+  - name: evidence_refs
+    type: array
+    description: "证据引用链"
+
+# ============================================================
+# Validation Rules
+# ============================================================
+validation_rules:
+  pass_conditions:
+    - success_rate >= 90
+    - anomaly_count == 0
+    - all required_evidence present
+  fail_reasons:
+    - code: SOURCE_FILE_NOT_FOUND
+      description: "源文件不存在"
+    - code: LOW_SUCCESS_RATE
+      description: "成功率低于90%"
+    - code: HIGH_ERROR_RATE
+      description: "HTTP错误率超过10%"
+    - code: SLOW_PROCESSING
+      description: "平均处理时间超过5秒"
+    - code: MISSING_EVIDENCE
+      description: "缺少必需证据"
+
+# ============================================================
+# Architecture Boundary
+# ============================================================
+architecture_boundary: |
+  - n8n 仅作为 Orchestrator（触发/路由/通知），不做最终裁决
+  - SkillForge 是 Governor（Gate 判定、Evidence 产出、AuditPack 固化）
+  - 输入确定性：repo_url + commit_sha (+ at_time)
+  - 无 permit 不允许发布/打 tag/release
+
+# ============================================================
+# Source References (Evidence Chain)
+# ============================================================
+source_doc_ref:
+  file: "D:\\NEW-GM\\scripts\\audit_replay.py"
+  lines: "1-373"
+  extracted_intents:
+    - load_audit_file           # Line 72-89
+    - parse_timestamps          # Line 91-106
+    - analyze_statistics        # Line 108-170
+    - detect_anomalies          # Line 216-253
+    - generate_recommendations  # Line 255-278
+
+# ============================================================
+# Migration Metadata
+# ============================================================
+migration:
+  task_id: A1
+  wave: 4
+  batch: 1
+  priority: P0
+  decision: MIGRATE
+  status: normalized
+  value_score: 8
+  risk_level: Medium
+  mapping_target: skillforge/src/skills/audit_repo.py

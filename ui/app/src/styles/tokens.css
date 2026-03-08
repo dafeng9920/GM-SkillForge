@@ -1,0 +1,105 @@
+/**
+ * GM.OS Design Tokens
+ * 
+ * Strict Token System enforcing constrained aesthetic: Premium Dark Mode,
+ * High Contrast Accessibility, and Semantic Clarity.
+ */
+
+:root {
+  /* ==========================================================================
+     1. COLOR SYSTEM (Tailored HSL for semantic meaning and a11y)
+     ========================================================================== */
+  
+  /* Base Dark Palette */
+  --gm-color-base-100: #0a0c10; /* Deepest background */
+  --gm-color-base-200: #12151c; /* Secondary containers (Sidebar/Glass) */
+  --gm-color-base-300: #1b1f27; /* Tertiary elements, hover states */
+  --gm-color-base-400: #2a313c; /* Borders, dividers */
+  
+  /* Solid Information Card Backgrounds (Constraint: High Contrast, NO Glass) */
+  --gm-color-card-solid: #161920; 
+  --gm-color-card-border: #333a45;
+
+  /* Typography Colors (Constraint: WCAG AA) */
+  --gm-color-text-primary: #e6edf8; /* High contrast white-blue */
+  --gm-color-text-secondary: #9aa4b5; /* Dimmer for metadata */
+  --gm-color-text-muted: #6f7887; /* For disabled or tertiary text */
+
+  /* State Neon Colors (Constraint: Limited usage to state dots/thin borders) */
+  --gm-color-state-pass: #00d2ff;     /* Cyan */
+  --gm-color-state-pass-bg: rgba(0, 210, 255, 0.1); 
+  
+  --gm-color-state-block: #ff2a55;    /* Red/Pink */
+  --gm-color-state-block-bg: rgba(255, 42, 85, 0.1);
+  
+  --gm-color-state-warning: #ffb800;  /* Yellow/Orange */
+  --gm-color-state-warning-bg: rgba(255, 184, 0, 0.1);
+
+  /* Primary Brand Action Color */
+  --gm-color-primary: #526af2;
+  --gm-color-primary-hover: #677ef5;
+
+
+  /* ==========================================================================
+     2. TYPOGRAPHY SYSTEM (Inter & Outfit)
+     ========================================================================== */
+  
+  --gm-font-header: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --gm-font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --gm-font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+
+  /* Hierarchical Scaling */
+  --gm-text-xs: 0.75rem;    /* 12px */
+  --gm-text-sm: 0.875rem;   /* 14px */
+  --gm-text-base: 1rem;     /* 16px */
+  --gm-text-lg: 1.125rem;   /* 18px */
+  --gm-text-xl: 1.25rem;    /* 20px */
+  --gm-text-2xl: 1.5rem;    /* 24px */
+  --gm-text-3xl: 2rem;      /* 32px */
+
+  /* Semantic Emphasis Weights */
+  --gm-font-weight-regular: 400;
+  --gm-font-weight-medium: 500;
+  --gm-font-weight-bold: 600;
+  --gm-font-weight-black: 800;
+
+
+  /* ==========================================================================
+     3. SPACING & LAYOUT SYSTEM
+     ========================================================================== */
+  
+  --gm-space-1: 0.25rem;  /* 4px */
+  --gm-space-2: 0.5rem;   /* 8px */
+  --gm-space-3: 0.75rem;  /* 12px */
+  --gm-space-4: 1rem;     /* 16px */
+  --gm-space-6: 1.5rem;   /* 24px */
+  --gm-space-8: 2rem;     /* 32px */
+  --gm-space-12: 3rem;    /* 48px */
+
+  --gm-radius-sm: 4px;
+  --gm-radius-md: 8px;
+  --gm-radius-lg: 12px;
+  --gm-radius-xl: 16px;
+
+
+  /* ==========================================================================
+     4. COMPONENT EFFECTS (Shadows, Glass, Outlines)
+     ========================================================================== */
+  
+  /* Constraint: Accessibility Focus Rings CANNOT be hidden */
+  --gm-focus-ring: 0 0 0 2px var(--gm-color-base-100), 0 0 0 4px var(--gm-color-primary);
+
+  /* Elevation Shadows */
+  --gm-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --gm-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --gm-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+
+  /* Constraint: Glassmorphism strictly for secondary containers */
+  --gm-glass-bg: rgba(18, 21, 28, 0.75);
+  --gm-glass-blur: blur(12px);
+  --gm-glass-border: 1px solid rgba(255, 255, 255, 0.05);
+
+  /* Performance: Animation timing */
+  --gm-transition-fast: 150ms ease;
+  --gm-transition-standard: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}

@@ -1,0 +1,63 @@
+{
+  "report_id": "REGRESSION-2026-02-25-R5-001",
+  "timestamp_utc": "2026-02-25T00:30:00Z",
+  "baseline": {
+    "skill_id": "quant-trading-system-skill",
+    "version": "1.0.0",
+    "hashes": {
+      "skill_json_sha256": "265EC5901957AD262B26CADF288FF4891BD8CA22AEEF57D54A96BA7FCC2FF37A",
+      "contract_json_sha256": "B8DB93147EF9B67AC66B5C92F2E98E6CCB11B806564DED6AC57D13668869F828",
+      "metrics_json_sha256": "BF1F6035E1FCB35B2AA54A3666629A095DC21F4DEE168CAF70325A0D3FA897F0"
+    }
+  },
+  "validation": {
+    "interface_stability": {
+      "check": "原量化交易 Skill 接口不变",
+      "status": "PASS",
+      "baseline_interfaces": [
+        "evaluate_performance",
+        "execute_orders",
+        "generate_signals",
+        "ingest_market_data",
+        "risk_gate_pre_trade"
+      ],
+      "unchanged_interfaces_asserted": [
+        "evaluate_performance",
+        "execute_orders",
+        "generate_signals",
+        "ingest_market_data",
+        "risk_gate_pre_trade"
+      ],
+      "added_interfaces_in_increment": [
+        "dispatch_anomaly_alert",
+        "monitor_realtime_risk"
+      ],
+      "regressions": {
+        "missing_in_base_from_assertion": [],
+        "baseline_not_asserted_unchanged": []
+      }
+    },
+    "metrics_integrity": {
+      "check": "原评估指标未被破坏",
+      "status": "PASS",
+      "baseline_metric_groups": [
+        "execution_quality",
+        "governance",
+        "performance",
+        "risk",
+        "robustness"
+      ],
+      "incremental_added_metric_groups": [
+        "realtime_risk_monitoring"
+      ],
+      "regression_findings": []
+    }
+  },
+  "release_reference": {
+    "release_id": "quant-trading-system-skill-1.1.0",
+    "from_version": "1.0.0",
+    "to_version": "1.1.0",
+    "compatibility_status": "compatible"
+  },
+  "overall_status": "PASS"
+}

@@ -1,0 +1,145 @@
+# GM OS Controls Catalog v0.1.0
+# 控制字段白名单与默认上限 - "控制字段宪法"
+
+schema_version: "0.1.0"
+
+canonical_object: "controls"
+
+description: |
+  全站统一控制面板字段宪法，所有 skill 的 Advanced schema、lint、gate、UI 都引用此 catalog。
+  不在此 catalog 中的控制字段将被 lint 拒绝。
+
+fields:
+  page_limit:
+    type: "integer"
+    description: "单次请求返回的最大结果数"
+    default: 50
+    minimum: 1
+    maximum: 100
+    aliases:
+      - "per_page"
+      - "limit"
+      - "page_size"
+
+  timeout_seconds:
+    type: "integer"
+    description: "执行超时时间（秒）"
+    default: 300
+    minimum: 1
+    maximum: 3600
+    aliases:
+      - "timeout"
+      - "max_time"
+
+  max_tool_calls:
+    type: "integer"
+    description: "最大工具调用次数"
+    default: 100
+    minimum: 1
+    maximum: 1000
+    aliases:
+      - "tool_limit"
+      - "max_actions"
+
+  max_cost_usd:
+    type: "number"
+    description: "最大执行成本（美元）"
+    default: 1.0
+    minimum: 0
+    maximum: 100.0
+    aliases:
+      - "cost_limit"
+      - "budget"
+
+  max_bytes_io:
+    type: "integer"
+    description: "最大 I/O 字节数"
+    default: 10485760
+    minimum: 0
+    maximum: 104857600
+    aliases:
+      - "max_io"
+      - "bytes_limit"
+
+  idempotency_key:
+    type: "string"
+    description: "幂等键，用于防止重复执行"
+    default: null
+    pattern: "^[a-zA-Z0-9_-]{8,64}$"
+    aliases:
+      - "idem_key"
+      - "dedupe_key"
+
+  retry_count:
+    type: "integer"
+    description: "失败重试次数"
+    default: 3
+    minimum: 0
+    maximum: 10
+    aliases:
+      - "retries"
+      - "max_retries"
+
+  retry_backoff_seconds:
+    type: "integer"
+    description: "重试退避时间（秒）"
+    default: 5
+    minimum: 1
+    maximum: 60
+    aliases:
+      - "backoff"
+      - "retry_delay"
+
+  allowed_domains:
+    type: "array"
+    description: "允许访问的域名白名单"
+    default: []
+    items:
+      type: "string"
+      format: "hostname"
+    aliases:
+      - "domains"
+      - "host_whitelist"
+
+  sandbox_mode:
+    type: "string"
+    description: "沙箱模式"
+    default: "moderate"
+    enum:
+      - "strict"
+      - "moderate"
+      - "permissive"
+    aliases:
+      - "sandbox"
+      - "security_mode"
+
+# 校验规则
+validation_rules:
+  - rule: "min <= default <= max"
+    description: "每个数值字段的 default 必须在 min 和 max 之间"
+
+  - rule: "aliases_unique"
+    description: "所有别名在 catalog 内必须唯一"
+
+  - rule: "pattern_valid"
+    description: "pattern 字段必须是有效的正则表达式"
+
+# 使用示例
+examples:
+  valid_controls:
+    page_limit: 50
+    timeout_seconds: 300
+    max_cost_usd: 1.0
+
+  valid_with_alias:
+    per_page: 30
+    timeout: 60
+
+  invalid_controls:
+    page_limit: 200
+    reason: "exceeds maximum 100"
+
+  invalid_unknown_field:
+    page_limit: 50
+    custom_timeout: 100
+    reason: "custom_timeout not in catalog"

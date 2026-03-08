@@ -1,0 +1,213 @@
+# Permit Gate 实现报告 v1
+
+> **实现时间**: 2026-02-18
+> **实现者**: CC-Code
+> **契约引用**: `docs/2026-02-18/contracts/permit_contract_v1.yml`
+
+---
+
+## 1. 接入点
+
+### 1.1 文件位置
+
+| 文件 | 路径 |
+|------|------|
+| Gate 实现 | `skillforge/src/skills/gates/gate_permit.py` |
+| 测试文件 | `skillforge/tests/test_gate_permit.py` |
+| 模块导出 | `skillforge/src/skills/gates/__init__.py` |
+
+### 1.2 接入位置
+
+Permit Gate 作为 **G9** 接入，在 `pack_audit_and_publish` (G8) 之前执行：
+
+```
+G1 intake_repo
+G2 license_gate
+G3 repo_scan_fit_score
+G4 draft_skill_spec
+G5 constitution_risk_gate
+G6 scaffold_skill_impl
+G7 sandbox_test_and_trace
+G8 pack_audit_and_publish
+G9 permit_gate  ← 新增（发布前统一检查点）
+```
+
+### 1.3 使用方式
+
+```python
+from skillforge.src.skills.gates.gate_permit import GatePermit, validate_permit
+
+# 方式1：类实例化
+gate = GatePermit()
+result = gate.execute({
+    "permit_token": permit_dict,
+    "repo_url": "https://github.com/local/NEW-GM",
+    "commit_sha": "4ea179d31a66fc2616f0cf953cd0e5c5c43d8ea8",
+    "run_id": "RUN-20260218-001",
+    "requested_action": "release"
+})
+
+# 方式2：便捷函数
+result = validate_permit(
+    permit_token=permit_dict,
+    repo_url="https://github.com/local/NEW-GM",
+    commit_sha="4ea179d31a66fc2616f0cf953cd0e5c5c43d8ea8",
+    run_id="RUN-20260218-001",
+    requested_action="release"
+)
+```
+
+---
+
+## 2. 测试矩阵结果
+
+| # | 测试项 | 状态 | 说明 |
+|---|--------|------|------|
+| T1 | 正常 permit | ✅ PASS | ALLOW, VALID, release_allowed=true |
+| T2a | 缺 permit (null) | ✅ PASS | BLOCK, E001, PERMIT_REQUIRED |
+| T2b | 缺 permit (empty) | ✅ PASS | BLOCK, E001, PERMIT_REQUIRED |
+| T3a | 格式错误 (invalid JSON) | ✅ PASS | BLOCK, E002, PERMIT_INVALID |
+| T3b | 格式错误 (missing field) | ✅ PASS | BLOCK, E002, PERMIT_INVALID |
+| T4a | 签名无效 (missing) | ✅ PASS | BLOCK, E003, PERMIT_INVALID |
+| T4b | 签名无效 (unsupported algo) | ✅ PASS | BLOCK, E003, PERMIT_INVALID |
+| T5 | 已过期 | ✅ PASS | BLOCK, E004, PERMIT_EXPIRED |
+| T6 | scope 不匹配 | ✅ PASS | BLOCK, E005, PERMIT_SCOPE_MISMATCH |
+| T7a | subject 不匹配 (repo_url) | ✅ PASS | BLOCK, E006, PERMIT_SUBJECT_MISMATCH |
+| T7b | subject 不匹配 (commit_sha) | ✅ PASS | BLOCK, E006, PERMIT_SUBJECT_MISMATCH |
+| T7c | subject 不匹配 (run_id) | ✅ PASS | BLOCK, E006, PERMIT_SUBJECT_MISMATCH |
+| T8 | 已撤销 | ✅ PASS | BLOCK, E007, PERMIT_REVOKED |
+| T9 | PASSED_NO_PERMIT 兼容性 | ✅ PASS | BLOCK, E001, release_allowed=false |
+
+**总计**: 19/19 测试通过
+
+---
+
+## 3. 错误码覆盖统计
+
+| 错误码 | 含义 | release_blocked_by | 测试覆盖 |
+|--------|------|-------------------|----------|
+| E001 | 缺少 Permit | PERMIT_REQUIRED | ✅ T2a, T2b, T9 |
+| E002 | Permit 格式无效 | PERMIT_INVALID | ✅ T3a, T3b |
+| E003 | 签名无效 | PERMIT_INVALID | ✅ T4a, T4b |
+| E004 | Permit 已过期 | PERMIT_EXPIRED | ✅ T5 |
+| E005 | 作用域不匹配 | PERMIT_SCOPE_MISMATCH | ✅ T6 |
+| E006 | 主体不匹配 | PERMIT_SUBJECT_MISMATCH | ✅ T7a, T7b, T7c |
+| E007 | Permit 已撤销 | PERMIT_REVOKED | ✅ T8 |
+
+**覆盖率**: 7/7 (100%)
+
+---
+
+## 4. 校验流程实现
+
+按照 `permit_contract_v1_spec.md` 3.1 章节实现：
+
+```
+Step 1: 存在性检查 (E001) ← 先快后慢
+Step 2: 解析 Permit (E002)
+Step 3: 必填字段检查 (E002)
+Step 4: 签名校验 (E003)
+Step 5: 过期检查 (E004)
+Step 6: 主体匹配检查 (E006)
+Step 7: 作用域匹配检查 (E005)
+Step 8: 撤销检查 (E007)
+Step 9: 生成 Evidence
+Step 10: 返回结果
+```
+
+**特性**:
+- Fail-Closed：任一检查失败立即返回，不继续后续检查
+- Evidence-First：每次校验生成 EvidenceRef
+- Deterministic：绑定 repo_url + commit_sha + run_id
+
+---
+
+## 5. 输出字段
+
+```python
+{
+    "gate_name": "permit_gate",
+    "gate_decision": "ALLOW" | "BLOCK",
+    "permit_validation_status": "VALID" | "INVALID",
+    "release_allowed": True | False,
+    "release_blocked_by": None | "PERMIT_REQUIRED" | "PERMIT_INVALID" | ...,
+    "error_code": None | "E001" | "E002" | ...,
+    "evidence_refs": [{...}],
+    "validation_timestamp": "2026-02-18T12:00:00Z",
+    "permit_id": "PERMIT-xxx" | None
+}
+```
+
+---
+
+## 6. 已知限制
+
+1. **签名验证使用 stub**
+   - 当前 `_stub_signature_verifier` 只做结构校验
+   - 不做真实的 RS256/ES256/HS256 签名验证
+   - 可通过构造函数注入真实验证器
+
+2. **无 permit 签发功能**
+   - 本实现仅包含 permit 校验
+   - permit 签发需要单独实现
+
+3. **无撤销列表检查**
+   - 当前只检查 permit 内的 `revocation.revoked` 字段
+   - 未实现外部撤销列表（CRL）检查
+
+---
+
+## 7. 与现有系统的关系
+
+### 7.1 与 PASSED_NO_PERMIT 兼容
+
+```python
+# 当 final_gate_decision = PASSED_NO_PERMIT 且无 permit 时
+result = gate.execute({
+    "permit_token": None,
+    "final_gate_decision": "PASSED_NO_PERMIT",
+    ...
+})
+# result["release_allowed"] = False
+# result["release_blocked_by"] = "PERMIT_REQUIRED"
+```
+
+### 7.2 与 pack_audit_and_publish 集成点
+
+```python
+# 在 pack_audit_and_publish 中调用 permit_gate
+if final_gate_decision == "PASSED_NO_PERMIT":
+    permit_result = permit_gate.execute({
+        "permit_token": permit_token,
+        ...
+    })
+    if not permit_result["release_allowed"]:
+        # 阻止发布
+        return BLOCKED
+```
+
+---
+
+## 8. 验收确认
+
+| 检查项 | 状态 |
+|--------|------|
+| Fail-Closed 默认开启 | ✅ |
+| 与 PASSED_NO_PERMIT 状态兼容 | ✅ |
+| 不修改现有 contracts-first 基础语义 | ✅ |
+| 每个 permit 校验生成 EvidenceRef | ✅ |
+| 错误码 E001-E007 全覆盖 | ✅ |
+| 测试矩阵 T1-T9 全通过 | ✅ |
+
+---
+
+## 9. 下一步
+
+- [ ] 实现真实签名验证（替换 stub）
+- [ ] 实现 permit 签发服务
+- [ ] 集成到 pack_audit_and_publish
+- [ ] 添加撤销列表（CRL）检查
+
+---
+
+*Generated by CC-Code | Permit Gate Implementation | 2026-02-18*

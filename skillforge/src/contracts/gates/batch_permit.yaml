@@ -1,0 +1,288 @@
+# Batch Permit Issuance Contract v1
+# Status: FROZEN
+# Purpose: N-Target Batch Permit Issuance with Failure Strategies
+
+definitions:
+  FailureStrategy:
+    type: string
+    enum: ["all_or_nothing", "best_effort", "majority_vote"]
+    description: |
+      Batch failure handling strategies:
+      - all_or_nothing: 任一失败则全部回滚 (default, audit-safe)
+      - best_effort: 允许部分成功，失败目标生成 tombstone
+      - majority_vote: 多数成功则批次成功
+
+  BatchDecision:
+    type: string
+    enum: ["SUCCESS", "PARTIAL_SUCCESS", "FAILED", "ROLLED_BACK"]
+    description: |
+      Final batch decision:
+      - SUCCESS: 全部成功
+      - PARTIAL_SUCCESS: 部分成功 (仅 BEST_EFFORT)
+      - FAILED: 全部失败
+      - ROLLED_BACK: 已回滚 (ALL_OR_NOTHING)
+
+  TargetConfig:
+    type: object
+    required: [target_id, repo_url, commit_sha, run_id, intent_id, ttl_seconds]
+    properties:
+      target_id:
+        type: string
+        description: "Unique identifier for this target within the batch"
+      repo_url:
+        type: string
+        description: "Repository URL"
+      commit_sha:
+        type: string
+        description: "Git commit SHA"
+      run_id:
+        type: string
+        description: "Run ID"
+      intent_id:
+        type: string
+        description: "Intent ID"
+      ttl_seconds:
+        type: integer
+        minimum: 1
+        maximum: 86400
+        description: "Permit time-to-live in seconds"
+      entry_path:
+        type: string
+        description: "Optional entry path"
+      environment:
+        type: string
+        description: "Optional environment"
+      gate_profile:
+        type: string
+        description: "Optional gate profile"
+
+  TombstoneRecord:
+    type: object
+    required: [tombstone_id, target_id, error_code, created_at, batch_id]
+    properties:
+      tombstone_id:
+        type: string
+        description: "Unique tombstone ID"
+      target_id:
+        type: string
+        description: "Target that failed"
+      target_index:
+        type: integer
+        description: "Index in batch"
+      error_code:
+        type: string
+        description: "Error code from failure"
+      error_message:
+        type: string
+        description: "Human-readable error message"
+      retryable:
+        type: boolean
+        description: "Whether this failure can be retried"
+      evidence_ref:
+        type: object
+        description: "Evidence reference for the failure"
+      created_at:
+        type: string
+        format: "iso8601"
+        description: "When tombstone was created"
+      batch_id:
+        type: string
+        description: "Parent batch ID"
+
+  TargetResult:
+    type: object
+    required: [target_id, target_index, success]
+    properties:
+      target_id:
+        type: string
+        description: "Target identifier"
+      target_index:
+        type: integer
+        description: "Index in batch array"
+      success:
+        type: boolean
+        description: "Whether permit was issued successfully"
+      permit_token:
+        type: string
+        nullable: true
+        description: "Issued permit token (if successful)"
+      permit_id:
+        type: string
+        nullable: true
+        description: "Issued permit ID (if successful)"
+      error_code:
+        type: string
+        nullable: true
+        description: "Error code (if failed)"
+      error_message:
+        type: string
+        nullable: true
+        description: "Error message (if failed)"
+      tombstone:
+        type: object
+        nullable: true
+        description: "Tombstone record (if failed or rolled back)"
+
+  BatchResult:
+    type: object
+    required: [batch_id, batch_decision, failure_strategy, total_targets, successful_count, failed_count, target_results, tombstones, batch_evidence_ref, timestamp]
+    properties:
+      batch_id:
+        type: string
+        description: "Unique batch identifier"
+      batch_decision:
+        $ref: "#/definitions/BatchDecision"
+        description: "Final batch decision"
+      failure_strategy:
+        $ref: "#/definitions/FailureStrategy"
+        description: "Failure strategy used"
+      total_targets:
+        type: integer
+        description: "Total number of targets in batch"
+      successful_count:
+        type: integer
+        description: "Number of successful targets"
+      failed_count:
+        type: integer
+        description: "Number of failed targets"
+      target_results:
+        type: array
+        items:
+          $ref: "#/definitions/TargetResult"
+        description: "Results for each target"
+      tombstones:
+        type: array
+        items:
+          $ref: "#/definitions/TombstoneRecord"
+        description: "Tombstone records for failed targets"
+      batch_evidence_ref:
+        type: object
+        description: "Evidence reference for the entire batch"
+      rolled_back_permits:
+        type: array
+        items:
+          type: string
+        description: "Permit IDs that were rolled back"
+      timestamp:
+        type: string
+        format: "iso8601"
+        description: "Batch processing timestamp"
+
+# Batch Permit Gate
+batch_permit:
+  description: "N-Target Batch Permit Issuance Gate"
+  inputs:
+    - name: targets
+      type: array
+      items: TargetConfig
+      min_items: 1
+      max_items: 5
+      description: "Array of target configurations"
+    - name: final_gate_decision
+      type: string
+      required: true
+      description: "Final gate decision (shared across all targets)"
+    - name: audit_pack_ref
+      type: string
+      required: true
+      description: "Audit pack reference (shared across all targets)"
+    - name: allowed_actions
+      type: array
+      items: string
+      default: ["release"]
+      description: "Allowed actions for all permits"
+    - name: failure_strategy
+      type: string
+      enum: ["all_or_nothing", "best_effort", "majority_vote"]
+      default: "all_or_nothing"
+      description: "Failure handling strategy"
+
+  outputs:
+    - name: BatchResult
+      description: "Complete batch result with per-target details"
+
+# Failure Strategy Behaviors
+failure_strategies:
+  all_or_nothing:
+    description: "任一失败则全部回滚"
+    behavior:
+      - "Process all targets sequentially"
+      - "If any target fails, mark ALL permits for revocation"
+      - "Generate tombstones for ALL targets (including successful ones)"
+      - "Return ROLLED_BACK decision"
+    audit_implication: "Highest audit safety - all-or-nothing guarantee"
+    use_cases:
+      - "Production releases requiring atomic deployment"
+      - "Regulated environments"
+      - "Critical batch operations"
+
+  best_effort:
+    description: "允许部分成功"
+    behavior:
+      - "Process all targets sequentially"
+      - "Issue permits for successful targets"
+      - "Generate tombstones for failed targets only"
+      - "Return SUCCESS / PARTIAL_SUCCESS / FAILED based on counts"
+    audit_implication: "Per-target audit trail, partial success allowed"
+    use_cases:
+      - "Non-critical batch operations"
+      - "Development environments"
+      - "Batch retries"
+
+  majority_vote:
+    description: "多数成功则批次成功"
+    behavior:
+      - "Process all targets sequentially"
+      - "Count successful vs failed targets"
+      - "If majority (>50%) succeed, return SUCCESS"
+      - "Otherwise return FAILED"
+    audit_implication: "Majority-based decision, requires review for failures"
+    use_cases:
+      - "A/B testing deployments"
+      - "Canary releases"
+      - "Distributed system updates"
+
+# Tombstone Rules
+tombstone_rules:
+  creation_triggers:
+    - "Target permit issuance fails"
+    - "Batch rollback (ALL_OR_NOTHING strategy)"
+    - "Permit revocation post-issuance"
+
+  required_fields:
+    - tombstone_id
+    - target_id
+    - target_index
+    - error_code
+    - error_message
+    - retryable
+    - evidence_ref
+    - created_at
+    - batch_id
+
+  retryable_errors:
+    - "I003"  # TTL_INVALID
+    - "I004"  # SIGNING_KEY_MISSING
+    - "I005"  # SIGNING_FAILED
+    - "BATCH_ROLLBACK"  # Rolled back due to strategy
+
+  non_retryable_errors:
+    - "I001"  # ISSUE_CONDITION_NOT_MET
+    - "I002"  # SUBJECT_INCOMPLETE
+
+# Constraints
+constraints:
+  batch_size:
+    min: 1
+    max: 5
+    description: "Current limit is 5 targets per batch"
+
+  fail_closed:
+    - "Missing target_id MUST generate valid tombstone"
+    - "Invalid batch_size MUST reject entire batch"
+    - "Any strategy violation MUST be logged with evidence"
+
+  evidence_required:
+    - "Per-target evidence_ref"
+    - "Batch-level evidence_ref"
+    - "Tombstone evidence_ref for failures"

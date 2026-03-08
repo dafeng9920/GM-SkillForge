@@ -1,0 +1,122 @@
+schema_version: "0.1.0"
+skill_id: "pipeline_engine"
+name: "Pipeline Engine"
+description: "Dual-path orchestration engine for SkillForge"
+version: "0.1.0"
+
+# 输入合同
+input:
+  required:
+    - mode:
+        type: "string"
+        enum: ["nl", "github", "auto"]
+        description: "Pipeline mode: nl, github, or auto"
+  conditional:
+    - natural_language:
+        type: "string"
+        required_when: "mode in ['nl', 'auto']"
+        description: "Natural language description"
+    - repo_url:
+        type: "string"
+        required_when: "mode in ['github', 'auto']"
+        description: "GitHub repository URL"
+  optional:
+    - branch:
+        type: "string"
+        default: "main"
+        description: "Git branch to use"
+    - options:
+        type: "object"
+        description: "Pipeline execution options (e.g. sandbox_mode)"
+
+# 路径定义
+paths:
+  PATH_A:
+    trigger: "mode == 'nl'"
+    nodes: ["intake_nl", "draft_spec", "constitution_risk_gate", "build_skill", "pack_audit_and_publish"]
+  PATH_B:
+    trigger: "mode == 'github'"
+    nodes: ["intake_repo", "license_gate", "analyze_code", "draft_spec", "constitution_risk_gate", "build_skill", "pack_audit_and_publish"]
+  PATH_AB:
+    trigger: "mode == 'auto'"
+    nodes: ["intake_nl", "intake_repo", "license_gate", "analyze_code", "draft_spec", "constitution_risk_gate", "build_skill", "pack_audit_and_publish"]
+  gate_nodes: ["license_gate", "constitution_risk_gate"]
+
+# 输出合同
+output:
+  required:
+    - job_id:
+        type: "string"
+        description: "Unique job identifier (UUID)"
+    - status:
+        type: "string"
+        enum: ["completed", "failed", "gate_denied"]
+        description: "Pipeline execution status"
+    - path_taken:
+        type: "string"
+        description: "Path executed: A, B, or AB"
+    - stages_completed:
+        type: "integer"
+        description: "Number of stages completed"
+    - gate_decisions:
+        type: "array"
+        description: "List of gate decision objects"
+    - trace_events:
+        type: "array"
+        description: "List of trace event objects (one per completed stage)"
+    - duration_ms:
+        type: "integer"
+        description: "Total execution time in milliseconds"
+  optional:
+    - audit_pack_path:
+        type: "string"
+        description: "Path to generated audit pack (from pack_audit_and_publish)"
+    - publish_result:
+        type: "object"
+        description: "Registry publish result (from pack_audit_and_publish)"
+    - error:
+        type: "object"
+        properties:
+          code: "string"
+          message: "string"
+        description: "Error information if status is failed/gate_denied"
+
+# 能力声明
+capabilities:
+  network: false
+  filesystem: false
+  subprocess: false
+  gpu: false
+
+# 风险等级
+risk_tier: "L0"
+
+# 依赖
+dependencies:
+  adapters: []
+  schemas: ["pipeline_input", "pipeline_output", "gate_decision", "trace_event"]
+  error_codes: ["EXEC_INVALID_INPUT", "EXEC_NODE_NOT_FOUND", "EXEC_VALIDATION_FAILED", "EXEC_OUTPUT_INVALID", "GATE_DENIED", "GATE_REQUIRES_CHANGES", "SYS_UNEXPECTED"]
+
+# 错误处理
+errors:
+  - code: "EXEC_INVALID_INPUT"
+    retryable: false
+    description: "Invalid input: missing mode or mode-specific required fields"
+  - code: "EXEC_NODE_NOT_FOUND"
+    retryable: false
+    description: "A node in the resolved path is not registered in node_registry"
+  - code: "EXEC_VALIDATION_FAILED"
+    retryable: false
+    description: "Node input validation failed"
+  - code: "EXEC_OUTPUT_INVALID"
+    retryable: false
+    description: "Node output validation failed"
+  - code: "GATE_DENIED"
+    retryable: false
+    description: "Gate evaluator returned DENY decision"
+  - code: "GATE_REQUIRES_CHANGES"
+    retryable: false
+    description: "Gate evaluator returned REQUIRES_CHANGES decision"
+  - code: "SYS_UNEXPECTED"
+    retryable: false
+    description: "Unexpected system exception during pipeline execution"

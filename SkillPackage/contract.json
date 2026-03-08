@@ -1,0 +1,164 @@
+{
+  "contract_id": "quant-trading-system-contract",
+  "version": "1.0.0",
+  "compatibility_policy": {
+    "semantic_versioning": true,
+    "breaking_change_requires_major": true,
+    "deprecation_window_days": 90
+  },
+  "interfaces": [
+    {
+      "name": "ingest_market_data",
+      "kind": "function",
+      "input_schema": {
+        "type": "object",
+        "required": [
+          "universe",
+          "start_date",
+          "end_date",
+          "frequency"
+        ],
+        "properties": {
+          "universe": { "type": "array", "items": { "type": "string" } },
+          "start_date": { "type": "string", "format": "date" },
+          "end_date": { "type": "string", "format": "date" },
+          "frequency": { "type": "string", "enum": ["1m", "5m", "15m", "1h", "1d"] },
+          "adjustments": { "type": "string", "enum": ["none", "split", "split_dividend"] }
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "required": ["bars", "corporate_actions", "input_hash"],
+        "properties": {
+          "bars": { "type": "array" },
+          "corporate_actions": { "type": "array" },
+          "input_hash": { "type": "string" }
+        }
+      },
+      "sla": {
+        "max_latency_ms": 5000,
+        "min_success_rate": 0.995
+      }
+    },
+    {
+      "name": "generate_signals",
+      "kind": "function",
+      "input_schema": {
+        "type": "object",
+        "required": ["feature_frame", "strategy_config", "asof_time"],
+        "properties": {
+          "feature_frame": { "type": "array" },
+          "strategy_config": { "type": "object" },
+          "asof_time": { "type": "string", "format": "date-time" }
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "required": ["signals", "model_version", "confidence"],
+        "properties": {
+          "signals": { "type": "array" },
+          "model_version": { "type": "string" },
+          "confidence": { "type": "array" }
+        }
+      },
+      "sla": {
+        "max_latency_ms": 2000,
+        "min_success_rate": 0.999
+      }
+    },
+    {
+      "name": "risk_gate_pre_trade",
+      "kind": "function",
+      "input_schema": {
+        "type": "object",
+        "required": ["orders", "positions", "risk_policy", "market_state"],
+        "properties": {
+          "orders": { "type": "array" },
+          "positions": { "type": "array" },
+          "risk_policy": { "type": "object" },
+          "market_state": { "type": "object" }
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "required": ["approved_orders", "blocked_orders", "risk_events"],
+        "properties": {
+          "approved_orders": { "type": "array" },
+          "blocked_orders": { "type": "array" },
+          "risk_events": { "type": "array" }
+        }
+      },
+      "sla": {
+        "max_latency_ms": 800,
+        "min_success_rate": 0.9999
+      }
+    },
+    {
+      "name": "execute_orders",
+      "kind": "function",
+      "input_schema": {
+        "type": "object",
+        "required": ["approved_orders", "execution_mode", "broker_session"],
+        "properties": {
+          "approved_orders": { "type": "array" },
+          "execution_mode": { "type": "string", "enum": ["simulated", "paper", "live"] },
+          "broker_session": { "type": "object" }
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "required": ["fills", "rejections", "latency_stats"],
+        "properties": {
+          "fills": { "type": "array" },
+          "rejections": { "type": "array" },
+          "latency_stats": { "type": "object" }
+        }
+      },
+      "sla": {
+        "max_latency_ms": 1500,
+        "min_success_rate": 0.995
+      }
+    },
+    {
+      "name": "evaluate_performance",
+      "kind": "function",
+      "input_schema": {
+        "type": "object",
+        "required": ["trade_ledger", "pnl_series", "benchmark_series"],
+        "properties": {
+          "trade_ledger": { "type": "array" },
+          "pnl_series": { "type": "array" },
+          "benchmark_series": { "type": "array" }
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "required": ["summary_metrics", "risk_metrics", "diagnostics"],
+        "properties": {
+          "summary_metrics": { "type": "object" },
+          "risk_metrics": { "type": "object" },
+          "diagnostics": { "type": "object" }
+        }
+      },
+      "sla": {
+        "max_latency_ms": 3000,
+        "min_success_rate": 0.999
+      }
+    }
+  ],
+  "global_constraints": {
+    "idempotency_key_required": true,
+    "trace_fields_required": [
+      "run_id",
+      "policy_version",
+      "input_hash",
+      "result_hash",
+      "evidence_ref"
+    ],
+    "time_ordering": "monotonic_event_time",
+    "error_contract": {
+      "required_fields": ["error_code", "message", "stage", "severity", "action"],
+      "retryable_codes": ["TRANSIENT_NETWORK", "RATE_LIMIT", "DATA_SOURCE_TIMEOUT"]
+    }
+  }
+}

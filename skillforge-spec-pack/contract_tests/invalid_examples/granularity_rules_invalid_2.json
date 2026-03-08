@@ -1,0 +1,15 @@
+{
+    "schema_version": "0.1.0",
+    "controls_catalog": {
+        "timeout": {
+            "description": "Missing required 'type' field"
+        }
+    },
+    "lint_rules": [
+        {
+            "rule_id": "BAD_001",
+            "description": "Missing required 'check' field"
+        }
+    ],
+    "risk_tier_minimums": {}
+}

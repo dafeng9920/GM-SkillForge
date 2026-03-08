@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://gm-os.dev/orchestration/nodes/draft_skill_spec.schema.json",
+  "title": "DraftSkillSpecNode",
+  "description": "Stage 3: Skill 规格草案生成",
+  "type": "object",
+  "required": ["node_id", "input", "output"],
+  "properties": {
+    "node_id": { "const": "draft_skill_spec" },
+    "stage": { "const": 3 },
+    "input": {
+      "type": "object",
+      "required": ["scan_report"],
+      "properties": {
+        "scan_report": { "type": "object" }
+      }
+    },
+    "output": {
+      "type": "object",
+      "required": ["skill_md", "input_schema", "output_schema", "capabilities"],
+      "properties": {
+        "skill_md": { "type": "string", "description": "SKILL.md 内容" },
+        "input_schema": { "type": "object", "description": "输入 JSON Schema" },
+        "output_schema": { "type": "object", "description": "输出 JSON Schema" },
+        "capabilities": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["network", "file_read", "file_write", "shell", "database", "llm"] },
+          "description": "需要的工具权限"
+        }
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["SCHEMA_INVALID", "SYS_INTERNAL"]
+      }
+    }
+  },
+  "version": "0.1.0"
+}

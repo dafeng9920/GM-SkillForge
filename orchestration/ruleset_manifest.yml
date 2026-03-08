@@ -1,0 +1,32 @@
+# Ruleset Manifest - 审计口径版本
+# SEEDS-P0-2: Ruleset Revision Binding
+# Job ID: L45-D4-SEEDS-P0-20260220-004
+
+version: 1
+ruleset_revision: "v1"
+sources:
+  audit_engine_protocol: "docs/AUDIT_ENGINE_PROTOCOL_v1.md"
+  quality_gate_levels: "orchestration/quality_gate_levels.yml"
+  error_policy: "orchestration/error_policy.yml"
+  error_codes: "orchestration/error_codes.yml"
+  external_skill_governance: "docs/2026-02-19/contracts/external_skill_governance_contract_v1.yaml"
+notes: |
+  Bump ruleset_revision when any of the above changes.
+  Every GateDecision must include this ruleset_revision for reproducibility.
+  at-time replay uses ruleset_revision to verify decision criteria consistency.
+
+# Constraints (SEEDS-P0-2)
+constraints:
+  - "Every GateDecision MUST include ruleset_revision"
+  - "at-time replay path MUST be able to read ruleset_revision"
+  - "Missing ruleset_revision MUST be fail-closed"
+  - "ALLOW without ruleset_revision is FORBIDDEN"
+
+# Revision History
+history:
+  - revision: "v1"
+    date: "2026-02-20"
+    changes:
+      - "Initial ruleset for L4.5 SEEDS P0 foundation"
+      - "Gate decision envelope schema with ruleset_revision"
+      - "External skill governance contract integration"
