@@ -166,7 +166,7 @@ node_modules/
 .env.local
 db/*.sqlite
 db/*.db
-trading_data/
+# trading_data/ (No longer ignored to allow for cloud-local snapshot sync)
 demo_*_data/
 .tmp/
 reports/ALL_TESTS_PASSED.flag

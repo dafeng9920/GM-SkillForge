@@ -2,12 +2,37 @@ export type IntentKey = 'vetting' | 'audit' | 'permit';
 export type IntentState = IntentKey | 'unknown';
 export type CanvasState = 'home' | 'clarify' | 'vetting' | 'audit' | 'permit' | 'overview';
 export type DecisionConfidence = 'high' | 'low';
+const VETTING_CAPABILITY_SEGMENTS = [
+  'source_trust_scan',
+  'code_redline_scan',
+  'permission_capability_fit_review',
+  'risk_adjudication',
+  'install_gate',
+] as const;
 
 export interface DecisionNextAction {
   id: string;
   label: string;
   intent?: IntentKey;
   route_target?: string;
+}
+
+export interface DecisionCanvasPayload {
+  profileLabel?: string;
+  profileValue?: string;
+  summary?: string;
+  status?: string;
+  reasonLabel?: string;
+  reasonText?: string;
+  primaryLabel?: string;
+  primaryTitle?: string;
+  primaryDescription?: string;
+  primaryActionLabel?: string;
+  secondaryActionLabel?: string;
+  alternativesLabel?: string;
+  capabilityLabel?: string;
+  capabilitySegments?: string[];
+  detailItems?: Array<{ label: string; value: string }>;
 }
 
 export interface InteractionDecision {
@@ -20,6 +45,7 @@ export interface InteractionDecision {
   nextActions?: DecisionNextAction[];
   profile?: string | null;
   capabilitySegments?: string[];
+  canvasPayload?: DecisionCanvasPayload;
 }
 
 export const INTENT_ROUTE_MAP: Record<IntentKey, string> = {
@@ -150,5 +176,75 @@ export const resolveInteractionDecision = (
           : intent === 'permit'
             ? ['permit_binding', 'scope_conditions', 'release_gate']
             : [],
+    canvasPayload: requiresClarification
+      ? {
+          summary: 'The system first confirms your input, then asks for the missing governance context.',
+          status: 'Clarification required',
+          reasonLabel: 'Why clarification is required',
+          reasonText:
+            'The current input is not strong enough to route safely, so the system records it and asks for more context.',
+          primaryLabel: 'Clarify first',
+          primaryTitle: 'Add missing governance context',
+          primaryDescription:
+            'Clarify whether this is an external skill, a current revision review, or a permit release request.',
+          primaryActionLabel: 'Continue clarifying',
+          alternativesLabel: 'Possible governed paths',
+          capabilityLabel: 'Capability segments',
+          capabilitySegments: [],
+        }
+      : {
+          summary:
+            intent === 'vetting'
+              ? 'The system detected external intake language and prepared the governed vetting canvas.'
+              : intent === 'audit'
+                ? 'The system detected audit language and prepared the adjudication canvas.'
+                : 'The system detected release language and prepared the permit decision canvas.',
+          status:
+            intent === 'vetting'
+              ? 'Needs intake adjudication'
+              : intent === 'audit'
+                ? 'Ready for audit review'
+                : 'Ready for permit review',
+          reasonLabel: 'Why this canvas is active',
+          reasonText:
+            intent === 'vetting'
+              ? 'External source, import, or pre-install intent was detected.'
+              : intent === 'audit'
+                ? 'Revision, evidence, or gap-review language was detected.'
+                : 'Permit, release, or issuance language was detected.',
+          primaryLabel: 'Recommended next step',
+          primaryTitle:
+            intent === 'vetting'
+              ? 'External Skill Vetting'
+              : intent === 'audit'
+                ? 'Revision Audit'
+                : 'Permit Decision',
+          primaryDescription:
+            intent === 'vetting'
+              ? 'Use this canvas to review intake risk, redlines, and install gate readiness.'
+              : intent === 'audit'
+                ? 'Use this canvas to inspect evidence, gaps, blocked decisions, and adjudication context.'
+                : 'Use this canvas to bind release scope, conditions, and formal permit issuance.',
+          primaryActionLabel:
+            intent === 'vetting'
+              ? 'Open vetting intake'
+              : intent === 'audit'
+                ? 'Open audit detail'
+                : 'Open permit page',
+          secondaryActionLabel:
+            intent === 'vetting'
+              ? 'View sample report'
+              : intent === 'audit'
+                ? 'Review blocked assets'
+                : 'Open linked audit',
+          alternativesLabel: 'Other possible paths',
+          capabilityLabel: 'Capability segments',
+          capabilitySegments:
+            intent === 'vetting'
+              ? [...VETTING_CAPABILITY_SEGMENTS]
+              : intent === 'audit'
+                ? ['evidence_review', 'gap_adjudication', 'decision_explanation']
+                : ['permit_binding', 'scope_conditions', 'release_gate'],
+        },
   };
 };

@@ -1,0 +1,77 @@
+{
+  "last_update": "2026-03-09T23:12:48.123567",
+  "snapshots": [
+    {
+      "date": "2026-03-09",
+      "timestamp": "22:50:13",
+      "total_asset": 804901.488,
+      "cash": 804901.488,
+      "market_value": 0,
+      "positions_count": 1,
+      "total_pnl": -195098.512,
+      "total_pnl_pct": -19.509851199999993,
+      "positions": [
+        {
+          "symbol": "002594.SZ",
+          "quantity": 2000,
+          "avg_price": 97.52,
+          "current_price": 97.52,
+          "market_value": 0,
+          "unrealized_pnl": 0,
+          "unrealized_pnl_pct": 0
+        }
+      ],
+      "pending_orders": 0,
+      "today_trades": 1
+    },
+    {
+      "date": "2026-03-09",
+      "timestamp": "23:00:38",
+      "total_asset": 1000000,
+      "cash": 1000000,
+      "market_value": 0,
+      "positions_count": 0,
+      "total_pnl": 0,
+      "total_pnl_pct": 0.0,
+      "positions": [],
+      "pending_orders": 0,
+      "today_trades": 0
+    },
+    {
+      "date": "2026-03-09",
+      "timestamp": "23:06:14",
+      "total_asset": 1000000,
+      "cash": 1000000,
+      "market_value": 0,
+      "positions_count": 0,
+      "total_pnl": 0,
+      "total_pnl_pct": 0.0,
+      "positions": [],
+      "pending_orders": 0,
+      "today_trades": 0
+    },
+    {
+      "date": "2026-03-09",
+      "timestamp": "23:12:48",
+      "total_asset": 804901.488,
+      "cash": 804901.488,
+      "market_value": 0,
+      "positions_count": 1,
+      "total_pnl": -195098.512,
+      "total_pnl_pct": -19.509851199999993,
+      "positions": [
+        {
+          "symbol": "002594.SZ",
+          "quantity": 2000,
+          "avg_price": 97.52,
+          "current_price": 97.52,
+          "market_value": 0,
+          "unrealized_pnl": 0,
+          "unrealized_pnl_pct": 0
+        }
+      ],
+      "pending_orders": 0,
+      "today_trades": 1
+    }
+  ]
+}

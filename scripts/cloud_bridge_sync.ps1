@@ -1,12 +1,13 @@
-# cloud_bridge_sync.ps1 - GM-SkillForge Cloud-Local Bridge Automation
+# cloud_bridge_sync.ps1 - GM-SkillForge Cloud-Local Bridge Automation (V3)
 # -------------------------------------------------------------------
-# 功能：本地编写 Skill -> Git 推送 -> 自动连通云端管理后台
-# 架构：Bridge of the Sea (Cloudflare Tunnel + Git Sync)
+# 功能：本地抓取行情 -> Git 推送 -> 云端直连 -> 自动化验收
+# 架构：Bridge of the Sea (Feeder + Sync + Adjudicator)
 # -------------------------------------------------------------------
 
 param (
-    [string]$commitMessage = "Auto-sync for cloud execution: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')",
-    [switch]$OpenDashboard = $true
+    [string]$commitMessage = "Market Snapshot & Skill Sync: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')",
+    [switch]$OpenDashboard = $true,
+    [switch]$SkipMarket = $false
 )
 
 $STABLE_URL = "https://mom-cocktail-characterization-consideration.trycloudflare.com"
@@ -15,33 +16,43 @@ $AUTH_URL = "$STABLE_URL/#token=$GATEWAY_TOKEN"
 
 Clear-Host
 Write-Host "==========================================" -ForegroundColor Cyan
-Write-Host "   GM-SkillForge: 跨海大桥同步程序 (V2)" -ForegroundColor Cyan
+Write-Host "   GM-SkillForge: 跨海大桥同步程序 (V3)" -ForegroundColor Cyan
 Write-Host "==========================================" -ForegroundColor Cyan
 
+# 0. A 股行情抓取 (Architecture A: Local Feeder)
+if (-not $SkipMarket) {
+    Write-Host "`n[0/4] 🔭 正在执行本地行情侦察 (akshare)..." -ForegroundColor Yellow
+    python ./scripts/fetch_ashare_data.py
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "⚠️ 行情抓取出现异常，将继续尝试推送其余文件。" -ForegroundColor Magenta
+    } else {
+        Write-Host "✅ 行情快照已捕获。" -ForegroundColor Green
+    }
+}
+
 # 1. 本地 Git 同步
-Write-Host "`n[1/3] 📦 正在同步本地 Skill 代码到 Git..." -ForegroundColor Yellow
+Write-Host "`n[1/4] 📦 正在同步本地 Skill 与 Intelligence 到 Git..." -ForegroundColor Yellow
 git add .
 git commit -m $commitMessage --allow-empty
 git push origin main
 
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "❌ Git 推送失败，请检查网络或 SSH Key。" -ForegroundColor Red
+    Write-Host "❌ Git 推送失败，请检查网络或配置。" -ForegroundColor Red
     exit $LASTEXITCODE
 }
-Write-Host "✅ Git 同步已完成。" -ForegroundColor Green
+Write-Host "✅ 全量同步已完成。" -ForegroundColor Green
 
-# 2. 云端重载提示
-Write-Host "`n[2/3] 🔔 请向 Discord/飞书 的“小龙虾”发送重载指令：" -ForegroundColor Yellow
-Write-Host "      !system reload-skills" -ForegroundColor White
-Write-Host "      (注意：云端已配置持续监听，通常会自动 pick up)" -ForegroundColor Gray
+# 2. 自动化信号
+Write-Host "`n[2/4] 🔔 请留意：云端 Adjudicator 正在监听行情更新..." -ForegroundColor Yellow
+Write-Host "      !market status - 查看最新同步的情报" -ForegroundColor Gray
 
-# 3. 开启云端直连后台
+# 3. 开启或刷新管理后台
 if ($OpenDashboard) {
-    Write-Host "`n[3/3] 🌉 正在通过免 VPN 隧道开启云端直连后台..." -ForegroundColor Yellow
+    Write-Host "`n[3/4] 🌉 正在刷新云端直连大桥..." -ForegroundColor Yellow
     Write-Host "      正在跳转至：$STABLE_URL" -ForegroundColor Gray
     Start-Process $AUTH_URL
 }
 
 Write-Host "`n==========================================" -ForegroundColor Cyan
-Write-Host "   ✅ 全链路同步任务已提交，大桥通航中！" -ForegroundColor Green
+Write-Host "   ✅ V3 同步完成，行情已跨海，大桥运行中！" -ForegroundColor Green
 Write-Host "==========================================" -ForegroundColor Cyan

@@ -15,6 +15,8 @@ export type CanvasIntentKey = Exclude<IntentState, 'unknown'>;
 
 export interface ContextCanvasModel {
   canvas: Extract<CanvasState, 'clarify' | 'vetting' | 'audit' | 'permit'>;
+  profileLabel?: string;
+  profileValue?: string;
   summary: string;
   status: string;
   confirmedLabel: string;
@@ -29,6 +31,7 @@ export interface ContextCanvasModel {
   secondaryActionLabel?: string;
   capabilityLabel?: string;
   capabilitySegments?: string[];
+  detailItems?: Array<{ label: string; value: string }>;
   alternativesLabel: string;
   alternatives: Array<{
     key: CanvasIntentKey;
@@ -178,18 +181,24 @@ export const buildContextCanvasModel = (
   if (decision.intent === 'unknown') {
     return {
       canvas: 'clarify',
-      summary: copy.summary,
-      status: copy.clarifyStatus,
+      profileLabel: decision.canvasPayload?.profileLabel,
+      profileValue: decision.canvasPayload?.profileValue,
+      summary: decision.canvasPayload?.summary ?? copy.summary,
+      status: decision.canvasPayload?.status ?? copy.clarifyStatus,
       confirmedLabel: copy.confirmedLabel,
       emptyTitle: copy.emptyTitle,
       emptyDescription: copy.emptyDescription,
-      reasonLabel: copy.reasonLabel,
-      reasonText: decision.reason ?? INTENT_REASONS[language].unknown,
-      primaryLabel: copy.primaryLabel,
-      primaryTitle: copy.clarifyTitle,
-      primaryDescription: copy.clarifyDescription,
-      primaryActionLabel: decision.nextActions?.[0]?.label ?? copy.clarifyAction,
-      alternativesLabel: copy.alternativesLabel,
+      reasonLabel: decision.canvasPayload?.reasonLabel ?? copy.reasonLabel,
+      reasonText: decision.canvasPayload?.reasonText ?? decision.reason ?? INTENT_REASONS[language].unknown,
+      primaryLabel: decision.canvasPayload?.primaryLabel ?? copy.primaryLabel,
+      primaryTitle: decision.canvasPayload?.primaryTitle ?? copy.clarifyTitle,
+      primaryDescription: decision.canvasPayload?.primaryDescription ?? copy.clarifyDescription,
+      primaryActionLabel:
+        decision.canvasPayload?.primaryActionLabel ?? decision.nextActions?.[0]?.label ?? copy.clarifyAction,
+      alternativesLabel: decision.canvasPayload?.alternativesLabel ?? copy.alternativesLabel,
+      capabilityLabel: decision.canvasPayload?.capabilityLabel,
+      capabilitySegments: decision.canvasPayload?.capabilitySegments ?? [],
+      detailItems: decision.canvasPayload?.detailItems ?? [],
       alternatives,
     };
   }
@@ -198,21 +207,26 @@ export const buildContextCanvasModel = (
 
   return {
     canvas: decision.canvas as Extract<CanvasState, 'clarify' | 'vetting' | 'audit' | 'permit'>,
-    summary: copy.summary,
-    status: descriptor.status,
+    profileLabel: decision.canvasPayload?.profileLabel,
+    profileValue: decision.canvasPayload?.profileValue ?? decision.profile ?? undefined,
+    summary: decision.canvasPayload?.summary ?? copy.summary,
+    status: decision.canvasPayload?.status ?? descriptor.status,
     confirmedLabel: copy.confirmedLabel,
     emptyTitle: copy.emptyTitle,
     emptyDescription: copy.emptyDescription,
-    reasonLabel: copy.reasonLabel,
-    reasonText: decision.reason ?? INTENT_REASONS[language][decision.intent],
-    primaryLabel: copy.primaryLabel,
-    primaryTitle: descriptor.title,
-    primaryDescription: descriptor.summary,
-    primaryActionLabel: decision.nextActions?.[0]?.label ?? descriptor.primaryAction,
-    secondaryActionLabel: decision.nextActions?.[1]?.label ?? descriptor.secondaryAction,
-    capabilityLabel: language === 'zh' ? '后端能力段' : 'Capability segments',
-    capabilitySegments: decision.capabilitySegments ?? [],
-    alternativesLabel: copy.alternativesLabel,
+    reasonLabel: decision.canvasPayload?.reasonLabel ?? copy.reasonLabel,
+    reasonText: decision.canvasPayload?.reasonText ?? decision.reason ?? INTENT_REASONS[language][decision.intent],
+    primaryLabel: decision.canvasPayload?.primaryLabel ?? copy.primaryLabel,
+    primaryTitle: decision.canvasPayload?.primaryTitle ?? descriptor.title,
+    primaryDescription: decision.canvasPayload?.primaryDescription ?? descriptor.summary,
+    primaryActionLabel:
+      decision.canvasPayload?.primaryActionLabel ?? decision.nextActions?.[0]?.label ?? descriptor.primaryAction,
+    secondaryActionLabel:
+      decision.canvasPayload?.secondaryActionLabel ?? decision.nextActions?.[1]?.label ?? descriptor.secondaryAction,
+    capabilityLabel: decision.canvasPayload?.capabilityLabel ?? (language === 'zh' ? '后端能力段' : 'Capability segments'),
+    capabilitySegments: decision.canvasPayload?.capabilitySegments ?? decision.capabilitySegments ?? [],
+    detailItems: decision.canvasPayload?.detailItems ?? [],
+    alternativesLabel: decision.canvasPayload?.alternativesLabel ?? copy.alternativesLabel,
     alternatives,
   };
 };

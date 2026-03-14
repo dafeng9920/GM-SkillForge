@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../app/i18n';
-import { ContextCanvasHost, type ContextCanvasHistoryItem } from '../../components/governance/ContextCanvasHost';
+import type { ContextCanvasHistoryItem } from '../../components/governance/ContextCanvasHost';
+import { useGovernanceCanvasSlot } from '../../components/governance/GovernanceCanvasSlot';
 import type { ComposerAction } from '../../components/governance/GovernComposer';
 import { useGovernanceInteraction } from '../../features/governanceInteraction/interaction';
 import { useGovernancePromptQuerySync } from '../../features/governanceInteraction/useGovernancePromptQuerySync';
@@ -376,6 +377,104 @@ const DashboardPage: React.FC = () => {
     [copy.intentAudit, copy.intentPermit, copy.intentVetting, copy.promptPlaceholder, language],
   );
 
+  const slotConfig = useMemo(
+    () => ({
+      variant: 'workspace' as const,
+      decision: activeDecision,
+      confirmedValue: currentTurn || undefined,
+      showHistory: Boolean(latestTurns.length > 0),
+      history: {
+        title: copy.homeHistoryTitle,
+        subtitle: copy.homeHistorySubtitle,
+        items: historyItems,
+      },
+      consoleHeader: {
+        eyebrow: copy.consoleEyebrow,
+        title: copy.consoleTitle,
+        meta: copy.consoleMeta,
+      },
+      consoleHint: copy.consoleHint,
+      canvasHeader: {
+        eyebrow: copy.bridgeEyebrow,
+        title: copy.bridgeTitle,
+        status: currentCanvasModel.status,
+      },
+      composer: {
+        value: draft,
+        onChange: setDraft,
+        onSubmit: () => {
+          submitDraft({ intentHint: draftIntentHint });
+        },
+        placeholder: copy.promptPlaceholder,
+        submitLabel: copy.confirmInput,
+        addAttachmentLabel: language === 'zh' ? '添加附件' : 'Add attachment',
+        imageActionLabel: language === 'zh' ? '图片' : 'Image',
+        fileActionLabel: language === 'zh' ? '文件' : 'File',
+        enterKeyLabel: 'Enter',
+        enterLabel: copy.submit,
+        shiftEnterKeyLabel: 'Shift+Enter',
+        newlineLabel: copy.newline,
+        separatorLabel: '·',
+        imageAttachedLabel: language === 'zh' ? '已附加图片' : 'Image attached',
+        fileAttachedLabel: language === 'zh' ? '已附加文件' : 'File attached',
+        headerBadge: copy.promptBadge,
+        headerText: copy.promptHelp,
+        quickActions,
+        onQuickActionSelect: (action: ComposerAction) => {
+          setDraft(action.prompt);
+          setDraftIntentHint(action.intentHint ?? 'unknown');
+        },
+        intentTabs: [
+          { key: 'vetting' as const, label: copy.intentVetting },
+          { key: 'audit' as const, label: copy.intentAudit },
+          { key: 'permit' as const, label: copy.intentPermit },
+        ],
+        selectedIntent: draftIntentHint,
+        onIntentSelect: setDraftIntentHint,
+      },
+      onPrimaryAction: (decision: typeof activeDecision) => {
+        if (decision.routeTarget && currentTurn) {
+          navigate(`${decision.routeTarget}?prompt=${encodeURIComponent(currentTurn)}`);
+        }
+      },
+      onAlternativeSelect: (intent: 'vetting' | 'audit' | 'permit') => setDraftIntentHint(intent),
+    }),
+    [
+      activeDecision,
+      copy.bridgeEyebrow,
+      copy.bridgeTitle,
+      copy.confirmInput,
+      copy.consoleEyebrow,
+      copy.consoleHint,
+      copy.consoleMeta,
+      copy.consoleTitle,
+      copy.homeHistorySubtitle,
+      copy.homeHistoryTitle,
+      copy.intentAudit,
+      copy.intentPermit,
+      copy.intentVetting,
+      copy.newline,
+      copy.promptBadge,
+      copy.promptHelp,
+      copy.promptPlaceholder,
+      copy.submit,
+      currentCanvasModel.status,
+      currentTurn,
+      draft,
+      draftIntentHint,
+      historyItems,
+      language,
+      latestTurns.length,
+      navigate,
+      quickActions,
+      setDraft,
+      setDraftIntentHint,
+      submitDraft,
+    ],
+  );
+
+  useGovernanceCanvasSlot(slotConfig);
+
   return (
     <main className={styles.page}>
       <section className={styles.hero}>
@@ -391,72 +490,6 @@ const DashboardPage: React.FC = () => {
           <button className={styles.secondaryAction}>{copy.viewPermitEvents}</button>
         </div>
       </section>
-
-      <section className={styles.workspace}>
-        <ContextCanvasHost
-          variant="workspace"
-          language={language}
-          decision={activeDecision}
-          confirmedValue={currentTurn || undefined}
-          showHistory={Boolean(latestTurns.length > 0)}
-          history={{
-            title: copy.homeHistoryTitle,
-            subtitle: copy.homeHistorySubtitle,
-            items: historyItems,
-          }}
-          consoleHeader={{
-            eyebrow: copy.consoleEyebrow,
-            title: copy.consoleTitle,
-            meta: copy.consoleMeta,
-          }}
-          consoleHint={copy.consoleHint}
-          canvasHeader={{
-            eyebrow: copy.bridgeEyebrow,
-            title: copy.bridgeTitle,
-            status: currentCanvasModel.status,
-          }}
-          composer={{
-            value: draft,
-            onChange: setDraft,
-            onSubmit: () => {
-              submitDraft({ intentHint: draftIntentHint });
-            },
-            placeholder: copy.promptPlaceholder,
-            submitLabel: copy.confirmInput,
-            addAttachmentLabel: language === 'zh' ? '添加附件' : 'Add attachment',
-            imageActionLabel: language === 'zh' ? '图片' : 'Image',
-            fileActionLabel: language === 'zh' ? '文件' : 'File',
-            enterKeyLabel: 'Enter',
-            enterLabel: copy.submit,
-            shiftEnterKeyLabel: 'Shift+Enter',
-            newlineLabel: copy.newline,
-            separatorLabel: '·',
-            imageAttachedLabel: language === 'zh' ? '已附加图片' : 'Image attached',
-            fileAttachedLabel: language === 'zh' ? '已附加文件' : 'File attached',
-            headerBadge: copy.promptBadge,
-            headerText: copy.promptHelp,
-            quickActions,
-            onQuickActionSelect: (action) => {
-              setDraft(action.prompt);
-              setDraftIntentHint(action.intentHint ?? 'unknown');
-            },
-            intentTabs: [
-              { key: 'vetting', label: copy.intentVetting },
-              { key: 'audit', label: copy.intentAudit },
-              { key: 'permit', label: copy.intentPermit },
-            ],
-            selectedIntent: draftIntentHint,
-            onIntentSelect: setDraftIntentHint,
-          }}
-          onPrimaryAction={(decision) => {
-            if (decision.routeTarget && currentTurn) {
-              navigate(`${decision.routeTarget}?prompt=${encodeURIComponent(currentTurn)}`);
-            }
-          }}
-          onAlternativeSelect={(intent) => setDraftIntentHint(intent)}
-        />
-      </section>
-
       <details className={styles.detailsPanel}>
         <summary className={styles.detailsSummary}>
           <div>

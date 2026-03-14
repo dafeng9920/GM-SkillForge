@@ -47,6 +47,107 @@ VETTING_PROFILE_SEGMENTS = [
     "install_gate",
 ]
 
+def derive_vetting_detail_items(raw_input: str, locale: str) -> list[dict]:
+    normalized = raw_input.lower()
+    zh = locale.startswith("zh")
+
+    if "github.com" in normalized or "git@" in normalized or "repo" in normalized:
+        source_kind = "Git 仓库" if zh else "Git repository"
+        source_trust = "公开仓库" if zh else "Public repository"
+    elif "http://" in normalized or "https://" in normalized or "url" in normalized or "链接" in normalized:
+        source_kind = "外部链接" if zh else "External URL"
+        source_trust = "未知镜像" if zh else "Unknown mirror"
+    elif "zip" in normalized or "folder" in normalized or "文件夹" in normalized or "压缩" in normalized:
+        source_kind = "压缩包 / 文件夹" if zh else "ZIP / Folder"
+        source_trust = "离线包" if zh else "Offline package"
+    elif "npm" in normalized or "pip" in normalized or "package" in normalized or "包" in normalized:
+        source_kind = "包分发源" if zh else "Package distribution"
+        source_trust = "第三方源" if zh else "Third-party registry"
+    else:
+        source_kind = "未声明来源" if zh else "Undeclared source"
+        source_trust = "需要确认" if zh else "Needs clarification"
+
+    trusted_signals = ["trusted", "internal", "official", "signed", "白名单", "内部", "官方", "签名"]
+    risky_signals = ["external", "partner", "unknown", "mirror", "third-party", "外部", "合作方", "未知", "镜像", "第三方"]
+    high_risk_signals = ["production", "prod", "payment", "billing", "publish", "发布", "生产", "支付", "账单"]
+    permission_signals = ["permission", "scope", "access", "admin", "权限", "范围", "访问", "管理"]
+
+    risk_score = 1
+    if any(signal in normalized for signal in risky_signals):
+        risk_score += 1
+    if any(signal in normalized for signal in high_risk_signals):
+        risk_score += 1
+    if any(signal in normalized for signal in permission_signals):
+        risk_score += 1
+    if any(signal in normalized for signal in trusted_signals):
+        risk_score -= 1
+
+    risk_score = max(0, min(3, risk_score))
+    redline_count = 1 + risk_score
+    gap_count = max(1, 4 - risk_score) if risk_score < 3 else 2
+
+    if risk_score >= 3:
+        install_gate = "阻断" if zh else "Blocked"
+        recommendation = "拒绝 / 人工升级" if zh else "Deny / escalate"
+    elif risk_score == 2:
+        install_gate = "条件放行" if zh else "Conditional"
+        recommendation = "需人工批准" if zh else "Manual approval required"
+    elif risk_score == 1:
+        install_gate = "条件放行" if zh else "Conditional"
+        recommendation = "允许但需复核" if zh else "Allowed with review"
+    else:
+        install_gate = "开放" if zh else "Open"
+        recommendation = "允许" if zh else "Allowed"
+
+    return [
+        {"label": "来源类型" if zh else "Source type", "value": source_kind},
+        {"label": "来源可信度" if zh else "Source trust", "value": source_trust},
+        {"label": "红线发现" if zh else "Redline findings", "value": f"{redline_count} 项" if zh else f"{redline_count} findings"},
+        {"label": "可修复缺口" if zh else "Fixable gaps", "value": f"{gap_count} 项" if zh else f"{gap_count} gaps"},
+        {"label": "安装闸门" if zh else "Install gate", "value": install_gate},
+        {"label": "推荐结论" if zh else "Recommendation", "value": recommendation},
+    ]
+
+def derive_audit_detail_items(raw_input: str, locale: str) -> list[dict]:
+    normalized = raw_input.lower()
+    zh = locale.startswith("zh")
+
+    revision = "R-014"
+    import re
+    revision_match = re.search(r"r[-_ ]?(\d{2,4})", normalized, re.IGNORECASE)
+    if revision_match:
+        revision = f"R-{revision_match.group(1)}"
+
+    blocked_signals = ["blocked", "deny", "冻结", "阻断", "失败", "rejected", "拒绝"]
+    gap_signals = ["gap", "missing", "fix", "缺口", "修复", "整改"]
+    evidence_signals = ["evidence", "trace", "proof", "证据", "追踪", "依据"]
+    drift_signals = ["drift", "hash", "mismatch", "漂移", "失配", "冲突"]
+
+    blocked_count = 1 if any(signal in normalized for signal in blocked_signals) else 0
+    gap_count = 3 if any(signal in normalized for signal in gap_signals) else 1
+
+    if any(signal in normalized for signal in evidence_signals):
+        evidence_coverage = "仅摘要" if zh else "Summary only"
+    elif any(signal in normalized for signal in drift_signals):
+        evidence_coverage = "薄弱" if zh else "Weak"
+    else:
+        evidence_coverage = "充分" if zh else "Sufficient"
+
+    if blocked_count > 0 and gap_count >= 3:
+        adjudication = "需要修复" if zh else "Fix required"
+    elif any(signal in normalized for signal in drift_signals):
+        adjudication = "待复核" if zh else "Needs review"
+    else:
+        adjudication = "可继续审计" if zh else "Ready for audit"
+
+    return [
+        {"label": "当前修订" if zh else "Current revision", "value": revision},
+        {"label": "证据覆盖" if zh else "Evidence coverage", "value": evidence_coverage},
+        {"label": "阻断项" if zh else "Blocked items", "value": f"{blocked_count} 项" if zh else f"{blocked_count} blocker" if blocked_count == 1 else f"{blocked_count} blockers"},
+        {"label": "可修复缺口" if zh else "Fixable gaps", "value": f"{gap_count} 项" if zh else f"{gap_count} gaps"},
+        {"label": "裁决状态" if zh else "Adjudication", "value": adjudication},
+    ]
+
 # ============================================================================
 # Helper Functions
 # ============================================================================
@@ -91,7 +192,85 @@ def infer_governance_intent(raw_input: str, intent_hint: str = "unknown") -> str
         return "audit"
     return "unknown"
 
-def build_governance_decision(raw_input: str, intent_hint: str = "unknown") -> dict:
+def build_canvas_payload(intent: str, locale: str, requires_clarification: bool, capability_segments: list[str], raw_input: str) -> dict:
+    zh = locale.startswith("zh")
+    if requires_clarification:
+        return {
+            "profileLabel": "当前状态" if zh else "Current state",
+            "profileValue": "需要澄清" if zh else "Clarification required",
+            "summary": "系统先确认你的输入，再要求补充缺失的治理上下文。" if zh else "The system first confirms your input, then asks for the missing governance context.",
+            "status": "需要进一步确认" if zh else "Clarification required",
+            "reasonLabel": "为什么需要进一步确认" if zh else "Why clarification is required",
+            "reasonText": "当前输入还不足以安全分流，因此系统会先记录并要求补充上下文。" if zh else "The current input is not strong enough to route safely, so the system records it and asks for more context.",
+            "primaryLabel": "先补充说明" if zh else "Clarify first",
+            "primaryTitle": "补充缺失的治理上下文" if zh else "Add missing governance context",
+            "primaryDescription": "请说明这是外部 Skill、当前 Revision 审查，还是 Permit 放行需求。" if zh else "Clarify whether this is an external skill, a current revision review, or a permit release request.",
+            "primaryActionLabel": "继续补充说明" if zh else "Continue clarifying",
+            "alternativesLabel": "可能的治理路径" if zh else "Possible governed paths",
+            "capabilityLabel": "后端能力段" if zh else "Capability segments",
+            "capabilitySegments": [],
+        }
+
+    if intent == "vetting":
+        return {
+            "profileLabel": "审查 Profile" if zh else "Active profile",
+            "profileValue": "external_skill_vetting",
+            "summary": "系统检测到外部摄入语义，已准备外部 Skill 审查画布。" if zh else "The system detected external intake language and prepared the external skill vetting canvas.",
+            "status": "需要入口裁决" if zh else "Needs intake adjudication",
+            "reasonLabel": "为什么激活这张画布" if zh else "Why this canvas is active",
+            "reasonText": "输入包含外部来源、导入或安装前判断语义。" if zh else "The request includes external source, import, or pre-install review language.",
+            "primaryLabel": "推荐下一步" if zh else "Recommended next step",
+            "primaryTitle": "外部 Skill 审查" if zh else "External Skill Vetting",
+            "primaryDescription": "在这里检查来源可信度、红线、权限匹配和安装闸门。" if zh else "Use this canvas to review source trust, redlines, permission fit, and install gate readiness.",
+            "primaryActionLabel": "打开审查入口" if zh else "Open vetting intake",
+            "secondaryActionLabel": "查看示例报告" if zh else "View sample report",
+            "alternativesLabel": "其它可选路径" if zh else "Other possible paths",
+            "capabilityLabel": "后端能力段" if zh else "Capability segments",
+            "capabilitySegments": capability_segments,
+            "detailItems": derive_vetting_detail_items(raw_input, locale),
+        }
+    if intent == "audit":
+        return {
+            "profileLabel": "审查 Profile" if zh else "Active profile",
+            "profileValue": "revision_audit",
+            "summary": "系统检测到审计语义，已准备裁决与证据解释画布。" if zh else "The system detected audit language and prepared the adjudication and evidence canvas.",
+            "status": "准备接受审计审查" if zh else "Ready for audit review",
+            "reasonLabel": "为什么激活这张画布" if zh else "Why this canvas is active",
+            "reasonText": "输入包含修订、证据或缺口审查语义。" if zh else "The request includes revision, evidence, or gap-review language.",
+            "primaryLabel": "推荐下一步" if zh else "Recommended next step",
+            "primaryTitle": "Revision 审核" if zh else "Revision Audit",
+            "primaryDescription": "在这里检查证据、缺口、阻断原因和裁决上下文。" if zh else "Use this canvas to inspect evidence, gaps, blocked decisions, and adjudication context.",
+            "primaryActionLabel": "打开审计详情" if zh else "Open audit detail",
+            "secondaryActionLabel": "审查阻断资产" if zh else "Review blocked assets",
+            "alternativesLabel": "其它可选路径" if zh else "Other possible paths",
+            "capabilityLabel": "后端能力段" if zh else "Capability segments",
+            "capabilitySegments": capability_segments,
+            "detailItems": derive_audit_detail_items(raw_input, locale),
+        }
+    return {
+        "profileLabel": "审查 Profile" if zh else "Active profile",
+        "profileValue": "permit_release",
+        "summary": "系统检测到放行语义，已准备 Permit 决策画布。" if zh else "The system detected release language and prepared the permit decision canvas.",
+        "status": "准备接受 Permit 审查" if zh else "Ready for permit review",
+        "reasonLabel": "为什么激活这张画布" if zh else "Why this canvas is active",
+        "reasonText": "输入包含 Permit、放行或签发语义。" if zh else "The request includes permit, release, or issuance language.",
+        "primaryLabel": "推荐下一步" if zh else "Recommended next step",
+        "primaryTitle": "Permit 放行" if zh else "Permit Decision",
+        "primaryDescription": "在这里绑定放行范围、条件和正式 Permit 签发动作。" if zh else "Use this canvas to bind release scope, conditions, and formal permit issuance.",
+        "primaryActionLabel": "打开 Permit 页面" if zh else "Open permit page",
+        "secondaryActionLabel": "打开关联审计" if zh else "Open linked audit",
+        "alternativesLabel": "其它可选路径" if zh else "Other possible paths",
+        "capabilityLabel": "后端能力段" if zh else "Capability segments",
+        "capabilitySegments": capability_segments,
+        "detailItems": [
+            {"label": "Permit 状态" if zh else "Permit status", "value": "待签发" if zh else "Pending"},
+            {"label": "绑定修订" if zh else "Bound revision", "value": "R-014"},
+            {"label": "放行范围" if zh else "Release scope", "value": "生产 / 内部" if zh else "Production / Internal"},
+            {"label": "残余风险" if zh else "Residual risk", "value": "持续监控" if zh else "Ongoing monitoring"},
+        ],
+    }
+
+def build_governance_decision(raw_input: str, intent_hint: str = "unknown", locale: str = "zh") -> dict:
     intent = infer_governance_intent(raw_input, intent_hint)
     canvas = {
         "vetting": "vetting",
@@ -146,6 +325,7 @@ def build_governance_decision(raw_input: str, intent_hint: str = "unknown") -> d
             "nextActions": next_actions,
             "profile": profile,
             "capabilitySegments": capability_segments,
+            "canvasPayload": build_canvas_payload(intent, locale, requires_clarification, capability_segments, raw_input),
         }
     }
 
@@ -343,6 +523,7 @@ async def governance_orchestrate(request: GovernanceOrchestrateRequest):
     payload = build_governance_decision(
         raw_input=request.raw_input,
         intent_hint=request.intent_hint,
+        locale=request.locale,
     )
     payload["trace"] = {
         "run_id": run_id,

@@ -20,6 +20,7 @@ export interface InteractionTurn {
   confidence: DecisionConfidence;
   requiresClarification: boolean;
   routeTarget: string | null;
+  decision: InteractionDecision;
   confirmedAt: string;
 }
 
@@ -52,10 +53,11 @@ const normalizeTurn = (turn: Partial<InteractionTurn>): InteractionTurn | null =
     return null;
   }
 
-  const decision = previewGovernanceOrchestration({
+  const fallbackDecision = previewGovernanceOrchestration({
     input: turn.userInput,
     intentHint: (turn.intent as IntentState) ?? 'unknown',
   }).decision;
+  const decision = turn.decision ?? fallbackDecision;
 
   return {
     id: turn.id,
@@ -65,6 +67,7 @@ const normalizeTurn = (turn: Partial<InteractionTurn>): InteractionTurn | null =
     confidence: decision.confidence,
     requiresClarification: decision.requiresClarification,
     routeTarget: decision.routeTarget,
+    decision,
     confirmedAt: turn.confirmedAt,
   };
 };
@@ -129,6 +132,7 @@ export const GovernanceInteractionProvider: React.FC<React.PropsWithChildren> = 
       confidence: decision.confidence,
       requiresClarification: decision.requiresClarification,
       routeTarget: decision.routeTarget,
+      decision,
       confirmedAt: new Date().toISOString(),
     };
 
@@ -168,6 +172,7 @@ export const GovernanceInteractionProvider: React.FC<React.PropsWithChildren> = 
       confidence: decision.confidence,
       requiresClarification: decision.requiresClarification,
       routeTarget: decision.routeTarget,
+      decision,
       confirmedAt: new Date().toISOString(),
     };
 
@@ -182,10 +187,7 @@ export const GovernanceInteractionProvider: React.FC<React.PropsWithChildren> = 
       }).decision
     : null;
   const latestDecision = latestTurn
-    ? previewGovernanceOrchestration({
-        input: latestTurn.userInput,
-        intentHint: latestTurn.intent,
-      }).decision
+    ? latestTurn.decision
     : null;
   const activeDecision =
     draftDecision ??

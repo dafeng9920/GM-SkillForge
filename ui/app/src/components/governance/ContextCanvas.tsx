@@ -48,6 +48,12 @@ export const ContextCanvas: React.FC<ContextCanvasProps> = ({
       <div className={styles.reasonBox}>
         <span className={styles.badge}>{model.reasonLabel}</span>
         <p>{model.reasonText}</p>
+        {model.profileLabel && model.profileValue ? (
+          <div className={styles.profileRow}>
+            <span className={styles.profileLabel}>{model.profileLabel}</span>
+            <span className={styles.profileValue}>{model.profileValue}</span>
+          </div>
+        ) : null}
         {model.capabilitySegments && model.capabilitySegments.length > 0 ? (
           <div className={styles.capabilityGroup}>
             <span className={styles.capabilityLabel}>{model.capabilityLabel}</span>
@@ -58,6 +64,16 @@ export const ContextCanvas: React.FC<ContextCanvasProps> = ({
                 </span>
               ))}
             </div>
+          </div>
+        ) : null}
+        {model.detailItems && model.detailItems.length > 0 ? (
+          <div className={styles.detailGrid}>
+            {model.detailItems.map((item) => (
+              <div key={`${item.label}-${item.value}`} className={styles.detailCard}>
+                <span className={styles.detailLabel}>{item.label}</span>
+                <strong className={styles.detailValue}>{item.value}</strong>
+              </div>
+            ))}
           </div>
         ) : null}
       </div>
