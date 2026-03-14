@@ -1,0 +1,40 @@
+{
+  "permit_id": "PERMIT-TG1-BASELINE-20260304-RESIGNED",
+  "schema_version": "pack_and_permit_v0",
+  "skill_id": "tg1_baseline_skill",
+  "revision": "tg1_baseline_rev_005",
+  "status": "ISSUED",
+  "demand_hash": "11a137deeb30eed253140b7a6635f751708d360e9c39ab6fa16422476004e1d5",
+  "contract_hash": "ff29ff0c71feb9847c9e622a33d55e838c01f6a203327403d4fc4ef51ba02729",
+  "decision_hash": "1db3c191897d68671144193610d35c18e11233c1051dcbae369be7558abffa60",
+  "audit_pack_hash": "65b441c02e70907e10fb5859cc4343c92557f2b3d07fad6678facc5401ce2884",
+  "issued_at": "2026-03-04T17:10:31Z",
+  "expires_at": null,
+  "issuer": "Antigravity-2-Fixed-Caliber-Guard",
+  "restrictions": {
+    "environment": "LOCAL-ANTIGRAVITY",
+    "scope": "baseline_delivery_completion"
+  },
+  "metadata": {
+    "purpose": "Permit updated via drill 20260305 - second permit change drill",
+    "reference_task": "T-PERMIT-CHANGE-DRILL-20260305",
+    "resigned_reason": "SF_PERMIT_HASH_MISMATCH - Fixed-caliber violation detected and corrected",
+    "three_rights_binding": {
+      "demand_path": ".tmp/pr1_smoke/demand.json",
+      "contract_path": ".tmp/pr1_smoke/contract.json",
+      "decision_path": ".tmp/pr1_smoke/decision.json"
+    },
+    "previous_revision": "tg1_baseline_rev_004",
+    "drill_metadata": {
+      "drill_id": "20260305",
+      "drill_type": "permit_change_simulation",
+      "drill_number": 2,
+      "simulated_change": "Added _drill_metadata to demand.json"
+    },
+    "drill_restoration": {
+      "drill_id": "20260305",
+      "restored_at": "2026-03-04T17:10:31Z",
+      "reason": "Restored original three-rights files after drill completion"
+    }
+  }
+}

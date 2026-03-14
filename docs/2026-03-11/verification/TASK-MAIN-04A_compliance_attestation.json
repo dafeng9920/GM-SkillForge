@@ -1,0 +1,135 @@
+{
+  "task_id": "TASK-MAIN-04A",
+  "task_name": "前端主链步骤展示",
+  "executed_at": "2026-03-11T10:30:00Z",
+  "executed_by": "claude-code",
+  "status": "completed",
+
+  "task_definition": {
+    "description": "在现有 ui/app 中做'主链步骤展示壳'",
+    "required_steps": [
+      "Permit",
+      "pre_absorb_check",
+      "absorb",
+      "local_accept",
+      "final_accept"
+    ],
+    "required_statuses": [
+      "pending",
+      "running",
+      "pass",
+      "fail",
+      "deny"
+    ]
+  },
+
+  "deliverables": {
+    "changed_files": [
+      {
+        "path": "ui/app/src/components/governance/MainChainStepPanel.tsx",
+        "description": "主链步骤展示组件 - 新建",
+        "lines_added": 470,
+        "lines_removed": 0
+      },
+      {
+        "path": "ui/app/src/components/governance/index.ts",
+        "description": "导出新组件类型",
+        "lines_added": 9,
+        "lines_removed": 0
+      },
+      {
+        "path": "ui/app/src/pages/execute/RunIntentPage.tsx",
+        "description": "集成主链步骤面板",
+        "lines_added": 35,
+        "lines_removed": 5
+      }
+    ],
+
+    "ui_surface_summary": {
+      "component_name": "MainChainStepPanel",
+      "location": "ui/app/src/components/governance/",
+      "integrated_into": "RunIntentPage (execution slot)",
+      "features": [
+        "5个主链步骤可视化展示",
+        "步骤状态：pending/running/pass/fail/deny",
+        "可展开查看详情和证据引用",
+        "支持点击复制证据引用",
+        "带时间戳的执行进度",
+        "动态状态图标和徽章",
+        "模拟数据生成器 (generateMockMainChainSteps)",
+        "真实数据映射位已预留"
+      ],
+      "visual_elements": {
+        "step_cards": "带编号圆圈、状态图标、名称、描述",
+        "status_badges": "等待中/执行中/通过/失败/拒绝",
+        "connectors": "步骤间连接线，颜色随状态变化",
+        "expanded_details": "evidence_ref、错误信息、Gate Decision",
+        "header": "run_id显示、整体状态徽章",
+        "footer_legend": "状态图例说明"
+      }
+    },
+
+    "evidence_refs": [
+      "ui/app/src/components/governance/MainChainStepPanel.tsx",
+      "ui/app/src/components/governance/index.ts",
+      "ui/app/src/pages/execute/RunIntentPage.tsx",
+      "docs/2026-03-11/verification/TASK-MAIN-04A_compliance_attestation.json"
+    ],
+
+    "data_mappings": {
+      "real_data_placeholder": "steps prop 接收真实主链数据",
+      "api_integration_points": [
+        "POST /api/v1/n8n/run_intent - 响应处理",
+        "GET /api/v1/evidence/{evidence_ref} - 证据查看"
+      ],
+      "type_contracts": {
+        "MainChainStep": "单个步骤数据结构",
+        "MainChainStepStatus": "步骤状态类型",
+        "MainChainStepPanelProps": "组件属性"
+      }
+    }
+  },
+
+  "constraints_compliance": {
+    "no_full_site_rebuild": true,
+    "no_backend_protocol_change": true,
+    "no_seo_quant_expansion": true,
+    "no_static_only_display": true,
+    "notes": [
+      "复用了现有 PipelineStepPanel 的 UI 模式",
+      "复用了现有 DecisionHeroCard 和 DualChannelWorkbench",
+      "只在 RunIntentPage 中集成，未改动其他页面",
+      "预留了真实后端数据映射位",
+      "包含模拟数据生成器用于测试展示"
+    ]
+  },
+
+  "risks": [
+    {
+      "level": "low",
+      "description": "当前使用模拟数据，需要后续对接真实 API",
+      "mitigation": "数据结构已定义，props 接口稳定，替换数据源无需改动组件"
+    },
+    {
+      "level": "low",
+      "description": "动画样式在组件内联注入，可能与全局样式冲突",
+      "mitigation": "使用唯一 styleId，命名空间隔离"
+    },
+    {
+      "level": "medium",
+      "description": "步骤顺序固定为5步，如需扩展需修改类型定义",
+      "mitigation": "MainChainStepId 使用字面量联合类型，扩展时会有 TypeScript 提示"
+    }
+  ],
+
+  "next_steps": [
+    "TASK-MAIN-04B: 前端接入主链状态与证据",
+    "TASK-MAIN-04C: 前端承接一次低风险完整链路测试"
+  ],
+
+  "compliance_check": {
+    "closed_loop_contract": "N/A - 前端组件任务",
+    "evidence_standard": "代码文件 + 此 attest JSON",
+    "permit_gate_bypass": "无绕过行为"
+  }
+}

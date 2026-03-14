@@ -1,0 +1,168 @@
+---
+task_id: "DEV-01"
+executor: "vs--cc1"
+reviewer: "Antigravity-2"
+compliance_officer: "Kior-C"
+wave: "Wave 1"
+depends_on: ["FE-GOV-REFACTOR-2026-03-12"]
+status: "COMPLETE"
+executed_at: "2026-03-12T10:30:00Z"
+
+# 交付物清单
+deliverables:
+  - path: "ui/app/src/app/router.tsx"
+    action: "修改"
+    lines_changed: ~180
+    summary: "将 execute-first 路由切换为治理主链路由，默认首页改为 /dashboard"
+
+  - path: "ui/app/src/app/layout/AppShell.tsx"
+    action: "修改"
+    lines_changed: ~120
+    summary: "重构导航分组为治理主链结构（Dashboard/Audit/Permit/Registry/Forge/Policies/History）"
+
+# Gate 自检结果
+gate_self_check:
+  - check: "是否已从 execute-first 路由切换为治理主链路由"
+    result: "PASS - 默认路由已从 /execute/run-intent 改为 /dashboard"
+    evidence:
+      - "router.tsx:106-108 - index route redirect to /dashboard"
+      - "router.tsx:173 - catch-all redirect to /dashboard"
+
+  - check: "是否建立 Dashboard/Audit Detail/Permit/Registry/History 基础路由"
+    result: "PASS - 已建立全部 7 条治理路由"
+    evidence:
+      - "router.tsx:113-122 - Dashboard route"
+      - "router.tsx:125-134 - Audit Detail route"
+      - "router.tsx:137-146 - Permit route"
+      - "router.tsx:151-160 - Registry route"
+      - "router.tsx:163-172 - Forge route (次级入口)"
+      - "router.tsx:175-184 - Policies route"
+      - "router.tsx:187-196 - History route"
+
+  - check: "是否让 Forge 保持次级导航权重"
+    result: "PASS - Forge 标记为 priority: 'secondary'，不在治理主链组"
+    evidence:
+      - "AppShell.tsx:50-57 - NAV_GROUPS 定义，Forge 在'治理支撑'组"
+      - "AppShell.tsx:44 - Forge priority: 'secondary'"
+
+  - check: "是否保留治理语义而非旧任务导向语义"
+    result: "PASS - 导航标签使用'概览/审计/放行'等治理语言"
+    evidence:
+      - "AppShell.tsx:50-71 - 导航分组：治理主链/治理支撑/策略与历史"
+      - "AppShell.tsx:52 - '概览'而非'执行中心'"
+      - "AppShell.tsx:53 - '审计'而非'审计与查询'"
+      - "AppShell.tsx:54 - '放行'而非'系统运维'"
+
+  - check: "不得保留旧 execute 为默认首页"
+    result: "PASS - 默认路由已改为 /dashboard"
+    evidence:
+      - "router.tsx:106-108 - index route points to /dashboard"
+
+  - check: "不得引入 builder-first 一级导航"
+    result: "PASS - 无 Build/Create/Generate/Marketplace/Canvas/Gallery 导航项"
+    evidence:
+      - "AppShell.tsx:50-71 - NAV_GROUPS 仅包含治理相关项"
+
+  - check: "不得把 Build/Create/Generate 做成壳层主按钮"
+    result: "PASS - 无相关按钮，主 CTA 为治理操作（搜索 evidence_ref）"
+    evidence:
+      - "AppShell.tsx:87-104 - GlobalSearch placeholder 使用治理语言"
+
+# EvidenceRefs
+evidence_refs:
+  - id: "EV-DEV-01-001"
+    kind: "FILE"
+    locator: "ui/app/src/app/router.tsx:1-179"
+    description: "治理主链路由配置完整文件"
+
+  - id: "EV-DEV-01-002"
+    kind: "FILE"
+    locator: "ui/app/src/app/layout/AppShell.tsx:1-462"
+    description: "治理型导航壳层完整文件"
+
+  - id: "EV-DEV-01-003"
+    kind: "LINE_REF"
+    locator: "ui/app/src/app/router.tsx:106-108"
+    description: "默认路由重定向到 /dashboard 而非 /execute/run-intent"
+
+  - id: "EV-DEV-01-004"
+    kind: "LINE_REF"
+    locator: "ui/app/src/app/router.tsx:113-146"
+    description: "治理主链三页路由：Dashboard / Audit Detail / Permit"
+
+  - id: "EV-DEV-01-005"
+    kind: "LINE_REF"
+    locator: "ui/app/src/app/layout/AppShell.tsx:50-71"
+    description: "治理主链导航分组定义"
+
+  - id: "EV-DEV-01-006"
+    kind: "LINE_REF"
+    locator: "ui/app/src/app/layout/AppShell.tsx:127-135"
+    description: "Main chain 样式权重强化（fontWeight: 600）"
+
+  - id: "EV-DEV-01-007"
+    kind: "DIFF"
+    locator: "router.tsx:106-108 (旧: /execute/run-intent → 新: /dashboard)"
+    description: "首页重定向从 execute-first 切换到治理主链"
+
+# 合规检查
+compliance_checks:
+  - check: "不得保留旧 execute 为默认首页"
+    status: "PASS"
+    evidence: "EV-DEV-01-003, EV-DEV-01-007"
+
+  - check: "不得引入 builder-first 一级导航"
+    status: "PASS"
+    evidence: "EV-DEV-01-005"
+
+  - check: "不得把 Build/Create/Generate 做成壳层主按钮"
+    status: "PASS"
+    evidence: "EV-DEV-01-005, EV-DEV-01-006"
+
+  - check: "不得在壳层展示 Layer 3 敏感字段"
+    status: "PASS"
+    evidence: "AppShell.tsx 仅包含导航与搜索，无敏感字段展示"
+
+  - check: "不得越权改动具体业务页面实现逻辑"
+    status: "PASS"
+    evidence: "仅修改路由与导航壳层，未改动页面组件实现"
+
+# 后续承接
+next_steps:
+  - task: "DEV-02"
+    executor: "Antigravity-1"
+    dependency: "AuditDetailPage 路由已预留，页面待实现"
+    evidence: "router.tsx:125-134 - /audit/detail route"
+
+  - task: "DEV-03"
+    executor: "Kior-B"
+    dependency: "PermitPage 路由已预留，页面待实现"
+    evidence: "router.tsx:137-146 - /permit route"
+
+  - task: "DEV-04"
+    executor: "vs--cc2"
+    dependency: "DashboardPage 路由已预留，页面待实现"
+    evidence: "router.tsx:113-122 - /dashboard route"
+
+  - task: "DEV-08"
+    executor: "Antigravity-1"
+    dependency: "Registry/History 基础路由已预留"
+    evidence: "router.tsx:151-160, 187-196"
+
+# 备注
+notes:
+  - "Legacy routes (execute/audit/system) 已保留用于向后兼容，但不在主导航中"
+  - "页面组件使用 React.lazy 懒加载，待 DEV-02/03/04 实现具体页面"
+  - "治理主链（Dashboard/Audit/Permit）已赋予更高视觉权重（fontWeight: 600）"
+  - "Forge 作为次级入口（priority: 'secondary'），不在治理主链组"
+  - "全局搜索 placeholder 已更新为治理语言（evidence_ref/资产 ID/许可证号）"
+
+# 合同引用
+contract_refs:
+  - "docs/2026-03-12/前端实现波次任务分发单_v1.md (L176-235 - DEV-01 Task Spec)"
+  - "docs/2026-03-12/verification/final_gate_decision.json (FE-GOV-REFACTOR-2026-03-12 == ALLOW)"
+  - "docs/2026-03-12/verification/T-FE-01_ia_spec.md (治理 IA 与导航定义)"
+  - "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md (命名与 CTA 文案边界)"
+  - "multi-ai-collaboration.md (三权分立与 EvidenceRef 规范)"
+  - "docs/2026-02-21/架构方向的提问和回复/EXECUTION_GUARD_A_PROPOSAL_SKILL_v1.md"
+  - "docs/2026-02-21/架构方向的提问和回复/EXECUTION_GUARD_B_EXECUTION_SKILL_v1.md"

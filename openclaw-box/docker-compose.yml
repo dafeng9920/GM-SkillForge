@@ -18,9 +18,7 @@ services:
       retries: 5
 
   openclaw-agent:
-    # We use the official node image to run the npm install and start the daemon
-    # This ensures maximum compatibility with the CLI
-    image: node:22-bookworm-slim
+    build: .
     container_name: openclaw_core
     restart: unless-stopped
     depends_on:
@@ -29,25 +27,21 @@ services:
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - NODE_ENV=production
-      - ZAI_API_KEY=${ZAI_API_KEY}
+      - ZAI_API_KEY=${OPENAI_API_KEY}
       - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - LARK_APP_ID=${LARK_APP_ID}
+      - LARK_APP_SECRET=${LARK_APP_SECRET}
+      - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_API_BASE=${OPENAI_API_BASE}
+      - OPENAI_BASE_URL=${OPENAI_API_BASE}
     ports:
       - "18789:18789" # OpenClaw Dashboard
     volumes:
       - ./data:/root/.openclaw # Persist Agent configuration and local files
       - ./data/logs:/tmp/openclaw # Expose logs for SkillForge monitoring
     working_dir: /app
-    # The entrypoint installs openclaw globally and starts the daemon
-    command: >
-      sh -c "
-      if [ ! -f /usr/local/bin/openclaw ]; then
-        apt-get update && apt-get install -y git python3 build-essential cmake &&
-        npm config set registry https://registry.npmmirror.com &&
-        npm install -g openclaw@latest
-      fi &&
-      echo 'Starting OpenClaw...' &&
-      openclaw gateway run --port 18789 --allow-unconfigured --bind lan
-      "
+
 
 volumes:
   openclaw_pgdata:

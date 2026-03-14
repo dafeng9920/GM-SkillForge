@@ -1,0 +1,150 @@
+.host {
+  width: 100%;
+}
+
+.hostHome {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.hostContext {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.hostWorkspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.92fr);
+  gap: 20px;
+  align-items: stretch;
+}
+
+.consolePanel,
+.canvasPanel {
+  border-radius: 24px;
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(22, 21, 21, 0.98) 0%, rgba(16, 16, 16, 0.98) 100%);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.28);
+}
+
+.hostContext .consolePanel {
+  padding: 20px;
+  border-radius: 22px;
+}
+
+.canvasPanel {
+  min-height: 420px;
+}
+
+.consoleHeader,
+.canvasHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: #f59e0b;
+}
+
+.consoleTitle,
+.canvasTitle {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.2;
+  color: #f5f5f4;
+}
+
+.consoleMeta,
+.canvasStatus {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #b6afa5;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.consoleHint {
+  margin-top: 14px;
+  color: #8f877e;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.homeCanvasBlock {
+  margin-bottom: 4px;
+}
+
+.historyBlock {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.historyHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.historyHeader strong {
+  color: #f5f5f4;
+  font-size: 14px;
+}
+
+.historyHeader span {
+  color: #8f877e;
+  font-size: 12px;
+}
+
+.historyList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.historyItem {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.historyInput {
+  color: #f5f5f4;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.historyState {
+  color: #fdba74;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+@media (max-width: 1080px) {
+  .hostWorkspace {
+    grid-template-columns: 1fr;
+  }
+
+  .canvasPanel {
+    min-height: auto;
+  }
+}

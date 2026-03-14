@@ -1,0 +1,263 @@
+# Demand DSL v0 Schema
+# Four-part DemandSpec: DemandSpec/AssetRefs/TestSpec/ControlSpec
+# Spec source: docs/2026-03-04/v0-L5/GM-SkillForge v0 封板范围声明（10 个必须模块）.md
+
+$schema: http://json-schema.org/draft-07/schema#
+$id: https://gm-skillforge/schemas/demand_dsl_v0.schema.yml
+title: GM-SkillForge Demand DSL v0
+description: Restricted NL to Demand DSL specification with four-part structure
+type: object
+required:
+  - schema_version
+  - intent_id
+  - mode
+  - trigger
+  - sources
+  - transforms
+  - destinations
+  - constraints
+  - acceptance
+properties:
+  # Schema version
+  schema_version:
+    const: demand_dsl_v0
+    description: Schema version identifier
+
+  # Intent identification
+  intent_id:
+    type: string
+    minLength: 1
+    description: Unique identifier for this intent
+
+  # Mode - restricted to 4 types per v0
+  mode:
+    type: string
+    enum:
+      - generate_skill    # Generate a new skill from NL
+      - modify_skill      # Modify an existing skill
+      - audit_skill       # Audit an existing skill
+      - compose_workflow  # Compose multiple skills into workflow
+    description: Execution mode (v0: 4 types only)
+
+  # Trigger - how the demand was initiated
+  trigger:
+    type: object
+    required:
+      - type
+      - source
+    properties:
+      type:
+        type: string
+        enum: [nl_prompt, api_call, scheduled, event_driven]
+      source:
+        type: string
+        description: Identifier of the trigger source
+      timestamp:
+        type: string
+        format: date-time
+      initiator:
+        type: string
+        description: User or system that initiated the request
+
+  # Sources - input data and asset references
+  sources:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      required: [kind, locator]
+      properties:
+        kind:
+          type: string
+          enum: [repo_url, local_path, skill_id, asset_ref, nl_text]
+        locator:
+          type: string
+          description: Path, URL, or identifier for the source
+        version:
+          type: string
+          description: Version reference (required for repos/skills)
+        format:
+          type: string
+          enum: [yaml, json, python, markdown, text]
+
+  # Transforms - processing steps
+  transforms:
+    type: array
+    minItems: 0
+    items:
+      type: object
+      required: [operation]
+      properties:
+        operation:
+          type: string
+          description: Operation to perform
+        parameters:
+          type: object
+          description: Operation-specific parameters
+        order:
+          type: integer
+          description: Execution order
+
+  # Destinations - output targets
+  destinations:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      required: [kind, locator, write_mode]
+      properties:
+        kind:
+          type: string
+          enum: [skill, workflow, audit_report, manifest]
+        locator:
+          type: string
+          description: Output path or identifier
+        write_mode:
+          type: string
+          enum: [create, update, append]
+        format:
+          type: string
+          enum: [yaml, json, python, markdown]
+
+  # Constraints - control specifications
+  constraints:
+    type: object
+    required:
+      - network_policy
+      - execution_mode
+    properties:
+      # Network policy - v0 defaults to deny_by_default
+      network_policy:
+        type: string
+        enum: [deny_by_default, allowlist]
+        default: deny_by_default
+
+      # Allowed domains (if network_policy is allowlist)
+      allowed_domains:
+        type: array
+        items:
+          type: string
+          format: hostname
+
+      # Execution mode
+      execution_mode:
+        type: string
+        enum: [dry_run, tests_only, sandboxed, production]
+        default: dry_run
+
+      # Secrets (names only, never values)
+      secrets:
+        type: array
+        items:
+          type: string
+          pattern: "^needs_user_key:[a-zA-Z0-9_\\-]+$"
+
+      # Resource limits
+      resource_limits:
+        type: object
+        properties:
+          max_duration_seconds:
+            type: integer
+            minimum: 1
+          max_memory_mb:
+            type: integer
+            minimum: 128
+          max_api_calls:
+            type: integer
+            minimum: 1
+
+      # Human approval points
+      human_approval_points:
+        type: array
+        items:
+          type: string
+          description: Gate names requiring human approval
+
+  # Acceptance criteria - test specifications
+  acceptance:
+    type: object
+    required:
+      - success_criteria
+    properties:
+      success_criteria:
+        type: array
+        minItems: 1
+        items:
+          type: object
+          required: [criterion, check_type]
+          properties:
+            criterion:
+              type: string
+              description: Human-readable success criterion
+            check_type:
+              type: string
+              enum: [automated_test, manual_review, static_check]
+            test_command:
+              type: string
+              description: Command to run for automated tests
+            expected_outcome:
+              type: string
+              description: Expected outcome description
+
+      # Quality gates
+      quality_gates:
+        type: object
+        properties:
+          min_test_pass_rate:
+            type: number
+            minimum: 0
+            maximum: 1
+          min_code_coverage:
+            type: number
+            minimum: 0
+            maximum: 1
+          security_scan_required:
+            type: boolean
+            default: true
+
+  # Optional fields (not included in hash)
+  summary:
+    type: string
+    description: Human-readable summary (EXCLUDED from demand_hash)
+
+  clarifications_needed:
+    type: array
+    items:
+      type: string
+    description: Outstanding clarification questions (EXCLUDED from demand_hash)
+
+# Additional constraints for v0
+additionalProperties: false
+
+# Examples
+examples:
+  - |
+    # Example: Generate a new skill from NL
+    schema_version: demand_dsl_v0
+    intent_id: "generate_email_pdf_to_notion_001"
+    mode: generate_skill
+    trigger:
+      type: nl_prompt
+      source: "user_123"
+    sources:
+      - kind: nl_text
+        locator: "Create a skill that emails PDFs to Notion"
+    transforms: []
+    destinations:
+      - kind: skill
+        locator: "skills/email_pdf_to_notion"
+        write_mode: create
+        format: python
+    constraints:
+      network_policy: deny_by_default
+      execution_mode: dry_run
+      secrets:
+        - "needs_user_key:gmail"
+        - "needs_user_key:notion"
+    acceptance:
+      success_criteria:
+        - criterion: "Skill manifest is valid"
+          check_type: static_check
+        - criterion: "Dry-run execution succeeds"
+          check_type: automated_test
+          test_command: "pytest tests/test_email_pdf_to_notion.py"

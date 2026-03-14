@@ -1,0 +1,52 @@
+name: l3-killer-gate-runner-skill
+description: 运行并裁决真L3 killer tests（A/B/C），输出 summary 和可审计报告。
+version: v1.0.0
+frozen_at: 2026-02-25
+owner: platform-governance
+tags:
+  - l3
+  - killer-tests
+  - hard-gate
+  - integrity
+  - delta
+  - adjudication
+default_prompt: |
+  运行 L3 killer tests 并输出裁决结论。
+  1) 执行 python scripts/run_l3_gap_closure.py
+  2) 汇总 A/B/C 与 summary 结果
+  3) 若任一失败，列出阻断证据路径与修复建议
+
+capabilities:
+  - run_killer_tests
+  - aggregate_abc_reports
+  - pass_fail_adjudication
+  - evidence_path_output
+
+input_schema:
+  repo_root:
+    type: string
+    required: true
+    description: 仓库根目录
+  run_command:
+    type: string
+    required: true
+    description: 默认执行命令（例如 python scripts/run_l3_gap_closure.py）
+  output_dir:
+    type: string
+    required: true
+    description: 报告输出目录
+
+output_schema:
+  summary_json:
+    type: string
+    description: summary.json 路径
+  summary_md:
+    type: string
+    description: summary.md 路径
+  reports:
+    type: array
+    description: A/B/C 报告路径
+  overall_status:
+    type: string
+    enum: [PASS, FAIL]
+    description: 总体状态

@@ -1,0 +1,43 @@
+{
+  "task_id": "L4-06",
+  "run_id": "AEV-L4-005-0156B2C9",
+  "diagnosis_id": "DX-L4-001-A1B2C3D4",
+  "aev_id": "AEV-L4-005-0156B2C9",
+  "skill_id": "skill-seo-audit-001",
+  "skill_name": "SEO Audit Skill",
+  "health_score": 85.5,
+  "overall_health": "HEALTHY",
+  "aev_total": 26000.0,
+  "currency": "USD",
+  "period": "year",
+  "components": {
+    "v_token": 12000.0,
+    "v_compute": 8000.0,
+    "v_risk": 3500.0,
+    "v_trust": 2500.0
+  },
+  "confidence_interval": {
+    "lower": 23304.55458226289,
+    "upper": 28695.44541773711,
+    "confidence_level": 0.95
+  },
+  "diagnosis_evidence_refs_count": 6,
+  "aev_evidence_refs_count": 4,
+  "chain_verification": {
+    "diagnosis_id_matches_aev": true,
+    "skill_id_matches": true,
+    "skill_name_matches": true,
+    "evidence_refs_populated": true,
+    "all_components_have_evidence_ref": true,
+    "diagnosis_format_valid": true,
+    "aev_format_valid": true,
+    "aev_total_positive": true,
+    "four_components_present": true,
+    "confidence_interval_present": true
+  },
+  "chain_verified": true,
+  "outputs": {
+    "diagnosis": "skillforge\\src\\economics\\l4_06_run_output\\l4_06_diagnosis_input.json",
+    "aev": "skillforge\\src\\economics\\l4_06_run_output\\l4_06_aev_output.json"
+  }
+}

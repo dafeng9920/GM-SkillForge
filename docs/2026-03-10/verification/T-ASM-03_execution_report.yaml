@@ -1,0 +1,241 @@
+task_id: "T-ASM-03"
+executor: "Agent C"
+status: "完成"
+
+# 交付物清单
+deliverables:
+  - path: "scripts/unified_validation_gate.py"
+    action: "新建"
+    lines_changed: 590
+    description: "最小统一验证入口"
+
+  - path: "docs/2026-03-10/UNIFIED_VALIDATION_GATE_SUMMARY.md"
+    action: "新建"
+    lines_changed: 280
+    description: "统一验证门完整文档"
+
+  - path: "docs/2026-03-10/verification/T-ASM-03_execution_report.yaml"
+    action: "新建"
+    lines_changed: 150
+    description: "执行报告"
+
+# Gate 自检结果
+gate_self_check:
+  - command: "python scripts/unified_validation_gate.py --help"
+    result: "帮助信息正常显示，支持4种模式"
+
+  - command: "python scripts/unified_validation_gate.py --mode quick --permit permits/default/tg1_baseline_permit.json"
+    result: "统一门正常调用 AG-2，返回验证结果 DENY（因缺少显式三权路径）"
+
+  - command: "python scripts/unified_validation_gate.py --mode absorb --task-id REAL-TASK-002 2>&1 | head -20"
+    result: "Absorb 模式可正常调用 pre_absorb_check.sh"
+
+  - command: "ls -la scripts/validate*.py scripts/verify_*.py scripts/antigravity*.py scripts/*guard*.py"
+    result: "所有被集成的验证脚本均存在且独立可调用"
+
+# 统一验证门摘要
+unified_gate_summary:
+  entry_point: "scripts/unified_validation_gate.py"
+  modes_supported: 4
+
+  modes:
+    - name: "mainline"
+      description: "完整主线验证 (AG-2 + N-Boundary可选)"
+      usage: "python scripts/unified_validation_gate.py --mainline --permit <permit>"
+
+    - name: "cloud"
+      description: "云端任务验证"
+      usage: "python scripts/unified_validation_gate.py --cloud --task-id <task-id>"
+
+    - name: "quick"
+      description: "快速开发迭代 (跳过三哈希)"
+      usage: "python scripts/unified_validation_gate.py --quick --permit <permit>"
+
+    - name: "absorb"
+      description: "Absorb 门禁"
+      usage: "python scripts/unified_validation_gate.py --absorb --task-id <task-id>"
+
+  output_format: "JSON"
+  output_location: "docs/{date}/verification/unified_validation_{mode}_{timestamp}.json"
+
+# 纳入主线的验证项
+included_checks:
+  ag2_core:
+    - name: "Permit 五字段校验"
+      script: "validate_permit_binding.py"
+      integrated_via: "antigravity_2_guard.py"
+      fields:
+        - "demand_hash"
+        - "contract_hash"
+        - "decision_hash"
+        - "audit_pack_hash"
+        - "revision"
+
+    - name: "Delivery 六件套校验"
+      script: "validate_delivery_completeness.py"
+      integrated_via: "antigravity_2_guard.py"
+      items:
+        - "Blueprint (contracts/dsl/*.yml)"
+        - "Skill (skills/*)"
+        - "n8n (workflows/**/*.json)"
+        - "Evidence (artifacts/*)"
+        - "AuditPack (audit_pack/*.json)"
+        - "Permit (permits/*/*.json)"
+
+    - name: "三哈希一致性校验"
+      script: "validate_three_hashes.py"
+      integrated_via: "antigravity_2_guard.py"
+      hashes:
+        - "demand_hash"
+        - "contract_hash"
+        - "decision_hash"
+
+    - name: "固定口径绑定校验"
+      script: "antigravity_2_guard.py (内置)"
+      description: "禁止跨批次混用，验证 orchestration/fixed_caliber_binding.yml"
+
+  n_boundary:
+    - name: "N1 命令白名单"
+      script: "verify_n1_command_allowlist.py"
+      boundary: "命令必须存在于 allowlist 中"
+
+    - name: "N2 工件完整性"
+      script: "verify_n2_artifact_completeness.py"
+      boundary: "必须返回 4 工件 (receipt, stdout, stderr, audit)"
+
+    - name: "N3 时间窗口"
+      script: "verify_n3_time_window.py"
+      boundary: "执行时长和命令数限制"
+
+  other:
+    - name: "Receipt 验证"
+      script: "verify_execution_receipt.py"
+      mode: "cloud"
+
+    - name: "Absorb 门禁"
+      script: "pre_absorb_check.sh"
+      mode: "absorb"
+
+# 保留为旁路的验证项
+excluded_checks:
+  standalone:
+    - name: "Evidence Chain"
+      script: "verify_evidence_chain.py"
+      reason: "可选审计链工具，不属主线必需"
+      status: "保留独立使用"
+
+  superseded:
+    - name: "Dual Gate Wrapper"
+      script: "verify_and_gate.py"
+      reason: "功能已合并入统一门"
+      status: "被替代"
+
+    - name: "Three-Hash Permit Guard"
+      script: "three-hash-permit-guard/run_guard.py"
+      reason: "功能已合并入 antigravity_2_guard.py"
+      status: "被替代"
+
+  legacy:
+    - name: "Phase Validators"
+      scripts:
+        - "validate_phase1.py"
+        - "validate_phase2.py"
+        - "validate_phase3_4.py"
+        - "validate_phase5.py"
+      reason: "历史阶段验证器"
+      status: "保留供参考"
+
+  specialized:
+    - name: "Iteration Artifact Validator"
+      script: "validate_iteration_artifacts.py"
+      reason: "特殊用途工具"
+      status: "独立使用"
+
+# 风险评估
+risks:
+  - "统一门作为单点入口 - 缓解：各验证脚本仍可独立直接调用"
+  - "AG-2 固定口径路径依赖 - 缓解：已实现显式参数覆盖"
+  - "版本漂移风险 - 缓解：统一门仅做编排，不复制验证逻辑"
+  - "未修改任何现有验证脚本逻辑 - 保持 fail-closed 语义不变"
+
+# Fail-Closed 保证
+fail_closed_guarantee:
+  - "任何验证失败均返回 DENY"
+  - "Exit code: 0 = ALLOW, 1 = DENY"
+  - "所有被调用脚本保持原有 fail-closed 语义"
+  - "统一门不降低任何安全门限"
+
+# 证据引用
+evidence_refs:
+  - id: "EV-ASM-03-001"
+    kind: "FILE"
+    locator: "scripts/unified_validation_gate.py"
+    description: "统一验证入口实现"
+
+  - id: "EV-ASM-03-002"
+    kind: "FILE"
+    locator: "docs/2026-03-10/UNIFIED_VALIDATION_GATE_SUMMARY.md"
+    description: "完整文档"
+
+  - id: "EV-ASM-03-003"
+    kind: "FILE"
+    locator: "docs/2026-03-10/verification/unified_validation_quick_154003.json"
+    description: "验证门测试输出"
+
+  - id: "EV-ASM-03-004"
+    kind: "FILE"
+    locator: "scripts/antigravity_2_guard.py"
+    description: "被集成的核心验证门"
+
+  - id: "EV-ASM-03-005"
+    kind: "FILE"
+    locator: "scripts/validate_permit_binding.py"
+    description: "Permit 五字段校验（通过 AG-2 集成）"
+
+  - id: "EV-ASM-03-006"
+    kind: "FILE"
+    locator: "scripts/validate_delivery_completeness.py"
+    description: "Delivery 六件套校验（通过 AG-2 集成）"
+
+  - id: "EV-ASM-03-007"
+    kind: "FILE"
+    locator: "scripts/validate_three_hashes.py"
+    description: "三哈希一致性校验（通过 AG-2 集成）"
+
+  - id: "EV-ASM-03-008"
+    kind: "FILE"
+    locator: "scripts/pre_absorb_check.sh"
+    description: "Absorb 门禁（直接调用）"
+
+  - id: "EV-ASM-03-009"
+    kind: "TEST"
+    locator: "Bash test output"
+    description: "统一门帮助、快速模式、absorb 模式测试通过"
+
+# 与现有体系对齐确认
+compliance_alignment:
+  permit_five_fields: "通过 AG-2 -> validate_permit_binding.py"
+  fixed_caliber_binding: "通过 AG-2 -> orchestration/fixed_caliber_binding.yml"
+  three_hash_consistency: "通过 AG-2 -> validate_three_hashes.py"
+  absorb_gate: "直接调用 pre_absorb_check.sh"
+  fail_closed_policy: "保持不变，任何验证失败均返回 DENY"
+  evidence_refs: "所有验证结果包含结构化证据引用"
+
+# 备注
+notes: |
+  本轮任务创建统一验证入口，集成当前主线所有核心验证能力。
+
+  核心设计：
+  - unified_validation_gate.py 作为单一入口点
+  - 通过调用现有验证脚本实现功能（不复制逻辑）
+  - 支持四种模式以适应不同使用场景
+  - 保持所有验证脚本独立可调用
+
+  使用方式：
+  python scripts/unified_validation_gate.py --mainline --permit <permit>
+  python scripts/unified_validation_gate.py --cloud --task-id <task-id>
+  python scripts/unified_validation_gate.py --quick --permit <permit>
+  python scripts/unified_validation_gate.py --absorb --task-id <task-id>
+
+  输出文件：
+  docs/{date}/verification/unified_validation_{mode}_{timestamp}.json

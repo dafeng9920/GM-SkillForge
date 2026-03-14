@@ -1,0 +1,179 @@
+task_id: "T04"
+executor: "Kior-B"
+status: "完成"
+job_id: "P0-L6-AUTH-20260226-001"
+wave: "Wave 2"
+issue_ref: "ISSUE-03"
+
+# 交付物清单
+deliverables:
+  - path: "skillforge-spec-pack/skillforge/src/utils/hybrid_crypto.py"
+    action: "新建"
+    lines_changed: 505
+    description: "AES-256-GCM + RSA-OAEP-256 混合加密核心模块"
+
+  - path: "skillforge-spec-pack/skillforge/tests/test_hybrid_crypto.py"
+    action: "新建"
+    lines_changed: 563
+    description: "混合加密测试套件 (42 个用例)"
+
+  - path: "skillforge-spec-pack/skillforge/src/utils/__init__.py"
+    action: "修改"
+    lines_changed: 52
+    description: "导出 hybrid_crypto 模块"
+
+  - path: "docs/2026-02-26/p0-governed-execution/verification/T04_hybrid_crypto_report.md"
+    action: "新建"
+    lines_changed: 150
+    description: "T04 实现报告"
+
+# Gate 自检结果
+gate_self_check:
+  - command: "test -f skillforge-spec-pack/skillforge/src/utils/hybrid_crypto.py"
+    result: "PASS - 核心模块存在"
+
+  - command: "test -f skillforge-spec-pack/skillforge/tests/test_hybrid_crypto.py"
+    result: "PASS - 测试文件存在"
+
+  - command: "python -c 'from skillforge.src.utils.hybrid_crypto import hybrid_encrypt, hybrid_decrypt, CRYPTOGRAPHY_AVAILABLE'"
+    result: "PASS - 导入成功"
+
+  - command: "python -m pytest skillforge/tests/test_hybrid_crypto.py -v"
+    result: "PASS - 42 passed in 1.17s"
+
+# ISSUE-03 验收标准对齐
+acceptance_criteria:
+  - criteria: "正常解密通过"
+    status: "PASS"
+    evidence: "42 测试全部通过，包含正常加解密流程测试"
+
+  - criteria: "任意篡改密文触发解密失败"
+    status: "PASS"
+    evidence: "测试 19, 20, 21, 33, 34 验证篡改检测"
+
+# 篡改检测详细结果
+tamper_detection_results:
+  - scenario: "篡改 ciphertext"
+    result: "FAIL (IntegrityError/DecryptionError)"
+    test: "test_decrypt_with_tampered_ciphertext_fails"
+
+  - scenario: "篡改 tag"
+    result: "FAIL (IntegrityError/DecryptionError)"
+    test: "test_decrypt_with_tampered_tag_fails"
+
+  - scenario: "篡改 iv"
+    result: "FAIL (DecryptionError)"
+    test: "test_decrypt_with_tampered_iv_fails"
+
+  - scenario: "篡改 encrypted_dek"
+    result: "FAIL (DecryptionError)"
+    test: "test_hybrid_decrypt_tampered_encrypted_dek_fails"
+
+  - scenario: "使用错误密钥"
+    result: "FAIL (DecryptionError)"
+    test: "test_hybrid_encrypt_wrong_key_fails"
+
+# 证据引用
+evidence_refs:
+  - id: "EV-T04-CODE-001"
+    kind: "FILE"
+    locator: "skillforge-spec-pack/skillforge/src/utils/hybrid_crypto.py:1-505"
+    description: "混合加密核心实现"
+
+  - id: "EV-T04-TEST-001"
+    kind: "FILE"
+    locator: "skillforge-spec-pack/skillforge/tests/test_hybrid_crypto.py:1-563"
+    description: "42 个测试用例"
+
+  - id: "EV-T04-TEST-RUN-001"
+    kind: "OUTPUT"
+    locator: "pytest execution"
+    description: "测试运行结果: 42 passed in 1.17s"
+
+  - id: "EV-T04-REPORT-001"
+    kind: "FILE"
+    locator: "docs/2026-02-26/p0-governed-execution/verification/T04_hybrid_crypto_report.md"
+    description: "实现报告"
+
+# 三权记录路径
+governance_records:
+  review: "docs/2026-02-26/p0-governed-execution/verification/T04_gate_decision.json"
+  compliance: "docs/2026-02-26/p0-governed-execution/verification/T04_compliance_attestation.json"
+  execution: "docs/2026-02-26/p0-governed-execution/verification/T04_execution_report.yaml"
+
+# 依赖验证
+dependency_verification:
+  - task: "T02"
+    status: "SATISFIED"
+    evidence: "T02 canonical_json.py 存在且可用"
+
+  - task: "T03"
+    status: "SATISFIED"
+    evidence: "T03 evidence_envelope.py 存在且集成测试通过"
+
+# 后续任务解锁
+downstream_unblock:
+  - "T05 (Ed25519 签名/验签)"
+  - "T06 (Nonce challenge 防重放)"
+  - "T09 (协议 T1-T5 全绿)"
+
+# 测试覆盖
+test_coverage:
+  total_tests: 42
+  passed: 42
+  failed: 0
+  test_classes:
+    - name: "TestDEKGeneration"
+      tests: 3
+      status: "all passed"
+    - name: "TestRSAKeyPairGeneration"
+      tests: 7
+      status: "all passed"
+    - name: "TestDEKEncryption"
+      tests: 3
+      status: "all passed"
+    - name: "TestBodyEncryption"
+      tests: 10
+      status: "all passed"
+    - name: "TestHybridEncryption"
+      tests: 12
+      status: "all passed"
+    - name: "TestEncryptionResultDataClass"
+      tests: 2
+      status: "all passed"
+    - name: "TestErrorHandling"
+      tests: 5
+      status: "all passed"
+    - name: "TestIntegrationWithEnvelope"
+      tests: 1
+      status: "all passed"
+    - name: "TestCryptographyNotAvailable"
+      tests: 1
+      status: "all passed"
+
+# 备注
+notes: |
+  T04 完成了 AES-256-GCM + RSA-OAEP-256 混合加密的实现和测试。
+
+  关键成果:
+  1. 实现了 hybrid_encrypt() 和 hybrid_decrypt() 高层 API
+  2. 实现了 DEK 生成、加密、解密功能
+  3. 实现了 AES-256-GCM 加密/解密功能
+  4. 编写了 42 个测试用例，全部通过
+  5. 完整覆盖了篡改检测场景
+
+  安全特性:
+  - AES-256-GCM 提供认证加密 (AEAD)
+  - RSA-OAEP-256 使用 SHA-256 作为哈希算法
+  - 任何密文篡改都会导致解密失败
+
+  与 T03 集成:
+  - EncryptionResult 可直接用于 EvidenceEnvelopeBuilder
+  - 集成测试验证了兼容性
+
+  无副作用操作，无需 permit。
+
+# 执行时间
+started_at: "2026-02-26T18:00:00Z"
+completed_at: "2026-02-26T18:45:00Z"
+duration_minutes: 45

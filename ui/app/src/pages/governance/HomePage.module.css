@@ -1,0 +1,600 @@
+.page {
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background:
+    radial-gradient(circle at 50% 6%, rgba(234, 88, 12, 0.14), transparent 22%),
+    radial-gradient(circle at top left, rgba(217, 119, 6, 0.06), transparent 16%),
+    linear-gradient(180deg, #050505 0%, #09090b 100%);
+}
+
+.stage {
+  width: min(980px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  min-height: min(620px, calc(100vh - 112px));
+  padding: 28px 44px 24px;
+  border-radius: 32px;
+  background: linear-gradient(180deg, rgba(20, 20, 20, 0.98) 0%, rgba(12, 12, 12, 0.98) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.03),
+    0 24px 60px rgba(0, 0, 0, 0.44);
+}
+
+.heroContent {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: #f59e0b;
+}
+
+.title {
+  margin: 0;
+  font-size: 64px;
+  line-height: 0.92;
+  font-weight: 900;
+  letter-spacing: -0.055em;
+  background: linear-gradient(180deg, #ffffff 0%, #d6d3d1 100%);
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+  text-shadow: none;
+}
+
+.subtitle {
+  margin: 0;
+  max-width: 760px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: rgba(231, 229, 228, 0.8);
+}
+
+.commandRow {
+  width: 100%;
+  display: block;
+}
+
+.bottomDock {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.composer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 144px;
+  padding: 14px 16px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(24, 24, 27, 0.94) 0%, rgba(18, 18, 18, 0.96) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.03),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.015),
+    0 14px 34px rgba(0, 0, 0, 0.28);
+  text-align: left;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease;
+}
+
+.composer:focus-within {
+  border-color: rgba(234, 88, 12, 0.52);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 0 0 1px #ea580c,
+    0 0 10px rgba(234, 88, 12, 0.28),
+    0 0 20px rgba(234, 88, 12, 0.08),
+    0 14px 34px rgba(0, 0, 0, 0.3);
+}
+
+.plusButton {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  width: 34px;
+  height: 34px;
+  background: rgba(255, 255, 255, 0.02);
+  color: #d6d3d1;
+  font-size: 19px;
+  font-weight: 500;
+  cursor: pointer;
+  line-height: 1;
+  box-shadow: none;
+  flex-shrink: 0;
+}
+
+.attachmentMenu {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  min-width: 104px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background: rgba(12, 12, 12, 0.98);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+  z-index: 10;
+}
+
+.attachmentMenuItem {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 9px 10px;
+  background: rgba(255, 255, 255, 0.02);
+  color: #f5f5f4;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
+.commandInput {
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 84px;
+  max-height: 400px;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 2px 0 8px !important;
+  background: transparent !important;
+  color: #fafaf9;
+  font: inherit;
+  font-size: 17px;
+  line-height: 1.55;
+  outline: none !important;
+  box-shadow: none !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  resize: none !important;
+  overflow-y: auto;
+}
+
+.commandInput:focus,
+.commandInput:focus-visible {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.commandInput::placeholder {
+  color: #a8a29e;
+}
+
+.composerFooter {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  gap: 16px;
+  padding: 0;
+}
+
+.attachmentSummary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.inputDock {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 44px;
+  padding: 10px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.inputDockLeft {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputDockCenter {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  flex: 1;
+}
+
+.attachmentTag {
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: rgba(217, 119, 6, 0.12);
+  color: #fdba74;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.enterHint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #8a8177;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 24px;
+  padding: 0 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  color: #d6d3d1;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: inherit;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.hintSeparator {
+  color: #57534e;
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.startButton {
+  appearance: none;
+  border: 1px solid rgba(234, 88, 12, 0.45);
+  border-radius: 16px;
+  height: 40px;
+  min-width: 84px;
+  padding: 0 18px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 28%),
+    linear-gradient(180deg, rgba(41, 20, 8, 0.98) 0%, rgba(24, 12, 6, 0.98) 100%);
+  color: #fdba74;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 0 1px rgba(234, 88, 12, 0.08),
+    0 6px 16px rgba(0, 0, 0, 0.24);
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease,
+    color 160ms ease;
+}
+
+.startButton:hover,
+.startButton:focus-visible {
+  border-color: rgba(234, 88, 12, 0.6);
+  color: #ffedd5;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0 10px rgba(234, 88, 12, 0.22),
+    0 0 28px rgba(234, 88, 12, 0.08);
+}
+
+.quickRow {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  order: 2;
+}
+
+.recommendationBlock {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(148, 163, 184, 0.08);
+}
+
+.confirmationStrip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+  text-align: left;
+}
+
+.confirmationBadge {
+  flex-shrink: 0;
+  border-radius: 999px;
+  padding: 4px 8px;
+  background: rgba(234, 88, 12, 0.12);
+  color: #fdba74;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.confirmationText {
+  color: #e7e5e4;
+  font-size: 13px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.recommendationHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  text-align: left;
+}
+
+.recommendationHeader strong {
+  color: #f5f5f4;
+  font-size: 15px;
+}
+
+.recommendationHeader span {
+  color: #a8a29e;
+  font-size: 13px;
+}
+
+.recommendationLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  gap: 14px;
+}
+
+.clarificationPanel {
+  width: 100%;
+  padding: 18px 20px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+  text-align: left;
+}
+
+.clarificationPanel p {
+  margin: 0;
+  color: #d6d3d1;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.historyBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+}
+
+.historyBlock strong {
+  color: #f5f5f4;
+  font-size: 14px;
+}
+
+.historyList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.historyItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.historyInput {
+  color: #e7e5e4;
+  font-size: 13px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.historyState {
+  flex-shrink: 0;
+  color: #fdba74;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.recommendationSecondaryColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.recommendationCard {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  background: rgba(20, 20, 20, 0.92);
+  padding: 16px;
+  color: #e7e5e4;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.recommendationPrimaryCard {
+  min-height: 100%;
+  justify-content: space-between;
+  border-color: rgba(234, 88, 12, 0.32);
+  background: linear-gradient(135deg, rgba(234, 88, 12, 0.08) 0%, rgba(20, 20, 20, 0.94) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.recommendationMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.recommendationIcon {
+  align-self: flex-start;
+  border-radius: 10px;
+  padding: 6px 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #d6d3d1;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.recommendationMeta strong {
+  font-size: 16px;
+  color: #fafaf9;
+}
+
+.recommendationBadge {
+  align-self: flex-start;
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #fdba74;
+  background: rgba(234, 88, 12, 0.12);
+}
+
+.recommendationCard p {
+  margin: 0;
+  color: #a8a29e;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.recommendationAction {
+  color: #e7e5e4;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.quickAction {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  padding: 10px 15px;
+  background: rgba(255, 255, 255, 0.02);
+  color: #d6d3d1;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quickActionIcon {
+  color: #a16207;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+@media (max-width: 900px) {
+  .stage {
+    padding: 28px 24px 24px;
+    min-height: auto;
+  }
+
+  .title {
+    font-size: 50px;
+  }
+
+  .recommendationLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .recommendationSecondaryColumn {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .page {
+    padding: 16px;
+  }
+
+  .stage {
+    padding: 24px 18px 20px;
+  }
+
+  .title {
+    font-size: 38px;
+  }
+
+  .subtitle {
+    font-size: 16px;
+  }
+
+  .commandRow {
+    display: block;
+  }
+
+  .startButton {
+    width: auto;
+    height: 40px;
+    padding: 0 16px;
+  }
+
+  .composerFooter,
+  .inputDock {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .enterHint {
+    white-space: normal;
+  }
+
+  .quickRow {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .recommendationHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

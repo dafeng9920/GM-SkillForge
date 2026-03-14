@@ -1,0 +1,47 @@
+{
+  "freeze_id": "T-G1-BASELINE-FREEZE-20260304-2235",
+  "environment": "LOCAL-ANTIGRAVITY",
+  "frozen_at": "2026-03-04T22:35:00Z",
+  "frozen_by": "Antigravity-1",
+  "freeze_status": "LOCKED",
+  "artifact_index": "docs/2026-03-04/verification/T-G1_artifact_index.json",
+  "baseline_snapshot": {
+    "permit_five_fields": {
+      "permit_path": "permits/default/tg1_baseline_permit.json",
+      "demand_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "contract_hash": "cc8321d6375c494d043fdd0260f21bc0ec51dacc9f6abb7f909cdcd3041b78bf",
+      "decision_hash": "86ae35d58a6aa3b5742df94ef9d7162219f0106a911ae1954c1f0604aaec805d",
+      "audit_pack_hash": "15de68de777909c47fe5532449cfa1666bb0a96c4c903f395d497dceaec4624f",
+      "revision": "tg1_baseline_rev_001"
+    },
+    "delivery_six_items": {
+      "Blueprint": "contracts/dsl/demand_dsl_v0.schema.yml",
+      "Skill": "skills/ai-response-improvement-skill",
+      "n8n": "workflows/skillforge_dispatcher.json",
+      "Evidence": "artifacts/tg1/tg1_baseline_evidence.json",
+      "AuditPack": "audit_pack/tg1_audit_pack.json",
+      "Permit": "permits/default/tg1_baseline_permit.json"
+    },
+    "triad_records": {
+      "execution": "PASS",
+      "review": "ALLOW",
+      "compliance": "PASS",
+      "all_consistent": true
+    }
+  },
+  "freeze_policy": {
+    "drift_detection": "ENABLED",
+    "drift_response": "FAIL_CLOSED",
+    "any_path_drift": "BLOCK_IMMEDIATELY"
+  },
+  "previous_freeze": {
+    "id": "T-G1-NIGHTLY-RECHECK-FROZEN-20260304",
+    "unfrozen_at": "2026-03-04T22:30:00Z",
+    "unfrozen_by": "Antigravity-1"
+  },
+  "monitoring": {
+    "status": "ACTIVE",
+    "periodic_recheck": "ENABLED",
+    "next_recheck": "As scheduled"
+  }
+}

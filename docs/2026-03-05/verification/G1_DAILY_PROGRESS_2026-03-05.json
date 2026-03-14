@@ -1,0 +1,31 @@
+{
+  "date": "2026-03-05",
+  "report_type": "G1_NIGHTLY_RECHECK_PROGRESS",
+  "execution_environment": "LOCAL-ANTIGRAVITY",
+  "baseline_id": "AG2-FIXED-CALIBER-TG1-20260304",
+  "permit_revision": "tg1_baseline_rev_005",
+  "nightly_recheck_result": {
+    "status": "PASS",
+    "drift_detected": false,
+    "report_file": "docs/2026-03-04/verification/ANTIGRAVITY-1-NIGHTLY-RECHECK-2026-03-05.json"
+  },
+  "g1_progress": {
+    "consecutive_days_completed": 2,
+    "target_consecutive_days": 14,
+    "remaining_days": 12,
+    "progress_percentage": 14.3
+  },
+  "fail_closed_status": {
+    "active": true,
+    "enforcement": "All hashes match, 0 drift detected",
+    "permit_status": "VALID",
+    "fixed_caliber_binding": "INTACT"
+  },
+  "next_steps": {
+    "next_recheck_date": "2026-03-06",
+    "command": "python scripts/antigravity_nightly_recheck.py --date 2026-03-06",
+    "continues": true
+  },
+  "generated_at": "2026-03-04T17:46:57.241274Z",
+  "generated_by": "Antigravity-1"
+}

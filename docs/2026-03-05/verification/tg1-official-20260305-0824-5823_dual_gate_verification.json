@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0.0",
+  "report_type": "dual_gate_verification",
+  "generated_at": "2026-03-05T08:24:29+00:00Z",
+  "task_id": "tg1-official-20260305-0824-5823",
+  "dual_gate_decision": {
+    "overall": "FAIL",
+    "reason": "All gates failed"
+  },
+  "gates": {
+    "receipt_verification": {
+      "task_id": "tg1-official-20260305-0824-5823",
+      "timestamp": "2026-03-05T08:24:29+00:00Z",
+      "status": "FAIL",
+      "exit_code": 1,
+      "stdout": "FAIL\n- receipt status must be success for acceptance, got: failure",
+      "stderr": ""
+    },
+    "cloud_lobster_mandatory_gate": {
+      "task_id": "tg1-official-20260305-0824-5823",
+      "timestamp": "2026-03-05T08:24:29+00:00Z",
+      "status": "DENY",
+      "exit_code": 1,
+      "stdout": "============================================================\n[CL-MG] Cloud Lobster Mandatory Gate\n[CL-MG] Started at 2026-03-05T08:24:29.286341+00:00\n[CL-MG] Environment: LOCAL-ANTIGRAVITY -> CLOUD-ROOT\n[CL-MG] Dispatch dir: .tmp\\openclaw-dispatch\n============================================================\n============================================================\n[CL-MG] Final Decision: DENY\n============================================================\n\n[CL-MG] DENY - Cloud lobster mandatory gate failed\n[CL-MG] Error code: SF_CLOUD_LOBSTER_BYPASS_ATTEMPT\n\n[CL-MG] Errors (1):\n  [SF_CLOUD_LOBSTER_BYPASS_ATTEMPT] 1 task(s) failed cloud lobster mandatory gate\n\n[CL-MG] Required changes (1):\n  1. Use cloud-lobster-closed-loop-skill for all CLOUD-ROOT executions\n\n[CL-MG] Violation reports written to: docs\\compliance_reviews\nDENY",
+      "stderr": ""
+    }
+  },
+  "summary": {
+    "total_gates": 2,
+    "passed": 0,
+    "failed": 2
+  }
+}

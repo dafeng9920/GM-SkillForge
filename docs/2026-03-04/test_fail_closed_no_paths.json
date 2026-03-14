@@ -1,0 +1,28 @@
+{
+  "decision": "DENY",
+  "error_code": "SF_FIXED_CALIBER_PATHS_REQUIRED",
+  "errors": [
+    {
+      "code": "SF_FIXED_CALIBER_PATHS_REQUIRED",
+      "message": "Fixed-caliber validation requires explicit demand/contract/decision paths"
+    }
+  ],
+  "required_changes": [
+    "Re-run with --demand, --contract, --decision arguments to match fixed-caliber binding"
+  ],
+  "permit_binding": {
+    "status": "PASS",
+    "error_code": null,
+    "missing_hashes": [],
+    "missing_fields": [],
+    "invalid_hashes": []
+  },
+  "fixed_caliber_binding": null,
+  "permit_hash_consistency": null,
+  "delivery_completeness": null,
+  "three_hash": null,
+  "checked_at": "2026-03-04T14:54:52.343208+00:00",
+  "guard_version": "Antigravity-2",
+  "execution_environment": "LOCAL-ANTIGRAVITY",
+  "fail_closed_policy": true
+}

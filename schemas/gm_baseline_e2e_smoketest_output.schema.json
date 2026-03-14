@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gm-skillforge.local/schemas/gm_baseline_e2e_smoketest_output.schema.json",
+  "title": "GM Baseline E2E Smoketest Output",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "run_id",
+    "skill",
+    "status",
+    "input_snapshot",
+    "execution_trace",
+    "output_payload",
+    "acceptance_report",
+    "compliance_flag"
+  ],
+  "properties": {
+    "run_id": { "type": "string", "minLength": 8 },
+    "skill": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version"],
+      "properties": {
+        "id": { "type": "string", "const": "gm.baseline.e2e-smoketest" },
+        "version": { "type": "string", "const": "0.1.0" }
+      }
+    },
+    "status": { "type": "string", "enum": ["success", "fail"] },
+    "input_snapshot": { "type": "object" },
+    "execution_trace": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["step", "name", "ok"],
+        "properties": {
+          "step": { "type": "integer", "minimum": 1 },
+          "name": { "type": "string", "minLength": 1 },
+          "ok": { "type": "boolean" }
+        }
+      }
+    },
+    "output_payload": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["artifacts", "metrics"],
+      "properties": {
+        "artifacts": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "metrics": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["elapsed_ms"],
+          "properties": {
+            "elapsed_ms": { "type": "integer", "minimum": 1 }
+          }
+        }
+      }
+    },
+    "acceptance_report": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["result", "reason", "replayable"],
+      "properties": {
+        "result": { "type": "string", "enum": ["PASS", "FAIL"] },
+        "reason": { "type": "string" },
+        "replayable": { "type": "boolean" },
+        "failure_category": {
+          "type": "string",
+          "enum": [
+            "INPUT_INVALID",
+            "EXECUTION_TIMEOUT",
+            "OUTPUT_SCHEMA_ERROR",
+            "ACCEPTANCE_MISMATCH",
+            "UNKNOWN_EXCEPTION"
+          ]
+        },
+        "diff_summary": { "type": "string" }
+      }
+    },
+    "compliance_flag": { "type": "boolean" }
+  }
+}
+

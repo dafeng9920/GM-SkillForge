@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-02-24T14:34:27Z",
+  "generated_at": "2026-03-11T16:53:57Z",
   "summary": {
-    "total": 13,
-    "passed": 13,
+    "total": 19,
+    "passed": 19,
     "failed": 0,
     "critical_or_high_failed": 0,
     "overall": "PASS"
@@ -117,13 +117,67 @@
       "location": "D:\\GM-SkillForge\\docs\\2026-02-22\\verification"
     },
     {
+      "check_id": "CR-014",
+      "severity": "HIGH",
+      "passed": true,
+      "summary": "T3-A core host-absorbed artifacts are present in authoritative repo paths",
+      "evidence": "{\"missing_files\": []}",
+      "required_change": "Restore missing T3-A host-absorbed artifacts under docs/2026-03-08 before closeout",
+      "location": "D:\\GM-SkillForge\\docs\\2026-03-08"
+    },
+    {
+      "check_id": "CR-015",
+      "severity": "HIGH",
+      "passed": true,
+      "summary": "T3-A P2 report aligns authoritative governor skill and deprecated alias semantics",
+      "evidence": "{\"missing_patterns\": [], \"bad_patterns\": []}",
+      "required_change": "Rewrite T3-A P2 report so lobster-cloud-execution-governor-skill is authoritative and governor-skill is deprecated, not deleted",
+      "location": "D:\\GM-SkillForge\\docs\\2026-03-08\\p2_doc_integration_report.md"
+    },
+    {
+      "check_id": "CR-016",
+      "severity": "HIGH",
+      "passed": true,
+      "summary": "T3-A P3 baseline reflects Wave 1 promoted items and Wave 2 deferred items",
+      "evidence": "{\"missing_patterns\": [], \"banned_patterns\": []}",
+      "required_change": "Correct T3-A P3 baseline so Wave 2 deferred items remain visible and not falsely collapsed into promote_now",
+      "location": "D:\\GM-SkillForge\\docs\\2026-03-08\\p3_baseline_inventory.md"
+    },
+    {
+      "check_id": "CR-017",
+      "severity": "MEDIUM",
+      "passed": true,
+      "summary": "T3-A checkpoint state aligns with manual host absorb and corrected Wave 2 defer split",
+      "evidence": "{\"missing_patterns\": [], \"banned_patterns\": []}",
+      "required_change": "Rewrite T3-A checkpoint state to reflect host_absorb_manual and Wave 2 deferred items without stale all_promoted summary",
+      "location": "D:\\GM-SkillForge\\docs\\2026-03-08\\checkpoint\\state.yaml"
+    },
+    {
       "check_id": "CR-007",
       "severity": "MEDIUM",
       "passed": true,
       "summary": "Compliance review cadence is within target window",
-      "evidence": "latest_report_date=2026-02-24, gap_days=0, max_gap_days=3",
+      "evidence": "latest_report_date=2026-03-08, gap_days=3, max_gap_days=3",
       "required_change": "Run review now and keep cadence <= 3 days",
       "location": "D:\\GM-SkillForge\\docs\\compliance_reviews"
+    },
+    {
+      "check_id": "CR-T-test_n8n_run_intent_internal_permit.py",
+      "severity": "HIGH",
+      "passed": true,
+      "summary": "Regression test: skillforge/tests/test_n8n_run_intent_internal_permit.py",
+      "evidence": "....                                                                     [100%]\n4 passed in 0.74s",
+      "required_change": "Fix failing test and restore fail-closed guard behavior in skillforge/tests/test_n8n_run_intent_internal_permit.py",
+      "location": "skillforge/tests/test_n8n_run_intent_internal_permit.py"
+    },
+    {
+      "check_id": "CR-T-test_n8n_orchestration.py",
+      "severity": "HIGH",
+      "passed": true,
+      "summary": "Regression test: skillforge/tests/test_n8n_orchestration.py",
+      "evidence": "..........                                                               [100%]\n10 passed in 0.34s",
+      "required_change": "Fix failing test and restore fail-closed guard behavior in skillforge/tests/test_n8n_orchestration.py",
+      "location": "skillforge/tests/test_n8n_orchestration.py"
     }
   ]
 }

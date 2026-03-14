@@ -1,0 +1,30 @@
+{
+  "report_type": "dual_gate_verification",
+  "task_id": "tencent-deploy-20260305-1000",
+  "generated_at": "2026-03-05T09:01:36Z",
+  "execution_environment": "LOCAL-ANTIGRAVITY",
+  "verification_target": "2/2 PASS",
+  "results": {
+    "gate1_receipt_verification": {
+      "name": "verify_execution_receipt.py",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    "gate2_mandatory_gate": {
+      "name": "cloud_lobster_mandatory_gate.py",
+      "status": "PASS",
+      "exit_code": 0
+    }
+  },
+  "summary": {
+    "total_gates": 2,
+    "passed": 2,
+    "failed": 0,
+    "overall": "PASS"
+  },
+  "compliance": {
+    "target_met": "true",
+    "target": "2/2 PASS",
+    "actual": "2/2 PASS"
+  }
+}

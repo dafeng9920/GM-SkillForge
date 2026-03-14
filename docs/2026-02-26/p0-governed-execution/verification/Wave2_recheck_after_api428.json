@@ -1,0 +1,56 @@
+{
+  "job_id": "P0-L6-AUTH-20260226-001",
+  "checked_at": "local-filesystem-snapshot",
+  "reason": "API428 handoff desync suspected",
+  "scope": {
+    "wave_gate": "Wave 2 (T04-T07)",
+    "prerequisites": [
+      "Wave 1 all ALLOW",
+      "T02 gate_decision == ALLOW",
+      "T02 compliance == PASS",
+      "T03 gate_decision == ALLOW",
+      "T03 compliance == PASS",
+      "T05 completion with ALLOW (for T07 dependency)"
+    ]
+  },
+  "observed_records": {
+    "T01": {
+      "execution_report": true,
+      "gate_decision": "ALLOW",
+      "compliance": "PASS"
+    },
+    "T02": {
+      "execution_report": true,
+      "gate_decision": "PRESENT_BUT_INVALID_JSON",
+      "compliance": "PRESENT_BUT_INVALID_JSON"
+    },
+    "T03": {
+      "execution_report": true,
+      "gate_decision": "ALLOW",
+      "compliance": "PASS"
+    },
+    "T05": {
+      "execution_report": true,
+      "gate_decision": "ALLOW",
+      "compliance": "PASS"
+    },
+    "T07": {
+      "execution_report": true,
+      "gate_decision": "ALLOW",
+      "compliance": "PASS"
+    }
+  },
+  "wave2_gate_decision": "DENY",
+  "blocking_reasons": [
+    "Wave 1 not machine-verifiable closed: T02 gate/compliance files are present but invalid JSON",
+    "Automation parser cannot adjudicate T02 due to schema/format error"
+  ],
+  "required_reconciliation_actions": [
+    "1) Rewrite T02_gate_decision.json as strict JSON (no YAML-style block scalars)",
+    "2) Rewrite T02_compliance_attestation.json as strict JSON (no YAML-style block scalars)",
+    "3) Keep semantic values unchanged: T02 gate=ALLOW, compliance=PASS",
+    "4) Re-run wave gate check after T02 format fix"
+  ],
+  "next_gate_check_command": "python scripts/run_l3_gap_closure.py",
+  "status": "REQUIRES_RECONCILIATION"
+}

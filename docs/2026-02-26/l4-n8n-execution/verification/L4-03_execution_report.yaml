@@ -1,0 +1,195 @@
+task_id: "L4-03"
+executor: "vs--cc3"
+status: "完成"
+job_id: "L4-N8N-MVP-20260226-001"
+wave: "Wave 1"
+issue_ref: "L4-Diagnosis"
+
+# 交付物清单
+deliverables:
+  - path: "skillforge-spec-pack/skillforge/src/diagnosis/__init__.py"
+    action: "新建"
+    lines_changed: 420
+    description: "Diagnosis 核心模块 - DiagnosisBuilder/DiagnosisOutput/EvidenceRef"
+
+  - path: "skillforge-spec-pack/skillforge/src/diagnosis/__main__.py"
+    action: "新建"
+    lines_changed: 35
+    description: "Diagnosis 包入口"
+
+  - path: "skillforge-spec-pack/skillforge/src/diagnosis/sample_diagnosis.json"
+    action: "新建"
+    lines_changed: 95
+    description: "标准 Diagnosis.json 示例输出"
+
+  - path: "skillforge-spec-pack/skillforge/tests/test_diagnosis.py"
+    action: "新建"
+    lines_changed: 280
+    description: "Diagnosis 模块测试套件 (22 个用例)"
+
+# Gate 自检结果
+gate_self_check:
+  - command: "test -f skillforge-spec-pack/skillforge/src/diagnosis/__init__.py"
+    result: "PASS - Diagnosis 模块存在"
+
+  - command: "test -f skillforge-spec-pack/skillforge/src/diagnosis/sample_diagnosis.json"
+    result: "PASS - 示例 Diagnosis.json 存在"
+
+  - command: "cd skillforge-spec-pack && python -c 'from skillforge.src.diagnosis import DiagnosisBuilder, DiagnosisOutput, validate_diagnosis'"
+    result: "PASS - 导入成功"
+
+  - command: "cd skillforge-spec-pack && python -m pytest skillforge/tests/test_diagnosis.py -v"
+    result: "PASS - 22 passed in 0.07s"
+
+# DoD 验收标准对齐
+dod_verification:
+  - criteria: "Diagnosis 字段齐全且可机读"
+    status: "PASS"
+    evidence: |
+      diagnosis_output_schema 包含:
+      - diagnosis_id (DX-L4-{seq}-{hash8})
+      - skill_id, skill_name
+      - overall_health (HEALTHY/DEGRADED/CRITICAL/UNKNOWN)
+      - health_score (0-100)
+      - categories[] (name/status/score/findings[])
+      - recommendations[] (priority/action/evidence_ref)
+      - evidence_refs[] (id/kind/locator/description)
+      - generated_at, metadata
+
+  - criteria: "每个关键结论可追溯 evidence_ref"
+    status: "PASS"
+    evidence: |
+      - Finding 必须包含 evidence_ref 字段
+      - Recommendation 必须包含 evidence_ref 字段
+      - EvidenceRef 格式: EV-{TYPE}-{SEQ}-{HASH8}
+      - EvidenceRef 包含 kind/locator/description/content_hash
+
+# Schema 字段验证
+schema_validation:
+  diagnosis_id:
+    format: "DX-L4-[0-9]+-[A-Z0-9]{8}"
+    example: "DX-L4-001-A1B2C3D4"
+    status: "PASS"
+
+  overall_health:
+    enum: ["HEALTHY", "DEGRADED", "CRITICAL", "UNKNOWN"]
+    status: "PASS"
+
+  health_score:
+    type: "number"
+    range: "0-100"
+    status: "PASS"
+
+  categories:
+    required_fields: ["name", "status", "score", "findings"]
+    category_names: ["code_quality", "test_coverage", "documentation", "security", "performance", "maintainability"]
+    status: "PASS"
+
+  evidence_refs:
+    required_fields: ["id", "kind", "locator", "description"]
+    id_format: "EV-{TYPE}-{SEQ}-{HASH8}"
+    status: "PASS"
+
+# 测试覆盖
+test_coverage:
+  total_tests: 22
+  passed: 22
+  failed: 0
+  test_classes:
+    - name: "TestEnums"
+      tests: 3
+      status: "all passed"
+    - name: "TestEvidenceRef"
+      tests: 2
+      status: "all passed"
+    - name: "TestFinding"
+      tests: 2
+      status: "all passed"
+    - name: "TestRecommendation"
+      tests: 1
+      status: "all passed"
+    - name: "TestCategory"
+      tests: 2
+      status: "all passed"
+    - name: "TestDiagnosisBuilder"
+      tests: 4
+      status: "all passed"
+    - name: "TestDiagnosisOutput"
+      tests: 2
+      status: "all passed"
+    - name: "TestValidateDiagnosis"
+      tests: 4
+      status: "all passed"
+    - name: "TestSampleDiagnosis"
+      tests: 2
+      status: "all passed"
+
+# 证据引用
+evidence_refs:
+  - id: "EV-L4-03-CODE-001"
+    kind: "FILE"
+    locator: "skillforge-spec-pack/skillforge/src/diagnosis/__init__.py:1-420"
+    description: "Diagnosis 核心模块实现"
+
+  - id: "EV-L4-03-SAMPLE-001"
+    kind: "FILE"
+    locator: "skillforge-spec-pack/skillforge/src/diagnosis/sample_diagnosis.json:1-95"
+    description: "标准 Diagnosis.json 示例"
+
+  - id: "EV-L4-03-TEST-001"
+    kind: "FILE"
+    locator: "skillforge-spec-pack/skillforge/tests/test_diagnosis.py:1-280"
+    description: "22 个测试用例"
+
+  - id: "EV-L4-03-TEST-RUN-001"
+    kind: "OUTPUT"
+    locator: "pytest execution"
+    description: "测试运行结果: 22 passed in 0.07s"
+
+# 三权记录路径
+governance_records:
+  review: "docs/2026-02-26/l4-n8n-execution/verification/L4-03_gate_decision.json"
+  compliance: "docs/2026-02-26/l4-n8n-execution/verification/L4-03_compliance_attestation.json"
+  execution: "docs/2026-02-26/l4-n8n-execution/verification/L4-03_execution_report.yaml"
+
+# 后续任务依赖
+downstream_unblock:
+  - "L4-04 (AEV 计算模块接入)"
+
+# 依赖验证
+dependencies_verified:
+  L4-01:
+    status: "ALLOW"
+    gate_decision: "docs/2026-02-26/l4-n8n-execution/verification/L4-01_gate_decision.json"
+    compliance: "PASS"
+    notes: "L4-01 契约定义了 diagnosis_output_schema，本任务实现了该 schema"
+
+# 备注
+notes: |
+  L4-03 完成了 Diagnosis.json 标准输出模块的实现。
+
+  关键成果：
+  1. 实现了 DiagnosisBuilder 构建器模式
+  2. 实现了 DiagnosisOutput 标准输出结构
+  3. 实现了 EvidenceRef 证据引用机制
+  4. 实现了 validate_diagnosis() schema 验证函数
+  5. 创建了 sample_diagnosis.json 示例文件
+  6. 编写了 22 个测试用例，全部通过
+
+  DoD 达成：
+  - ✅ Diagnosis 字段齐全且可机读
+  - ✅ 每个关键结论可追溯 evidence_ref
+
+  与 L4-01 契约对齐：
+  - diagnosis_id 格式: DX-L4-{seq}-{hash8} ✅
+  - overall_health 枚举: HEALTHY/DEGRADED/CRITICAL/UNKNOWN ✅
+  - health_score 范围: 0-100 ✅
+  - categories 结构: name/status/score/findings[] ✅
+  - evidence_refs 格式: EV-{TYPE}-{SEQ}-{HASH8} ✅
+
+  无副作用操作，无需 permit。
+
+# 执行时间
+started_at: "2026-02-26T21:30:00Z"
+completed_at: "2026-02-26T22:15:00Z"
+duration_minutes: 45

@@ -1,0 +1,202 @@
+# PR4-T1 Execution Report
+# v0 10模块路径对齐（FAIL补齐 + PARTIAL对齐）
+
+task_id: PR4-T1
+phase: Phase 4
+objective: 补齐 v0 10模块中的4个 FAIL + 4个 PARTIAL 路径对齐（最小可运行）
+status: COMPLETED
+execution_log:
+  - step: 1
+    action: Create FAIL module #1 - Demand DSL v0 schema
+    result: SUCCESS
+    evidence: contracts/dsl/demand_dsl_v0.schema.yml
+    details: |
+      Four-part DemandSpec schema with:
+      - DemandSpec/AssetRefs/TestSpec/ControlSpec
+      - 4 supported modes (generate_skill, modify_skill, audit_skill, compose_workflow)
+      - Required fields validation
+      - JSON Schema v7 format
+
+  - step: 2
+    action: Create FAIL module #5 - demand_parser_lite.py
+    result: SUCCESS
+    evidence: core/demand_parser_lite.py
+    details: |
+      Restricted NL to Demand DSL parser:
+      - 4 supported modes with pattern detection
+      - Max 3 clarifications (blocking)
+      - Missing fields => clarifications, not guessing
+      - No full DDD deconstruction
+      - No autonomous planning
+
+  - step: 3
+    action: Create FAIL module #6 - dsl_validator.py
+    result: SUCCESS
+    evidence: core/dsl_validator.py
+    details: |
+      Hard validation for Demand DSL:
+      - All required fields must be present
+      - Refs must have version specified
+      - Controls must be explicit
+      - Tests must be atomic
+      - network_policy must be explicit
+      - Fail-closed with error codes
+
+  - step: 4
+    action: Create FAIL module #7 - contract_compiler.py
+    result: SUCCESS
+    evidence: core/contract_compiler.py
+    details: |
+      Demand DSL to Constitution Contract compiler:
+      - Maps mode to contract goals
+      - Fixed 8 Gate order
+      - Builds I/O, controls, quality, risk sections
+      - contract_hash keyset fields complete
+
+  - step: 5
+    action: Align PARTIAL module #3 - tools/canonicalize.py
+    result: SUCCESS
+    evidence: tools/canonicalize.py
+    details: |
+      Thin wrapper for canonical_json implementation:
+      - Imports from skillforge-spec-pack/skillforge/src/utils/canonical_json.py
+      - Provides single entry point for canonicalization
+      - Fallback implementation if spec-pack unavailable
+      - CLI for testing
+
+  - step: 6
+    action: Align PARTIAL module #4 - tools/hash_calc.py
+    result: SUCCESS
+    evidence: tools/hash_calc.py
+    details: |
+      Thin wrapper for three-hash calculation:
+      - Imports from scripts/hash_calc.py
+      - Provides single entry point for hash calculation
+      - Re-exports calc_three_hashes, read_json, read_yaml
+      - CLI for three-hash calculation
+
+  - step: 7
+    action: Align PARTIAL module #8 - core/gate_engine.py
+    result: SUCCESS
+    evidence: core/gate_engine.py
+    details: |
+      Thin wrapper for gate engine implementation:
+      - Imports from skillforge-spec-pack/skillforge/src/orchestration/gate_engine.py
+      - Provides execute_gate_plan() for fixed 8 Gate execution
+      - FIXED_GATE_ORDER constant for v0
+      - Fallback implementation if spec-pack unavailable
+
+  - step: 8
+    action: Align PARTIAL module #9 - core/evidence_store.py
+    result: SUCCESS
+    evidence: core/evidence_store.py
+    details: |
+      Thin wrapper for audit pack storage:
+      - Imports from skillforge/src/storage/audit_pack_store.py
+      - Provides EvidenceRef append-only storage
+      - create_evidence_ref() with hash calculation
+      - CLI for evidence store operations
+
+  - step: 9
+    action: Align PARTIAL module #10 - core/pack_and_permit.py
+    result: SUCCESS
+    evidence: core/pack_and_permit.py
+    details: |
+      Unified facade for L3 AuditPack assembly and Permit issuance:
+      - Assembles L3 AuditPack from gate decisions
+      - Issues Permit with three-hash binding
+      - Validates delivery completeness (uses PR2 validators)
+      - PackAndPermitAssembler class with CLI
+
+module_status_matrix:
+  - module: "contracts/dsl/demand_dsl_v0.schema.yml"
+    status: "PASS"
+    previous_status: "FAIL"
+    evidence: "contracts/dsl/demand_dsl_v0.schema.yml"
+
+  - module: "orchestration/hash_keysets.yml"
+    status: "PASS"
+    previous_status: "PASS"
+    evidence: "orchestration/hash_keysets.yml"
+
+  - module: "tools/canonicalize.py"
+    status: "PASS"
+    previous_status: "PARTIAL"
+    evidence: "tools/canonicalize.py"
+    wraps: "skillforge-spec-pack/skillforge/src/utils/canonical_json.py"
+
+  - module: "tools/hash_calc.py"
+    status: "PASS"
+    previous_status: "PARTIAL"
+    evidence: "tools/hash_calc.py"
+    wraps: "scripts/hash_calc.py"
+
+  - module: "core/demand_parser_lite.py"
+    status: "PASS"
+    previous_status: "FAIL"
+    evidence: "core/demand_parser_lite.py"
+
+  - module: "core/dsl_validator.py"
+    status: "PASS"
+    previous_status: "FAIL"
+    evidence: "core/dsl_validator.py"
+
+  - module: "core/contract_compiler.py"
+    status: "PASS"
+    previous_status: "FAIL"
+    evidence: "core/contract_compiler.py"
+
+  - module: "core/gate_engine.py"
+    status: "PASS"
+    previous_status: "PARTIAL"
+    evidence: "core/gate_engine.py"
+    wraps: "skillforge-spec-pack/skillforge/src/orchestration/gate_engine.py"
+
+  - module: "core/evidence_store.py"
+    status: "PASS"
+    previous_status: "PARTIAL"
+    evidence: "core/evidence_store.py"
+    wraps: "skillforge/src/storage/audit_pack_store.py"
+
+  - module: "core/pack_and_permit.py"
+    status: "PASS"
+    previous_status: "PARTIAL"
+    evidence: "core/pack_and_permit.py"
+    combines: "permit_issuer.py + gate_permit.py + validators"
+
+summary:
+  total_modules: 10
+  previous_pass: 2
+  previous_partial: 4
+  previous_fail: 4
+  current_pass: 10
+  current_partial: 0
+  current_fail: 0
+  improvement: "4 FAIL -> PASS, 4 PARTIAL -> PASS"
+
+compliance_attestation:
+  pr4_v0_10_modules_aligned: true
+  all_declared_paths_exist: true
+  thin_wrappers_established: true
+  no_domain_expansion: true
+  no_business_contract_changes: true
+  cloud_bypass_prevented: true
+  fail_closed_policy: true
+
+spec_source:
+  - docs/2026-03-04/v0-L5/index.md
+  - docs/2026-03-04/v0-L5/GM-SkillForge v0 封板范围声明（10 个必须模块）.md
+  - docs/2026-03-04/verification/v0_10_modules_audit.md
+
+implementation_notes:
+  - All modules are minimally runnable (no expansion beyond v0 scope)
+  - Thin wrappers preserve existing implementations
+  - All entry points are importable and executable
+  - Fallback implementations provided for resilience
+  - No P5 business contract changes
+
+auditor: Antigravity-2
+timestamp_utc: "2026-03-04T09:00:00Z"
+
+# PR4 Execution Completion
+pr4_execution_done: true

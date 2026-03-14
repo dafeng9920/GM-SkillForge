@@ -1,0 +1,125 @@
+task_id: "T-ASM-02"
+executor: "Antigravity-1"
+status: "完成"
+
+# 交付物清单
+deliverables:
+  - path: "core/runtime_interface.py"
+    action: "新建"
+    lines_changed: 520
+    description: "统一最小运行接口定义"
+
+  - path: "core/RUNTIME_INTERFACE_README.md"
+    action: "新建"
+    lines_changed: 320
+    description: "统一接口说明文档"
+
+# Gate 自检结果
+gate_self_check:
+  - command: "python -c 'from core.runtime_interface import *'"
+    result: "Import successful - 所有接口正常导入"
+
+  - command: "python -c 'from core.runtime_interface import *; RunRequest(...).calculate_hash()'"
+    result: "RunRequest hash 计算正常"
+
+  - command: "python -c 'from core.runtime_interface import ArtifactManifest; ArtifactManifest.from_dropzone_manifest(Path(\"dropzone/REAL-TASK-002/manifest.json\"), \"RUN-TEST\")'"
+    result: "dropzone manifest 兼容性测试通过"
+
+  - command: "python -c 'from core.runtime_interface import RuntimeSession; RuntimeSession(\"T-ASM-02\", \"Antigravity-1\")'"
+    result: "RuntimeSession 会话管理正常"
+
+# 接口摘要
+interface_summary:
+  unified_interfaces:
+    - "RunRequest - 统一执行请求"
+    - "RunResult - 统一执行结果"
+    - "ArtifactManifest - 统一工件清单"
+
+  session_management:
+    - "RuntimeSession - 运行时会话管理器"
+
+  enums:
+    - "RunStatus - 执行状态枚举"
+    - "ArtifactKind - 工件类型枚举"
+
+  helper_types:
+    - "ArtifactRef - 工件引用"
+    - "EvidenceRef - 证据引用"
+
+# 兼容性说明
+compatibility_notes:
+  existing_structures:
+    - "CloudTaskContract (schemas/openclaw_cloud_task_contract.schema.json) - RunRequest 完全覆盖"
+    - "ExecutionReceipt (schemas/openclaw_execution_receipt.schema.json) - RunResult 完全覆盖"
+    - "dropzone manifest.json - ArtifactManifest 完全兼容，提供 from_dropzone_manifest() 方法"
+    - "AuditPack (core/pack_and_permit.py) - manifest 字段可接收 ArtifactManifest.to_dict() 输出"
+    - "GateResult (各 gate 文件) - EvidenceRef 完全兼容"
+
+  main_chain_integration:
+    - "Permit -> pre_absorb_check -> absorb (前半段) - 已有真实脚本"
+    - "local accept / final accept (后半段) - 可使用 RunResult 作为统一输入"
+
+# 本轮不动项（后续迁移路径）
+not_migrated_this_round:
+  - "dropzone manifest.json 格式 - 保持现有简单格式，下一轮可迁移"
+  - "scripts/absorb.sh - 保持现有实现，下一轮可使用 ArtifactManifest"
+  - "core/pack_and_permit.py - 保持现有 AuditPack 结构，通过 manifest 字段对接"
+  - "scripts/validate_delivery_completeness.py - 保持现有固定检查逻辑"
+  - "Gate 系统 (skillforge/src/skills/gates/*.py) - 保持现有 GateResult 结构"
+  - "现有 Schema 文件 (schemas/*.json) - 保持不变"
+
+# 风险评估
+risks:
+  - "低风险 - 新接口与现有系统并行存在，不强制迁移"
+  - "兼容性风险 - 通过提供转换方法缓解"
+  - "多 Agent 使用版本冲突 - 使用 schema_version 字段标识"
+
+# 证据引用
+evidence_refs:
+  - id: "EV-001"
+    kind: "FILE"
+    locator: "core/runtime_interface.py"
+    description: "统一接口定义"
+
+  - id: "EV-002"
+    kind: "FILE"
+    locator: "core/RUNTIME_INTERFACE_README.md"
+    description: "接口说明文档"
+
+  - id: "EV-003"
+    kind: "TEST"
+    locator: "Bash test output"
+    description: "导入测试、功能测试、兼容性测试全部通过"
+
+  - id: "EV-004"
+    kind: "FILE"
+    locator: "schemas/openclaw_cloud_task_contract.schema.json"
+    description: "现有 TaskContract 结构"
+
+  - id: "EV-005"
+    kind: "FILE"
+    locator: "schemas/openclaw_execution_receipt.schema.json"
+    description: "现有 ExecutionReceipt 结构"
+
+  - id: "EV-006"
+    kind: "FILE"
+    locator: "dropzone/REAL-TASK-002/manifest.json"
+    description: "现有 dropzone manifest 示例"
+
+  - id: "EV-007"
+    kind: "FILE"
+    locator: "core/pack_and_permit.py"
+    description: "现有 Permit/AuditPack 结构"
+
+# 备注
+notes: |
+  本轮任务只创建统一接口定义和说明文档，不修改任何现有业务逻辑。
+  新接口与现有系统并行存在，提供兼容方法和转换函数。
+
+  统一接口位于 core/runtime_interface.py，提供：
+  - from core.runtime_interface import RunRequest, RunResult, ArtifactManifest, RuntimeSession
+
+  下一轮（T-ASM-03）可考虑：
+  - scripts/absorb.sh 使用 ArtifactManifest.from_dropzone_manifest()
+  - dropzone manifest.json 增加 kind 和 content_hash 字段
+  - 创建 local/final accept 的统一脚本入口

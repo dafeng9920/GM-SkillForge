@@ -1,0 +1,51 @@
+name: evidence-freeze-manifest-skill
+description: 冻结 L3 证据快照并生成 MANIFEST 校验清单，保证证据可复核与可追溯。
+version: v1.0.0
+frozen_at: 2026-02-25
+owner: platform-governance
+tags:
+  - l3
+  - evidence
+  - manifest
+  - snapshot
+  - audit
+  - reproducibility
+default_prompt: |
+  冻结最新 PASS 证据并生成哈希清单。
+  1) 复制 A/B/C/summary 到 evidence_pass_snapshot
+  2) 生成 MANIFEST.json（sha256/size/time）
+  3) 若缺任一文件，返回 FAIL 并列出缺失项
+
+capabilities:
+  - copy_required_evidence
+  - generate_manifest
+  - sha256_hashing
+  - evidence_snapshot_archival
+
+input_schema:
+  source_dir:
+    type: string
+    required: true
+    description: 证据来源目录（reports/l3_gap_closure/{date}）
+  snapshot_dir:
+    type: string
+    required: true
+    description: 快照输出目录（docs/{date}/verification/evidence_pass_snapshot）
+  required_files:
+    type: array
+    required: true
+    description: 必需文件列表
+
+output_schema:
+  snapshot_files:
+    type: array
+    description: 已冻结文件路径
+  manifest_file:
+    type: string
+    description: MANIFEST.json 路径
+  missing_files:
+    type: array
+    description: 缺失文件列表
+  success:
+    type: boolean
+    description: 是否完成冻结

@@ -1,0 +1,166 @@
+{
+  "compliance_id": "COMP-P5E-20260304",
+  "task_id": "P5-E",
+  "contract_path": ".tmp/openclaw-dispatch/drafts/p5_e_small_batch_contract.json",
+  "contract_sha256": "4035416ccf268a00d10d5847b3181e43e2c5f14339d0d78cf2afb148d3e88b46",
+  "decision": "PASS",
+  "reviewed_at": "2026-03-04T15:00:00Z",
+  "compliance_officer": "Kior-B",
+
+  "hard_rules_audit": {
+    "rule_1_discord_only": {
+      "description": "外发边界必须 Discord-only",
+      "status": "PASS",
+      "evidence": "All command_allowlist entries target Discord channel ID 1475477500506411162",
+      "target_channel": "1475477500506411162",
+      "command_scan": [
+        "docker compose exec -T -u 1000 openclaw-agent sh -c 'MSG=$(sed -n \"/## 🎯 目标 1/,/---/p\" /home/node/.openclaw/workspace/memory/strike_pack.md | sed -n \"8,12p\"); openclaw message send --channel discord --target 1475477500506411162 --message \"$MSG\"'"
+      ]
+    },
+    "rule_2_rate_limit": {
+      "description": "限流必须存在且不超阈值",
+      "status": "PASS",
+      "evidence": "governance.rate_limit = 2req/min",
+      "rate_limit_value": "2req/min",
+      "threshold_check": "BELOW_SAFE_THRESHOLD (safe < 10req/min)",
+      "max_actions_per_window": 3
+    },
+    "rule_3_rollback_plan": {
+      "description": "rollback_plan 必须可执行",
+      "status": "PASS",
+      "evidence": "1 rollback action defined",
+      "rollback_actions": [
+        "docker compose exec -T -u 1000 openclaw-agent openclaw gateway stop"
+      ],
+      "executability": "VERIFIED_COMMAND_SYNTAX"
+    },
+    "rule_4_fail_closed": {
+      "description": "fail_closed 必须为 true",
+      "status": "PASS",
+      "evidence": "fail_closed = true (both top-level and policy level)",
+      "top_level": true,
+      "policy_level": true
+    },
+    "rule_5_draft_only": {
+      "description": "DRAFT_ONLY 必须为 true (放量前门禁)",
+      "status": "PASS",
+      "evidence": "draft_only = true",
+      "human_permit_required": true
+    },
+    "rule_6_required_keys": {
+      "description": "缺关键字段即 FAIL",
+      "status": "PASS",
+      "evidence": "All required keys present",
+      "present_keys": [
+        "task_id",
+        "name",
+        "description",
+        "command_allowlist",
+        "acceptance",
+        "required_artifacts",
+        "rollback_plan",
+        "permit_id",
+        "governance",
+        "policy",
+        "metadata"
+      ],
+      "missing_keys": []
+    }
+  },
+
+  "additional_checks": {
+    "acceptance_criteria": {
+      "status": "PASS",
+      "criteria_count": 2,
+      "criteria": [
+        {
+          "check": "Message ID captured",
+          "metric": "discord_sent",
+          "expected": "PASS"
+        },
+        {
+          "check": "UTC timestamp added to strike_log.md",
+          "metric": "log_closed",
+          "expected": "PASS"
+        }
+      ]
+    },
+    "policy_constraints": {
+      "max_commands": 10,
+      "max_duration_sec": 600,
+      "status": "PASS"
+    },
+    "governance_controls": {
+      "kill_switch": "ERROR_RATE > 10%",
+      "max_actions_per_window": 3,
+      "rate_limit": "2req/min",
+      "status": "PASS"
+    }
+  },
+
+  "security_assessment": {
+    "outbound_network": "DISCORD_ONLY",
+    "container_execution": "YES (docker compose exec)",
+    "user_isolation": "YES (-u 1000)",
+    "data_access": "READ_ONLY (memory files)",
+    "write_operations": "MINIMAL (strike_log.md append only)"
+  },
+
+  "evidence_refs": [
+    {
+      "id": "EV-P5E-001",
+      "kind": "FILE",
+      "locator": ".tmp/openclaw-dispatch/drafts/p5_e_small_batch_contract.json",
+      "sha256": "4035416ccf268a00d10d5847b3181e43e2c5f14339d0d78cf2afb148d3e88b46"
+    },
+    {
+      "id": "EV-P5E-002",
+      "kind": "SNIPPET",
+      "locator": "command_allowlist[0]",
+      "observation": "Discord target 1475477500506411162 confirmed"
+    },
+    {
+      "id": "EV-P5E-003",
+      "kind": "SNIPPET",
+      "locator": "governance.rate_limit",
+      "observation": "2req/min confirmed"
+    },
+    {
+      "id": "EV-P5E-004",
+      "kind": "SNIPPET",
+      "locator": "rollback_plan[0]",
+      "observation": "gateway stop command verified"
+    }
+  ],
+
+  "reasons": [
+    "All 6 hard rules passed: Discord-only, rate_limit, rollback_plan, fail_closed, draft_only, required_keys",
+    "Contract structure follows v2 spec correctly",
+    "Governance controls (kill_switch, max_actions, rate_limit) properly configured",
+    "Acceptance criteria are machine-verifiable (Message ID capture, log timestamp)"
+  ],
+
+  "required_changes": [],
+
+  "warnings": [
+    "NOTE: Rollback plan uses 'openclaw gateway stop' - verify this command exists in container",
+    "NOTE: rate_limit=2req/min is aggressive - monitor actual send rate during execution"
+  ],
+
+  "next_steps": [
+    "Obtain human permit (permit-20260304-p5-e-01)",
+    "Execute T-S2 final review (vs--cc3)",
+    "Proceed to execution only after permit=VALID"
+  ],
+
+  "conclusion": {
+    "summary": "P5-E 合同草案通过所有硬规则检查。Discord-only 边界清晰，限流配置安全 (2req/min)，回滚计划可执行，DRAFT_ONLY 标记正确。建议在获得人工许可后进入执行阶段。",
+    "compliance_decision": "PASS",
+    "gating_decision": "P5E_COMPLIANCE=PASS",
+    "safe_to_proceed": true,
+    "pending_conditions": [
+      "human_permit_required = true must be satisfied",
+      "vs--cc3 review must be completed"
+    ]
+  }
+}

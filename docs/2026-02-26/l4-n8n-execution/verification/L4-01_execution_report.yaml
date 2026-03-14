@@ -1,0 +1,588 @@
+task_id: "L4-01"
+executor: "Antigravity-2"
+status: "完成"
+execution_date: "2026-02-26"
+last_updated: "2026-02-26T10:00:00Z"
+
+contract_definition:
+  title: "n8n L4 Diagnosis/AEV Access Contract v1.0"
+  contract_id: "L4-N8N-CONTRACT-20260226-001"
+  scope: "Diagnosis -> AEV 经济模型定标最小闭环"
+
+# --- Diagnosis 输入契约 ---
+diagnosis_input_schema:
+  type: "object"
+  required:
+    - "skill_id"
+    - "skill_name"
+    - "repo_url"
+    - "commit_sha"
+    - "at_time"
+    - "requester_id"
+  properties:
+    skill_id:
+      type: "string"
+      description: "Skill 标识符"
+    skill_name:
+      type: "string"
+      description: "Skill 名称"
+    repo_url:
+      type: "string"
+      format: "uri"
+      description: "仓库 URL"
+    commit_sha:
+      type: "string"
+      pattern: "^[0-9a-f]{40}$"
+      description: "40 位 commit SHA"
+    at_time:
+      type: "string"
+      format: "date-time"
+      description: "ISO-8601 时间戳（必须固定，禁止 'latest'）"
+    requester_id:
+      type: "string"
+      description: "请求者 ID"
+    n8n_execution_id:
+      type: "string"
+      description: "n8n 工作流执行 ID（可选）"
+
+# --- Diagnosis 输出契约 ---
+diagnosis_output_schema:
+  type: "object"
+  required:
+    - "diagnosis_id"
+    - "skill_id"
+    - "overall_health"
+    - "health_score"
+    - "categories"
+    - "evidence_refs"
+  properties:
+    diagnosis_id:
+      type: "string"
+      pattern: "^DX-L4-[0-9]+-[A-Z0-9]{8}$"
+      description: "诊断报告 ID"
+    skill_id:
+      type: "string"
+      description: "关联的 Skill ID"
+    overall_health:
+      type: "string"
+      enum: ["HEALTHY", "DEGRADED", "CRITICAL", "UNKNOWN"]
+      description: "整体健康状态"
+    health_score:
+      type: "number"
+      minimum: 0
+      maximum: 100
+      description: "健康分数 (0-100)"
+    categories:
+      type: "array"
+      items:
+        type: "object"
+        required:
+          - "name"
+          - "status"
+          - "score"
+          - "findings"
+        properties:
+          name:
+            type: "string"
+            enum: ["code_quality", "test_coverage", "documentation", "security", "performance", "maintainability"]
+            description: "诊断类别"
+          status:
+            type: "string"
+            enum: ["PASS", "WARN", "FAIL"]
+            description: "类别状态"
+          score:
+            type: "number"
+            minimum: 0
+            maximum: 100
+            description: "类别分数"
+          findings:
+            type: "array"
+            items:
+              type: "object"
+              required:
+                - "severity"
+                - "message"
+                - "evidence_ref"
+              properties:
+                severity:
+                  type: "string"
+                  enum: ["INFO", "WARNING", "ERROR", "CRITICAL"]
+                  description: "严重程度"
+                message:
+                  type: "string"
+                  description: "问题描述"
+                evidence_ref:
+                  type: "string"
+                  pattern: "^EV-[A-Z]+-[0-9]+-[A-Z0-9]{8}$"
+                  description: "证据引用"
+    recommendations:
+      type: "array"
+      items:
+        type: "object"
+        required:
+          - "priority"
+          - "action"
+          - "evidence_ref"
+        properties:
+          priority:
+            type: "string"
+            enum: ["HIGH", "MEDIUM", "LOW"]
+            description: "优先级"
+          action:
+            type: "string"
+            description: "推荐行动"
+          evidence_ref:
+            type: "string"
+            description: "支撑证据引用"
+    generated_at:
+      type: "string"
+      format: "date-time"
+      description: "生成时间"
+
+# --- AEV 输入契约 ---
+aev_input_schema:
+  type: "object"
+  required:
+    - "diagnosis_id"
+    - "skill_id"
+    - "requester_id"
+  properties:
+    diagnosis_id:
+      type: "string"
+      description: "诊断报告 ID（来自 Diagnosis 输出）"
+    skill_id:
+      type: "string"
+      description: "Skill ID"
+    requester_id:
+      type: "string"
+      description: "请求者 ID"
+    custom_parameters:
+      type: "object"
+      description: "自定义计算参数（可选）"
+      properties:
+        time_period:
+          type: "string"
+          enum: ["month", "quarter", "year"]
+          default: "year"
+          description: "收益计算周期"
+        currency:
+          type: "string"
+          enum: ["USD", "EUR", "CNY"]
+          default: "USD"
+          description: "收益货币单位"
+
+# --- AEV 输出契约 ---
+aev_output_schema:
+  type: "object"
+  required:
+    - "aev_id"
+    - "skill_id"
+    - "diagnosis_id"
+    - "aev_total"
+    - "currency"
+    - "period"
+    - "components"
+    - "evidence_refs"
+  properties:
+    aev_id:
+      type: "string"
+      pattern: "^AEV-L4-[0-9]+-[A-Z0-9]{8}$"
+      description: "AEV 报告 ID"
+    skill_id:
+      type: "string"
+      description: "Skill ID"
+    diagnosis_id:
+      type: "string"
+      description: "关联的诊断报告 ID"
+    aev_total:
+      type: "object"
+      required:
+        - "value"
+        - "confidence_interval"
+      properties:
+        value:
+          type: "number"
+          description: "总收益值"
+        confidence_interval:
+          type: "object"
+          required:
+            - "lower"
+            - "upper"
+            - "confidence_level"
+          properties:
+            lower:
+              type: "number"
+              description: "置信区间下限"
+            upper:
+              type: "number"
+              description: "置信区间上限"
+            confidence_level:
+              type: "number"
+              description: "置信水平 (e.g., 0.95)"
+    currency:
+      type: "string"
+      enum: ["USD", "EUR", "CNY"]
+      description: "货币单位"
+    period:
+      type: "string"
+      enum: ["month", "quarter", "year"]
+      description: "计算周期"
+    components:
+      type: "object"
+      required:
+        - "v_token"
+        - "v_compute"
+        - "v_risk"
+        - "v_trust"
+      properties:
+        v_token:
+          type: "object"
+          required:
+            - "value"
+            - "description"
+            - "evidence_ref"
+          properties:
+            value:
+              type: "number"
+              description: "Token 收益分量"
+            description:
+              type: "string"
+              description: "计算说明"
+            evidence_ref:
+              type: "string"
+              description: "证据引用"
+        v_compute:
+          type: "object"
+          required:
+            - "value"
+            - "description"
+            - "evidence_ref"
+          properties:
+            value:
+              type: "number"
+              description: "计算收益分量"
+            description:
+              type: "string"
+              description: "计算说明"
+            evidence_ref:
+              type: "string"
+              description: "证据引用"
+        v_risk:
+          type: "object"
+          required:
+            - "value"
+            - "description"
+            - "evidence_ref"
+          properties:
+            value:
+              type: "number"
+              description: "风险调整分量"
+            description:
+              type: "string"
+              description: "计算说明"
+            evidence_ref:
+              type: "string"
+              description: "证据引用"
+        v_trust:
+          type: "object"
+          required:
+            - "value"
+            - "description"
+            - "evidence_ref"
+          properties:
+            value:
+              type: "number"
+              description: "信任度收益分量"
+            description:
+              type: "string"
+              description: "计算说明"
+            evidence_ref:
+              type: "string"
+              description: "证据引用"
+    formula:
+      type: "string"
+      description: "AEV = V_token + V_compute + V_risk + V_trust"
+    evidence_refs:
+      type: "array"
+      items:
+        type: "object"
+        required:
+          - "ref_id"
+          - "type"
+          - "source_locator"
+          - "content_hash"
+        properties:
+          ref_id:
+            type: "string"
+            pattern: "^EV-[A-Z]+-[0-9]+-[A-Z0-9]{8}$"
+            description: "证据引用 ID"
+          type:
+            type: "string"
+            enum: ["diagnosis", "metric", "log", "artifact", "report", "signature"]
+            description: "证据类型"
+          source_locator:
+            type: "string"
+            description: "证据来源位置"
+          content_hash:
+            type: "string"
+            description: "SHA-256 内容哈希"
+    generated_at:
+      type: "string"
+      format: "date-time"
+      description: "生成时间"
+
+# --- 错误码约定 ---
+error_codes:
+  prefix: "L4"
+  codes:
+    - code: "E001"
+      name: "INVALID_INPUT"
+      severity: "ERROR"
+      description: "输入参数不符合 schema"
+      action: "检查输入参数格式和必填字段"
+
+    - code: "E002"
+      name: "DIAGNOSIS_FAILED"
+      severity: "ERROR"
+      description: "诊断执行失败"
+      action: "检查诊断服务和依赖项"
+
+    - code: "E003"
+      name: "AEV_CALCULATION_FAILED"
+      severity: "ERROR"
+      description: "AEV 计算失败"
+      action: "检查 AEV 计算模块和输入数据"
+
+    - code: "E004"
+      name: "EVIDENCE_REF_MISSING"
+      severity: "ERROR"
+      description: "缺少必需的证据引用"
+      action: "确保所有关键结论都有 evidence_ref"
+
+    - code: "E005"
+      name: "SKILL_NOT_FOUND"
+      severity: "ERROR"
+      description: "指定的 Skill 不存在"
+      action: "确认 skill_id 正确"
+
+    - code: "W001"
+      name: "LOW_CONFIDENCE"
+      severity: "WARNING"
+      description: "计算结果置信度低"
+      action: "检查输入数据质量"
+
+    - code: "W002"
+      name: "PARTIAL_EVIDENCE"
+      severity: "WARNING"
+      description: "部分证据缺失，结果可能不完整"
+      action: "补充缺失的证据链"
+
+    - code: "W003"
+      name: "DEGRADED_HEALTH"
+      severity: "WARNING"
+      description: "Skill 健康状态下降"
+      action: "查看诊断报告详情"
+
+# --- evidence_ref 约定 ---
+evidence_ref_requirements:
+  format: "^EV-[A-Z]+-[0-9]+-[A-Z0-9]{8}$"
+  components:
+    - "EV-{prefix}-{timestamp}-{uuid8}"
+  prefixes:
+    DX: "Diagnosis"
+    AEV: "Agent Economic Value"
+    MET: "Metric"
+    LOG: "Log"
+    ART: "Artifact"
+    SIG: "Signature"
+  required_fields:
+    - "ref_id"
+    - "type"
+    - "source_locator"
+    - "content_hash"
+    - "timestamp"
+  traceability_requirements:
+    - "每个关键结论必须关联至少一个 evidence_ref"
+    - "evidence_ref 必须可追溯到具体文件或日志"
+    - "所有 evidence_ref 必须包含 content_hash 用于完整性验证"
+    - "evidence_ref 链路必须完整：Diagnosis -> AEV"
+
+# --- 决策可机读约定 ---
+decision_schema:
+  type: "object"
+  required:
+    - "decision"
+    - "task_id"
+    - "timestamp"
+  properties:
+    decision:
+      type: "string"
+      enum: ["ALLOW", "PASS", "REQUIRES_CHANGES", "DENY", "FAIL"]
+      description: "决策结果"
+    task_id:
+      type: "string"
+      description: "任务 ID"
+    timestamp:
+      type: "string"
+      format: "date-time"
+      description: "决策时间"
+    evidence_refs:
+      type: "array"
+      items:
+        type: "object"
+        required:
+          - "ref_id"
+          - "kind"
+          - "locator"
+        properties:
+          ref_id:
+            type: "string"
+          kind:
+            type: "string"
+            enum: ["FILE", "LOG", "DIFF", "SNIPPET"]
+          locator:
+            type: "string"
+          description:
+            type: "string"
+    reasons:
+      type: "array"
+      items:
+        type: "string"
+      description: "决策原因列表"
+    required_changes:
+      type: "array"
+      items:
+        type: "object"
+        properties:
+          issue_key:
+            type: "string"
+          reason:
+            type: "string"
+          next_action:
+            type: "string"
+
+contract_validation_rules:
+  - "所有输入必须符合 schema 定义"
+  - "所有输出必须包含完整的 evidence_refs 数组"
+  - "所有数值型输出必须提供置信区间"
+  - "所有错误必须包含标准 error_code"
+  - "所有 evidence_ref 必须符合格式约定"
+  - "所有决策必须使用标准枚举值"
+
+examples:
+  valid_diagnosis_output:
+    diagnosis_id: "DX-L4-20260226-A1B2C3D4"
+    skill_id: "skillforge-example-skill"
+    overall_health: "HEALTHY"
+    health_score: 85.5
+    categories:
+      - name: "code_quality"
+        status: "PASS"
+        score: 90
+        findings:
+          - severity: "INFO"
+            message: "代码质量良好"
+            evidence_ref: "EV-DX-20260226-A1B2C3D5"
+    evidence_refs:
+      - ref_id: "EV-DX-20260226-A1B2C3D5"
+        type: "metric"
+        source_locator: "skillforge-spec-pack/reports/code_quality.json"
+        content_hash: "a1b2c3d4..."
+        timestamp: "2026-02-26T10:00:00Z"
+    generated_at: "2026-02-26T10:00:00Z"
+
+  valid_aev_output:
+    aev_id: "AEV-L4-20260226-A1B2C3D6"
+    skill_id: "skillforge-example-skill"
+    diagnosis_id: "DX-L4-20260226-A1B2C3D4"
+    aev_total:
+      value: 50000
+      confidence_interval:
+        lower: 45000
+        upper: 55000
+        confidence_level: 0.95
+    currency: "USD"
+    period: "year"
+    components:
+      v_token:
+        value: 20000
+        description: "Token 收益基于市场定价"
+        evidence_ref: "EV-AEV-20260226-A1B2C3D7"
+      v_compute:
+        value: 15000
+        description: "计算收益基于执行次数"
+        evidence_ref: "EV-AEV-20260226-A1B2C3D8"
+      v_risk:
+        value: 8000
+        description: "风险调整基于历史失败率"
+        evidence_ref: "EV-AEV-20260226-A1B2C3D9"
+      v_trust:
+        value: 7000
+        description: "信任度收益基于用户评分"
+        evidence_ref: "EV-AEV-20260226-A1B2C3DA"
+    formula: "AEV = V_token + V_compute + V_risk + V_trust"
+    evidence_refs:
+      - ref_id: "EV-AEV-20260226-A1B2C3D7"
+        type: "metric"
+        source_locator: "skillforge/metrics/token_value.json"
+        content_hash: "b1c2d3e4..."
+        timestamp: "2026-02-26T10:00:00Z"
+    generated_at: "2026-02-26T10:00:00Z"
+
+  valid_decision:
+    decision: "ALLOW"
+    task_id: "L4-01"
+    timestamp: "2026-02-26T10:00:00Z"
+    reasons:
+      - "契约定义完整"
+      - "包含 Diagnosis 和 AEV 完整输入输出定义"
+      - "error_code 标准化"
+      - "evidence_ref 格式统一"
+      - "决策可机读"
+    evidence_refs:
+      - ref_id: "EV-L4-01-001"
+        kind: "FILE"
+        locator: "docs/2026-02-26/l4-n8n-execution/verification/L4-01_execution_report.yaml"
+        description: "L4-01 执行报告（契约定义）"
+
+compliance_checklist:
+  dod_1:
+    item: "契约包含 Diagnosis/AEV 输入输出字段"
+    status: "PASS"
+    evidence: "diagnosis_input_schema, diagnosis_output_schema, aev_input_schema, aev_output_schema 已定义"
+  dod_2:
+    item: "明确 evidence_ref 字段要求"
+    status: "PASS"
+    evidence: "evidence_ref_requirements 定义了格式、组件、必填字段和可追溯性要求"
+  dod_3:
+    item: "决策可机读（ALLOW/PASS）"
+    status: "PASS"
+    evidence: "decision_schema 定义了标准枚举值和数据结构"
+
+notes: |
+  L4-01 契约定义完成。该契约定义了 n8n 接入 L4 经济模型的最小闭环所需的
+  Diagnosis 和 AEV 输入输出结构。后续任务 (L4-02 到 L4-08) 将基于此契约
+  进行实现和验证。
+
+  关键设计决策：
+  1. 所有 ID 使用标准前缀格式：{PREFIX}-L4-{timestamp}-{uuid8}
+  2. evidence_ref 使用统一格式：EV-{prefix}-{timestamp}-{uuid8}
+  3. 所有数值型输出要求置信区间
+  4. 错误码标准化 (E001-E005, W001-W003)
+  5. 决策使用标准枚举值：ALLOW/PASS/REQUIRES_CHANGES/DENY/FAIL
+
+evidence_refs:
+  - id: "EV-L4-01-001"
+    kind: "FILE"
+    locator: "docs/2026-02-26/l4-n8n-execution/verification/L4-01_execution_report.yaml"
+    description: "L4-01 执行报告 - n8n Diagnosis/AEV 契约定义"
+
+  - id: "EV-L4-01-002"
+    kind: "FILE"
+    locator: "skillforge/src/contracts/api/n8n_boundary_v1.yaml"
+    description: "现有 n8n Boundary API v1.0 参考"
+
+  - id: "EV-L4-01-003"
+    kind: "FILE"
+    locator: "skillforge/src/contracts/governance/n8n_execution_receipt.schema.json"
+    description: "现有 n8n Execution Receipt Schema 参考"

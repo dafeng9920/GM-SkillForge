@@ -1,0 +1,46 @@
+name: wave-gate-orchestrator-skill
+description: 负责 Wave 内并发调度与 Wave 间门禁放行，输出可执行放行决策与阻断列表。
+version: v1.0.0
+frozen_at: 2026-02-26
+owner: platform-governance
+tags:
+  - l6
+  - wave
+  - gate
+  - orchestration
+  - governance
+default_prompt: |
+  根据 task_dispatch 与 verification 目录，判断每个 wave 是否可放行。
+  要求：Wave 内并发、Wave 间门禁，输出阻断任务和下一步派单动作。
+
+capabilities:
+  - wave_release_decision
+  - dependency_gate_check
+  - parallel_dispatch_guidance
+  - blocker_reporting
+
+input_schema:
+  dispatch_file:
+    type: string
+    required: true
+    description: 调度文件路径
+  verification_dir:
+    type: string
+    required: true
+    description: 三件套验证目录
+  wave_policy:
+    type: object
+    required: true
+    description: 并发与门禁策略
+
+output_schema:
+  wave_status:
+    type: array
+    description: 各 wave 放行状态
+  blocking_tasks:
+    type: array
+    description: 阻断任务与原因
+  next_wave_actions:
+    type: array
+    description: 下一波可执行动作
+

@@ -1,0 +1,34 @@
+{
+  "unfreeze_id": "T-G1-UNFREEZE-20260304",
+  "environment": "LOCAL-ANTIGRAVITY",
+  "unfrozen_at": "2026-03-04T22:30:00Z",
+  "unfrozen_by": "Antigravity-1",
+  "action": "UNFREEZE",
+  "previous_baseline": "T-G1-NIGHTLY-RECHECK-FROZEN-20260304",
+  "previous_baseline_frozen_at": "2026-03-04T21:20:00Z",
+  "monitoring_duration_hours": 1.17,
+  "unfreeze_summary": {
+    "status": "COMPLETED",
+    "monitoring_stopped": true,
+    "reason": "Explicit unfreeze command from Antigravity-1"
+  },
+  "final_baseline_status": {
+    "permit_five_fields": "MATCH",
+    "delivery_six_items": "MATCH",
+    "triad_records": "MATCH",
+    "total_rechecks": 6,
+    "drifts_detected": 0,
+    "blocks_triggered": 0
+  },
+  "next_steps": {
+    "requirement": "Create new baseline freeze before continuing governance",
+    "current_state": "NO_ACTIVE_BASELINE"
+  },
+  "unfreeze_record": {
+    "baseline_id": "T-G1-NIGHTLY-RECHECK-FROZEN-20260304",
+    "frozen_at": "2026-03-04T21:20:00Z",
+    "unfrozen_at": "2026-03-04T22:30:00Z",
+    "operator": "Antigravity-1",
+    "environment": "LOCAL-ANTIGRAVITY"
+  }
+}

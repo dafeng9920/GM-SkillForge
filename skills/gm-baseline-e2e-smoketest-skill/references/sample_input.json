@@ -1,0 +1,9 @@
+{
+  "task_payload": {
+    "action": "sum",
+    "numbers": [1, 2, 3, 4]
+  },
+  "validation_mode": "strict",
+  "timeout_ms": 3000
+}
+

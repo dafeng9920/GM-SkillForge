@@ -12,6 +12,7 @@
 - 不负责什么
 - 需要回传什么
 - 如何与本地治理内核配合
+- 核心治理约束：[lobster-cloud-execution-governor-skill](file:///d:/GM-SkillForge/skills/lobster-cloud-execution-governor-skill/SKILL.md)
 
 ---
 

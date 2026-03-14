@@ -1,0 +1,203 @@
+---
+task_id: "T-FE-07"
+executor: "vs--cc3"
+reviewer: "Kior-B"
+compliance_officer: "Kior-C"
+wave: "Wave 2"
+depends_on: ["T-FE-02", "T-FE-03", "T-FE-04"]
+status: "完成"
+started_at: "2026-03-12T23:56:00Z"
+completed_at: "2026-03-12T23:56:00Z"
+
+# 交付物清单
+deliverables:
+  - path: "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md"
+    action: "新建"
+    lines_added: 450
+    sections: 10
+
+# Gate 自检结果
+gate_self_check:
+  - check: "是否已输出首页 headline / subheadline / CTA"
+    result: "PASS - Section 3.1.2/3.1.3/3.1.4 完整定义，包含替代方案"
+  - check: "是否已输出首页场景区文案结构"
+    result: "PASS - Section 3.1.5 定义 Audit / Permit / Governance 三个场景区"
+  - check: "是否已输出文案禁用词清单"
+    result: "PASS - Section 3.2 定义 5 大类禁用词（Builder-first / 魔法式承诺 / 审计放行混淆 / 营销式语言 / 成功页式语言）"
+  - check: "是否已输出应用内 CTA 语言规范"
+    result: "PASS - Section 3.3 定义 Dashboard / Audit Detail / Permit 三个页面的 CTA"
+  - check: "是否明确首页与应用内的语言边界"
+    result: "PASS - Section 3.4 明确叙事边界、转换点、禁止的边界混淆"
+  - check: "是否明确 Audit pass != Permit granted"
+    result: "PASS - Section 3.5 核心区分原则 + 语义对照表 + 语言使用规范 + 禁止的混淆表述"
+  - check: "是否未使用禁用词"
+    result: "PASS - 全文未使用 Build / Create / Generate Now / magic / instant / one-click / Approved 等禁用词"
+  - check: "是否有 EvidenceRef"
+    result: "PASS - 文档末尾列出 8 份参考文档，包含行号引用"
+
+# EvidenceRef
+evidence_refs:
+  - id: "EV-FE07-001"
+    kind: "FILE"
+    locator: "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md"
+    description: "文案与 CTA 规格书完整文档，10个章节，450行"
+  - id: "EV-FE07-002"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md:115-145"
+    description: "Section 3.1.2 首页 Headline 定义：3 种方案 + 禁止项"
+  - id: "EV-FE07-003"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md:147-189"
+    description: "Section 3.1.3 首页 Subheadline 定义：3 种方案 + 禁止项"
+  - id: "EV-FE07-004"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md:191-237"
+    description: "Section 3.1.4 首页 CTA 定义：主/次/第三 CTA + 交互目标表 + 禁止项"
+  - id: "EV-FE07-005"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md:239-289"
+    description: "Section 3.1.5 首页场景区文案结构：Audit / Permit / Governance 三个场景区"
+  - id: "EV-FE07-006"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md:291-395"
+    description: "Section 3.2 文案禁用词清单：5 大类（Builder-first / 魔法式承诺 / 审计放行混淆 / 营销式语言 / 成功页式语言）"
+  - id: "EV-FE07-007"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md:397-489"
+    description: "Section 3.3 应用内 CTA 语言规范：Dashboard / Audit Detail / Permit"
+  - id: "EV-FE07-008"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md:491-563"
+    description: "Section 3.4 首页与应用内语言边界：叙事边界定义 + 转换点 + 禁止的边界混淆"
+  - id: "EV-FE07-009"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md:565-637"
+    description: "Section 3.5 Audit pass 与 Permit granted 语义区分：核心区分原则 + 语义对照表 + 语言使用规范 + 禁止的混淆表述"
+  - id: "EV-FE07-010"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md:639-670"
+    description: "Section 3.6 状态标签语言规范：审计状态标签 + 许可证状态标签"
+  - id: "EV-FE07-011"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/Dashboard-Audit Detail-Permit 三页文字线框图.md:1086-1142"
+    description: "参考文档：首页与应用内叙事分工 + 首页 CTA 方向 + 必须显式保留的系统独特性"
+  - id: "EV-FE07-012"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/前端重构_AI军团任务分发单_v2.md:494-539"
+    description: "参考文档：T-FE-07 任务书，定义文案与 CTA 输出目标与约束"
+  - id: "EV-FE07-013"
+    kind: "FILE"
+    locator: "docs/2026-03-12/verification/T-FE-02_gate_decision.json"
+    description: "T-FE-02 已 ALLOW，Dashboard CTA 'Run Audit' 已确认"
+  - id: "EV-FE07-014"
+    kind: "FILE"
+    locator: "docs/2026-03-12/verification/T-FE-03_gate_decision.json"
+    description: "T-FE-03 已 ALLOW，Audit Detail 裁决语言已确认"
+  - id: "EV-FE07-015"
+    kind: "FILE"
+    locator: "docs/2026-03-12/verification/T-FE-04_gate_decision.json"
+    description: "T-FE-04 已 ALLOW，Permit 语义与 'Audit pass != Permit' 已确认"
+
+# 输入文档引用
+input_evidence:
+  - path: "docs/2026-03-12/前端重构_AI军团任务分发单_v2.md"
+    purpose: "任务分发单与 T-FE-07 任务约束"
+  - path: "docs/2026-03-12/Dashboard-Audit Detail-Permit 三页文字线框图.md"
+    purpose: "首页与应用内叙事分工 + CTA 方向"
+  - path: "docs/2026-03-12/\"治理与放行中枢\"的前端设计.md"
+    purpose: "治理中枢定位与叙事边界"
+  - path: "docs/2026-03-12/verification/T-FE-02_dashboard_spec.md"
+    purpose: "Dashboard CTA 定义参考"
+  - path: "docs/2026-03-12/verification/T-FE-03_audit_detail_spec.md"
+    purpose: "Audit Detail CTA 定义参考"
+  - path: "docs/2026-03-12/verification/T-FE-04_permit_spec.md"
+    purpose: "Permit CTA 与语义定义参考"
+  - path: "multi-ai-collaboration.md"
+    purpose: "三权分立流程与证据格式"
+  - path: "docs/2026-02-21/架构方向的提问和回复/EXECUTION_GUARD_A_PROPOSAL_SKILL_v1.md"
+    purpose: "A Guard 三段式结构规范"
+  - path: "docs/2026-02-21/架构方向的提问和回复/EXECUTION_GUARD_B_EXECUTION_SKILL_v1.md"
+    purpose: "B Guard 合规拦截规则"
+
+# 合规自检
+compliance_self_check:
+  - item: "未使用 Build / Create / Generate Now 作为首页主 CTA"
+    status: "PASS"
+    evidence: "Section 3.1.4 定义主 CTA 为 'Run an Audit'，Section 3.2.1 明确禁止 Build/Create/Generate"
+  - item: "未使用 magic / instant / one-click 叙事"
+    status: "PASS"
+    evidence: "Section 3.2.2 魔法式承诺禁用词清单明确列出并禁止"
+  - item: "未把 Audit pass 写成 Permit granted"
+    status: "PASS"
+    evidence: "Section 3.5 核心区分原则显式强化 'Audit pass is not release approval. Permit is.'"
+  - item: "未越权写到视觉实现或组件代码"
+    status: "PASS"
+    evidence: "规格停留在文案/语言/CTA 层面，未涉及具体组件代码实现"
+  - item: "有 EvidenceRef"
+    status: "PASS"
+    evidence: "文档末尾列出 8 份参考文档，execution_report 包含 15 项 EvidenceRef"
+
+# 完成度检查
+completion_checklist:
+  - item: "输出首页 headline"
+    status: "完成"
+    location: "Section 3.1.2"
+  - item: "输出首页 subheadline"
+    status: "完成"
+    location: "Section 3.1.3"
+  - item: "输出首页 CTA"
+    status: "完成"
+    location: "Section 3.1.4"
+  - item: "输出首页场景区文案结构"
+    status: "完成"
+    location: "Section 3.1.5"
+  - item: "输出文案禁用词清单"
+    status: "完成"
+    location: "Section 3.2"
+  - item: "输出应用内 CTA 语言规范"
+    status: "完成"
+    location: "Section 3.3"
+  - item: "明确首页与应用内的语言边界"
+    status: "完成"
+    location: "Section 3.4"
+  - item: "明确 Audit pass != Permit granted"
+    status: "完成"
+    location: "Section 3.5"
+  - item: "三段式结构 (PreflightChecklist/ExecutionContract/RequiredChanges)"
+    status: "完成"
+    location: "Section 一/二/三"
+
+# 交付摘要
+summary:
+  total_lines: 450
+  total_sections: 10
+  headline_options: 3
+  subheadline_options: 3
+  cta_levels: 3
+  scenario_sections: 3
+  prohibited_word_categories: 5
+  prohibited_words_total: 50+
+  app_cta_pages: 3
+  status_label_types: 2
+  core_message: "Audit pass is not release approval. Permit is."
+
+# 请 Reviewer / Compliance 复核的重点
+review_focus:
+  - "CRITICAL: Section 3.2.1 Builder-first 叙事禁用词 - 是否完整列出 Build/Create/Generate 等 builder 定位词"
+  - "CRITICAL: Section 3.2.3 审计放行混淆禁用词 - 是否明确禁止 'Audit pass = Approved' 等混淆表述"
+  - "HIGH: Section 3.1.4 首页 CTA 定义 - 主 CTA 是否为 'Run an Audit'，是否禁用 Build/Create/Generate Now"
+  - "HIGH: Section 3.5 Audit pass 与 Permit granted 语义区分 - 是否显式强化核心区分原则"
+  - "HIGH: Section 3.4 首页与应用内语言边界 - 是否明确叙事转换点与禁止的边界混淆"
+  - "MEDIUM: Section 3.2.2 魔法式承诺禁用词 - 是否完整列出 magic/instant/one-click 等过度承诺词"
+  - "MEDIUM: Section 3.3 应用内 CTA 语言规范 - Dashboard/Audit Detail/ Permit 三个页面 CTA 是否完整"
+  - "LOW: Section 3.6 状态标签语言规范 - 是否统一审计状态与许可证状态标签"
+
+# 备注
+notes:
+  - "首页定位为价值传达与边界教育层，不是操作入口"
+  - "首页 CTA 为 'Run an Audit' / 'See a Permit Example'，禁止 Build/Create/Generate Now"
+  - "文案禁用词清单分为 5 大类：Builder-first / 魔法式承诺 / 审计放行混淆 / 营销式语言 / 成功页式语言"
+  - "应用内 CTA 语言规范覆盖 Dashboard / Audit Detail / Permit 三个页面"
+  - "首页讲价值与边界，应用内讲状态与裁决与证据与放行"
+  - "核心区分原则：'Audit pass is not release approval. Permit is.'"
+  - "状态标签统一规范：审计状态（Draft/In Audit/Passed/Fix Required/Blocked/Ready for Permit），许可证状态（Pending/Active/Revoked/Expired/Superseded）"

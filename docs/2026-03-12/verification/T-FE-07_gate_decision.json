@@ -1,0 +1,139 @@
+{
+  "task_id": "T-FE-07",
+  "decision": "ALLOW",
+  "reviewer": "Kior-B",
+  "reviewed_at": "2026-03-12T23:59:00Z",
+  "reasons": [
+    "vs--cc3 交付了完整且高质量的文案与 CTA 规格文档，已成功从 builder 叙事切换到治理叙事。首页 headline/subheadline/CTA/场景区/禁用词清单/应用内 CTA/首页与应用内语言边界/Audit pass 与 Permit granted 语义区分全部完整定义。文案规范可直接供设计/前端/产品复用，EvidenceRef 充足（8 份参考文档 + 15 项 execution_report 证据）。",
+    "核心区分原则显式强化：'Audit pass is not release approval. Permit is.' 在多个章节反复强调，语义对照表与禁止混淆表述完整。",
+    "首页定位准确：'Governed Asset Intelligence' / 'Audit decisions backed by evidence. Release authorization bound to permits.' 明确治理中枢定位，首页 CTA 为 'Run an Audit' / 'See a Permit Example'。",
+    "文案禁用词清单分为 5 大类（Builder-first/魔法式承诺/审计放行混淆/营销式语言/成功页式语言），共 50+ 禁用词，每项都有禁用理由和替代方案。",
+    "应用内 CTA 语言规范完整覆盖 Dashboard/Audit Detail/Permit 三页，每页包含主导航 CTA、行内 CTA、空状态 CTA、Footer Action Bar CTA 的详细定义。",
+    "首页与应用内语言边界明确：首页讲价值与边界（'这是什么'/'不是什么'/'为什么需要'/'如何开始'），应用内讲状态与裁决（状态/裁决/证据/放行）。",
+    "状态标签语言规范统一：审计状态（Draft/In Audit/Passed/Fix Required/Blocked/Ready for Permit）与许可证状态（Pending/Active/Revoked/Expired/Superseded）明确区分，禁用词完整列出。"
+  ],
+  "evidence_refs": [
+    {
+      "id": "EV-REVIEW-FE07-001",
+      "kind": "FILE",
+      "locator": "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md",
+      "description": "文案与 CTA 规格书完整文档，10个章节，450行"
+    },
+    {
+      "id": "EV-REVIEW-FE07-002",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md:110-116",
+      "description": "Section 3.1.1 核心定位：首页是价值传达与边界教育层，三个问题（这是什么/不是什么/如何开始）"
+    },
+    {
+      "id": "EV-REVIEW-FE07-003",
+      "kind": "SNIPPET",
+      "locator": "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md:113-130",
+      "description": "Section 3.1.2 首页 Headline：'Governed Asset Intelligence' + 3 种替代方案"
+    },
+    {
+      "id": "EV-REVIEW-FE07-004",
+      "kind": "SNIPPET",
+      "locator": "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md:132-150",
+      "description": "Section 3.1.3 首页 Subheadline：'Audit decisions backed by evidence. Release authorization bound to permits.' + 3 种替代方案"
+    },
+    {
+      "id": "EV-REVIEW-FE07-005",
+      "kind": "SNIPPET",
+      "locator": "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md:152-178",
+      "description": "Section 3.1.4 首页 CTA：主 CTA 'Run an Audit'，次 CTA 'See a Permit Example'，第三 CTA 'Learn More About Governance'"
+    },
+    {
+      "id": "EV-REVIEW-FE07-006",
+      "kind": "SNIPPET",
+      "locator": "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md:239-297",
+      "description": "Section 3.2.1 Builder-first 叙事禁用词（CRITICAL）：8 项禁用词（Build/Create/Generate/Builder/Workflow/Canvas/Template/Marketplace/Gallery）"
+    },
+    {
+      "id": "EV-REVIEW-FE07-007",
+      "kind": "SNIPPET",
+      "locator": "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md:299-335",
+      "description": "Section 3.2.3 审计放行混淆禁用词（CRITICAL）：7 项禁用词，明确禁止 'Audit pass = Approved' / 'Approved for release' / 'Ready to deploy' 等混淆表述"
+    },
+    {
+      "id": "EV-REVIEW-FE07-008",
+      "kind": "SNIPPET",
+      "locator": "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md:417-437",
+      "description": "Section 3.5.1 核心区分原则：'Audit pass is not release approval. Permit is.' + 权力归属与决策依据表"
+    },
+    {
+      "id": "EV-REVIEW-FE07-009",
+      "kind": "SNIPPET",
+      "locator": "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md:439-466",
+      "description": "Section 3.5.2 语义对照表：状态标签/辅助文案/CTA/通知的正确与错误用语对比"
+    },
+    {
+      "id": "EV-REVIEW-FE07-010",
+      "kind": "SNIPPET",
+      "locator": "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md:512-521",
+      "description": "EvidenceRef：8 份参考文档列表，包含行号引用，足以支撑规范结论"
+    },
+    {
+      "id": "EV-REVIEW-FE07-011",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/前端重构_AI军团任务分发单_v2.md:521-539",
+      "description": "任务书 T-FE-07：定义文案与 CTA 输出目标与约束（第 8 项要求）"
+    },
+    {
+      "id": "EV-REVIEW-FE07-012",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/Dashboard-Audit Detail-Permit 三页文字线框图.md:1086-1142",
+      "description": "参考文档：首页与应用内叙事分工 + 首页 CTA 方向"
+    },
+    {
+      "id": "EV-REVIEW-FE07-013",
+      "kind": "SNIPPET",
+      "locator": "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md:365-414",
+      "description": "Section 3.4.1 叙事边界定义：首页叙事（价值主张/定位/边界/可信性/入口）与应用内叙事（状态/裁决/证据/放行）"
+    },
+    {
+      "id": "EV-REVIEW-FE07-014",
+      "kind": "SNIPPET",
+      "locator": "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md:468-490",
+      "description": "Section 3.6 状态标签语言规范：审计状态标签 5 项 + 许可证状态标签 5 项，每项列出禁用的替代词"
+    },
+    {
+      "id": "EV-REVIEW-FE07-015",
+      "kind": "FILE",
+      "locator": "docs/2026-03-12/verification/T-FE-07_execution_report.yaml",
+      "description": "Execution Report：15 项 EvidenceRef，gate_self_check 9 项全部 PASS，completion_checklist 10 项全部完成"
+    }
+  ],
+  "positive_notes": [
+    "首页定位精准：'Governed Asset Intelligence' 与 'Audit decisions backed by evidence. Release authorization bound to permits.' 明确治理中枢定位，完全脱离 builder-first 叙事",
+    "首页 CTA 准确：主 CTA 'Run an Audit'，次 CTA 'See a Permit Example'，第三 CTA 'Learn More About Governance'，完全符合治理型前端要求",
+    "场景区文案完整：Audit（Evidence-Backed Decisions）/Permit（Bound Release Authorization）/Governance（Three-Pillar Separation）三个场景区文案结构完整",
+    "禁用词清单完整：5 大类 50+ 禁用词，每项都有明确的禁用理由和替代方案，可直接作为设计/前端/产品的检查清单",
+    "审计放行区分清晰：'Audit pass is not release approval. Permit is.' 核心区分原则在多个章节强化，语义对照表与禁止混淆表述完整",
+    "应用内 CTA 规范完整：Dashboard/Audit Detail/Permit 三页的 CTA 语言规范详细，包含主导航 CTA、行内 CTA、空状态 CTA、Footer Action Bar CTA",
+    "首页与应用内边界明确：首页讲价值与边界（Landing/Marketing 层），应用内讲状态与裁决（Dashboard/Audit/Release 层），边界转换点与禁止的边界混淆完整定义",
+    "状态标签规范统一：审计状态标签（Draft/In Audit/Passed/Fix Required/Blocked/Ready for Permit）与许可证状态标签（Pending/Active/Revoked/Expired/Superseded）明确区分，禁用词完整列出",
+    "替代方案完整：首页 Headline/Subheadline 各提供 3 种替代方案，可适应不同产品定位需求",
+    "三段式结构完整：PreflightChecklist（5 类 Fail-Closed 风险枚举）/ ExecutionContract（Input Constraints/Output Definition/Gate Check）/ RequiredChanges（8 个章节）",
+    "交付物验收清单完整：10 项验收清单全部完成，8 个核心交付物已输出",
+    "EvidenceRef 充足：8 份参考文档 + 15 项 execution_report 证据，全部包含行号引用或文件定位"
+  ],
+  "minor_suggestions": [
+    {
+      "issue_key": "FE07-001",
+      "severity": "LOW",
+      "location": "Section 3.2.1 Builder-first 叙事禁用词",
+      "note": "'Create' 在首页被列为禁用词（首页应避免，属于操作动作），但在空状态 CTA 中使用 'Register Asset'。虽然 'Register' 比 'Create' 更精确，但空状态 CTA 'Register Asset' 仍隐含创建操作。建议后续版本考虑更精确的表述，如 'Add Asset to Registry' 或 'Intake Asset'。",
+      "not_blocking": "此问题不影响当前决策，因为 'Register Asset' 相比 'Create Skill' / 'Build Workflow' 已经是显著改进，且 'Create' 在首页主要位置已被正确禁止。"
+    },
+    {
+      "issue_key": "FE07-002",
+      "severity": "LOW",
+      "location": "Section 3.1.2 首页 Headline 定义",
+      "note": "当前 headline 'Governed Asset Intelligence' 准确传达治理定位，但 'Intelligence' 可能暗示数据分析/BI 工具定位。替代方案 A（'Governance for AI Skills'）更直接，替代方案 C（'The Governance Layer for AI Assets'）更强调层级定位。当前版本可接受，建议在产品迭代时考虑更突出 'Governance' 或 'Layer' 关键词。",
+      "not_blocking": "此问题不影响当前决策，headline 'Governed Asset Intelligence' 仍然准确传达治理中枢定位，且提供了 3 种替代方案供不同产品定位需求。"
+    }
+  ],
+  "final_notes": "vs--cc3 的 T-FE-07 交付质量优秀，文案与 CTA 规格完整、准确、可直接复用。成功实现了从 builder 叙事到治理叙事的切换，首页讲价值、应用内讲状态/裁决/证据/放行的边界清晰明确，Audit pass 与 Permit granted 语义区分显式强化。5 大类 50+ 禁用词清单可作为设计/前端/产品的检查清单使用。",
+  "compliance_delegation": "Compliance 审查由 Kior-C 负责，本 Review Decision 不替代 Compliance Attestation。"
+}

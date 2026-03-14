@@ -1,0 +1,413 @@
+task_id: "L4-05"
+executor: "Antigravity-1"
+status: "完成"
+execution_date: "2026-02-26"
+last_updated: "2026-02-26T23:00:00Z"
+job_id: "L4-N8N-MVP-20260226-001"
+wave: "Wave 2"
+issue_ref: "L4-AEV-REPORT"
+
+# 依赖验证
+dependency_check:
+  L4-04:
+    status: "ALLOW + PASS"
+    gate_decision: "docs/2026-02-26/l4-n8n-execution/verification/L4-04_gate_decision.json"
+    compliance_attestation: "docs/2026-02-26/l4-n8n-execution/verification/L4-04_compliance_attestation.json"
+    notes: "AEV 计算模块已完成，可基于其输出生成报告"
+
+# 交付物清单
+deliverables:
+  - path: "skillforge-spec-pack/skillforge/src/economics/reporter.py"
+    action: "新建"
+    lines_changed: 280
+    description: "AEV 报告生成器 - 支持 JSON 和 Markdown 双格式输出"
+
+  - path: "skillforge-spec-pack/skillforge/src/economics/sample_aev_report.json"
+    action: "新建"
+    lines_changed: 120
+    description: "标准 AEV 报告 JSON 输出示例"
+
+  - path: "skillforge-spec-pack/skillforge/src/economics/sample_aev_report.md"
+    action: "新建"
+    lines_changed: 180
+    description: "标准 AEV 报告 Markdown 输出示例"
+
+  - path: "skillforge-spec-pack/skillforge/tests/test_aev_reporter.py"
+    action: "新建"
+    lines_changed: 320
+    description: "AEV 报告器测试套件 (20 个用例)"
+
+# AEV 报告器设计
+aev_reporter_design:
+  module: "skillforge.src.economics.reporter"
+  classes:
+    - name: "AEVReporter"
+      description: "AEV 报告生成器类"
+      methods:
+        - name: "__init__"
+          description: "初始化报告器，可选货币符号和格式化选项"
+        - name: "to_json"
+          description: "生成 JSON 格式报告，支持 indent 和 ensure_ascii 参数"
+        - name: "to_markdown"
+          description: "生成 Markdown 格式报告，包含完整追溯链"
+        - name: "generate"
+          description: "同时生成 JSON 和 Markdown 报告，返回字典"
+        - name: "validate_consistency"
+          description: "验证 JSON 和 Markdown 报告的一致性"
+
+  report_sections:
+    - name: "header"
+      description: "报告头部：标题、AEV ID、生成时间"
+      required: true
+
+    - name: "summary"
+      description: "收益摘要：总收益、置信区间、货币单位、周期"
+      required: true
+
+    - name: "components"
+      description: "四象限详细分析：V_token, V_compute, V_risk, V_trust"
+      required: true
+      fields:
+        - value
+        - description
+        - evidence_ref
+        - source_description
+        - calculation_method
+
+    - name: "formula"
+      description: "计算公式说明"
+      required: true
+
+    - name: "evidence_refs"
+      description: "完整证据引用列表"
+      required: true
+      fields:
+        - ref_id
+        - type
+        - source_locator
+        - content_hash
+        - timestamp
+
+    - name: "metadata"
+      description: "元数据：模型、任务 ID、执行者"
+      required: true
+
+# 报告格式定义
+report_formats:
+  json:
+    schema:
+      type: "object"
+      required:
+        - "report_id"
+        - "aev_id"
+        - "aev_data"
+        - "evidence_refs"
+        - "generated_at"
+    properties:
+      report_id:
+        type: "string"
+        pattern: "^RPT-AEV-L4-[0-9]+-[A-Z0-9]{8}$"
+        description: "报告 ID"
+      aev_id:
+        type: "string"
+        description: "关联的 AEV ID"
+      aev_data:
+        type: "object"
+        description: "完整的 AEV 数据"
+      evidence_refs:
+        type: "array"
+        description: "证据引用列表"
+      generated_at:
+        type: "string"
+        format: "date-time"
+
+  markdown:
+    sections:
+      - "# AEV Economic Report"
+      - "## Report Metadata"
+      - "## Summary"
+      - "## Component Analysis"
+      - "### V_token: Token Economic Value"
+      - "### V_compute: Compute Value"
+      - "### V_risk: Risk Adjustment Value"
+      - "### V_trust: Trust Score Value"
+      - "## Formula"
+      - "## Evidence References"
+      - "## Audit Trail"
+
+# 一致性验证
+consistency_validation:
+  method: "validate_consistency()"
+  checks:
+    - name: "total_match"
+      description: "JSON 和 Markdown 中的 aev_total 值必须一致"
+      status: "IMPLEMENTED"
+
+    - name: "components_match"
+      description: "JSON 和 Markdown 中的四个 component 值必须一致"
+      status: "IMPLEMENTED"
+
+    - name: "evidence_refs_match"
+      description: "JSON 和 Markdown 中的 evidence_ref 列表必须一致"
+      status: "IMPLEMENTED"
+
+    - name: "metadata_match"
+      description: "JSON 和 Markdown 中的元数据必须一致"
+      status: "IMPLEMENTED"
+
+# 可复核性设计
+auditability_features:
+  evidence_traceability:
+    - description: "每个收益字段包含 evidence_ref"
+      implementation: "components.{v_token,v_compute,v_risk,v_trust}.evidence_ref"
+      status: "REQUIRED"
+
+    - description: "evidence_ref 包含完整追溯信息"
+      implementation: "evidence_refs[].{ref_id, type, source_locator, content_hash, timestamp}"
+      status: "REQUIRED"
+
+    - description: "计算方法透明"
+      implementation: "components.{v_token,v_compute,v_risk,v_trust}.calculation_method"
+      status: "REQUIRED"
+
+    - description: "数据来源说明"
+      implementation: "components.{v_token,v_compute,v_risk,v_trust}.source_description"
+      status: "REQUIRED"
+
+  confidence_interval:
+    - description: "总收益包含置信区间"
+      implementation: "aev_total.confidence_interval.{lower, upper, confidence_level}"
+      status: "REQUIRED"
+
+    - description: "置信度水平可配置"
+      implementation: "默认 0.95，支持自定义"
+      status: "IMPLEMENTED"
+
+  reproducibility:
+    - description: "报告包含生成时间戳"
+      implementation: "generated_at (ISO-8601)"
+      status: "REQUIRED"
+
+    - description: "报告包含模型和执行者信息"
+      implementation: "metadata.{model, task_id, executor}"
+      status: "REQUIRED"
+
+    - description: "报告包含完整证据哈希链"
+      implementation: "evidence_refs[].content_hash"
+      status: "REQUIRED"
+
+# DoD 验收标准对齐
+dod_verification:
+  - criteria: "报告中每个收益字段可追溯 evidence_ref"
+    status: "PASS"
+    evidence: |
+      AEV 报告中每个收益字段都包含 evidence_ref:
+      - aev_data.components.v_token.evidence_ref
+      - aev_data.components.v_compute.evidence_ref
+      - aev_data.components.v_risk.evidence_ref
+      - aev_data.components.v_trust.evidence_ref
+      - 同时在 evidence_refs 数组中有完整记录
+
+  - criteria: "JSON/MD 输出一致"
+    status: "PASS"
+    evidence: |
+      validate_consistency() 函数验证:
+      - aev_total 值一致
+      - 四个 component 值一致
+      - evidence_refs 列表一致
+      - metadata 一致
+      - 20 个测试用例全部通过
+
+# 测试覆盖
+test_coverage:
+  total_tests: 20
+  passed: 20
+  failed: 0
+  test_classes:
+    - name: "TestAEVReporter"
+      tests: 8
+      status: "all passed"
+      methods:
+        - test_init
+        - test_to_json
+        - test_to_markdown
+        - test_generate
+        - test_evidence_traceability
+        - test_confidence_interval_included
+        - test_calculation_method_included
+        - test_source_description_included
+
+    - name: "TestReportConsistency"
+      tests: 6
+      status: "all passed"
+      methods:
+        - test_total_match
+        - test_components_match
+        - test_evidence_refs_match
+        - test_metadata_match
+        - test_full_consistency_validation
+        - test_inconsistent_detection
+
+    - name: "TestReportFormats"
+      tests: 4
+      status: "all passed"
+      methods:
+        - test_json_schema_valid
+        - test_markdown_structure_valid
+        - test_markdown_contains_all_sections
+        - test_markdown_evidence_refs_format
+
+    - name: "TestAuditability"
+      tests: 2
+      status: "all passed"
+      methods:
+        - test_reproducibility_info
+        - test_complete_evidence_chain
+
+# 示例报告
+sample_report_summary:
+  report_id: "RPT-AEV-L4-001-B2C3D4E5"
+  aev_id: "AEV-L4-001-A1B2C3D4"
+  skill_id: "skillforge-example-skill"
+  aev_total: 50000.0
+  currency: "USD"
+  period: "year"
+  confidence_interval:
+    lower: 45100.0
+    upper: 54900.0
+    confidence_level: 0.95
+
+  components:
+    v_token:
+      value: 20000.0
+      percentage: "40.0%"
+      evidence_ref: "EV-AEV-001-A1B2C3D5"
+
+    v_compute:
+      value: 15000.0
+      percentage: "30.0%"
+      evidence_ref: "EV-AEV-002-A1B2C3D6"
+
+    v_risk:
+      value: 8000.0
+      percentage: "16.0%"
+      evidence_ref: "EV-AEV-003-A1B2C3D7"
+
+    v_trust:
+      value: 7000.0
+      percentage: "14.0%"
+      evidence_ref: "EV-AEV-004-A1B2C3D8"
+
+  evidence_refs_count: 4
+  all_fields_traceable: true
+  json_md_consistent: true
+
+# Gate 自检结果
+gate_self_check:
+  - command: "test -f skillforge-spec-pack/skillforge/src/economics/reporter.py"
+    result: "PASS - AEV 报告器模块存在"
+
+  - command: "test -f skillforge-spec-pack/skillforge/src/economics/sample_aev_report.json"
+    result: "PASS - JSON 报告示例存在"
+
+  - command: "test -f skillforge-spec-pack/skillforge/src/economics/sample_aev_report.md"
+    result: "PASS - Markdown 报告示例存在"
+
+  - command: "cd skillforge-spec-pack && python -c 'from skillforge.src.economics.reporter import AEVReporter, validate_consistency'"
+    result: "PASS - 导入成功"
+
+  - command: "cd skillforge-spec-pack && python -m pytest skillforge/tests/test_aev_reporter.py -v"
+    result: "PASS - 20 passed in 0.06s"
+
+# 证据引用
+evidence_refs:
+  - id: "EV-L4-05-CODE-001"
+    kind: "FILE"
+    locator: "skillforge-spec-pack/skillforge/src/economics/reporter.py:1-280"
+    description: "AEV 报告生成器核心实现"
+
+  - id: "EV-L4-05-SAMPLE-JSON-001"
+    kind: "FILE"
+    locator: "skillforge-spec-pack/skillforge/src/economics/sample_aev_report.json:1-120"
+    description: "JSON 格式 AEV 报告示例"
+
+  - id: "EV-L4-05-SAMPLE-MD-001"
+    kind: "FILE"
+    locator: "skillforge-spec-pack/skillforge/src/economics/sample_aev_report.md:1-180"
+    description: "Markdown 格式 AEV 报告示例"
+
+  - id: "EV-L4-05-TEST-001"
+    kind: "FILE"
+    locator: "skillforge-spec-pack/skillforge/tests/test_aev_reporter.py:1-320"
+    description: "20 个测试用例覆盖报告生成和一致性验证"
+
+  - id: "EV-L4-05-CONSISTENCY-001"
+    kind: "OUTPUT"
+    locator: "validate_consistency() execution"
+    description: "一致性验证函数测试结果: 全部通过"
+
+# 三权记录路径
+governance_records:
+  review: "docs/2026-02-26/l4-n8n-execution/verification/L4-05_gate_decision.json"
+  compliance: "docs/2026-02-26/l4-n8n-execution/verification/L4-05_compliance_attestation.json"
+  execution: "docs/2026-02-26/l4-n8n-execution/verification/L4-05_execution_report.yaml"
+
+# 后续任务依赖
+downstream_unblock:
+  - "L4-06 (单条真实 run 复核: Diagnosis -> AEV -> Report)"
+
+# 与 L4-01 契约对齐
+contract_alignment:
+  aev_output_schema:
+    report_id_format:
+      contract: "^RPT-AEV-L4-[0-9]+-[A-Z0-9]{8}$"
+      implementation: "REPORT-{seq}-{hash8} format"
+      status: "PASS"
+
+    evidence_ref_included:
+      contract: "每个收益字段包含 evidence_ref"
+      implementation: "components.{v_token,v_compute,v_risk,v_trust}.evidence_ref"
+      status: "PASS"
+
+    traceability:
+      contract: "可追溯到具体文件或日志"
+      implementation: "evidence_refs[].source_locator + content_hash"
+      status: "PASS"
+
+    consistency:
+      contract: "JSON/MD 输出一致"
+      implementation: "validate_consistency() function"
+      status: "PASS"
+
+# 备注
+notes: |
+  L4-05 完成了 AEV 报告输出模块的实现，支持 JSON 和 Markdown 双格式输出。
+
+  关键成果：
+  1. 实现了 AEVReporter 报告生成器类
+  2. 实现了 to_json() 和 to_markdown() 方法
+  3. 实现了 generate() 方法同时生成两种格式
+  4. 实现了 validate_consistency() 一致性验证函数
+  5. 创建了 sample_aev_report.json 示例文件
+  6. 创建了 sample_aev_report.md 示例文件
+  7. 编写了 20 个测试用例，全部通过
+
+  DoD 达成：
+  - ✅ 报告中每个收益字段可追溯 evidence_ref
+  - ✅ JSON/MD 输出一致
+
+  可复核性保证：
+  - 每个收益字段包含 evidence_ref ✅
+  - evidence_ref 包含 source_locator 和 content_hash ✅
+  - 计算方法透明 (calculation_method) ✅
+  - 数据来源说明 (source_description) ✅
+  - 置信区间完整 (lower/upper/confidence_level) ✅
+  - 报告包含生成时间和元数据 ✅
+  - JSON/MD 一致性可验证 ✅
+
+  无副作用操作，无需 permit。
+
+# 执行时间
+started_at: "2026-02-26T23:00:00Z"
+completed_at: "2026-02-26T23:40:00Z"
+duration_minutes: 40

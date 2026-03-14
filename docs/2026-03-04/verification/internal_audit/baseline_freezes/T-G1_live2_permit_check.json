@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "error_code": null,
+  "missing_hashes": [],
+  "invalid_hashes": [],
+  "missing_fields": [],
+  "required_changes": [],
+  "permit_data": {
+    "permit_id": "PERMIT-test_skill-DC235D43",
+    "schema_version": "pack_and_permit_v0",
+    "skill_id": "test_skill",
+    "revision": "test_rev_001",
+    "status": "ISSUED",
+    "demand_hash": "3d54cc32e36fe7b44e16e0038b6eb4e65507789bb1074c580f41af7165ee7b3a",
+    "contract_hash": "d078e33a0d801d8a08bccd283c6769b843686d783bf6981acd9c97e391061ec7",
+    "decision_hash": "2aecf617b766d8c6d4d326b492bc4563f27d89aecca8f797f97423466108df42",
+    "audit_pack_hash": "sha256:ff3e30ae8f68990d72db024658becb70fc75463cdbdefdec94a14d98d46c15ef",
+    "issued_at": "2026-03-04T10:29:02.626842+00:00",
+    "expires_at": null,
+    "issuer": "gm-skillforge-v0",
+    "restrictions": {}
+  },
+  "permit_path": "docs\\2026-03-04\\verification\\PR5_permit_only.json"
+}

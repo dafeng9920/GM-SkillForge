@@ -1,0 +1,46 @@
+name: wave-recheck-generator-skill
+description: 在 API 异常或衔接断层后自动生成 Wave 重校对报告（JSON+MD）并给出纠偏动作。
+version: v1.0.0
+frozen_at: 2026-02-26
+owner: platform-governance
+tags:
+  - l6
+  - wave
+  - recheck
+  - reconciliation
+  - incident
+default_prompt: |
+  针对指定 wave 生成重校对报告，列出当前状态、阻断原因和可执行纠偏步骤，并输出 json+md。
+
+capabilities:
+  - wave_state_reconstruction
+  - blocker_analysis
+  - remediation_action_generation
+  - dual_format_reporting
+
+input_schema:
+  job_id:
+    type: string
+    required: true
+    description: 任务批次 ID
+  verification_dir:
+    type: string
+    required: true
+    description: 三件套目录
+  wave:
+    type: string
+    required: true
+    description: 目标 wave
+
+output_schema:
+  recheck_json:
+    type: string
+    description: 重校对 JSON 路径
+  recheck_md:
+    type: string
+    description: 重校对 Markdown 路径
+  decision:
+    type: string
+    enum: [ALLOW, REQUIRES_CHANGES, DENY]
+    description: 当前 wave 判定
+

@@ -1,0 +1,78 @@
+{
+  "schema_version": "three_hash_permit_guard_v1",
+  "guard_status": "FAIL",
+  "permit_check_exit_code": 0,
+  "delivery_check_exit_code": 1,
+  "permit_check": {
+    "status": "PASS",
+    "error_code": null,
+    "missing_hashes": [],
+    "invalid_hashes": [],
+    "missing_fields": [],
+    "required_changes": [],
+    "permit_data": {
+      "permit_id": "PERMIT-test_skill-DC235D43",
+      "schema_version": "pack_and_permit_v0",
+      "skill_id": "test_skill",
+      "revision": "test_rev_001",
+      "status": "ISSUED",
+      "demand_hash": "3d54cc32e36fe7b44e16e0038b6eb4e65507789bb1074c580f41af7165ee7b3a",
+      "contract_hash": "d078e33a0d801d8a08bccd283c6769b843686d783bf6981acd9c97e391061ec7",
+      "decision_hash": "2aecf617b766d8c6d4d326b492bc4563f27d89aecca8f797f97423466108df42",
+      "audit_pack_hash": "sha256:ff3e30ae8f68990d72db024658becb70fc75463cdbdefdec94a14d98d46c15ef",
+      "issued_at": "2026-03-04T10:29:02.626842+00:00",
+      "expires_at": null,
+      "issuer": "gm-skillforge-v0",
+      "restrictions": {}
+    },
+    "permit_path": "docs\\2026-03-04\\verification\\PR5_permit_only.json"
+  },
+  "delivery_check": {
+    "status": "FAIL",
+    "error_code": "SF_DELIVERY_EVIDENCE_MISSING",
+    "missing_items": [
+      {
+        "category": "Evidence",
+        "pattern": "artifacts/*/"
+      },
+      {
+        "category": "AuditPack",
+        "pattern": "audit_pack/*.json"
+      },
+      {
+        "category": "Permit",
+        "pattern": "permits/*/*.json"
+      }
+    ],
+    "present_items": [
+      {
+        "category": "Blueprint",
+        "path": "contracts\\dsl\\demand_dsl_v0.schema.yml"
+      },
+      {
+        "category": "Skill",
+        "path": "skills\\ai-response-improvement-skill"
+      },
+      {
+        "category": "n8n",
+        "path": "workflows\\skillforge_dispatcher.json"
+      }
+    ],
+    "required_changes": [
+      "add required delivery item: Evidence at pattern artifacts/*/",
+      "add required delivery item: AuditPack at pattern audit_pack/*.json",
+      "add required delivery item: Permit at pattern permits/*/*.json"
+    ],
+    "checked_at": "2026-03-04T12:26:52.085771+00:00",
+    "base_path": "."
+  },
+  "blocking_reasons": [
+    "delivery_completeness_failed"
+  ],
+  "raw": {
+    "permit_stdout": "status: PASS",
+    "permit_stderr": "",
+    "delivery_stdout": "status: FAIL\nbase_path: .\nchecked_at: 2026-03-04T12:26:52.085771+00:00\nerror_code: SF_DELIVERY_EVIDENCE_MISSING\n\npresent_items:\n  - Blueprint: contracts\\dsl\\demand_dsl_v0.schema.yml\n  - Skill: skills\\ai-response-improvement-skill\n  - n8n: workflows\\skillforge_dispatcher.json\n\nmissing_items:\n  - Evidence: artifacts/*/\n  - AuditPack: audit_pack/*.json\n  - Permit: permits/*/*.json\n\nrequired_changes:\n  - add required delivery item: Evidence at pattern artifacts/*/\n  - add required delivery item: AuditPack at pattern audit_pack/*.json\n  - add required delivery item: Permit at pattern permits/*/*.json",
+    "delivery_stderr": ""
+  }
+}

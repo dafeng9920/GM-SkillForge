@@ -1,0 +1,34 @@
+{
+  "schema_version": "diff_v0",
+  "revision_from": "rev_...",
+  "revision_to": "rev_...",
+  "diff_type": "demand|contract|decision",
+  "generated_at": "UTC_TIMESTAMP",
+  "hashes": {
+    "from": {
+      "demand_hash": null,
+      "contract_hash": null,
+      "decision_hash": null
+    },
+    "to": {
+      "demand_hash": null,
+      "contract_hash": null,
+      "decision_hash": null
+    }
+  },
+  "changes": {
+    "added": [],
+    "removed": [],
+    "modified": [],
+    "path_changes": []
+  },
+  "impact_summary": {
+    "scope_affected": [],
+    "gates_requiring_recheck": [],
+    "risk_level": "LOW|MEDIUM|HIGH|CRITICAL"
+  },
+  "metadata": {
+    "generated_by": "system|user",
+    "change_initiator": null
+  }
+}

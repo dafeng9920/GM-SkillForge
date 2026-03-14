@@ -1,0 +1,33 @@
+{
+  "test_suite": "T2_F3_ReplayParity",
+  "timestamp": "2026-03-06T12:15:06Z",
+  "total_tests": 19,
+  "successes": 19,
+  "failures": 0,
+  "errors": 0,
+  "status": "PASS",
+  "failure_details": [],
+  "evidence_refs": [
+    {
+      "id": "EV-F3-001",
+      "target": "constitutional_default_deny",
+      "kind": "TEST",
+      "locator": "D:\\GM-SkillForge\\skillforge-spec-pack\\skillforge\\tests\\test_t2_f3_replay_parity.py:TestConstitutionalDefaultDenyBehavior",
+      "description": "Tests for constitutional default-deny stop behavior"
+    },
+    {
+      "id": "EV-F3-002",
+      "target": "decision_evidence_traceability",
+      "kind": "TEST",
+      "locator": "D:\\GM-SkillForge\\skillforge-spec-pack\\skillforge\\tests\\test_t2_f3_replay_parity.py:TestDecisionEvidenceTraceability",
+      "description": "Tests for decision-evidence traceability (gate decision timestamps preserved in evidence chain)"
+    },
+    {
+      "id": "EV-F3-003",
+      "target": "time_semantics_replay",
+      "kind": "TEST",
+      "locator": "D:\\GM-SkillForge\\skillforge-spec-pack\\skillforge\\tests\\test_t2_f3_replay_parity.py:TestTimeSemanticsReplayDiscipline",
+      "description": "Tests for time_semantics at_time replay discipline"
+    }
+  ]
+}

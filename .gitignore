@@ -160,3 +160,16 @@ captured_leads.json
 openclaw-box/data/
 node_modules/
 .npm/
+
+# P0-1 Runtime & Sensitive Items (CLEANUP-EXEC-01: 2026-03-11)
+.env.bak
+.env.local
+db/*.sqlite
+db/*.db
+trading_data/
+demo_*_data/
+.tmp/
+reports/ALL_TESTS_PASSED.flag
+GM-SkillForge.tmppytest/
+docs/2026-03-11/orphan_transcripts/
+docs/2026-03-11/orphan_transcripts_md/

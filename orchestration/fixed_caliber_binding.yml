@@ -1,0 +1,78 @@
+version: 1
+caliber_id: AG2-FIXED-CALIBER-TG1-20260304
+caliber_status: ACTIVE
+enforced_at: '2026-03-04T14:50:00Z'
+fixed_binding:
+  permit:
+    path: permits/default/tg1_baseline_permit.json
+    permit_id: PERMIT-TG1-BASELINE-20260304-RESIGNED
+    revision: tg1_baseline_rev_002
+    issuer: Antigravity-2-Fixed-Caliber-Guard
+    issued_at: '2026-03-04T14:50:00Z'
+  three_rights:
+    demand:
+      path: .tmp/pr1_smoke/demand.json
+      hash: 11a137deeb30eed253140b7a6635f751708d360e9c39ab6fa16422476004e1d5
+    contract:
+      path: .tmp/pr1_smoke/contract.json
+      hash: ff29ff0c71feb9847c9e622a33d55e838c01f6a203327403d4fc4ef51ba02729
+    decision:
+      path: .tmp/pr1_smoke/decision.json
+      hash: 1db3c191897d68671144193610d35c18e11233c1051dcbae369be7558abffa60
+    manifest:
+      path: .tmp/pr1_smoke/MANIFEST.json
+      hash_spec_version: v0
+hash_binding:
+  demand_hash: 11a137deeb30eed253140b7a6635f751708d360e9c39ab6fa16422476004e1d5
+  contract_hash: ff29ff0c71feb9847c9e622a33d55e838c01f6a203327403d4fc4ef51ba02729
+  decision_hash: 1db3c191897d68671144193610d35c18e11233c1051dcbae369be7558abffa60
+  audit_pack_hash: 65b441c02e70907e10fb5859cc4343c92557f2b3d07fad6678facc5401ce2884
+constraints:
+- Antigravity-2 Guard 必须使用上述 fixed_binding 中指定的文件路径
+- 禁止使用其他 Permit（包括旧版 rev_001）
+- 禁止跨批次混用不同来源的三权文件
+- Permit 哈希值必须与实际三权文件计算出的哈希值完全一致
+- 任何不一致必须导致 DENY + 阻断
+- 更换口径必须更新此文件并重新生成 Permit
+execution_environment: LOCAL-ANTIGRAVITY
+fail_closed_policy: true
+compliance_evidence:
+  guard_decision_file: docs/2026-03-04/AG2_fixed_caliber_final.json
+  decision: ALLOW
+  checked_at: '2026-03-04T14:53:31.287945+00:00'
+  guard_version: Antigravity-2
+  final_gate_decision_file: docs/2026-03-04/verification/Antigravity-1_Final_Gate_Decision_ALLOW.json
+  final_gate_decision: ALLOW
+  final_gate_issued_at: '2026-03-04T15:10:20Z'
+  verification_index: docs/2026-03-04/verification/verification_index_2026-03-04.json
+  evidence_frozen: true
+  archived_at: '2026-03-04T15:10:25Z'
+history:
+- revision: rev_003
+  caliber_id: AG2-FIXED-CALIBER-TG1-20260304
+  date: '2026-03-04T17:08:51Z'
+  action: PERMIT_UPDATE
+  reason: Nightly recheck detected hash drift, updated permit and config to current
+    file state
+  previous_revision: tg1_baseline_rev_003
+  changes:
+  - Updated all hash values to match current three-rights files
+- revision: rev_002
+  caliber_id: AG2-FIXED-CALIBER-TG1-20260304
+  date: '2026-03-04T14:50:00Z'
+  action: RESIGNED
+  reason: Fixed-caliber violation detected and corrected. Permit resigned to match
+    .tmp/pr1_smoke three-rights files.
+  previous_permit_id: PERMIT-TG1-BASELINE-20260304
+  previous_revision: tg1_baseline_rev_001
+  changes:
+  - Updated demand_hash from e3b0c442... to 0aadae064...
+  - Updated contract_hash from cc8321d6... to cf9436bed...
+  - Updated decision_hash from 86ae35d5... to 80bbb0b0...
+  - Added three_rights_binding metadata to permit
+  - Enforced fixed-caliber validation in Antigravity-2 Guard
+prohibitions:
+- 禁止回退到 PERMIT-TG1-BASELINE-20260304 (rev_001)
+- 禁止使用其他来源的 demand/contract/decision 文件
+- 禁止手动修改 Permit 中的哈希值
+- 禁止绕过 Antigravity-2 Guard 的固定口径校验

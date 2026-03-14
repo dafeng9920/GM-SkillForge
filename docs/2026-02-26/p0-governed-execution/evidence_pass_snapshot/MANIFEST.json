@@ -1,0 +1,206 @@
+[
+  {
+    "file": "final_gate_decision.json",
+    "sha256": "7BDAF695478BEFE6058192B8AF88CEF46F27909B2A8669B7B9D561AE45ECAED4",
+    "size_bytes": 899,
+    "last_write_time_utc": "2026-02-26T11:37:57.1639182Z"
+  },
+  {
+    "file": "T01_compliance_attestation.json",
+    "sha256": "4B3D90C732429C11C9B2D2CBACAAB100BB3DA904BAAEFCD777D507C56C68D813",
+    "size_bytes": 1022,
+    "last_write_time_utc": "2026-02-26T08:14:37.1845778Z"
+  },
+  {
+    "file": "T01_execution_report.yaml",
+    "sha256": "28E9E0DFF14E1DCF855360DDDEFCE3D7D426C41D1ADCDB1A44092EE4ADC69235",
+    "size_bytes": 3743,
+    "last_write_time_utc": "2026-02-26T08:19:08.1675330Z"
+  },
+  {
+    "file": "T01_gate_decision.json",
+    "sha256": "643FAC3ABB84F2E6D773CE1CFF5E24323C040BA637C3E9345E0089A85F7A77E4",
+    "size_bytes": 1037,
+    "last_write_time_utc": "2026-02-26T08:14:25.9800568Z"
+  },
+  {
+    "file": "T02_compliance_attestation.json",
+    "sha256": "AE60272637C9DAFD36430BF16B209FF609F54E148582DFE378B5A48F2D1B10F5",
+    "size_bytes": 4795,
+    "last_write_time_utc": "2026-02-26T10:36:11.5677065Z"
+  },
+  {
+    "file": "T02_execution_report.yaml",
+    "sha256": "DBA162702A8B87177A20D0F8B7F28AE23F85DA7E09506F107452A905703BA8BD",
+    "size_bytes": 4631,
+    "last_write_time_utc": "2026-02-26T08:32:34.3885581Z"
+  },
+  {
+    "file": "T02_gate_decision.json",
+    "sha256": "667684E56444D5674F9AEB9E81F99C56302D6D85A7BBDC4320ACFBC7A5E8A1CA",
+    "size_bytes": 3898,
+    "last_write_time_utc": "2026-02-26T10:36:05.5247373Z"
+  },
+  {
+    "file": "T03_compliance_attestation.json",
+    "sha256": "30B16620CE425BF30B522ABDC8C5B444FDF64A80D3FEE4AF4FB556A7F4E8D1F0",
+    "size_bytes": 2300,
+    "last_write_time_utc": "2026-02-26T10:06:01.1496735Z"
+  },
+  {
+    "file": "T03_execution_report.yaml",
+    "sha256": "202ED40D2C079D132B2BD039D705005EC05B508807F35A20CE2370EAF61BADD6",
+    "size_bytes": 6251,
+    "last_write_time_utc": "2026-02-26T10:01:49.7727344Z"
+  },
+  {
+    "file": "T03_gate_decision.json",
+    "sha256": "707373115D004F7969877B856F11774306E9B5A86DA921FEEE58CAB66C0A777B",
+    "size_bytes": 1807,
+    "last_write_time_utc": "2026-02-26T10:02:30.4372404Z"
+  },
+  {
+    "file": "T04_compliance_attestation.json",
+    "sha256": "27968B3F9F075996E927AF7295AC38B6512E6B8EA77DB47D6E3B671A0E0AA7DF",
+    "size_bytes": 2680,
+    "last_write_time_utc": "2026-02-26T10:55:35.5087577Z"
+  },
+  {
+    "file": "T04_execution_report.yaml",
+    "sha256": "55AA8220DEC1ABA5C5CB9083E9B32E8AD2668C3BD58B8295CF068EC9257FDE61",
+    "size_bytes": 5565,
+    "last_write_time_utc": "2026-02-26T10:49:19.2543683Z"
+  },
+  {
+    "file": "T04_gate_decision.json",
+    "sha256": "7153EA03DFB0929E25D8CC0C66137B1896DD98FF7133DC615DD11226E61B6B04",
+    "size_bytes": 2359,
+    "last_write_time_utc": "2026-02-26T10:49:51.5041001Z"
+  },
+  {
+    "file": "T05_compliance_attestation.json",
+    "sha256": "84C70E3AEA9D66A25D09CB68EB1C0827BDCF59D08F22BD35BF4A53FC0AA2C8BA",
+    "size_bytes": 8829,
+    "last_write_time_utc": "2026-02-26T10:18:30.0542182Z"
+  },
+  {
+    "file": "T05_execution_report.yaml",
+    "sha256": "B3D436D59AEAE5A21601D2326277944D8C893D9BE53A192A786B8CDAB799CB89",
+    "size_bytes": 8403,
+    "last_write_time_utc": "2026-02-26T10:17:43.3733692Z"
+  },
+  {
+    "file": "T05_gate_decision.json",
+    "sha256": "69D18873FF1AF92D40DE67CCBA92991A0278F4100C04779C1C86022BD134D6A2",
+    "size_bytes": 8063,
+    "last_write_time_utc": "2026-02-26T10:18:08.2005439Z"
+  },
+  {
+    "file": "T06_compliance_attestation.json",
+    "sha256": "3BA9F5296A2F4E2EC5408A21C9030E482836DE1DAEA1035CD65F1D2862E086FF",
+    "size_bytes": 4504,
+    "last_write_time_utc": "2026-02-26T10:55:39.2385678Z"
+  },
+  {
+    "file": "T06_execution_report.yaml",
+    "sha256": "7F3EDE322871F12264AB8EE492462E3A30136D8BCA35EECFB7C2D6A84DECE75B",
+    "size_bytes": 6359,
+    "last_write_time_utc": "2026-02-26T10:52:17.8567581Z"
+  },
+  {
+    "file": "T06_gate_decision.json",
+    "sha256": "ED00631730DACC2BC809D430853C96B1B1C9E1F8BC1D98E4B21F2EA953A6E782",
+    "size_bytes": 7620,
+    "last_write_time_utc": "2026-02-26T10:53:22.8601986Z"
+  },
+  {
+    "file": "T07_compliance_attestation.json",
+    "sha256": "C297A5C15021A5271C0EAE05EAA49F5C52CF6E948610B0FDA524B375519A9742",
+    "size_bytes": 9545,
+    "last_write_time_utc": "2026-02-26T10:25:08.2365831Z"
+  },
+  {
+    "file": "T07_execution_report.yaml",
+    "sha256": "E42B7157C293CE3AFDB10897909DE0F703F2D2011147FAF5A57BD73ADBEC765C",
+    "size_bytes": 6327,
+    "last_write_time_utc": "2026-02-26T10:24:23.4824758Z"
+  },
+  {
+    "file": "T07_gate_decision.json",
+    "sha256": "7CEF5EE5A9833136CC2A98DAB274DE3A5135961953D200FDC45461D20DE1FDCB",
+    "size_bytes": 8815,
+    "last_write_time_utc": "2026-02-26T10:24:48.9555608Z"
+  },
+  {
+    "file": "T08_compliance_attestation.json",
+    "sha256": "4E22420DAFAA780AB749A0C07D5FFDC0CD8D683B5C1ECE5656192F831A4BBDF8",
+    "size_bytes": 9353,
+    "last_write_time_utc": "2026-02-26T11:17:16.5666306Z"
+  },
+  {
+    "file": "T08_execution_report.yaml",
+    "sha256": "86570B7C035E316A85680825791CD00BBBCB1758785A2F3C445523DA69C3E152",
+    "size_bytes": 4571,
+    "last_write_time_utc": "2026-02-26T11:13:19.3561908Z"
+  },
+  {
+    "file": "T08_gate_decision.json",
+    "sha256": "F8A89CD51C84C48D46E2DDE9EF0414D52F6FCA9F8E29BF274BDC87A93C00320E",
+    "size_bytes": 9134,
+    "last_write_time_utc": "2026-02-26T11:16:43.3485596Z"
+  },
+  {
+    "file": "T09_compliance_attestation.json",
+    "sha256": "D57D024506EEF7396A44B0492933EE7C294CDC284E62C0AA13CA1B5DC8E6FEDA",
+    "size_bytes": 10157,
+    "last_write_time_utc": "2026-02-26T11:20:12.1965891Z"
+  },
+  {
+    "file": "T09_execution_report.yaml",
+    "sha256": "842B22A5E4B18A35B65704B4BA149E82624A53CA80F1CC3257EF87819C04B715",
+    "size_bytes": 6990,
+    "last_write_time_utc": "2026-02-26T11:18:41.0844987Z"
+  },
+  {
+    "file": "T09_gate_decision.json",
+    "sha256": "59962AB726892EE3AFF5CB04EC22DFF16432E5CFB1440A4305BF5EFEC3FBE979",
+    "size_bytes": 8700,
+    "last_write_time_utc": "2026-02-26T11:19:45.1162118Z"
+  },
+  {
+    "file": "T10_compliance_attestation.json",
+    "sha256": "F006B397CE9E3C64A577707E71BB377CB206B78CD891EB99283F539A3168588B",
+    "size_bytes": 2535,
+    "last_write_time_utc": "2026-02-26T11:10:44.9050977Z"
+  },
+  {
+    "file": "T10_execution_report.yaml",
+    "sha256": "07CEA3F05BC2AA2E8060DC43ABA02F689F124EAEF0AEB1284E285550F3B37BF8",
+    "size_bytes": 5649,
+    "last_write_time_utc": "2026-02-26T11:09:58.7544855Z"
+  },
+  {
+    "file": "T10_gate_decision.json",
+    "sha256": "FF14F590C58BC51C77AD2A03BF5F9175015B910F656D75767D6A7036C8D9E8AC",
+    "size_bytes": 1839,
+    "last_write_time_utc": "2026-02-26T11:10:25.3508081Z"
+  },
+  {
+    "file": "T11_compliance_attestation.json",
+    "sha256": "98998504DD64D22763598B06AD3E33BBD382E44C059EDC727FBEE2E285CDE6BF",
+    "size_bytes": 2851,
+    "last_write_time_utc": "2026-02-26T11:33:10.5416229Z"
+  },
+  {
+    "file": "T11_execution_report.yaml",
+    "sha256": "8458A2F99477D9EF71CC8B64D974B295A4DDA4E18120F91B4C607F210AC10886",
+    "size_bytes": 5153,
+    "last_write_time_utc": "2026-02-26T11:32:21.8254916Z"
+  },
+  {
+    "file": "T11_gate_decision.json",
+    "sha256": "DF9867DCDC6F9BB137EE593A87BAE09E7C992D5480D34C05EADB8499561340D9",
+    "size_bytes": 2830,
+    "last_write_time_utc": "2026-02-26T11:32:47.6916224Z"
+  }
+]

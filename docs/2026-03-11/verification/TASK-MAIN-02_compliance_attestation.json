@@ -1,0 +1,111 @@
+{
+  "schema_version": "compliance_attestation_v1",
+  "task_id": "TASK-MAIN-02",
+  "compliance_agent": "Compliance Agent (Independent)",
+  "reviewed_at": "2026-03-11T16:20:00Z",
+  "decision": "PASS",
+  "attestation": {
+    "decision": "PASS",
+    "attestation_version": "1.0"
+  },
+  "reasons": [
+    "任务范围与实际交付一致：本轮证明的是统一接口已被真实执行入口使用，而不是全系统默认迁移完成",
+    "存在独立 execution_report 和独立 Review 结论，满足三权分立前置材料要求",
+    "真实任务 REAL-TASK-002 已生成 ArtifactManifest 和 RunResult，不能再被归类为仅有接口定义",
+    "未削弱 Permit / pre_absorb_check / absorb / local_accept / final_accept，采用的是兼容扩展入口而非破坏式替换",
+    "EvidenceRef 完整，能证明统一接口已进入至少一条真实执行流"
+  ],
+  "hard_rules_check": {
+    "rule_1_no_bypass_triad": {
+      "status": "PASS",
+      "description": "不得绕过三权分立",
+      "evidence": "execution_report + REVIEW_REPORT_MAIN_TASKS_2026-03-11.md + 本 attestation"
+    },
+    "rule_2_no_weaken_main_chain": {
+      "status": "PASS",
+      "description": "不得削弱主链既有门禁",
+      "evidence": "scripts/absorb_with_manifest.py 为新入口，不修改 scripts/absorb.sh"
+    },
+    "rule_3_no_defined_as_integrated": {
+      "status": "PASS",
+      "description": "不得把接口已定义冒充接口已接入",
+      "evidence": "docs/2026-03-11/REAL-TASK-002/artifact_manifest.json 与 run_result.json 为真实输出"
+    },
+    "rule_4_no_fake_default": {
+      "status": "PASS",
+      "description": "不得把局部接入冒充全局默认接入",
+      "evidence": "execution_report 明确为真实执行入口接入，不宣称全系统默认切换"
+    },
+    "rule_5_no_claim_without_evidence": {
+      "status": "PASS",
+      "description": "不得无证据宣称完成",
+      "evidence": "execution_report 的 evidence_refs + 真实产物文件"
+    }
+  },
+  "scope_statement": {
+    "task_scope": "证明统一接口已接入至少一条真实执行流",
+    "proven": [
+      "scripts/absorb_with_manifest.py 可实际生成统一接口产物",
+      "REAL-TASK-002 已生成 run_result.json",
+      "REAL-TASK-002 已生成 artifact_manifest.json"
+    ],
+    "not_claimed": [
+      "不宣称所有现有执行入口已迁移",
+      "不宣称 RunRequest 已强制进入所有 absorb 场景",
+      "不宣称系统级迁移完成"
+    ]
+  },
+  "triad_records_status": {
+    "execution_report": {
+      "exists": true,
+      "path": "docs/2026-03-11/verification/TASK-MAIN-02_execution_report.yaml",
+      "status": "VALID"
+    },
+    "review_report": {
+      "exists": true,
+      "path": "docs/2026-03-11/verification/REVIEW_REPORT_MAIN_TASKS_2026-03-11.md",
+      "decision": "ALLOW",
+      "status": "VALID"
+    },
+    "compliance_attestation": {
+      "exists": true,
+      "path": "docs/2026-03-11/verification/TASK-MAIN-02_compliance_attestation.json",
+      "decision": "PASS",
+      "status": "VALID"
+    }
+  },
+  "evidence_refs": [
+    {
+      "id": "EV-COMPLIANCE-MAIN02-001",
+      "kind": "FILE",
+      "locator": "docs/2026-03-11/verification/TASK-MAIN-02_execution_report.yaml",
+      "description": "TASK-MAIN-02 执行报告"
+    },
+    {
+      "id": "EV-COMPLIANCE-MAIN02-002",
+      "kind": "FILE",
+      "locator": "docs/2026-03-11/verification/REVIEW_REPORT_MAIN_TASKS_2026-03-11.md",
+      "description": "Review Agent 对 TASK-MAIN-02 给出 ALLOW"
+    },
+    {
+      "id": "EV-COMPLIANCE-MAIN02-003",
+      "kind": "FILE",
+      "locator": "scripts/absorb_with_manifest.py",
+      "description": "统一接口真实执行入口"
+    },
+    {
+      "id": "EV-COMPLIANCE-MAIN02-004",
+      "kind": "FILE",
+      "locator": "docs/2026-03-11/REAL-TASK-002/artifact_manifest.json",
+      "description": "真实任务生成的 ArtifactManifest"
+    },
+    {
+      "id": "EV-COMPLIANCE-MAIN02-005",
+      "kind": "FILE",
+      "locator": "docs/2026-03-11/REAL-TASK-002/run_result.json",
+      "description": "真实任务生成的 RunResult"
+    }
+  ],
+  "required_changes": [],
+  "compliance_statement": "TASK-MAIN-02 在本轮范围内已满足合规要求。它证明的不是'全系统统一接口迁移完成'，而是'统一接口已经进入至少一条真实执行流'。独立 execution_report、Review 结论和真实任务产物均已存在，且交付没有削弱现有主链门禁。决定：PASS。"
+}

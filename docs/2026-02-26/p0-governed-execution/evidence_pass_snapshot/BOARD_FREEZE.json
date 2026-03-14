@@ -1,0 +1,11 @@
+{
+  "board_id": "P0-L6-AUTH-20260226-001",
+  "level": "L6-P0",
+  "decision": "ALLOW",
+  "frozen_at_utc": "2026-02-26T11:44:10.0833593Z",
+  "source_verification_dir": "d:\\GM-SkillForge\\docs\\2026-02-26\\p0-governed-execution\\verification",
+  "snapshot_dir": "d:\\GM-SkillForge\\docs\\2026-02-26\\p0-governed-execution\\evidence_pass_snapshot",
+  "manifest": "d:\\GM-SkillForge\\docs\\2026-02-26\\p0-governed-execution\\evidence_pass_snapshot\\MANIFEST.json",
+  "zip": "d:\\GM-SkillForge\\docs\\2026-02-26\\p0-governed-execution\\evidence_pass_snapshot.zip",
+  "owner": "Codex (Orchestrator)"
+}

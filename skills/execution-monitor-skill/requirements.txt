@@ -1,0 +1,3 @@
+# Execution Monitor Dependencies
+
+asyncio>=3.10.0

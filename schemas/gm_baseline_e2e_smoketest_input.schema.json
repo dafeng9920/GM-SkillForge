@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gm-skillforge.local/schemas/gm_baseline_e2e_smoketest_input.schema.json",
+  "title": "GM Baseline E2E Smoketest Input",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["task_payload"],
+  "properties": {
+    "task_payload": {
+      "type": "object",
+      "minProperties": 1
+    },
+    "validation_mode": {
+      "type": "string",
+      "enum": ["strict", "loose"],
+      "default": "strict"
+    },
+    "timeout_ms": {
+      "type": "integer",
+      "minimum": 1
+    }
+  }
+}
+

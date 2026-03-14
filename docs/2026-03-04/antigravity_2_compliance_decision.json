@@ -1,0 +1,63 @@
+{
+  "decision": "DENY",
+  "error_code": "SF_HASH_CALCULATION_FAILED",
+  "errors": [
+    {
+      "code": "SF_HASH_CALCULATION_FAILED",
+      "message": "Three-hash validation failed: Failed to compute hashes: Expecting value: line 1 column 1 (char 0)"
+    }
+  ],
+  "required_changes": [
+    "Ensure demand, contract, decision, and manifest files exist and are valid"
+  ],
+  "permit_binding": {
+    "status": "PASS",
+    "error_code": null,
+    "missing_hashes": [],
+    "missing_fields": [],
+    "invalid_hashes": []
+  },
+  "delivery_completeness": {
+    "status": "PASS",
+    "error_code": null,
+    "missing_items": [],
+    "present_items": [
+      {
+        "category": "Blueprint",
+        "path": "contracts\\dsl\\demand_dsl_v0.schema.yml"
+      },
+      {
+        "category": "Skill",
+        "path": "skills\\ai-response-improvement-skill"
+      },
+      {
+        "category": "n8n",
+        "path": "workflows\\skillforge_dispatcher.json"
+      },
+      {
+        "category": "Evidence",
+        "path": "artifacts\\tg1"
+      },
+      {
+        "category": "AuditPack",
+        "path": "audit_pack\\tg1_audit_pack.json"
+      },
+      {
+        "category": "Permit",
+        "path": "permits\\default\\tg1_baseline_permit.json"
+      }
+    ]
+  },
+  "three_hash": {
+    "status": "FAIL",
+    "error_code": "SF_HASH_CALCULATION_FAILED",
+    "error_details": [
+      "Failed to compute hashes: Expecting value: line 1 column 1 (char 0)"
+    ],
+    "computed_hashes": {},
+    "manifest_hashes": {}
+  },
+  "checked_at": "2026-03-04T14:34:11.094766+00:00",
+  "guard_version": "Antigravity-2",
+  "fail_closed_policy": true
+}

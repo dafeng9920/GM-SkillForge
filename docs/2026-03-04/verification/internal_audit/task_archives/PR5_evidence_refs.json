@@ -1,0 +1,296 @@
+{
+  "evidence_refs": [
+    {
+      "ref_id": "test_ref_0",
+      "type": "test_evidence",
+      "source_locator": "test://evidence/0",
+      "content_hash": "sha256:c97841160851add9c18e9d6ad977b227e0200f9b880ba0b924d95d1214b85a2c",
+      "timestamp": "2026-03-04T10:29:02Z",
+      "tool_revision": "test_v0"
+    },
+    {
+      "ref_id": "test_ref_1",
+      "type": "test_evidence",
+      "source_locator": "test://evidence/1",
+      "content_hash": "sha256:218ff4da726aaad1be81393881ac64d30b6217f5b7e83d26bc80f6e10d7475c3",
+      "timestamp": "2026-03-04T10:29:02Z",
+      "tool_revision": "test_v0"
+    },
+    {
+      "ref_id": "test_ref_2",
+      "type": "test_evidence",
+      "source_locator": "test://evidence/2",
+      "content_hash": "sha256:30fcf190d3c8818f0b2bc45bbedf997709f049d6f9b3cec0703aceb0a8342191",
+      "timestamp": "2026-03-04T10:29:02Z",
+      "tool_revision": "test_v0"
+    }
+  ],
+  "gate_decisions": [
+    {
+      "schema_version": "0.1.0",
+      "gate_id": "gate-834b258a-32f7-4684-bf3d-7107e6ce746c",
+      "node_id": "intake_repo",
+      "decision": "ALLOW",
+      "reason": "Fallback gate engine - no specialized evaluator",
+      "details": {
+        "warning": "using_fallback_implementation"
+      },
+      "timestamp": "2026-03-04T10:29:02Z",
+      "gate_name": "intake_repo"
+    },
+    {
+      "schema_version": "0.1.0",
+      "gate_id": "gate-f9f3c491-8478-4b06-8d68-6b46cc04ca44",
+      "node_id": "license_gate",
+      "decision": "ALLOW",
+      "reason": "Fallback gate engine - no specialized evaluator",
+      "details": {
+        "warning": "using_fallback_implementation"
+      },
+      "timestamp": "2026-03-04T10:29:02Z",
+      "gate_name": "license_gate"
+    },
+    {
+      "schema_version": "0.1.0",
+      "gate_id": "gate-ca8cca97-75a1-43c8-87d3-a7ee99fa41de",
+      "node_id": "repo_scan_fit_score",
+      "decision": "ALLOW",
+      "reason": "Fallback gate engine - no specialized evaluator",
+      "details": {
+        "warning": "using_fallback_implementation"
+      },
+      "timestamp": "2026-03-04T10:29:02Z",
+      "gate_name": "repo_scan_fit_score"
+    },
+    {
+      "schema_version": "0.1.0",
+      "gate_id": "gate-68738fb6-b2f9-4c06-a012-c9ac2f44293d",
+      "node_id": "draft_skill_spec",
+      "decision": "ALLOW",
+      "reason": "Fallback gate engine - no specialized evaluator",
+      "details": {
+        "warning": "using_fallback_implementation"
+      },
+      "timestamp": "2026-03-04T10:29:02Z",
+      "gate_name": "draft_skill_spec"
+    },
+    {
+      "schema_version": "0.1.0",
+      "gate_id": "gate-f783eb9f-4875-4339-828c-9815713778e5",
+      "node_id": "constitution_risk_gate",
+      "decision": "ALLOW",
+      "reason": "Fallback gate engine - no specialized evaluator",
+      "details": {
+        "warning": "using_fallback_implementation"
+      },
+      "timestamp": "2026-03-04T10:29:02Z",
+      "gate_name": "constitution_risk_gate"
+    },
+    {
+      "schema_version": "0.1.0",
+      "gate_id": "gate-6ed7f0cb-9028-4e4b-995a-5bc8d3bbbee7",
+      "node_id": "scaffold_skill_impl",
+      "decision": "ALLOW",
+      "reason": "Fallback gate engine - no specialized evaluator",
+      "details": {
+        "warning": "using_fallback_implementation"
+      },
+      "timestamp": "2026-03-04T10:29:02Z",
+      "gate_name": "scaffold_skill_impl"
+    },
+    {
+      "schema_version": "0.1.0",
+      "gate_id": "gate-3d1cb036-a5af-4539-b2bb-8a9b078bfe0c",
+      "node_id": "sandbox_test_and_trace",
+      "decision": "ALLOW",
+      "reason": "Fallback gate engine - no specialized evaluator",
+      "details": {
+        "warning": "using_fallback_implementation"
+      },
+      "timestamp": "2026-03-04T10:29:02Z",
+      "gate_name": "sandbox_test_and_trace"
+    },
+    {
+      "schema_version": "0.1.0",
+      "gate_id": "gate-04d27b89-8be9-4ccd-b953-97cc9ce06581",
+      "node_id": "pack_audit_and_publish",
+      "decision": "ALLOW",
+      "reason": "Fallback gate engine - no specialized evaluator",
+      "details": {
+        "warning": "using_fallback_implementation"
+      },
+      "timestamp": "2026-03-04T10:29:02Z",
+      "gate_name": "pack_audit_and_publish"
+    }
+  ],
+  "three_hashes": {
+    "hash_spec_version": "v0",
+    "demand_hash": "3d54cc32e36fe7b44e16e0038b6eb4e65507789bb1074c580f41af7165ee7b3a",
+    "contract_hash": "d078e33a0d801d8a08bccd283c6769b843686d783bf6981acd9c97e391061ec7",
+    "decision_hash": "2aecf617b766d8c6d4d326b492bc4563f27d89aecca8f797f97423466108df42",
+    "canonical_inputs": {
+      "demand": {
+        "schema_version": "demand_dsl_v0",
+        "intent_id": "f8690a595bd0470881319bac79cbc74b",
+        "trigger": {
+          "type": "nl_prompt",
+          "source": "test_user"
+        },
+        "mode": "generate_skill",
+        "sources": [
+          {
+            "kind": "nl_text",
+            "locator": "Generate a skill that emails PDFs to Notion",
+            "format": "text"
+          }
+        ],
+        "destinations": [
+          {
+            "kind": "skill",
+            "locator": "skills/generated_skill",
+            "write_mode": "create",
+            "format": "python"
+          }
+        ],
+        "transforms": [],
+        "constraints": {
+          "network_policy": "deny_by_default",
+          "execution_mode": "dry_run",
+          "secrets": [],
+          "resource_limits": {
+            "max_duration_seconds": 300,
+            "max_memory_mb": 512
+          },
+          "human_approval_points": [
+            "constitution_risk_gate",
+            "pack_audit_and_publish"
+          ]
+        },
+        "acceptance": {
+          "success_criteria": [
+            {
+              "criterion": "Dry-run execution completes without errors",
+              "check_type": "automated_test"
+            },
+            {
+              "criterion": "Manifest is valid per demand_dsl_v0.schema.yml",
+              "check_type": "static_check"
+            }
+          ],
+          "quality_gates": {
+            "min_test_pass_rate": 1.0,
+            "security_scan_required": true
+          }
+        }
+      },
+      "contract": {
+        "schema_version": "constitution_contract_v0",
+        "intent_id": "f8690a595bd0470881319bac79cbc74b",
+        "goals": {
+          "primary": [
+            {
+              "goal_id": "generate_skill_from_nl",
+              "description": "Generate a new skill from natural language description",
+              "success_metrics": [
+                "Skill manifest is valid",
+                "Dry-run execution succeeds",
+                "No BLOCKER findings from static analysis"
+              ]
+            }
+          ],
+          "non_goals": [
+            "Architecture Blueprint IR / PlanSpec auto-generation",
+            "Autonomous feature planning",
+            "Complex state machine execution",
+            "Full DDD deconstruction",
+            "Multi-Agent autonomous planning",
+            "Real external system execution (except tests-only/dry-run)",
+            "Unlimited API calls"
+          ]
+        },
+        "io": {
+          "inputs": [
+            {
+              "kind": "nl_text",
+              "locator": "Generate a skill that emails PDFs to Notion",
+              "format": "text"
+            }
+          ],
+          "outputs": [
+            {
+              "kind": "skill",
+              "locator": "skills/generated_skill",
+              "write_mode": "create",
+              "format": "python"
+            }
+          ]
+        },
+        "controls": {
+          "network_policy": "deny_by_default",
+          "execution_mode": "dry_run",
+          "human_approval_points": [
+            "constitution_risk_gate",
+            "pack_audit_and_publish"
+          ],
+          "resource_limits": {
+            "max_duration_seconds": 300,
+            "max_memory_mb": 512
+          }
+        },
+        "quality": {
+          "must_have": [
+            "capabilities",
+            "controls",
+            "schema_version",
+            "skill_id",
+            "skill_version"
+          ],
+          "min_test_coverage": 0.8,
+          "min_documentation_score": 0.7,
+          "min_test_pass_rate": 1.0,
+          "security_scan_required": true,
+          "acceptance_criteria": [
+            {
+              "criterion": "Manifest is valid per demand_dsl_v0.schema.yml",
+              "check_type": "static_check"
+            },
+            {
+              "criterion": "Dry-run execution completes without errors",
+              "check_type": "automated_test"
+            }
+          ]
+        },
+        "risk": {
+          "risk_tier": "L0",
+          "deny_list": [
+            "DYNAMIC_IMPORT",
+            "PERSIST_STORAGE",
+            "SUBPROCESS",
+            "SYS_ENV_WRITE"
+          ],
+          "allowed_actions": [
+            "dry_run_execution",
+            "generate_code",
+            "read_manifest",
+            "static_analysis",
+            "validate_schema",
+            "write_to_workspace"
+          ]
+        },
+        "gate_plan": [
+          "intake_repo",
+          "license_gate",
+          "repo_scan_fit_score",
+          "draft_skill_spec",
+          "constitution_risk_gate",
+          "scaffold_skill_impl",
+          "sandbox_test_and_trace",
+          "pack_audit_and_publish"
+        ]
+      },
+      "decision": {
+        "gate_decisions": []
+      }
+    }
+  }
+}

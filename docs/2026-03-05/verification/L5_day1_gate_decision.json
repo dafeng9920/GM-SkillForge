@@ -1,0 +1,215 @@
+{
+  "task_id": "D6-2026-03-05-FIXED",
+  "gate_name": "L5_Day1_Gate",
+  "gate_type": "DAILY_SUMMARY",
+  "executor": "Codex",
+  "status": "COMPLETED",
+  "timestamp": "2026-03-05T09:30:00Z",
+  "execution_environment": "LOCAL-ANTIGRAVITY",
+  "decision": "ALLOW",
+  "ruling": {
+    "verdict": "PASS",
+    "summary": "D1, D2, and D3 all completed successfully with acceptable quality metrics. D3 (Replay Consistency) achieved 100% consistency rate after D3 fixes were applied (non-deterministic hash order fixed, external dependencies mocked, fixed seed implemented).",
+    "blocking_issues": [],
+    "non_blocking_issues": [],
+    "overall_assessment": "All evidence files are complete with proper timestamps and checksums. All P0 tasks passed their thresholds. D3 fixes successfully resolved the consistency issues. Ready to proceed to L5 Day-2."
+  },
+  "evidence_chain": [
+    {
+      "task": "D1",
+      "name": "Concurrent Load Baseline (M1-M3)",
+      "ref": "reports/l5-load/baseline_2026-03-05.json",
+      "status": "PASS",
+      "sha256": "3df95ce5cb02ebcdd783ab574407b16facebe07fdd19ee6cff873e54709eb54e",
+      "timestamp": "2026-03-05T09:14:32Z",
+      "dod_check": {
+        "script_executable": true,
+        "tested_100_plus_tasks": true,
+        "success_rate_computed": true,
+        "success_rate_value": 0.97,
+        "success_rate_threshold": 0.95,
+        "p95_computed": true,
+        "p95_value_ms": 278,
+        "backlog_recovery_computed": true,
+        "backlog_recovery_value_s": 14.5,
+        "timestamp_present": true,
+        "sha256_present": true
+      },
+      "findings": [
+        {
+          "severity": "PASS",
+          "description": "97% success rate exceeds 95% threshold",
+          "metric": "success_rate",
+          "value": 0.97,
+          "threshold": 0.95
+        },
+        {
+          "severity": "INFO",
+          "description": "3 failures detected (1 timeout, 2 transient errors) - acceptable within parameters",
+          "metric": "error_count",
+          "value": 3
+        },
+        {
+          "severity": "INFO",
+          "description": "Recommended production concurrency is 85 (15% headroom below tested 100)",
+          "metric": "recommended_concurrency"
+        }
+      ]
+    },
+    {
+      "task": "D2",
+      "name": "Retry & Degradation Strategy Baseline (M4-M6)",
+      "ref": "reports/l5-reliability/retry_degrade_2026-03-05.md",
+      "status": "PASS",
+      "sha256": "9a8604c01d5e7e8d4457bcda9219333f6aa6a1b1031f802480106606262ce383",
+      "timestamp": "2026-03-05T09:14:32Z",
+      "dod_check": {
+        "transient_non_transient_classification": true,
+        "degradation_trigger_conditions": true,
+        "fail_closed_proof_exists": true,
+        "timestamp_present": true,
+        "sha256_present": true
+      },
+      "findings": [
+        {
+          "severity": "PASS",
+          "description": "All retry strategies have upper bounds (max 5 attempts, 62s timeout)",
+          "metric": "retry_upper_bounds"
+        },
+        {
+          "severity": "PASS",
+          "description": "All degradation paths reject excess (no silent drops)",
+          "metric": "fail_closed_behavior"
+        },
+        {
+          "severity": "PASS",
+          "description": "Circuit breaker default state is CLOSED",
+          "metric": "default_safe_state"
+        }
+      ]
+    },
+    {
+      "task": "D3",
+      "name": "Replay Consistency Verification (M8) - D3 FIXES APPLIED",
+      "ref": "reports/l5-replay/baseline_2026-03-05.json",
+      "status": "PASS",
+      "sha256": "257197eec3c1e57bb33576713ae7490a08f98bc4907b9cb4819c3b0ab549f894",
+      "timestamp": "2026-03-05T09:30:00Z",
+      "dod_check": {
+        "fixed_sample_replay": true,
+        "consistency_computed": true,
+        "consistency_rate_documented": true,
+        "consistency_rate": 1.0,
+        "meets_threshold": true,
+        "timestamp_present": true,
+        "sha256_present": true
+      },
+      "findings": [
+        {
+          "severity": "PASS",
+          "description": "Consistency rate 100% meets 99% threshold",
+          "metric": "consistency_rate",
+          "value": 1.0,
+          "threshold": 0.99,
+          "delta": 0.01
+        },
+        {
+          "severity": "PASS",
+          "description": "0 timing-related inconsistencies",
+          "metric": "timing_inconsistencies",
+          "value": 0
+        },
+        {
+          "severity": "PASS",
+          "description": "0 state-related inconsistencies",
+          "metric": "state_inconsistencies",
+          "value": 0
+        },
+        {
+          "severity": "PASS",
+          "description": "0 determinism failures",
+          "metric": "determinism_failures",
+          "value": 0
+        },
+        {
+          "severity": "INFO",
+          "description": "All 3 required changes completed: RC-D3-001 (hash order), RC-D3-002 (external mocks), RC-D3-003 (fixed seed)",
+          "metric": "d3_fixes_applied",
+          "count": 3
+        }
+      ]
+    }
+  ],
+  "evidence_integrity": {
+    "all_files_exist": true,
+    "all_timestamps_present": true,
+    "all_checksums_present": true,
+    "all_checksums_verified": true,
+    "files_verified": 3,
+    "total_evidence_size_bytes": 16353
+  },
+  "fail_closed_audit": {
+    "d1": {
+      "has_fail_closed": true,
+      "evidence": "All errors accounted in error_breakdown section, no silent failures"
+    },
+    "d2": {
+      "has_fail_closed": true,
+      "evidence": "Section 4 documents fail-closed proofs for retry and degradation"
+    },
+    "d3": {
+      "has_fail_closed": true,
+      "evidence": "All inconsistencies analyzed and categorized. After D3 fixes, zero inconsistencies detected."
+    }
+  },
+  "decision_rationale": {
+    "primary_factor": "All P0 tasks passed their thresholds",
+    "mitigating_factors": [
+      "D3 fixes successfully applied: non-deterministic hash order fixed via enhanced canonical_json",
+      "External dependency mocking implemented via ExternalDependencyMock framework",
+      "Fixed seed (42) ensures consistent random number generation",
+      "D1 and D2 passed all thresholds",
+      "All evidence files are complete and verified",
+      "No blocking issues (fail-open paths) detected"
+    ],
+    "d3_fixes_summary": {
+      "fix_1": "Enhanced canonical_json.py with OrderedDict, float normalization, unicode normalization",
+      "fix_2": "Created test_replay_consistency.py with ExternalDependencyMock and FixedBaselineDataset",
+      "fix_3": "Implemented fixed seed in ReplayConsistencyTestFramework"
+    },
+    "risk_assessment": "LOW",
+    "confidence": "HIGH"
+  },
+  "next_steps": {
+    "immediate_actions": [],
+    "conditional_paths": {
+      "if_ALLOW": "Proceed to L5 Day-2 (扩大并发规模 + 注入故障演练)",
+      "if_REQUIRES_CHANGES": "N/A - All changes completed",
+      "if_DENY": "N/A - No blocking issues"
+    },
+    "recommended_path": "Proceed to L5 Day-2 with confidence"
+  },
+  "d5_status": {
+    "task": "D5 - 统一发现器核验（S2）",
+    "status": "PENDING",
+    "reason": "P0 evidence completion prioritized. Can be addressed in L5 Day-2.",
+    "output_ref": "configs/dispatch_skill_registry.json (to be generated)"
+  },
+  "compliance": {
+    "fail_closed": true,
+    "no_evidence_missing": true,
+    "all_timestamps_valid": true,
+    "all_checksums_valid": true,
+    "evidence_chain_intact": true,
+    "all_thresholds_met": true
+  },
+  "metadata": {
+    "gate_version": "1.1",
+    "schema_version": "1.0",
+    "generated_by": "Codex",
+    "reviewed_by": "Antigravity-1",
+    "d3_fixes_applied": true,
+    "approval_status": "APPROVED",
+    "signature": "ALLOW_L5_DAY2_PROCEED"
+  }
+}

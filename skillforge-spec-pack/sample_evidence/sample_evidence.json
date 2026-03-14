@@ -1,0 +1,44 @@
+{
+  "body": {
+    "action": "third_party_verification_demo",
+    "details": {
+      "description": "Sample evidence for third-party verification",
+      "protocol": "L6-authenticity",
+      "version": "1.0.0"
+    },
+    "executor": "Kior-B",
+    "issue_id": "ISSUE-10",
+    "metrics": {
+      "coverage_percent": 100,
+      "tests_failed": 0,
+      "tests_passed": 42
+    },
+    "task_id": "T11",
+    "timestamp": "2026-02-26T11:30:09Z"
+  },
+  "cert": {
+    "algorithm": "Ed25519",
+    "issued_at": "2026-02-26T11:30:09Z",
+    "issuer": "self-signed",
+    "node_id": "node-kior-b-001",
+    "public_key": "f993f2868eaf1870a99fcc37393a4999c0eb54489314c6015427322274e4c1c3"
+  },
+  "header": {
+    "body_encoding": "json",
+    "body_hash": "adfdffa5fe75700623e5646f57df07df4d37a48a824fd560618d49604ca68fad",
+    "content_type": "application/json",
+    "created_at": "2026-02-26T11:30:09Z",
+    "envelope_id": "ev-891c4bb2",
+    "node_id": "node-kior-b-001",
+    "schema_version": "1.0.0",
+    "trace_id": "trace-6161b018405c"
+  },
+  "signature": {
+    "algorithm": "Ed25519",
+    "signed_at": "2026-02-26T11:30:09Z",
+    "signed_fields": [
+      "header"
+    ],
+    "value": "eEjKRI4oZRx4WQ/Gp9NmWFwTAaEGn1bp/bzUkgaIDNWiH1/z6P4Adr40qm1iE3T3mPF+bdVwSRYLVo1tcENcCA=="
+  }
+}

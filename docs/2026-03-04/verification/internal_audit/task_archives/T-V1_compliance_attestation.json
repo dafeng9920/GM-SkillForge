@@ -1,0 +1,8 @@
+{
+  "task_id": "T-V1",
+  "compliance_id": "COMP-T-V1-20260304",
+  "decision": "PASS",
+  "reasoning": "Receipt p5-c-social-strike-live-v1.5.4 verified. All required keys (task_id, status, executed_commands, exit_code, artifacts, summary) are present and correctly mapped.",
+  "timestamp_utc": "2026-03-04T06:58:00Z",
+  "auditor": "Antigravity Gemini"
+}

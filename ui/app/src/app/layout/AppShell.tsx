@@ -1,81 +1,133 @@
-/**
- * App Shell - 统一导航框架
- *
- * 功能：
- * - 一级导航 3 组（执行/审计/系统）
- * - Top Bar 预留 run_id 全局检索入口
- * - 响应式布局
- *
- * 设计规范：
- * - 不出现 n8n 顶层一级导航
- * - 工业控制台风格（白底高对比）
- * - 审计中台风格
- *
- * @module app/layout/AppShell
- * @see docs/2026-02-20/FRONTEND_REQUIREMENTS_v1.md
- */
-
-import React, { useState, useCallback } from 'react';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-
-// ============================================
-// Types
-// ============================================
+import React, { useCallback, useState } from 'react';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { LanguageProvider, useLanguage, type AppLanguage } from '../i18n';
+import { GovernanceInteractionProvider } from '../../features/governanceInteraction/interaction';
+import {
+  GovernanceCanvasSlotProvider,
+  GovernanceCanvasSlotRenderer,
+} from '../../components/governance/GovernanceCanvasSlot';
 
 interface NavItem {
   id: string;
-  label: string;
   path: string;
   icon: string;
-  children?: NavItem[];
+  priority: 'main' | 'secondary';
 }
 
-// ============================================
-// Constants
-// ============================================
+const NAV_LABELS: Record<AppLanguage, Record<string, string>> = {
+  zh: {
+    home: '首页',
+    overview: '概览',
+    intake: '摄入',
+    audit: '审计',
+    permit: '发布',
+    registry: '登记',
+    forge: '锻造',
+    policies: '策略',
+    history: '历史',
+  },
+  en: {
+    home: 'Home',
+    overview: 'Overview',
+    intake: 'Intake',
+    audit: 'Audit',
+    permit: 'Release',
+    registry: 'Registry',
+    forge: 'Forge',
+    policies: 'Policies',
+    history: 'History',
+  },
+};
 
-const NAV_GROUPS: { group: string; items: NavItem[] }[] = [
+const GROUP_LABELS: Record<AppLanguage, Record<string, string>> = {
+  zh: {
+    entry: '入口',
+    main: '治理主链',
+    support: '治理支撑',
+    archive: '策略与历史',
+  },
+  en: {
+    entry: 'Entry',
+    main: 'Governance Chain',
+    support: 'Support',
+    archive: 'Policies & History',
+  },
+};
+
+const COPY: Record<
+  AppLanguage,
   {
-    group: '执行中心',
+    collapse: string;
+    expand: string;
+    searchPlaceholder: string;
+    clear: string;
+    systemHealthy: string;
+    switchLanguage: string;
+  }
+> = {
+  zh: {
+    collapse: '收起侧边栏',
+    expand: '展开侧边栏',
+    searchPlaceholder: '搜索证据编号、资产 ID 或许可证号...',
+    clear: '清除',
+    systemHealthy: '系统正常',
+    switchLanguage: '切换为英文',
+  },
+  en: {
+    collapse: 'Collapse sidebar',
+    expand: 'Expand sidebar',
+    searchPlaceholder: 'Search evidence ref, asset ID, or permit ID...',
+    clear: 'Clear',
+    systemHealthy: 'System healthy',
+    switchLanguage: 'Switch to Chinese',
+  },
+};
+
+const NAV_GROUPS: { groupId: keyof (typeof GROUP_LABELS)['zh']; items: NavItem[] }[] = [
+  {
+    groupId: 'entry',
     items: [
-      { id: 'run-intent', label: '执行意图', path: '/execute/run-intent', icon: '▶' },
-      { id: 'import-skill', label: '技能导入', path: '/execute/import-skill', icon: '📦' },
+      { id: 'home', path: '/home', icon: '◌', priority: 'main' },
+      { id: 'overview', path: '/dashboard', icon: '📊', priority: 'main' },
+      { id: 'intake', path: '/intake/vetting', icon: '⇣', priority: 'main' },
     ],
   },
   {
-    group: '审计与查询',
+    groupId: 'main',
     items: [
-      { id: 'packs', label: '审计包', path: '/audit/packs', icon: '📋' },
-      { id: 'rag-query', label: 'RAG 查询', path: '/audit/rag-query', icon: '🔍' },
+      { id: 'audit', path: '/audit/detail', icon: '🔍', priority: 'main' },
+      { id: 'permit', path: '/permit', icon: '✓', priority: 'main' },
     ],
   },
   {
-    group: '系统运维',
+    groupId: 'support',
     items: [
-      { id: 'health', label: '健康监控', path: '/system/health', icon: '💚' },
+      { id: 'registry', path: '/registry', icon: '📋', priority: 'secondary' },
+      { id: 'forge', path: '/forge', icon: '🔨', priority: 'secondary' },
+    ],
+  },
+  {
+    groupId: 'archive',
+    items: [
+      { id: 'policies', path: '/policies', icon: '⚙️', priority: 'secondary' },
+      { id: 'history', path: '/history', icon: '📜', priority: 'secondary' },
     ],
   },
 ];
 
 const STATUS_COLORS = {
-  primary: '#1890FF',
   success: '#10B981',
-  warning: '#F59E0B',
-  error: '#EF4444',
-  gray: '#6B7280',
 };
-
-// ============================================
-// Sub-Components
-// ============================================
 
 const GlobalSearch: React.FC<{
   value: string;
   onChange: (value: string) => void;
   onSearch: (value: string) => void;
 }> = ({ value, onChange, onSearch }) => {
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && value.trim()) {
+  const { language } = useLanguage();
+
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' && value.trim()) {
       onSearch(value.trim());
     }
   };
@@ -86,17 +138,13 @@ const GlobalSearch: React.FC<{
       <input
         type="text"
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(event) => onChange(event.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="搜索 run_id 或 evidence_ref..."
+        placeholder={COPY[language].searchPlaceholder}
         style={searchInputStyles}
       />
       {value && (
-        <button
-          onClick={() => onChange('')}
-          style={searchClearStyles}
-          title="清除"
-        >
+        <button type="button" onClick={() => onChange('')} style={searchClearStyles} title={COPY[language].clear}>
           ✕
         </button>
       )}
@@ -106,74 +154,90 @@ const GlobalSearch: React.FC<{
 
 const NavLink: React.FC<{
   item: NavItem;
+  label: string;
   isActive: boolean;
   onClick: () => void;
-}> = ({ item, isActive, onClick }) => (
+}> = ({ item, label, isActive, onClick }) => (
   <button
+    type="button"
     onClick={onClick}
     style={{
       ...navLinkStyles,
       ...(isActive ? activeNavLinkStyles : {}),
+      ...(item.priority === 'main' ? mainChainStyles : {}),
     }}
-    title={item.label}
+    title={label}
   >
     <span style={navIconStyles}>{item.icon}</span>
-    <span style={navLabelStyles}>{item.label}</span>
+    <span style={navLabelStyles}>{label}</span>
   </button>
 );
 
 const NavGroup: React.FC<{
-  group: string;
+  groupLabel: string;
   items: NavItem[];
   activePath: string;
+  language: AppLanguage;
   onNavigate: (path: string) => void;
-}> = ({ group, items, activePath, onNavigate }) => (
+}> = ({ groupLabel, items, activePath, language, onNavigate }) => (
   <div style={navGroupStyles}>
-    <div style={navGroupTitleStyles}>{group}</div>
+    <div style={navGroupTitleStyles}>{groupLabel}</div>
     {items.map((item) => (
       <NavLink
         key={item.id}
         item={item}
-        isActive={activePath === item.path}
+        label={NAV_LABELS[language][item.id]}
+        isActive={activePath === item.path || activePath.startsWith(`${item.path}/`)}
         onClick={() => onNavigate(item.path)}
       />
     ))}
   </div>
 );
 
-// ============================================
-// Main Component
-// ============================================
-
-export const AppShell: React.FC = () => {
+const AppShellBody: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { language, toggleLanguage } = useLanguage();
   const [searchValue, setSearchValue] = useState('');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const isHomeRoute = location.pathname === '/home';
 
   const handleNavigate = useCallback((path: string) => {
     navigate(path);
   }, [navigate]);
 
   const handleSearch = useCallback((query: string) => {
-    // TODO: Implement global search - navigate to audit packs with search query
-    // For now, just navigate to audit packs page
-    navigate(`/audit/packs?search=${encodeURIComponent(query)}`);
+    navigate(`/audit/detail?search=${encodeURIComponent(query)}`);
   }, [navigate]);
 
   const toggleSidebar = useCallback(() => {
-    setSidebarCollapsed((prev) => !prev);
+    setSidebarCollapsed((current) => !current);
   }, []);
+
+  const isPathActive = useCallback((path: string) => {
+    if (path === '/home') {
+      return location.pathname === '/home';
+    }
+
+    return location.pathname === path || location.pathname.startsWith(`${path}/`);
+  }, [location.pathname]);
 
   return (
     <div style={shellStyles}>
-      {/* Top Bar */}
+      <style>{`
+        @keyframes gmPulse {
+          0% { box-shadow: 0 0 0 0 rgba(16,185,129,0.18), 0 0 10px rgba(16,185,129,0.12); }
+          70% { box-shadow: 0 0 0 6px rgba(16,185,129,0), 0 0 16px rgba(16,185,129,0.16); }
+          100% { box-shadow: 0 0 0 0 rgba(16,185,129,0), 0 0 10px rgba(16,185,129,0.12); }
+        }
+      `}</style>
       <header style={topBarStyles}>
         <div style={topBarLeftStyles}>
           <button
+            type="button"
             onClick={toggleSidebar}
             style={menuButtonStyles}
-            title={sidebarCollapsed ? '展开侧边栏' : '收起侧边栏'}
+            title={sidebarCollapsed ? COPY[language].expand : COPY[language].collapse}
           >
             ☰
           </button>
@@ -184,48 +248,75 @@ export const AppShell: React.FC = () => {
           </div>
         </div>
 
-        {/* Global Search - run_id / evidence_ref */}
-        <div style={searchWrapperStyles}>
-          <GlobalSearch
-            value={searchValue}
-            onChange={setSearchValue}
-            onSearch={handleSearch}
-          />
-        </div>
+        {!isHomeRoute && (
+          <div style={searchWrapperStyles}>
+            <GlobalSearch value={searchValue} onChange={setSearchValue} onSearch={handleSearch} />
+          </div>
+        )}
+
+        {isHomeRoute && (
+          <nav style={headerNavStyles}>
+            {NAV_GROUPS.flatMap((group) => group.items).slice(0, 7).map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => handleNavigate(item.path)}
+                style={{
+                  ...headerNavLinkStyles,
+                  ...(isPathActive(item.path) ? headerNavActiveStyles : {}),
+                }}
+              >
+                {NAV_LABELS[language][item.id]}
+              </button>
+            ))}
+          </nav>
+        )}
 
         <div style={topBarRightStyles}>
-          {/* Status indicator placeholder */}
+          <button
+            type="button"
+            onClick={toggleLanguage}
+            style={languageButtonStyles}
+            title={COPY[language].switchLanguage}
+          >
+            {language === 'zh' ? 'EN' : '中'}
+          </button>
           <div style={statusIndicatorStyles}>
             <span style={statusDotStyles} />
-            <span style={statusTextStyles}>系统正常</span>
+            <span style={statusTextStyles}>{COPY[language].systemHealthy}</span>
           </div>
         </div>
       </header>
 
-      {/* Main Layout */}
       <div style={mainLayoutStyles}>
-        {/* Sidebar */}
-        <aside
-          style={{
-            ...sidebarStyles,
-            width: sidebarCollapsed ? '64px' : '220px',
-          }}
-        >
-          <nav style={navStyles}>
-            {NAV_GROUPS.map((group) => (
-              <NavGroup
-                key={group.group}
-                group={sidebarCollapsed ? '' : group.group}
-                items={group.items}
-                activePath={location.pathname}
-                onNavigate={handleNavigate}
-              />
-            ))}
-          </nav>
-        </aside>
+        {!isHomeRoute && (
+          <aside
+            style={{
+              ...sidebarStyles,
+              width: sidebarCollapsed ? '64px' : '220px',
+            }}
+          >
+            <nav style={navStyles}>
+              {NAV_GROUPS.map((group) => (
+                <NavGroup
+                  key={group.groupId}
+                  groupLabel={sidebarCollapsed ? '' : GROUP_LABELS[language][group.groupId]}
+                  items={group.items}
+                  activePath={location.pathname}
+                  language={language}
+                  onNavigate={handleNavigate}
+                />
+              ))}
+            </nav>
+          </aside>
+        )}
 
-        {/* Content Area */}
-        <main style={contentStyles}>
+        <main style={{ ...contentStyles, ...(isHomeRoute ? homeContentStyles : {}) }}>
+          {!isHomeRoute ? (
+            <div style={canvasSlotStyles}>
+              <GovernanceCanvasSlotRenderer />
+            </div>
+          ) : null}
           <Outlet />
         </main>
       </div>
@@ -233,15 +324,22 @@ export const AppShell: React.FC = () => {
   );
 };
 
-// ============================================
-// Styles
-// ============================================
+export const AppShell: React.FC = () => (
+  <LanguageProvider>
+    <GovernanceInteractionProvider>
+      <GovernanceCanvasSlotProvider>
+        <AppShellBody />
+      </GovernanceCanvasSlotProvider>
+    </GovernanceInteractionProvider>
+  </LanguageProvider>
+);
 
 const shellStyles: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   height: '100vh',
-  backgroundColor: '#F5F7FA',
+  background:
+    'radial-gradient(circle at top center, rgba(234,88,12,0.1), transparent 18%), linear-gradient(180deg, #050505 0%, #09090b 100%)',
   fontFamily: '"Noto Sans SC", "Segoe UI", system-ui, sans-serif',
 };
 
@@ -249,10 +347,12 @@ const topBarStyles: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  height: '56px',
-  padding: '0 16px',
-  backgroundColor: '#FFFFFF',
-  borderBottom: '1px solid #E5E7EB',
+  height: '64px',
+  padding: '0 18px 0 16px',
+  background:
+    'linear-gradient(135deg, rgba(9,9,11,0.98) 0%, rgba(16,16,16,0.96) 75%, rgba(34,20,12,0.92) 100%)',
+  borderBottom: '1px solid rgba(255,255,255,0.06)',
+  boxShadow: 'inset 0 -1px 0 rgba(255,255,255,0.02), 0 10px 30px rgba(0,0,0,0.24)',
   flexShrink: 0,
   zIndex: 100,
 };
@@ -267,20 +367,20 @@ const menuButtonStyles: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  width: '36px',
-  height: '36px',
-  border: 'none',
-  borderRadius: '6px',
-  backgroundColor: 'transparent',
+  width: '38px',
+  height: '38px',
+  border: '1px solid rgba(255,255,255,0.08)',
+  borderRadius: '12px',
+  backgroundColor: 'rgba(255,255,255,0.02)',
   cursor: 'pointer',
-  fontSize: '20px',
-  color: '#374151',
+  fontSize: '18px',
+  color: '#e7e5e4',
 };
 
 const logoStyles: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
-  gap: '8px',
+  gap: '10px',
 };
 
 const logoIconStyles: React.CSSProperties = {
@@ -289,17 +389,19 @@ const logoIconStyles: React.CSSProperties = {
 
 const logoTextStyles: React.CSSProperties = {
   fontSize: '18px',
-  fontWeight: 600,
-  color: '#1F2937',
+  fontWeight: 800,
+  letterSpacing: '-0.02em',
+  color: '#f5f5f4',
 };
 
 const versionBadgeStyles: React.CSSProperties = {
-  padding: '2px 6px',
+  padding: '3px 8px',
   fontSize: '11px',
-  fontWeight: 500,
-  color: '#1890FF',
-  backgroundColor: '#E6F7FF',
-  borderRadius: '4px',
+  fontWeight: 700,
+  color: '#fdba74',
+  backgroundColor: 'rgba(217,119,6,0.12)',
+  borderRadius: '999px',
+  border: '1px solid rgba(217,119,6,0.2)',
 };
 
 const searchWrapperStyles: React.CSSProperties = {
@@ -308,14 +410,44 @@ const searchWrapperStyles: React.CSSProperties = {
   margin: '0 24px',
 };
 
+const headerNavStyles: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '6px',
+  flex: 1,
+  justifyContent: 'center',
+  margin: '0 20px',
+};
+
+const headerNavLinkStyles: React.CSSProperties = {
+  appearance: 'none',
+  border: '1px solid transparent',
+  background: 'transparent',
+  color: '#a8a29e',
+  borderRadius: '999px',
+  padding: '8px 11px',
+  fontSize: '12px',
+  fontWeight: 700,
+  letterSpacing: '0.04em',
+  cursor: 'pointer',
+};
+
+const headerNavActiveStyles: React.CSSProperties = {
+  border: '1px solid rgba(234,88,12,0.24)',
+  background: 'linear-gradient(180deg, rgba(234,88,12,0.12) 0%, rgba(234,88,12,0.06) 100%)',
+  color: '#f5f5f4',
+  boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.03), 0 0 0 1px rgba(234,88,12,0.04)',
+};
+
 const searchContainerStyles: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
-  height: '36px',
+  height: '40px',
   padding: '0 12px',
-  backgroundColor: '#F5F7FA',
-  borderRadius: '6px',
-  border: '1px solid #E5E7EB',
+  backgroundColor: 'rgba(255,255,255,0.03)',
+  borderRadius: '10px',
+  border: '1px solid rgba(255,255,255,0.08)',
+  boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.02)',
 };
 
 const searchIconStyles: React.CSSProperties = {
@@ -329,7 +461,7 @@ const searchInputStyles: React.CSSProperties = {
   outline: 'none',
   backgroundColor: 'transparent',
   fontSize: '14px',
-  color: '#1F2937',
+  color: '#f5f5f4',
 };
 
 const searchClearStyles: React.CSSProperties = {
@@ -340,8 +472,8 @@ const searchClearStyles: React.CSSProperties = {
   height: '20px',
   border: 'none',
   borderRadius: '50%',
-  backgroundColor: '#D1D5DB',
-  color: '#FFFFFF',
+  backgroundColor: 'rgba(255,255,255,0.1)',
+  color: '#f5f5f4',
   fontSize: '12px',
   cursor: 'pointer',
 };
@@ -352,13 +484,28 @@ const topBarRightStyles: React.CSSProperties = {
   gap: '16px',
 };
 
+const languageButtonStyles: React.CSSProperties = {
+  appearance: 'none',
+  border: '1px solid rgba(255,255,255,0.1)',
+  background: 'rgba(20, 20, 20, 0.8)',
+  color: '#e7e5e4',
+  borderRadius: '999px',
+  padding: '8px 12px',
+  fontSize: '12px',
+  fontWeight: 800,
+  letterSpacing: '0.08em',
+  cursor: 'pointer',
+};
+
 const statusIndicatorStyles: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   gap: '8px',
-  padding: '6px 12px',
-  backgroundColor: '#ECFDF5',
-  borderRadius: '6px',
+  padding: '8px 12px',
+  backgroundColor: 'rgba(20,20,20,0.78)',
+  borderRadius: '999px',
+  border: '1px solid rgba(255,255,255,0.08)',
+  boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.03)',
 };
 
 const statusDotStyles: React.CSSProperties = {
@@ -366,11 +513,13 @@ const statusDotStyles: React.CSSProperties = {
   height: '8px',
   borderRadius: '50%',
   backgroundColor: STATUS_COLORS.success,
+  boxShadow: '0 0 0 4px rgba(16,185,129,0.12), 0 0 14px rgba(16,185,129,0.18)',
+  animation: 'gmPulse 2.4s ease-in-out infinite',
 };
 
 const statusTextStyles: React.CSSProperties = {
   fontSize: '13px',
-  color: '#065F46',
+  color: '#d6d3d1',
 };
 
 const mainLayoutStyles: React.CSSProperties = {
@@ -382,8 +531,8 @@ const mainLayoutStyles: React.CSSProperties = {
 const sidebarStyles: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
-  backgroundColor: '#FFFFFF',
-  borderRight: '1px solid #E5E7EB',
+  background: 'linear-gradient(180deg, rgba(8,8,8,0.98) 0%, rgba(13,13,15,1) 100%)',
+  borderRight: '1px solid rgba(255,255,255,0.06)',
   transition: 'width 200ms ease',
   overflow: 'hidden',
 };
@@ -402,7 +551,7 @@ const navGroupTitleStyles: React.CSSProperties = {
   padding: '8px 12px',
   fontSize: '12px',
   fontWeight: 600,
-  color: '#9CA3AF',
+  color: '#736b63',
   textTransform: 'uppercase',
   letterSpacing: '0.05em',
 };
@@ -414,16 +563,22 @@ const navLinkStyles: React.CSSProperties = {
   width: '100%',
   padding: '10px 12px',
   border: 'none',
-  borderRadius: '6px',
+  borderRadius: '12px',
   backgroundColor: 'transparent',
   cursor: 'pointer',
   textAlign: 'left',
-  transition: 'background-color 150ms',
+  transition: 'background-color 150ms, transform 150ms',
+  color: '#d6d3d1',
 };
 
 const activeNavLinkStyles: React.CSSProperties = {
-  backgroundColor: '#E6F7FF',
-  color: '#1890FF',
+  background: 'linear-gradient(90deg, rgba(234,88,12,0.18) 0%, rgba(234,88,12,0.06) 100%)',
+  color: '#f5f5f4',
+  boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.02)',
+};
+
+const mainChainStyles: React.CSSProperties = {
+  fontWeight: 600,
 };
 
 const navIconStyles: React.CSSProperties = {
@@ -433,7 +588,7 @@ const navIconStyles: React.CSSProperties = {
 
 const navLabelStyles: React.CSSProperties = {
   fontSize: '14px',
-  color: '#374151',
+  color: 'inherit',
   whiteSpace: 'nowrap',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
@@ -442,7 +597,15 @@ const navLabelStyles: React.CSSProperties = {
 const contentStyles: React.CSSProperties = {
   flex: 1,
   overflow: 'auto',
-  backgroundColor: '#F5F7FA',
+  background: 'linear-gradient(180deg, #050505 0%, #09090b 100%)',
+};
+
+const homeContentStyles: React.CSSProperties = {
+  background: 'linear-gradient(180deg, #050505 0%, #09090b 100%)',
+};
+
+const canvasSlotStyles: React.CSSProperties = {
+  padding: '24px 24px 0',
 };
 
 export default AppShell;

@@ -1,0 +1,8 @@
+{
+  "task_id": "T-R1",
+  "compliance_id": "COMP-T-R1-20260304",
+  "decision": "PASS",
+  "reasoning": "Health snapshot cloud-health-snapshot-20260304 verified. 4 artifacts present. Receipt keys complete. All commands are read-only (ignoring mkdir output_dir).",
+  "timestamp_utc": "2026-03-04T06:58:00Z",
+  "auditor": "Antigravity Gemini"
+}

@@ -1,8 +1,28 @@
 FROM node:22-bookworm-slim
 
-ARG OPENCLAW_VERSION=0.70.0
-RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
-RUN npm install -g openclaw@${OPENCLAW_VERSION}
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    python3 \
+    build-essential \
+    cmake \
+    pkg-config \
+    libgd-dev \
+    libwebp-dev \
+    libheif-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-USER node
-WORKDIR /home/node
+# Set npm mirror
+RUN npm config set registry https://registry.npmmirror.com
+
+# Install OpenClaw globally
+RUN npm install -g openclaw@latest
+
+# Set working directory
+WORKDIR /app
+
+# The entrypoint will handle plugin installation and service startup
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]

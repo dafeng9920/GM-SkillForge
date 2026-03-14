@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "boundary": "N+1_COMMAND_ALLOWLIST",
+  "summary": "All 3 commands within allowlist",
+  "details": {
+    "total_commands": 3,
+    "allowlist_size": 6,
+    "violations": 0
+  }
+}

@@ -1,0 +1,154 @@
+# T06 Execution Report
+# Task: ISSUE-05 - Nonce Challenge 防重放
+# Executor: Kior-A
+# Date: 2026-02-26
+
+task_id: "T06"
+issue_id: "ISSUE-05"
+executor: "Kior-A"
+reviewer: "Antigravity-1"
+compliance_officer: "Kior-C"
+wave: "Wave 2"
+depends_on: ["T03", "T05"]
+
+execution_summary:
+  objective: "实现 nonce challenge/ttl 与 replay 拒绝"
+  status: "COMPLETE"
+  start_time: "2026-02-26T10:00:00Z"
+  end_time: "2026-02-26T10:45:00Z"
+  duration_minutes: 45
+
+deliverables:
+  - path: "skillforge-spec-pack/skillforge/src/utils/nonce_challenge.py"
+    type: "新建"
+    description: "Nonce challenge module with generation, validation, and replay prevention"
+    lines_of_code: 730
+
+  - path: "skillforge-spec-pack/skillforge/tests/test_nonce_challenge.py"
+    type: "新建"
+    description: "Comprehensive test suite with 38 test cases"
+    lines_of_code: 800
+
+  - path: "skillforge-spec-pack/skillforge/src/utils/__init__.py"
+    type: "修改"
+    description: "Added nonce_challenge exports"
+
+  - path: "docs/2026-02-26/p0-governed-execution/verification/T06_nonce_report.md"
+    type: "新建"
+    description: "Technical report documenting implementation"
+
+acceptance_criteria:
+  - criteria: "重放旧包返回 REPLAY_DETECTED"
+    status: "PASS"
+    test_ref: "test_replay_detected_error_code"
+    evidence: "pytest output shows REPLAY_DETECTED error code returned"
+
+  - criteria: "过期返回 CHALLENGE_EXPIRED"
+    status: "PASS"
+    test_ref: "test_challenge_expired_error_code"
+    evidence: "pytest output shows CHALLENGE_EXPIRED error code returned"
+
+test_results:
+  framework: "pytest"
+  total_tests: 38
+  passed: 38
+  failed: 0
+  skipped: 0
+  duration_seconds: 0.14
+  output: |
+    ============================= test session starts =============================
+    platform win32 -- Python 3.11.9, pytest-9.0.2
+    collected 38 items
+
+    TestChallenge::test_challenge_creation PASSED
+    TestChallenge::test_challenge_is_expired PASSED
+    TestChallenge::test_challenge_is_valid PASSED
+    TestChallenge::test_challenge_serialization PASSED
+    TestChallengeResponse::test_response_creation PASSED
+    TestChallengeResponse::test_response_serialization PASSED
+    TestValidationResult::test_success_result PASSED
+    TestValidationResult::test_failure_result PASSED
+    TestValidationResult::test_result_serialization PASSED
+    TestChallengeStore::test_store_and_get PASSED
+    TestChallengeStore::test_mark_used PASSED
+    TestChallengeStore::test_nonexistent_challenge PASSED
+    TestChallengeStore::test_cleanup_expired PASSED
+    TestChallengeStore::test_thread_safety PASSED
+    TestNonceChallengeManager::test_generate_challenge PASSED
+    TestNonceChallengeManager::test_generate_challenge_with_node_binding PASSED
+    TestNonceChallengeManager::test_generate_challenge_custom_ttl PASSED
+    TestNonceChallengeManager::test_validate_challenge_success PASSED
+    TestNonceChallengeManager::test_validate_challenge_replay_detection PASSED
+    TestNonceChallengeManager::test_validate_challenge_expired PASSED
+    TestNonceChallengeManager::test_validate_challenge_not_found PASSED
+    TestNonceChallengeManager::test_consume_nonce PASSED
+    TestNonceChallengeManager::test_validate_response_success PASSED
+    TestNonceChallengeManager::test_validate_response_node_mismatch PASSED
+    TestNonceChallengeManager::test_validate_response_with_signature_verifier PASSED
+    TestNonceChallengeManager::test_validate_response_replay_detection PASSED
+    TestSignatureFunctions::test_build_challenge_response_payload PASSED
+    TestSignatureFunctions::test_create_and_verify_challenge_response PASSED
+    TestSignatureFunctions::test_verify_challenge_response_tampered_nonce PASSED
+    TestSignatureFunctions::test_verify_challenge_response_wrong_key PASSED
+    TestAcceptanceCriteria::test_replay_detected_error_code PASSED
+    TestAcceptanceCriteria::test_challenge_expired_error_code PASSED
+    TestAcceptanceCriteria::test_full_challenge_response_flow PASSED
+    TestEdgeCases::test_unique_nonce_generation PASSED
+    TestEdgeCases::test_challenge_store_capacity PASSED
+    TestEdgeCases::test_concurrent_challenge_consumption PASSED
+    TestIntegrationWithEd25519::test_challenge_response_with_ed25519_signature PASSED
+    TestIntegrationWithEd25519::test_tampered_signature_rejected PASSED
+
+    ============================= 38 passed in 0.14s =============================
+
+dependency_validation:
+  T03_envelope_structure:
+    status: "ALLOW"
+    integration: "Uses header.nonce field, Challenge can bind to envelope"
+  T05_ed25519_signature:
+    status: "ALLOW"
+    integration: "create_challenge_response() and verify_challenge_response_signature()"
+
+implementation_highlights:
+  - "Cryptographically secure nonce generation using secrets.token_bytes()"
+  - "Thread-safe ChallengeStore with threading.RLock"
+  - "Automatic cleanup of expired challenges"
+  - "Configurable TTL (default 300 seconds)"
+  - "Memory protection with max_size limit"
+  - "Full Ed25519 signature integration"
+
+evidence_refs:
+  - id: "EV-T06-CODE-001"
+    kind: "FILE"
+    locator: "skillforge-spec-pack/skillforge/src/utils/nonce_challenge.py"
+  - id: "EV-T06-CODE-002"
+    kind: "FILE"
+    locator: "skillforge-spec-pack/skillforge/src/utils/__init__.py"
+  - id: "EV-T06-TEST-001"
+    kind: "FILE"
+    locator: "skillforge-spec-pack/skillforge/tests/test_nonce_challenge.py"
+  - id: "EV-T06-TEST-002"
+    kind: "OUTPUT"
+    locator: "pytest: 38 passed in 0.14s"
+  - id: "EV-T06-REPORT-001"
+    kind: "FILE"
+    locator: "docs/2026-02-26/p0-governed-execution/verification/T06_nonce_report.md"
+
+restrictions_compliance:
+  no_cross_task_modification: true
+  no_bypass_compliance: true
+  no_execution_without_permit: true
+  scope_limited_to_issue: true
+  evidence_refs_complete: true
+
+side_effects:
+  file_creations:
+    - "skillforge-spec-pack/skillforge/src/utils/nonce_challenge.py"
+    - "skillforge-spec-pack/skillforge/tests/test_nonce_challenge.py"
+    - "docs/2026-02-26/p0-governed-execution/verification/T06_nonce_report.md"
+  file_modifications:
+    - "skillforge-spec-pack/skillforge/src/utils/__init__.py"
+  runtime_side_effects: none
+
+final_status: "EXECUTION_COMPLETE"
+ready_for_review: true

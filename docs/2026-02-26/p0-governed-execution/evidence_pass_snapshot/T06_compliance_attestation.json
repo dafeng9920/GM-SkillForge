@@ -1,0 +1,160 @@
+{
+  "attestation_id": "ATTEST-T06-20260226-001",
+  "task_id": "T06",
+  "issue_id": "ISSUE-05",
+  "executor": "Kior-A",
+  "compliance_officer": "Kior-C",
+  "attestation_date": "2026-02-26",
+  "stage": "P0",
+  "track": "L6-authenticity",
+
+  "decision": "PASS",
+  "compliance_status": "PASS",
+
+  "preflight_compliance": {
+    "scope_check": {
+      "status": "PASS",
+      "evidence": "仅处理 ISSUE-05 (Nonce Challenge)，未扩展到其他 ISSUE"
+    },
+    "dependency_check": {
+      "status": "PASS",
+      "dependencies": ["T03", "T05"],
+      "evidence": {
+        "T03": "ALLOW (T03_gate_decision.json)",
+        "T05": "ALLOW (T05_gate_decision.json)"
+      }
+    },
+    "guard_check": {
+      "status": "PASS",
+      "evidence": "Guard A/B 文档可访问"
+    },
+    "evidence_check": {
+      "status": "PASS",
+      "evidence": "任务卡中声明了三件套产物路径"
+    },
+    "permit_check": {
+      "status": "N/A",
+      "evidence": "无运行时副作用操作，仅需代码和文档修改"
+    }
+  },
+
+  "execution_compliance": {
+    "review_first": {
+      "status": "PASS",
+      "evidence": "完成代码审查检查清单 (10项全部 PASS)"
+    },
+    "no_bypass_compliance": {
+      "status": "PASS",
+      "evidence": "遵循 Review -> Compliance -> Execution 顺序"
+    },
+    "evidence_ref_complete": {
+      "status": "PASS",
+      "evidence_refs": [
+        "EV-T06-CODE-001",
+        "EV-T06-CODE-002",
+        "EV-T06-TEST-001",
+        "EV-T06-TEST-002",
+        "EV-T06-REPORT-001"
+      ]
+    },
+    "no_cross_task_modification": {
+      "status": "PASS",
+      "evidence": "仅修改 __init__.py 添加导出，未修改其他任务输出文件"
+    }
+  },
+
+  "acceptance_criteria_compliance": {
+    "replay_detected": {
+      "criteria": "重放旧包返回 REPLAY_DETECTED",
+      "status": "PASS",
+      "test_evidence": "test_replay_detected_error_code PASSED"
+    },
+    "challenge_expired": {
+      "criteria": "过期返回 CHALLENGE_EXPIRED",
+      "status": "PASS",
+      "test_evidence": "test_challenge_expired_error_code PASSED"
+    }
+  },
+
+  "security_compliance": {
+    "cryptographic_strength": {
+      "status": "PASS",
+      "evidence": "32-byte CSPRNG nonces, Ed25519 signatures"
+    },
+    "thread_safety": {
+      "status": "PASS",
+      "evidence": "threading.RLock used in ChallengeStore"
+    },
+    "memory_protection": {
+      "status": "PASS",
+      "evidence": "Configurable max_size with cleanup"
+    },
+    "replay_prevention": {
+      "status": "PASS",
+      "evidence": "One-time use challenges with used_nonce tracking"
+    }
+  },
+
+  "test_compliance": {
+    "total_tests": 38,
+    "passed": 38,
+    "failed": 0,
+    "coverage_adequate": true,
+    "acceptance_criteria_covered": true
+  },
+
+  "deliverable_compliance": {
+    "execution_report": {
+      "path": "docs/2026-02-26/p0-governed-execution/verification/T06_execution_report.yaml",
+      "status": "CREATED"
+    },
+    "gate_decision": {
+      "path": "docs/2026-02-26/p0-governed-execution/verification/T06_gate_decision.json",
+      "status": "CREATED"
+    },
+    "compliance_attestation": {
+      "path": "docs/2026-02-26/p0-governed-execution/verification/T06_compliance_attestation.json",
+      "status": "CREATED"
+    },
+    "technical_report": {
+      "path": "docs/2026-02-26/p0-governed-execution/verification/T06_nonce_report.md",
+      "status": "CREATED"
+    }
+  },
+
+  "restrictions_compliance": {
+    "deny_bypass_compliance": "PASS",
+    "deny_skip_depends_on": "PASS",
+    "deny_no_evidence_claim": "PASS",
+    "deny_cross_task_modification": "PASS",
+    "deny_side_effects_without_permit": "PASS"
+  },
+
+  "violations": [],
+
+  "attestation_summary": {
+    "overall_status": "PASS",
+    "ready_for_gate": true,
+    "recommendation": "ALLOW - 任务符合所有合规要求"
+  },
+
+  "signed_at": "2026-02-26T10:45:00Z",
+
+  "evidence_refs": [
+    {
+      "id": "EV-T06-COMPLIANCE-001",
+      "kind": "FILE",
+      "locator": "docs/2026-02-26/p0-governed-execution/verification/T06_execution_report.yaml"
+    },
+    {
+      "id": "EV-T06-COMPLIANCE-002",
+      "kind": "FILE",
+      "locator": "docs/2026-02-26/p0-governed-execution/verification/T06_gate_decision.json"
+    },
+    {
+      "id": "EV-T06-COMPLIANCE-003",
+      "kind": "OUTPUT",
+      "locator": "pytest: 38 passed in 0.14s"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "schema_version": "runtime_interface_v0.1",
+  "task_id": "TASK-MAIN-02",
+  "run_id": "TASK-MAIN-02-F0ECFE8F",
+  "executor": "Antigravity-1",
+  "status": "success",
+  "started_at": "2026-03-10T16:20:42.890266+00:00",
+  "finished_at": "2026-03-10T16:20:42.923498+00:00",
+  "executed_commands": [
+    "echo 'Hello from runtime interface'"
+  ],
+  "exit_code": 0,
+  "output": {},
+  "summary": "命令执行成功: ['echo', \"'Hello\", 'from', 'runtime', \"interface'\"]",
+  "evidence_refs": [],
+  "contract_ref": null,
+  "permit_ref": null,
+  "receipt_ref": null
+}

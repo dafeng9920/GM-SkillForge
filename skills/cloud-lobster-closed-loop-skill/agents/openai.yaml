@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cloud Lobster Closed Loop"
+  short_description: "Fixed-caliber cloud dispatch with fail-closed review."
+  default_prompt: "Generate fixed-caliber cloud task contracts, enforce artifact return, verify execution receipts, and emit review/final gate decisions for archival."

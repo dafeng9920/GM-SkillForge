@@ -1,0 +1,37 @@
+{
+  "suite_id": "L3_gap_closure_killer_tests",
+  "generated_at_utc": "2026-03-05T11:15:52Z",
+  "total": 3,
+  "passed": 3,
+  "failed": 0,
+  "overall_status": "PASS",
+  "results": [
+    {
+      "test_id": "A_constitution_hard_gate",
+      "script": "D:\\GM-SkillForge\\scripts\\l3_gap_closure\\test_constitution_hard_gate.py",
+      "report_path": "D:\\GM-SkillForge\\reports\\l3_gap_closure\\2026-03-06\\A_constitution_hard_gate.json",
+      "passed": true,
+      "returncode": 0,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    },
+    {
+      "test_id": "B_registry_graph_integrity",
+      "script": "D:\\GM-SkillForge\\scripts\\l3_gap_closure\\test_registry_graph_integrity.py",
+      "report_path": "D:\\GM-SkillForge\\reports\\l3_gap_closure\\2026-03-06\\B_registry_graph_integrity.json",
+      "passed": true,
+      "returncode": 0,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    },
+    {
+      "test_id": "C_incremental_delta_enforced",
+      "script": "D:\\GM-SkillForge\\scripts\\l3_gap_closure\\test_incremental_delta_enforced.py",
+      "report_path": "D:\\GM-SkillForge\\reports\\l3_gap_closure\\2026-03-06\\C_incremental_delta_enforced.json",
+      "passed": true,
+      "returncode": 0,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    }
+  ]
+}

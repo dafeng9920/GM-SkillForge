@@ -1,0 +1,38 @@
+{
+  "name": "SkillForge Task Dispatcher",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "node-1",
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "// SkillForge Task Dispatcher\n// Validates and dispatches tasks to execution nodes\nreturn [{\n  json: {\n    task_id: '{{$now.format(\"yyyyMMddHHmmss\")}}',\n    status: 'pending',\n    dispatched_at: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "node-2",
+      "name": "Validate Task",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    }
+  ],
+  "connections": {
+    "Start": {
+      "main": [[{"node": "Validate Task", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "skillforge-dispatcher-v1"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "gate_id": "PR3-FINAL-GATE",
+  "timestamp": "2026-03-04T17:10:00Z",
+  "decision": "ALLOW",
+  "summary": {
+    "files_check": {
+      "PR3_execution_report.yaml": "EXISTS - status: COMPLETED",
+      "PR3_review_decision.json": "EXISTS - decision: ALLOW",
+      "PR3_compliance_attestation.json": "EXISTS - decision: PASS"
+    },
+    "data_freshness": {
+      "PR3_execution_report_timestamp": "2026-03-04T08:50:00Z",
+      "PR3_review_decision_timestamp": "2026-03-04T12:00:00Z",
+      "PR3_compliance_attestation_timestamp": "2026-03-04T17:05:00Z",
+      "status": "CURRENT - all attestations aligned"
+    }
+  },
+  "rules_applied": [
+    "execution_report = COMPLETED AND review_decision = ALLOW AND compliance = PASS => ALLOW"
+  ],
+  "analysis": {
+    "execution_report_status": "COMPLETED - validate_iteration_artifacts.py implemented with 8 SF_ITERATION_ error codes",
+    "review_decision_status": "ALLOW - 5/5 criteria PASS",
+    "compliance_attestation_status": "PASS - all hard_rules_check PASS, all required_evidence PRESENT",
+    "pr3_objectives": {
+      "hash_change_detection": "IMPLEMENTED",
+      "artifact_generation": "IMPLEMENTED",
+      "fail_closed_policy": "IMPLEMENTED"
+    }
+  },
+  "implementation_verification": {
+    "validate_iteration_artifacts.py": "PRESENT - scripts/validate_iteration_artifacts.py",
+    "artifact_templates": {
+      "diff_template.json": "PRESENT - audit/templates/diff_template.json (diff_v0)",
+      "rationale_template.json": "PRESENT - audit/templates/rationale_template.json (rationale_v0)",
+      "tombstone_template.json": "PRESENT - audit/templates/tombstone_template.json (tombstone_v0)"
+    },
+    "error_codes": "8 SF_ITERATION_ codes defined",
+    "fail_closed_enforcement": "Active - exit code 0=PASS, 1=FAIL"
+  },
+  "required_actions": [],
+  "blocking_reason": null,
+  "final_verdict": "PR3_FINAL_DECISION=ALLOW"
+}

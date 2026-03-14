@@ -1,0 +1,51 @@
+name: t2-integrity-regression-guard-skill
+description: 持续回归 T2 完整性防线，确保篡改检测触发 DENY 且阻断发布。
+version: v1.0.0
+frozen_at: 2026-02-25
+owner: platform-governance
+tags:
+  - l3
+  - t2
+  - integrity
+  - tamper-detection
+  - regression
+  - fail-closed
+default_prompt: |
+  执行 T2 完整性回归并验证“篡改必阻断”。
+  1) 运行完整性相关测试
+  2) 确认 tamper -> DENY -> publish rejected
+  3) 输出报告并标注 ruling.rule_id 与证据
+
+capabilities:
+  - run_t2_integrity_tests
+  - tamper_conflict_detection
+  - deny_on_integrity_violation
+  - integrity_evidence_validation
+
+input_schema:
+  repo_root:
+    type: string
+    required: true
+    description: 仓库根目录
+  test_command:
+    type: string
+    required: true
+    description: 目标测试命令（默认 test_registry_graph_integrity）
+  expected_rule_id:
+    type: string
+    required: true
+    description: 期望规则ID（INTEGRITY_TAMPER_DETECTED）
+
+output_schema:
+  report_path:
+    type: string
+    description: B_registry_graph_integrity.json 路径
+  conflict_or_block_detected:
+    type: boolean
+    description: 是否检测到冲突或阻断
+  publish_status:
+    type: string
+    description: 发布状态（期望 rejected）
+  passed:
+    type: boolean
+    description: 评估是否通过

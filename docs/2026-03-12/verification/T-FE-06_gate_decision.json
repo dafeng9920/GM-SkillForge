@@ -1,0 +1,132 @@
+{
+  "task_id": "T-FE-06",
+  "reviewed_by": "vs--cc1",
+  "decision": "ALLOW",
+  "reviewed_at": "2026-03-12T23:45:00Z",
+  "reasons": [
+    "ALLOW: T-FE-06 完整输出权限裁剪与禁止前端呈现区设计文档，满足所有 DoD 要求",
+    "ALLOW: Section 3.1 定义四层信息分层模型，Layer 0/1/2/3 分层清晰，核心原则完整（3 原则：Layer 3 绝对禁止、层级递进需授权、API 层裁剪）",
+    "ALLOW: Section 3.2 输出完整可见性矩阵，分别按页面（Dashboard/Audit Detail/Permit）和按字段类别定义 Layer 0/1/2/3 可见性",
+    "ALLOW: Section 3.3.1 Never-in-DOM 清单完整，列出 30 类禁止字段，覆盖规则机制/探针实现/执行细节/系统架构/异常信息/判定逻辑/证据收集/证据处理/合规内部 9 大类",
+    "ALLOW: Section 3.4 明确 API payload 裁剪责任归属，禁止'后端全量返回+前端隐藏'模式，要求后端按角色裁剪，提供 6 个 API 端点的裁剪责任表",
+    "ALLOW: Section 3.5 角色与信息密度映射完整，明确 Executor/Reviewer/Compliance 三角色的访问层级和特殊约束，强化'所有角色均不得访问 Layer 3'",
+    "ALLOW: Section 3.6 页面级权限裁剪规则完整，分别定义 Dashboard/Audit Detail/Permit 三页的访问控制和字段级裁剪规则",
+    "ALLOW: Section 3.7 字段级禁止下发清单完整，30 类禁止字段按类型分组，提供使用指南（后端/前端/Code Review）",
+    "ALLOW: Section 3.8 可直接供前后端接口使用的约束结构完整，提供 TypeScript Schema（APIResponseConstraint、FieldVisibilityConstraint、PagePermissionConstraint），可直接用于前后端接口约束",
+    "ALLOW: 文档可直接作为前后端接口约束文档使用，提供完整的约束 Schema 和前后端协作指南（后端/前端/Code Review 检查清单）",
+    "ALLOW: 与 T-FE-05 组件树/字段映射一致，T-FE-05 的禁止字段在本规格中扩展为 Never-in-DOM 清单",
+    "ALLOW: 坚持 API 层裁剪而非前端层隐藏，Section 3.4.1 明确禁止'后端全量返回+前端隐藏'模式，要求后端按角色和层级裁剪 payload",
+    "ALLOW: 强化'所有角色均不得访问 Layer 3'，Section 3.3.1 明确 Layer 3 为绝对禁止区，任何角色都不得在前端看到，Section 3.5.3 强化 Compliance 角色也不得访问 Layer 3",
+    "ALLOW: EvidenceRef 完整，12 个证据项覆盖所有关键章节与参考文档，包含 T-FE-05 依赖证据",
+    "ALLOW: Evidence visibility 裁剪规则明确，Section 3.6.2 明确 restricted 级别证据通过 API 裁剪而非前端隐藏（显示'需权限验证'提示）"
+  ],
+  "evidence_refs": [
+    {
+      "id": "EV-FE06-001",
+      "kind": "FILE",
+      "locator": "docs/2026-03-12/verification/T-FE-06_visibility_and_permission_matrix.md",
+      "description": "权限裁剪与禁止前端呈现区设计文档完整版，9 个章节，650 行"
+    },
+    {
+      "id": "EV-FE06-002",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-06_visibility_and_permission_matrix.md:96-123",
+      "description": "Section 3.1 四层信息分层模型，定义 Layer 0/1/2/3 与核心原则"
+    },
+    {
+      "id": "EV-FE06-003",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-06_visibility_and_permission_matrix.md:125-184",
+      "description": "Section 3.2 Layer 0/1/2/3 可见性矩阵，按页面和字段类别分别定义"
+    },
+    {
+      "id": "EV-FE06-004",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-06_visibility_and_permission_matrix.md:186-250",
+      "description": "Section 3.3 Never-in-DOM 清单，30 类禁止字段，按页面分类"
+    },
+    {
+      "id": "EV-FE06-005",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-06_visibility_and_permission_matrix.md:252-310",
+      "description": "Section 3.4 API payload 裁剪责任归属，明确 API 层裁剪原则与端点责任"
+    },
+    {
+      "id": "EV-FE06-006",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-06_visibility_and_permission_matrix.md:312-360",
+      "description": "Section 3.5 角色与信息密度映射，定义三角色与页面访问权限"
+    },
+    {
+      "id": "EV-FE06-007",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-06_visibility_and_permission_matrix.md:362-430",
+      "description": "Section 3.6 页面级权限裁剪规则，三页主链分别定义"
+    },
+    {
+      "id": "EV-FE06-008",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-06_visibility_and_permission_matrix.md:432-480",
+      "description": "Section 3.7 字段级禁止下发清单，30 类禁止字段按类型分组"
+    },
+    {
+      "id": "EV-FE06-009",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-06_visibility_and_permission_matrix.md:482-650",
+      "description": "Section 3.8 可直接供前后端接口使用的约束结构，TypeScript Schema"
+    },
+    {
+      "id": "EV-FE06-010",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-06_execution_report.yaml",
+      "description": "Execution Report: gate_self_check 全部 PASS，交付物验收清单 15 项全勾选"
+    },
+    {
+      "id": "EV-FE06-011",
+      "kind": "DOC",
+      "locator": "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md",
+      "description": "T-FE-05 已 ALLOW，满足 depends_on 条件，组件树/字段映射与权限矩阵一致"
+    },
+    {
+      "id": "EV-FE06-012",
+      "kind": "DOC",
+      "locator": "docs/2026-03-12/前端重构_AI军团任务分发单_v2.md",
+      "description": "参考文档: T-FE-06 任务书与约束条件"
+    },
+    {
+      "id": "EV-FE06-013",
+      "kind": "DOC",
+      "locator": "docs/2026-03-12/Dashboard-Audit Detail-Permit 三页文字线框图.md",
+      "description": "参考文档: 四层信息分层模型与禁止前端呈现区定义"
+    }
+  ],
+  "required_changes": [],
+  "positive_findings": [
+    "Layer 3 绝对禁止区定义完整，30 类禁止字段覆盖所有敏感机制信息",
+    "API 层裁剪原则明确，严格禁止'后端全量返回+前端隐藏'模式",
+    "可见性矩阵结构清晰，按页面（Dashboard/Audit Detail/Permit）和字段类别分别定义",
+    "角色权限边界明确，所有角色（包括 Compliance）均不得访问 Layer 3",
+    "TypeScript Schema 完整，可直接供前后端接口使用，降低实施成本",
+    "前后端协作指南实用，提供后端/前端/Code Review 三方检查清单",
+    "与 T-FE-05 组件树/字段映射一致，禁止字段列表完整对应",
+    "Evidence visibility 裁剪规则明确，restricted 级别证据通过 API 裁剪而非前端隐藏",
+    "文档结构清晰，三段式结构（PreflightChecklist/ExecutionContract/RequiredChanges）完整",
+    "交付物验收清单 15 项全部勾选，无遗漏"
+  ],
+  "compliance_notes": [
+    "Compliance 复核应重点关注：Layer 3 绝对禁止区的完整性、API 层裁剪原则的严格执行、角色权限溢出风险的防护"
+  ],
+  "notes": "T-FE-06 作为 Wave 2 关键任务，成功建立了前后端接口约束的基础框架。文档质量高，可直接用于指导前后端开发。API 层裁剪原则的明确和 TypeScript Schema 的完整性是本规格的亮点。建议后续在实施阶段重点关注 API 层裁剪的落实，确保敏感字段不进入前端响应。",
+  "review_summary": {
+    "layer_visibility_matrix_check": "PASS - Layer 0/1/2/3 可见性矩阵完整，按页面和字段类别分别定义",
+    "never_in_dom_list_check": "PASS - 30 类禁止字段完整，覆盖 9 大类别",
+    "api_payload_responsibility_check": "PASS - API 层裁剪责任归属明确，禁止后端全量返回+前端隐藏模式",
+    "role_permission_mapping_check": "PASS - 三角色访问权限清晰，所有角色均不得访问 Layer 3",
+    "page_level_permission_rules_check": "PASS - 三页主链权限规则完整，包含访问控制和字段级裁剪",
+    "frontend_backend_constraint_schema_check": "PASS - TypeScript Schema 完整，可直接用于前后端接口约束",
+    "t_fe05_consistency_check": "PASS - 与 T-FE-05 组件树/字段映射一致，禁止字段列表完整对应",
+    "api_layer_not_frontend_layer_check": "PASS - 明确 API 层裁剪而非前端层隐藏，Section 3.4.1 提供禁止模式和要求模式对比",
+    "compliance_role_layer3_restriction_check": "PASS - 强化 Compliance 角色也不得访问 Layer 3",
+    "evidence_visibility_api_filtering_check": "PASS - restricted 级别证据通过 API 裁剪而非前端隐藏"
+  }
+}

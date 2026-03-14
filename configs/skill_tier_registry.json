@@ -1,0 +1,393 @@
+{
+  "version": "2026-02-26.v1",
+  "policy": {
+    "tiers": [
+      "core",
+      "support",
+      "experimental"
+    ],
+    "mainline_rule": "Only core skills with enabled_for_mainline=true can be hard-wired in execution path",
+    "promotion_gate": "experimental/support -> core requires certification PASS + registry approval"
+  },
+  "summary": {
+    "generated_at_utc": "2026-02-26T12:48:59.434917+00:00",
+    "counts": {
+      "total": 41,
+      "core": 8,
+      "support": 26,
+      "experimental": 7,
+      "enabled_for_mainline": 8
+    }
+  },
+  "skills": [
+    {
+      "name": "ai-response-improvement-skill",
+      "source": "repo",
+      "path": "skills/ai-response-improvement-skill/SKILL.md",
+      "has_openai_yaml": true,
+      "tier": "support",
+      "enabled_for_mainline": false,
+      "reason": "Has openai.yaml but not mapped to mainline dispatch"
+    },
+    {
+      "name": "ci-skill-validation-skill",
+      "source": "repo",
+      "path": "skills/ci-skill-validation-skill/SKILL.md",
+      "has_openai_yaml": true,
+      "tier": "support",
+      "enabled_for_mainline": false,
+      "reason": "Has openai.yaml but not mapped to mainline dispatch"
+    },
+    {
+      "name": "decision-schema-normalizer-skill",
+      "source": "repo",
+      "path": "skills/decision-schema-normalizer-skill/SKILL.md",
+      "has_openai_yaml": true,
+      "tier": "support",
+      "enabled_for_mainline": false,
+      "reason": "Has openai.yaml but not mapped to mainline dispatch"
+    },
+    {
+      "name": "dispatch-broadcast-builder-skill",
+      "source": "repo",
+      "path": "skills/dispatch-broadcast-builder-skill/SKILL.md",
+      "has_openai_yaml": true,
+      "tier": "support",
+      "enabled_for_mainline": false,
+      "reason": "Has openai.yaml but not mapped to mainline dispatch"
+    },
+    {
+      "name": "dispatch-taskbook-generator-skill",
+      "source": "repo",
+      "path": "skills/dispatch-taskbook-generator-skill/SKILL.md",
+      "has_openai_yaml": true,
+      "tier": "support",
+      "enabled_for_mainline": false,
+      "reason": "Has openai.yaml but not mapped to mainline dispatch"
+    },
+    {
+      "name": "drill-evidence-collector-skill",
+      "source": "repo",
+      "path": "skills/drill-evidence-collector-skill/SKILL.md",
+      "has_openai_yaml": false,
+      "tier": "core",
+      "enabled_for_mainline": true,
+      "reason": "Referenced by dispatch registry"
+    },
+    {
+      "name": "evidence-chain-verify-skill",
+      "source": "repo",
+      "path": "skills/evidence-chain-verify-skill/SKILL.md",
+      "has_openai_yaml": false,
+      "tier": "experimental",
+      "enabled_for_mainline": false,
+      "reason": "Skeleton or local-only skill without openai.yaml"
+    },
+    {
+      "name": "evidence-freeze-board-skill",
+      "source": "repo",
+      "path": "skills/evidence-freeze-board-skill/SKILL.md",
+      "has_openai_yaml": true,
+      "tier": "support",
+      "enabled_for_mainline": false,
+      "reason": "Has openai.yaml but not mapped to mainline dispatch"
+    },
+    {
+      "name": "evidence-freeze-manifest-skill",
+      "source": "repo",
+      "path": "skills/evidence-freeze-manifest-skill/SKILL.md",
+      "has_openai_yaml": true,
+      "tier": "support",
+      "enabled_for_mainline": false,
+      "reason": "Has openai.yaml but not mapped to mainline dispatch"
+    },
+    {
+      "name": "example-data-processing-skill",
+      "source": "repo",
+      "path": "skills/example-data-processing-skill/SKILL.md",
+      "has_openai_yaml": true,
+      "tier": "support",
+      "enabled_for_mainline": false,
+      "reason": "Has openai.yaml but not mapped to mainline dispatch"
+    },
+    {
+      "name": "execution-guard-a-proposal-skill",
+      "source": "repo",
+      "path": "skills/execution-guard-a-proposal-skill/SKILL.md",
+      "has_openai_yaml": false,
+      "tier": "experimental",
+      "enabled_for_mainline": false,
+      "reason": "Skeleton or local-only skill without openai.yaml"
+    },
+    {
+      "name": "execution-guard-b-execution-skill",
+      "source": "repo",
+      "path": "skills/execution-guard-b-execution-skill/SKILL.md",
+      "has_openai_yaml": false,
+      "tier": "experimental",
+      "enabled_for_mainline": false,
+      "reason": "Skeleton or local-only skill without openai.yaml"
+    },
+    {
+      "name": "experience-template-retriever-skill",
+      "source": "repo",
+      "path": "skills/experience-template-retriever-skill/SKILL.md",
+      "has_openai_yaml": false,
+      "tier": "core",
+      "enabled_for_mainline": true,
+      "reason": "Referenced by dispatch registry"
+    },
+    {
+      "name": "final-gate-adjudicator-skill",
+      "source": "repo",
+      "path": "skills/final-gate-adjudicator-skill/SKILL.md",
+      "has_openai_yaml": true,
+      "tier": "support",
+      "enabled_for_mainline": false,
+      "reason": "Has openai.yaml but not mapped to mainline dispatch"
+    },
+    {
+      "name": "governance-orchestrator-skill",
+      "source": "repo",
+      "path": "skills/governance-orchestrator-skill/SKILL.md",
+      "has_openai_yaml": true,
+      "tier": "core",
+      "enabled_for_mainline": true,
+      "reason": "Referenced by dispatch registry"
+    },
+    {
+      "name": "l3-killer-gate-runner-skill",
+      "source": "repo",
+      "path": "skills/l3-killer-gate-runner-skill/SKILL.md",
+      "has_openai_yaml": true,
+      "tier": "support",
+      "enabled_for_mainline": false,
+      "reason": "Has openai.yaml but not mapped to mainline dispatch"
+    },
+    {
+      "name": "master-signoff-skill",
+      "source": "repo",
+      "path": "skills/master-signoff-skill/SKILL.md",
+      "has_openai_yaml": false,
+      "tier": "core",
+      "enabled_for_mainline": true,
+      "reason": "Referenced by dispatch registry"
+    },
+    {
+      "name": "multi-entry-consistency-checker-skill",
+      "source": "repo",
+      "path": "skills/multi-entry-consistency-checker-skill/SKILL.md",
+      "has_openai_yaml": true,
+      "tier": "support",
+      "enabled_for_mainline": false,
+      "reason": "Has openai.yaml but not mapped to mainline dispatch"
+    },
+    {
+      "name": "p0-final-adjudicator-skill",
+      "source": "repo",
+      "path": "skills/p0-final-adjudicator-skill/SKILL.md",
+      "has_openai_yaml": true,
+      "tier": "support",
+      "enabled_for_mainline": false,
+      "reason": "Has openai.yaml but not mapped to mainline dispatch"
+    },
+    {
+      "name": "p1-closing-freeze-skill",
+      "source": "repo",
+      "path": "skills/p1-closing-freeze-skill/SKILL.md",
+      "has_openai_yaml": false,
+      "tier": "experimental",
+      "enabled_for_mainline": false,
+      "reason": "Skeleton or local-only skill without openai.yaml"
+    },
+    {
+      "name": "p2-final-gate-aggregate-skill",
+      "source": "repo",
+      "path": "skills/p2-final-gate-aggregate-skill/SKILL.md",
+      "has_openai_yaml": false,
+      "tier": "experimental",
+      "enabled_for_mainline": false,
+      "reason": "Skeleton or local-only skill without openai.yaml"
+    },
+    {
+      "name": "permit-governance-skill",
+      "source": "repo",
+      "path": "skills/permit-governance-skill/SKILL.md",
+      "has_openai_yaml": true,
+      "tier": "support",
+      "enabled_for_mainline": false,
+      "reason": "Has openai.yaml but not mapped to mainline dispatch"
+    },
+    {
+      "name": "policy-lock-check-skill",
+      "source": "repo",
+      "path": "skills/policy-lock-check-skill/SKILL.md",
+      "has_openai_yaml": false,
+      "tier": "experimental",
+      "enabled_for_mainline": false,
+      "reason": "Skeleton or local-only skill without openai.yaml"
+    },
+    {
+      "name": "protocol-gate-ci-checker-skill",
+      "source": "repo",
+      "path": "skills/protocol-gate-ci-checker-skill/SKILL.md",
+      "has_openai_yaml": true,
+      "tier": "support",
+      "enabled_for_mainline": false,
+      "reason": "Has openai.yaml but not mapped to mainline dispatch"
+    },
+    {
+      "name": "release-gate-skill",
+      "source": "repo",
+      "path": "skills/release-gate-skill/SKILL.md",
+      "has_openai_yaml": true,
+      "tier": "support",
+      "enabled_for_mainline": false,
+      "reason": "Has openai.yaml but not mapped to mainline dispatch"
+    },
+    {
+      "name": "rollback-drill-skill",
+      "source": "repo",
+      "path": "skills/rollback-drill-skill/SKILL.md",
+      "has_openai_yaml": false,
+      "tier": "experimental",
+      "enabled_for_mainline": false,
+      "reason": "Skeleton or local-only skill without openai.yaml"
+    },
+    {
+      "name": "rollback-tombstone-skill",
+      "source": "repo",
+      "path": "skills/rollback-tombstone-skill/SKILL.md",
+      "has_openai_yaml": true,
+      "tier": "support",
+      "enabled_for_mainline": false,
+      "reason": "Has openai.yaml but not mapped to mainline dispatch"
+    },
+    {
+      "name": "seed-gate-validator-skill",
+      "source": "repo",
+      "path": "skills/seed-gate-validator-skill/SKILL.md",
+      "has_openai_yaml": false,
+      "tier": "core",
+      "enabled_for_mainline": true,
+      "reason": "Referenced by dispatch registry"
+    },
+    {
+      "name": "t2-integrity-regression-guard-skill",
+      "source": "repo",
+      "path": "skills/t2-integrity-regression-guard-skill/SKILL.md",
+      "has_openai_yaml": true,
+      "tier": "support",
+      "enabled_for_mainline": false,
+      "reason": "Has openai.yaml but not mapped to mainline dispatch"
+    },
+    {
+      "name": "task-pack-writer-skill",
+      "source": "repo",
+      "path": "skills/task-pack-writer-skill/SKILL.md",
+      "has_openai_yaml": false,
+      "tier": "core",
+      "enabled_for_mainline": true,
+      "reason": "Referenced by dispatch registry"
+    },
+    {
+      "name": "trinity-dispatch-orchestrator-skill",
+      "source": "repo",
+      "path": "skills/trinity-dispatch-orchestrator-skill/SKILL.md",
+      "has_openai_yaml": false,
+      "tier": "core",
+      "enabled_for_mainline": true,
+      "reason": "Referenced by dispatch registry"
+    },
+    {
+      "name": "triple-record-validator-skill",
+      "source": "repo",
+      "path": "skills/triple-record-validator-skill/SKILL.md",
+      "has_openai_yaml": true,
+      "tier": "support",
+      "enabled_for_mainline": false,
+      "reason": "Has openai.yaml but not mapped to mainline dispatch"
+    },
+    {
+      "name": "wave-gate-orchestrator-skill",
+      "source": "repo",
+      "path": "skills/wave-gate-orchestrator-skill/SKILL.md",
+      "has_openai_yaml": true,
+      "tier": "support",
+      "enabled_for_mainline": false,
+      "reason": "Has openai.yaml but not mapped to mainline dispatch"
+    },
+    {
+      "name": "wave-recheck-generator-skill",
+      "source": "repo",
+      "path": "skills/wave-recheck-generator-skill/SKILL.md",
+      "has_openai_yaml": true,
+      "tier": "support",
+      "enabled_for_mainline": false,
+      "reason": "Has openai.yaml but not mapped to mainline dispatch"
+    },
+    {
+      "name": "ai_search_scanner",
+      "source": "agents",
+      "path": ".agents/skills/ai_search_scanner/SKILL.md",
+      "has_openai_yaml": false,
+      "tier": "support",
+      "enabled_for_mainline": false,
+      "reason": "Agent-level helper not explicitly wired into mainline"
+    },
+    {
+      "name": "execution_guard_a_proposal",
+      "source": "agents",
+      "path": ".agents/skills/execution_guard_a_proposal/SKILL.md",
+      "has_openai_yaml": false,
+      "tier": "support",
+      "enabled_for_mainline": false,
+      "reason": "Agent-level helper not explicitly wired into mainline"
+    },
+    {
+      "name": "execution_guard_b_compliance",
+      "source": "agents",
+      "path": ".agents/skills/execution_guard_b_compliance/SKILL.md",
+      "has_openai_yaml": false,
+      "tier": "support",
+      "enabled_for_mainline": false,
+      "reason": "Agent-level helper not explicitly wired into mainline"
+    },
+    {
+      "name": "governance_protocol",
+      "source": "agents",
+      "path": ".agents/skills/governance_protocol/SKILL.md",
+      "has_openai_yaml": false,
+      "tier": "core",
+      "enabled_for_mainline": true,
+      "reason": "Agent skill explicitly referenced by dispatch registry"
+    },
+    {
+      "name": "intelligence_factory",
+      "source": "agents",
+      "path": ".agents/skills/intelligence_factory/SKILL.md",
+      "has_openai_yaml": false,
+      "tier": "support",
+      "enabled_for_mainline": false,
+      "reason": "Agent-level helper not explicitly wired into mainline"
+    },
+    {
+      "name": "lobster_intelligence_harvester",
+      "source": "agents",
+      "path": ".agents/skills/lobster_intelligence_harvester/SKILL.md",
+      "has_openai_yaml": false,
+      "tier": "support",
+      "enabled_for_mainline": false,
+      "reason": "Agent-level helper not explicitly wired into mainline"
+    },
+    {
+      "name": "trend_sniffer",
+      "source": "agents",
+      "path": ".agents/skills/trend_sniffer/SKILL.md",
+      "has_openai_yaml": false,
+      "tier": "support",
+      "enabled_for_mainline": false,
+      "reason": "Agent-level helper not explicitly wired into mainline"
+    }
+  ]
+}

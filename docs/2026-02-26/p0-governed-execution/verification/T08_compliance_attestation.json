@@ -1,0 +1,300 @@
+{
+  "document_type": "T08_compliance_attestation",
+  "task_id": "T08",
+  "attestation_date": "2026-02-26",
+  "compliance_officer": "Kior-C",
+  "version": "1.0.0",
+
+  "attestation_summary": {
+    "decision": "PASS",
+    "summary": "T08 审计回执哈希修正实现符合合规要求。移除 Python hash()，统一使用 SHA-256(canonical payload) 生成回执哈希。EvidenceRef 数据结构完整，一致性测试通过 17/17。与 T02 canonical_json 正确集成，无跨任务冲突。"
+  },
+
+  "input_documents": {
+    "execution_report": "docs/2026-02-26/p0-governed-execution/verification/T08_execution_report.yaml",
+    "gate_decision": "docs/2026-02-26/p0-governed-execution/verification/T08_gate_decision.json",
+    "receipt_hash_report": "docs/2026-02-26/p0-governed-execution/verification/T08_receipt_hash_report.md"
+  },
+
+  "compliance_validation": {
+    "gate_decision_verdict": "ALLOW",
+    "gate_reviewer": "Kior-B",
+    "no_concerns_raised": true,
+    "no_required_changes": true,
+    "all_evidence_refs_present": true
+  },
+
+  "hard_rule_compliance": {
+    "evidence_integrity": {
+      "rule": "无 EvidenceRef 不得宣称完成",
+      "status": "PASS",
+      "evidence": {
+        "evidence_refs_count": 4,
+        "covers_implementation": true,
+        "covers_tests": true,
+        "covers_documentation": true
+      }
+    },
+
+    "no_bypass": {
+      "rule": "不得绕过 Compliance PASS 直接执行",
+      "status": "PASS",
+      "evidence": {
+        "gate_decision": "ALLOW",
+        "gate_decision_precedes_execution": true,
+        "compliance_attestation_follows_review": true
+      }
+    },
+
+    "dependency_satisfaction": {
+      "rule": "不得跳过 depends_on",
+      "status": "PASS",
+      "evidence": {
+        "depends_on": ["T01", "T02"],
+        "t01_status": "ALLOW",
+        "t02_status": "ALLOW",
+        "t01_integration": "policy_check 框架已建立",
+        "t02_integration": "canonical_json_hash() 直接使用"
+      }
+    },
+
+    "no_side_effects_without_permit": {
+      "rule": "涉及副作用操作的任务必须获得 permit=VALID",
+      "status": "PASS",
+      "evidence": {
+        "task_scope": "代码新建/修改 + 文档",
+        "no_runtime_side_effects": true,
+        "permit_required": false,
+        "permit_status": "N/A"
+      }
+    },
+
+    "only_modified_designated_files": {
+      "rule": "不得越权修改其他任务输出文件",
+      "status": "PASS",
+      "evidence": {
+        "modified_files": [
+          "skillforge-spec-pack/skillforge/src/utils/__init__.py"
+        ],
+        "created_files": [
+          "skillforge-spec-pack/skillforge/src/utils/receipt_hash.py",
+          "skillforge-spec-pack/skillforge/tests/test_receipt_hash.py",
+          "docs/2026-02-26/p0-governed-execution/verification/T08_receipt_hash_report.md"
+        ],
+        "cross_task_violations": "无"
+      }
+    }
+  },
+
+  "acceptance_criteria_compliance": {
+    "sha256_canonical_payload": {
+      "criteria": "receipt hash = SHA-256(canonical payload)",
+      "status": "PASS",
+      "evidence": {
+        "function": "compute_receipt_hash()",
+        "implementation": "canonical_json_hash(payload.to_dict())",
+        "algorithm": "hashlib.sha256",
+        "hash_length": "64 hex characters",
+        "test_ref": "test_hash_length_is_64"
+      }
+    },
+
+    "no_python_hash": {
+      "criteria": "去除 Python hash()",
+      "status": "PASS",
+      "evidence": {
+        "codebase_search": "hash\\(",
+        "result": "未发现 Python 内置 hash() 使用",
+        "used_alternative": "hashlib.sha256"
+      }
+    },
+
+    "consistency_tests": {
+      "criteria": "提供一致性测试结果",
+      "status": "PASS",
+      "evidence": {
+        "test_function": "verify_receipt_consistency()",
+        "iterations_tested": [10, 50, 100, 200, 500],
+        "unique_hashes": 1,
+        "total_tests": 17,
+        "all_passed": true
+      }
+    },
+
+    "evidence_ref_complete": {
+      "criteria": "EvidenceRef 完整",
+      "status": "PASS",
+      "evidence": {
+        "dataclass": "EvidenceRef",
+        "required_fields": [
+          "envelope_id",
+          "envelope_hash",
+          "storage_location",
+          "received_at"
+        ],
+        "optional_fields": [
+          "verified",
+          "evidence_type",
+          "node_id"
+        ],
+        "methods": ["to_dict()"],
+        "test_coverage": "TestEvidenceRef, TestIntegrationEvidenceRefComplete"
+      }
+    }
+  },
+
+  "security_compliance": {
+    "deterministic_hashing": {
+      "description": "跨平台一致性哈希",
+      "status": "COMPLIANT",
+      "evidence": {
+        "method": "canonical_json + SHA-256",
+        "key_order_independence": "true",
+        "cross_platform_consistent": "true"
+      }
+    },
+
+    "collision_resistance": {
+      "description": "哈希碰撞抗性",
+      "status": "COMPLIANT",
+      "evidence": {
+        "algorithm": "SHA-256",
+        "output_length": "256 bits",
+        "standard": "FIPS 180-4"
+      }
+    },
+
+    "no_random_components": {
+      "description": "无随机因素影响哈希",
+      "status": "COMPLIANT",
+      "evidence": {
+        "deterministic_only": "true",
+        "no_salt": "true",
+        "no_random_iv": "true"
+      }
+    },
+
+    "canonical_serialization": {
+      "description": "规范序列化",
+      "status": "COMPLIANT",
+      "evidence": {
+        "dependency": "T02 canonical_json",
+        "key_sorting": "true",
+        "consistent_format": "true"
+      }
+    }
+  },
+
+  "integration_compliance": {
+    "t02_canonical_json": {
+      "dependency_status": "SATISFIED",
+      "integration_method": "canonical_json_hash() 直接调用",
+      "purpose": "确保跨平台一致性哈希"
+    },
+
+    "t01_policy_baseline": {
+      "dependency_status": "SATISFIED",
+      "integration_method": "receipt_hash 可在 policy_check 验证流程中使用",
+      "compatible_with": "T01 PolicyDecision 结构"
+    }
+  },
+
+  "downstream_impact": {
+    "t09_protocol_tests": {
+      "status": "UNBLOCKED",
+      "enables": "可使用 compute_receipt_hash() 生成可验证的回执哈希"
+    },
+    "audit_pack_generation": {
+      "status": "UNBLOCKED",
+      "enables": "可使用 ReceiptPayload 和 EvidenceRef 构建审计包"
+    },
+    "t10_third_party_verification": {
+      "status": "UNBLOCKED",
+      "enables": "第三方可使用 compute_receipt_hash_from_dict() 独立验证"
+    }
+  },
+
+  "test_coverage_validation": {
+    "total_tests": 17,
+    "test_classes": 6,
+    "coverage_areas": [
+      "EvidenceRef 数据类",
+      "ReceiptPayload 数据类",
+      "哈希计算（核心）",
+      "一致性验证",
+      "便捷函数",
+      "集成测试（EvidenceRef 完整）"
+    ],
+    "all_tests_passable": true,
+    "status": "COMPLIANT"
+  },
+
+  "documentation_compliance": {
+    "implementation_report_exists": true,
+    "report_path": "docs/2026-02-26/p0-governed-execution/verification/T08_receipt_hash_report.md",
+    "api_documentation": true,
+    "usage_examples": true,
+    "security_considerations": true,
+    "integration_guide": true
+  },
+
+  "cross_reference_validation": {
+    "execution_report_status": "完成",
+    "gate_decision_verdict": "ALLOW",
+    "all_acceptance_criteria_met": true,
+    "all_inputs_consistent": true,
+    "consistency_notes": "三个输入文档结论一致：T08 审计回执哈希修正实现完整，符合所有验收标准"
+  },
+
+  "evidence_references": [
+    {
+      "id": "EV-T08-COMP-001",
+      "source": "T08_execution_report.yaml",
+      "locator": "deliverables",
+      "description": "交付物清单"
+    },
+    {
+      "id": "EV-T08-COMP-002",
+      "source": "T08_gate_decision.json",
+      "locator": "acceptance_criteria_matrix",
+      "description": "验收标准矩阵验证"
+    },
+    {
+      "id": "EV-T08-COMP-003",
+      "source": "receipt_hash.py",
+      "locator": "compute_receipt_hash()",
+      "description": "SHA-256(canonical payload) 实现"
+    },
+    {
+      "id": "EV-T08-COMP-004",
+      "source": "test_receipt_hash.py",
+      "locator": "TestVerifyReceiptConsistency",
+      "description": "一致性验证测试"
+    },
+    {
+      "id": "EV-T08-COMP-005",
+      "source": "receipt_hash.py",
+      "locator": "EvidenceRef dataclass",
+      "description": "EvidenceRef 数据结构定义"
+    }
+  ],
+
+  "compliance_notes": [
+    "SHA-256 是密码学安全哈希算法，符合 FIPS 180-4 标准",
+    "Canonical JSON 序列化确保不同运行环境的一致性",
+    "EvidenceRef 结构完整，包含所有必需字段用于审计追踪",
+    "建议在后续审计包生成流程中集成 compute_receipt_hash()",
+    "第三方验证可通过 compute_receipt_hash_from_dict() 实现"
+  ],
+
+  "final_attestation": {
+    "decision": "PASS",
+    "acceptance_criteria_satisfied": true,
+    "security_compliant": true,
+    "integration_compliant": true,
+    "test_coverage_adequate": true,
+    "documentation_complete": true,
+    "attestation_signature": "Kior-C",
+    "attestation_timestamp": "2026-02-26T22:15:00Z"
+  }
+}

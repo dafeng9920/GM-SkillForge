@@ -1,0 +1,42 @@
+name: dispatch-broadcast-builder-skill
+description: 从调度与校对结果生成可一键转发的群发指令、补单指令和纠偏文案。
+version: v1.0.0
+frozen_at: 2026-02-26
+owner: platform-governance
+tags:
+  - l6
+  - dispatch
+  - broadcast
+  - collaboration
+  - remediation
+default_prompt: |
+  根据 task_dispatch 和 wave recheck，输出可直接转发的任务消息，包含负责人、回传路径和验收标准。
+
+capabilities:
+  - message_template_generation
+  - role_targeted_dispatch
+  - reconciliation_broadcast
+  - delivery_ready_output
+
+input_schema:
+  dispatch_file:
+    type: string
+    required: true
+    description: 调度主文档
+  wave_status_file:
+    type: string
+    required: true
+    description: 重校对结果 JSON
+  target_tasks:
+    type: array
+    required: true
+    description: 目标任务列表
+
+output_schema:
+  broadcast_messages:
+    type: array
+    description: 可群发消息
+  reconciliation_messages:
+    type: array
+    description: 纠偏消息
+

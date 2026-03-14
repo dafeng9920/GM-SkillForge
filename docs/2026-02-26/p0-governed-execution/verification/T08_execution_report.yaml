@@ -1,0 +1,175 @@
+---
+# T08 Execution Report - ISSUE-07: 审计回执哈希修正
+task_id: "T08"
+issue_id: "ISSUE-07"
+task_name: "审计回执哈希修正"
+executor: "vs--cc3"
+execution_date: "2026-02-26"
+
+# 任务目标
+objective: "移除 Python hash()，统一 SHA-256(canonical_payload)"
+
+# 验收标准
+acceptance_criteria:
+  - criterion: "receipt hash = SHA-256(canonical payload)"
+    status: "PASS"
+    evidence: "compute_receipt_hash() 使用 canonical_json_hash()"
+  - criterion: "去除 Python hash()"
+    status: "PASS"
+    evidence: "代码库搜索确认无内置 hash() 使用"
+  - criterion: "提供一致性测试结果"
+    status: "PASS"
+    evidence: "17/17 测试通过"
+  - criterion: "EvidenceRef 完整"
+    status: "PASS"
+    evidence: "EvidenceRef 包含所有必需字段"
+
+# 交付物
+deliverables:
+  - name: "receipt_hash.py"
+    type: "module"
+    path: "skillforge-spec-pack/skillforge/src/utils/receipt_hash.py"
+    status: "created"
+  - name: "test_receipt_hash.py"
+    type: "test"
+    path: "skillforge-spec-pack/skillforge/tests/test_receipt_hash.py"
+    status: "created"
+  - name: "__init__.py 更新"
+    type: "update"
+    path: "skillforge-spec-pack/skillforge/src/utils/__init__.py"
+    status: "updated"
+  - name: "T08_receipt_hash_report.md"
+    type: "report"
+    path: "docs/2026-02-26/p0-governed-execution/verification/T08_receipt_hash_report.md"
+    status: "created"
+  - name: "T08_execution_report.yaml"
+    type: "report"
+    path: "docs/2026-02-26/p0-governed-execution/verification/T08_execution_report.yaml"
+    status: "created"
+
+# 模块导出
+exports:
+  - "EvidenceRef"
+  - "ReceiptPayload"
+  - "compute_receipt_hash"
+  - "compute_receipt_hash_from_dict"
+  - "verify_receipt_consistency"
+  - "create_evidence_ref"
+  - "create_receipt_payload"
+
+# 测试结果
+test_results:
+  file: "skillforge/tests/test_receipt_hash.py"
+  command: "pytest skillforge/tests/test_receipt_hash.py -v"
+  total_tests: 17
+  passed: 17
+  failed: 0
+  skipped: 0
+  duration_seconds: 0.08
+
+  test_classes:
+    - class: "TestEvidenceRef"
+      tests: 2
+      passed: 2
+    - class: "TestReceiptPayload"
+      tests: 2
+      passed: 2
+    - class: "TestComputeReceiptHash"
+      tests: 5
+      passed: 5
+    - class: "TestVerifyReceiptConsistency"
+      tests: 3
+      passed: 3
+    - class: "TestConvenienceFunctions"
+      tests: 2
+      passed: 2
+    - class: "TestIntegrationEvidenceRefComplete"
+      tests: 3
+      passed: 3
+
+# 一致性验证
+consistency_verification:
+  iterations_tested: [10, 50, 100, 200, 500]
+  unique_hashes: 1
+  consistent: true
+  hash_algorithm: "SHA-256"
+  hash_length_hex: 64
+
+# EvidenceRef 字段验证
+evidence_ref_fields:
+  - field: "envelope_id"
+    type: "str"
+    required: true
+  - field: "envelope_hash"
+    type: "str"
+    required: true
+  - field: "storage_location"
+    type: "str"
+    required: true
+  - field: "received_at"
+    type: "str"
+    required: true
+  - field: "verified"
+    type: "bool"
+    default: "false"
+  - field: "evidence_type"
+    type: "str"
+    default: "evidence_envelope.v1"
+  - field: "node_id"
+    type: "Optional[str]"
+    default: "null"
+
+# 依赖模块
+dependencies:
+  - module: "canonical_json"
+    functions:
+      - "canonical_json"
+      - "canonical_json_hash"
+    used_by:
+      - "compute_receipt_hash"
+      - "compute_receipt_hash_from_dict"
+
+# 技术验证
+technical_verification:
+  python_hash_usage:
+    search_pattern: "hash\\("
+    found_in_code: false
+    notes: "代码库中未发现 Python 内置 hash() 使用"
+
+  canonical_json_usage:
+    module: "skillforge.src.utils.canonical_json"
+    verified: true
+    notes: "使用 canonical_json_hash() 确保跨平台一致性"
+
+  sha256_implementation:
+    module: "hashlib"
+    algorithm: "sha256"
+    output_encoding: "hex"
+    output_length: 64
+
+# 状态汇总
+status_summary:
+  task_status: "COMPLETED"
+  all_acceptance_criteria_met: true
+  all_tests_passing: true
+  deliverables_complete: true
+  ready_for_integration: true
+
+# 问题与解决
+issues_and_resolutions:
+  - issue: "无"
+    resolution: "N/A"
+
+# 后续建议
+next_steps:
+  - "将 receipt_hash 模块集成到审计包生成流程"
+  - "在 pack_publish 节点中使用 compute_receipt_hash()"
+  - "添加 receipt hash 到 AuditPack.hashes 字段"
+
+# 元数据
+metadata:
+  issue_ref: "ISSUE-07"
+  p0_task: true
+  l6_protocol: true
+  dependencies_satisfied: true
+  blocking: false

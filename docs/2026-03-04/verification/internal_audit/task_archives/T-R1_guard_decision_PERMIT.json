@@ -1,0 +1,55 @@
+{
+  "decision": "DENY",
+  "error_code": "SF_DELIVERY_N8N_MISSING",
+  "errors": [
+    {
+      "code": "SF_DELIVERY_N8N_MISSING",
+      "message": "Delivery incomplete: missing 4 items"
+    }
+  ],
+  "required_changes": [
+    "Add missing delivery items: add required delivery item: n8n at pattern workflows/**/*.json; add required delivery item: Evidence at pattern artifacts/*/; add required delivery item: AuditPack at pattern audit_pack/*.json; add required delivery item: Permit at pattern permits/*/*.json"
+  ],
+  "permit_binding": {
+    "status": "PASS",
+    "error_code": null,
+    "missing_hashes": [],
+    "missing_fields": [],
+    "invalid_hashes": []
+  },
+  "delivery_completeness": {
+    "status": "FAIL",
+    "error_code": "SF_DELIVERY_N8N_MISSING",
+    "missing_items": [
+      {
+        "category": "n8n",
+        "pattern": "workflows/**/*.json"
+      },
+      {
+        "category": "Evidence",
+        "pattern": "artifacts/*/"
+      },
+      {
+        "category": "AuditPack",
+        "pattern": "audit_pack/*.json"
+      },
+      {
+        "category": "Permit",
+        "pattern": "permits/*/*.json"
+      }
+    ],
+    "present_items": [
+      {
+        "category": "Blueprint",
+        "path": "D:\\GM-SkillForge\\contracts\\dsl\\demand_dsl_v0.schema.yml"
+      },
+      {
+        "category": "Skill",
+        "path": "D:\\GM-SkillForge\\skills\\ai-response-improvement-skill"
+      }
+    ]
+  },
+  "checked_at": "2026-03-04T12:12:18.625336+00:00",
+  "guard_version": "v0",
+  "fail_closed_policy": true
+}

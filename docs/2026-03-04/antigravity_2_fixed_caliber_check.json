@@ -1,0 +1,60 @@
+{
+  "decision": "DENY",
+  "error_code": "SF_PERMIT_HASH_MISMATCH",
+  "errors": [
+    {
+      "code": "SF_PERMIT_HASH_MISMATCH",
+      "message": "Permit hash mismatch: demand_hash, contract_hash, decision_hash"
+    }
+  ],
+  "required_changes": [
+    "FIXED-CALIBER VIOLATION: Permit hashes must match actual three-rights files. Option A: Re-sign permit with current three-rights files. Option B: Restore original three-rights files that match the permit."
+  ],
+  "permit_binding": {
+    "status": "PASS",
+    "error_code": null,
+    "missing_hashes": [],
+    "missing_fields": [],
+    "invalid_hashes": []
+  },
+  "permit_hash_consistency": {
+    "status": "FAIL",
+    "error_code": "SF_PERMIT_HASH_MISMATCH",
+    "permit_hashes": {
+      "demand_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "contract_hash": "cc8321d6375c494d043fdd0260f21bc0ec51dacc9f6abb7f909cdcd3041b78bf",
+      "decision_hash": "86ae35d58a6aa3b5742df94ef9d7162219f0106a911ae1954c1f0604aaec805d"
+    },
+    "computed_hashes": {
+      "demand_hash": "0aadae06454b317fbefc9c997e63336128752993552909090ead5ccfd8039429",
+      "contract_hash": "cf9436bed520a4d6edd0e084ab3da4df1b3cf7a6c540a571daf8503a20465f8a",
+      "decision_hash": "80bbb0b07dc13e01e32a93f8c405686f0f011bae172749b8a3e39db3f7d51e2a"
+    },
+    "mismatch_details": [
+      {
+        "field": "demand_hash",
+        "permit_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "actual_hash": "0aadae06454b317fbefc9c997e63336128752993552909090ead5ccfd8039429",
+        "matches": false
+      },
+      {
+        "field": "contract_hash",
+        "permit_hash": "cc8321d6375c494d043fdd0260f21bc0ec51dacc9f6abb7f909cdcd3041b78bf",
+        "actual_hash": "cf9436bed520a4d6edd0e084ab3da4df1b3cf7a6c540a571daf8503a20465f8a",
+        "matches": false
+      },
+      {
+        "field": "decision_hash",
+        "permit_hash": "86ae35d58a6aa3b5742df94ef9d7162219f0106a911ae1954c1f0604aaec805d",
+        "actual_hash": "80bbb0b07dc13e01e32a93f8c405686f0f011bae172749b8a3e39db3f7d51e2a",
+        "matches": false
+      }
+    ]
+  },
+  "delivery_completeness": null,
+  "three_hash": null,
+  "checked_at": "2026-03-04T14:47:46.436789+00:00",
+  "guard_version": "Antigravity-2",
+  "execution_environment": "LOCAL-ANTIGRAVITY",
+  "fail_closed_policy": true
+}

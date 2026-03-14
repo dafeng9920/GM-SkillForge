@@ -1,0 +1,38 @@
+name: decision-schema-normalizer-skill
+description: 标准化 gate/compliance 决策 JSON 字段，修复解析失败与 decision 字段漂移。
+version: v1.0.0
+frozen_at: 2026-02-26
+owner: platform-governance
+tags:
+  - l6
+  - schema
+  - normalization
+  - decision
+  - json
+default_prompt: |
+  对 gate/compliance 文件做字段标准化，确保 JSON 可解析并包含 decision 字段，不改变原判定语义。
+
+capabilities:
+  - decision_schema_alignment
+  - json_strict_format_fix
+  - semantic_preservation
+  - normalization_report
+
+input_schema:
+  target_files:
+    type: array
+    required: true
+    description: 需要标准化的 JSON 文件
+  required_fields:
+    type: object
+    required: true
+    description: 必需字段定义
+
+output_schema:
+  normalized_files:
+    type: array
+    description: 已处理文件及变更状态
+  schema_diff_report:
+    type: string
+    description: 标准化差异报告路径
+

@@ -1,0 +1,129 @@
+{
+  "recheck_id": "T-G1-NIGHTLY-RECHECK-20260304",
+  "environment": "LOCAL-ANTIGRAVITY",
+  "triggered_at": "2026-03-04T21:00:00Z",
+  "artifact_index": "docs/2026-03-04/verification/T-G1_artifact_index.json",
+  "recheck_summary": {
+    "overall_status": "FAIL_CLOSED",
+    "decision": "BLOCK",
+    "reason": "Delivery Completeness 检测到漂移：缺失 n8n, Evidence, AuditPack, 四项必需产物"
+  },
+  "validation_results": {
+    "permit_binding_check": {
+      "status": "PASS",
+      "validated_at": "2026-03-04T12:22:38Z",
+      "permit_path": "docs/2026-03-04/verification/PR5_permit_only.json",
+      "validated_fields": {
+        "demand_hash": "PRESENT",
+        "contract_hash": "PRESENT",
+        "decision_hash": "PRESENT",
+        "audit_pack_hash": "PRESENT",
+        "revision": "PRESENT"
+      },
+      "hash_values": {
+        "demand_hash": "3d54cc32e36fe7b44e16e0038b6eb4e65507789bb1074c580f41af7165ee7b3a",
+        "contract_hash": "d078e33a0d801d8a08bccd283c6769b843686d783bf6981acd9c97e391061ec7",
+        "decision_hash": "2aecf617b766d8c6d4d326b492bc4563f27d89aecca8f797f97423466108df42",
+        "audit_pack_hash": "sha256:ff3e30ae8f68990d72db024658becb70fc75463cdbdefdec94a14d98d46c15ef",
+        "revision": "test_rev_001"
+      }
+    },
+    "delivery_completeness_check": {
+      "status": "FAIL",
+      "validated_at": "2026-03-04T12:22:39Z",
+      "error_code": "SF_DELIVERY_N8N_MISSING",
+      "present_items": [
+        {"category": "Blueprint", "path": "contracts/dsl/demand_dsl_v0.schema.yml"},
+        {"category": "Skill", "path": "skills/ai-response-improvement-skill"}
+      ],
+      "missing_items": [
+        {"category": "n8n", "pattern": "workflows/**/*.json"},
+        {"category": "Evidence", "pattern": "artifacts/*/"},
+        {"category": "AuditPack", "pattern": "audit_pack/*.json"},
+        {"category": "Permit", "pattern": "permits/*/*.json"}
+      ]
+    },
+    "triad_records_check": {
+      "status": "PASS",
+      "validated_at": "2026-03-04T20:30:00Z",
+      "records": {
+        "execution": {
+          "status": "COMPLETED",
+          "decision": "PASS",
+          "evidence_file": "docs/2026-03-04/verification/T-G1_execution_report.md"
+        },
+        "review": {
+          "status": "COMPLETED",
+          "decision": "ALLOW",
+          "evidence_refs": [
+            "docs/2026-03-04/verification/T-S1_compliance_attestation.md",
+            "docs/2026-03-04/verification/T-V1_compliance_attestation.json"
+          ]
+        },
+        "compliance": {
+          "status": "PASS",
+          "decision": "PASS",
+          "evidence_refs": [
+            "docs/2026-03-04/verification/T-S1_compliance_attestation.json",
+            "docs/2026-03-04/verification/T-V1_compliance_attestation.json"
+          ]
+        }
+      },
+      "consistency_check": {
+        "execution_review_match": true,
+        "execution_compliance_match": true,
+        "review_compliance_match": true,
+        "all_triad_consistent": true
+      }
+    }
+  },
+  "drift_analysis": {
+    "has_drift": true,
+    "drift_categories": ["DELIVERY_COMPLETENESS"],
+    "drift_details": {
+      "delivery_completeness": {
+        "missing_count": 4,
+        "present_count": 2,
+        "completion_rate": "33.33%",
+        "severity": "CRITICAL"
+      }
+    }
+  },
+  "fail_closed_decision": {
+    "gate_id": "T-G1-NIGHTLY-RECHECK-GATE-20260304",
+    "decision": "BLOCK",
+    "orchestrator": "Antigravity-1",
+    "environment": "LOCAL-ANTIGRAVITY",
+    "decided_at": "2026-03-04T21:00:00Z",
+    "blocking_evidence": [
+      "Delivery Completeness FAIL: missing n8n (workflows/**/*.json)",
+      "Delivery Completeness FAIL: missing Evidence (artifacts/*/)",
+      "Delivery Completeness FAIL: missing AuditPack (audit_pack/*.json)",
+      "Delivery Completeness FAIL: missing Permit (permits/*/*.json)"
+    ],
+    "required_changes": [
+      "add required delivery item: n8n at pattern workflows/**/*.json",
+      "add required delivery item: Evidence at pattern artifacts/*/",
+      "add required delivery item: AuditPack at pattern audit_pack/*.json",
+      "add required delivery item: Permit at pattern permits/*/*.json"
+    ],
+    "unblock_conditions": [
+      "Create workflows directory with at least one n8n workflow JSON",
+      "Create artifacts directory with execution evidence",
+      "Create audit_pack directory with audit pack JSON",
+      "Create permits directory structure with permit JSON files"
+    ]
+  },
+  "next_steps": [
+    {
+      "priority": "P0",
+      "action": "Create missing delivery items to unblock the gate",
+      "owner": "Development Team"
+    },
+    {
+      "priority": "P1",
+      "action": "Re-run nightly recheck after all delivery items are present",
+      "owner": "Antigravity-1"
+    }
+  ]
+}

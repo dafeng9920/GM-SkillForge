@@ -1,9 +1,9 @@
-# Compliance Review 2026-02-24
+# Compliance Review 2026-03-11
 
-- Generated at: `2026-02-24T14:34:27Z`
+- Generated at: `2026-03-11T16:53:57Z`
 - Overall: **PASS**
-- Total checks: `13`
-- Passed: `13`
+- Total checks: `19`
+- Passed: `19`
 - Failed: `0`
 - Critical/High failed: `0`
 
@@ -46,7 +46,13 @@
 | CR-011 | HIGH | PASS | Governance dispatch core assets and compatibility alias are present |
 | CR-012 | MEDIUM | PASS | Governance orchestrator skill has cross-platform openai.yaml metadata |
 | CR-013 | HIGH | PASS | L4P5 triad closure chain and final gate decision are complete |
+| CR-014 | HIGH | PASS | T3-A core host-absorbed artifacts are present in authoritative repo paths |
+| CR-015 | HIGH | PASS | T3-A P2 report aligns authoritative governor skill and deprecated alias semantics |
+| CR-016 | HIGH | PASS | T3-A P3 baseline reflects Wave 1 promoted items and Wave 2 deferred items |
+| CR-017 | MEDIUM | PASS | T3-A checkpoint state aligns with manual host absorb and corrected Wave 2 defer split |
 | CR-007 | MEDIUM | PASS | Compliance review cadence is within target window |
+| CR-T-test_n8n_run_intent_internal_permit.py | HIGH | PASS | Regression test: skillforge/tests/test_n8n_run_intent_internal_permit.py |
+| CR-T-test_n8n_orchestration.py | HIGH | PASS | Regression test: skillforge/tests/test_n8n_orchestration.py |
 
 ## Required Changes
 

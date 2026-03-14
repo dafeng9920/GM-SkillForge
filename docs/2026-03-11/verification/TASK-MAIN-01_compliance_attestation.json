@@ -1,0 +1,213 @@
+{
+  "schema_version": "compliance_attestation_v1",
+  "task_id": "TASK-MAIN-01",
+  "compliance_agent": "Compliance Agent (Independent)",
+  "reviewed_at": "2026-03-11T13:10:00Z",
+  "decision": "FAIL",
+  "attestation": {
+    "decision": "FAIL",
+    "attestation_version": "1.0"
+  },
+  "reasons": [
+    "硬规则1违规：Permit 和 pre_absorb_check 因 Windows 环境被 SKIPPED，不得视为 PASS",
+    "硬规则2违规：execution_report.summary 声称'完成了一次真实的任务承接'，但实际只完成了后半段验证",
+    "硬规则5违规：当前材料只能证明'后半段保护机制工作正常'，不能证明'完整主链成功承接真实任务'",
+    "final_accept 正确返回 DENY，Compliance 必须坚持 fail-closed，不能绕过 DENY 结果给 PASS"
+  ],
+  "hard_rules_check": {
+    "rule_1_no_skipped_as_pass": {
+      "status": "FAIL",
+      "description": "不得把 SKIPPED 的 Permit / pre_absorb_check 视为 PASS",
+      "evidence": "execution_report.yaml lines 65-75: permit=SKIPPED, pre_absorb_check=SKIPPED",
+      "violation": "Permit 和 pre_absorb_check 都被 SKIPPED，不能证明'完整主链接入'"
+    },
+    "rule_2_no_code_as_complete": {
+      "status": "FAIL",
+      "description": "不得把'代码改动完成'冒充'完整主链承接完成'",
+      "evidence": "execution_report.yaml line 14: '完成了一次真实的任务承接'",
+      "violation": "代码修改完成，但主链承接不完整（缺 Permit 和 pre_absorb_check）"
+    },
+    "rule_3_no_pass_without_evidence": {
+      "status": "N/A",
+      "description": "不得无 EvidenceRef 给 PASS",
+      "note": "后半段有 EvidenceRef，前半段因 SKIPPED 无 EvidenceRef"
+    },
+    "rule_4_no_bypass_deny": {
+      "status": "CONFIRMED",
+      "description": "不得绕过 final_accept = DENY 的既有结果",
+      "evidence": "final_accept_decision.json decision=DENY",
+      "note": "final_accept DENY 是正确结果，Compliance 必须 FAIL"
+    },
+    "rule_5_no_partial_as_complete": {
+      "status": "FAIL",
+      "description": "不得把局部统一冒充'系统最终完成'",
+      "evidence": "execution_report.yaml claims '真实的任务承接' but only demonstrates '后半段保护机制'",
+      "violation": "只能证明后半段验证有效，不能证明完整主链接入成功"
+    }
+  },
+  "main_chain_analysis": {
+    "permitted_stages": {
+      "permit": {
+        "status": "SKIPPED",
+        "pass": false,
+        "required_for_complete_chain": true
+      },
+      "pre_absorb_check": {
+        "status": "SKIPPED",
+        "pass": false,
+        "required_for_complete_chain": true
+      },
+      "absorb": {
+        "status": "COMPLETED",
+        "pass": true,
+        "evidence_ref": "EV-TASK01-001"
+      },
+      "local_accept": {
+        "status": "COMPLETED",
+        "decision": "REQUIRES_CHANGES",
+        "pass": false,
+        "reason": "Missing triad records"
+      },
+      "final_accept": {
+        "status": "COMPLETED",
+        "decision": "DENY",
+        "pass": false,
+        "reason": "Missing triad records"
+      }
+    },
+    "completeness_assessment": {
+      "code_execution": "PASS - 代码修改和测试完成",
+      "backend_validation": "PASS - local_accept 和 final_accept 正确工作",
+      "frontend_gates": "FAIL - Permit 和 pre_absorb_check 未执行",
+      "triad_completeness": "FAIL - 缺少完整的三权分立记录",
+      "overall_main_chain": "INCOMPLETE - 不能证明'完整主链接入'"
+    }
+  },
+  "triad_records_status": {
+    "execution_report": {
+      "exists": true,
+      "path": "docs/2026-03-11/verification/TASK-MAIN-01_execution_report.yaml",
+      "status": "VALID"
+    },
+    "gate_decision": {
+      "exists": true,
+      "path": "docs/2026-03-11/verification/TASK-MAIN-01_gate_decision.json",
+      "decision": "REQUIRES_CHANGES",
+      "status": "VALID"
+    },
+    "compliance_attestation": {
+      "exists": true,
+      "path": "docs/2026-03-11/verification/TASK-MAIN-01_compliance_attestation.json",
+      "decision": "FAIL",
+      "status": "VALID"
+    },
+    "completeness": "PARTIAL - 三权记录都存在，但 decision 不是 PASS"
+  },
+  "critical_violations": [
+    {
+      "issue": "主链执行不完整",
+      "severity": "CRITICAL",
+      "rule": "规则1、规则5",
+      "details": "Permit 和 pre_absorb_check 因 Windows 环境被 SKIPPED，不能证明'完整主链接入'",
+      "evidence_ref": "execution_report.yaml lines 64-75, gate_decision.json lines 27-44"
+    },
+    {
+      "issue": "执行报告口径不准确",
+      "severity": "HIGH",
+      "rule": "规则2",
+      "details": "summary 声称'完成了一次真实的任务承接'，但实际只完成了后半段验证",
+      "evidence_ref": "execution_report.yaml line 14, gate_decision.json lines 35-39"
+    },
+    {
+      "issue": "任务目标未达成",
+      "severity": "HIGH",
+      "rule": "规则5",
+      "details": "任务目标'用新主链承接一次'要求 Permit → pre_absorb_check → absorb 完整流程",
+      "evidence_ref": "gate_decision.json lines 40-45"
+    }
+  ],
+  "positive_findings": [
+    {
+      "area": "代码质量",
+      "details": "check_akshare_funcs.py 增强完成，CLI 参数、JSON 输出、文档均正确实现",
+      "evidence_ref": "EV-TASK01-001, EV-REVIEW-001"
+    },
+    {
+      "area": "测试完整性",
+      "details": "gate_self_check 中 6 项测试全部通过",
+      "evidence_ref": "execution_report.yaml lines 109-128"
+    },
+    {
+      "area": "fail-closed 后半段验证",
+      "details": "local_accept 和 final_accept 正确工作，final_accept 返回 DENY 是预期结果",
+      "evidence_ref": "EV-TASK01-005, EV-TASK01-006, EV-REVIEW-004"
+    }
+  ],
+  "evidence_refs": [
+    {
+      "id": "EV-COMPLIANCE-001",
+      "kind": "FILE",
+      "locator": "check_akshare_funcs.py",
+      "description": "代码修改完成，CLI 参数和 JSON 输出已添加"
+    },
+    {
+      "id": "EV-COMPLIANCE-002",
+      "kind": "FILE",
+      "locator": "docs/2026-03-11/verification/TASK-MAIN-01_execution_report.yaml",
+      "description": "执行报告存在，但 Permit 和 pre_absorb_check 被标记为 SKIPPED"
+    },
+    {
+      "id": "EV-COMPLIANCE-003",
+      "kind": "FILE",
+      "locator": "docs/2026-03-11/verification/TASK-MAIN-01_gate_decision.json",
+      "description": "Review Agent 正确识别主链执行不完整问题"
+    },
+    {
+      "id": "EV-COMPLIANCE-004",
+      "kind": "FILE",
+      "locator": "docs/2026-03-11/verification/TASK-MAIN-01_local_accept_decision.json",
+      "description": "local_accept 正确返回 REQUIRES_CHANGES"
+    },
+    {
+      "id": "EV-COMPLIANCE-005",
+      "kind": "FILE",
+      "locator": "docs/2026-03-11/verification/TASK-MAIN-01_final_accept_decision.json",
+      "description": "final_accept 正确返回 DENY（fail-closed 机制正常工作）"
+    },
+    {
+      "id": "EV-COMPLIANCE-006",
+      "kind": "FILE",
+      "locator": "dropzone/TASK-MAIN-01-RETRY/test_report.md",
+      "description": "测试报告完整，所有测试通过"
+    }
+  ],
+  "required_changes": [
+    {
+      "issue_key": "COMPLIANCE-TASK01-001",
+      "reason": "execution_report.summary 声称'完成了一次真实的任务承接'不准确",
+      "next_action": "修正为'demonstrates main chain backend validation (local_accept + final_accept)'",
+      "priority": "HIGH"
+    },
+    {
+      "issue_key": "COMPLIANCE-TASK01-002",
+      "reason": "主链执行不完整，Permit 和 pre_absorb_check 未执行",
+      "next_action": "在支持完整主链的环境中（Linux 或 WSL）重新执行完整流程",
+      "priority": "CRITICAL"
+    },
+    {
+      "issue_key": "COMPLIANCE-TASK01-003",
+      "reason": "当前结果只能证明'后半段保护机制工作正常'，不能证明'完整主链接入成功'",
+      "next_action": "调整任务目标为'验证主链后半段有效性'，或完成完整主链接入",
+      "priority": "HIGH"
+    }
+  ],
+  "clarifications": [
+    "本合规审查基于现有材料进行，不新增设计",
+    "代码修改本身是成功的，CLI 增强和测试均完成",
+    "fail-closed 后半段（local_accept + final_accept）验证有效",
+    "但 Permit → pre_absorb_check → absorb 完整流程未执行",
+    "Windows 环境限制是真实存在的，但不应因此夸大完成度",
+    "final_accept DENY 是正确结果，Compliance 必须坚持 FAIL"
+  ],
+  "compliance_statement": "TASK-MAIN-01 的 execution 侧工作（代码修改、测试、任务包）完成良好，fail-closed 后半段（local_accept + final_accept）验证有效。但作为'真实任务接主链'示范，未能证明完整主链流程的执行。Permit 和 pre_absorb_check 因 Windows 环境被 SKIPPED，违反硬规则1（不得把 SKIPPED 视为 PASS）和规则5（不得把局部统一冒充系统完成）。final_accept 正确返回 DENY，Compliance Agent 必须坚持 fail-closed，决定：FAIL。建议：1) 修正 execution_report 口径；2) 在支持完整主链的环境中重新执行；或 3) 调整任务目标为'验证主链后半段有效性'。"
+}

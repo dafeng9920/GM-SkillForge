@@ -1,0 +1,53 @@
+{
+  "decision": "DENY",
+  "error_code": "SF_FIXED_CALIBER_VIOLATION",
+  "errors": [
+    {
+      "code": "SF_FIXED_CALIBER_VIOLATION",
+      "message": "Fixed-caliber violation: demand"
+    }
+  ],
+  "required_changes": [
+    "PROHIBITED: Use fixed-caliber paths only. Violations: demand: expected .tmp/pr1_smoke/demand.json, got docs\\2026-02-25\\verification\\evidence_pass_snapshot\\MANIFEST.json"
+  ],
+  "permit_binding": {
+    "status": "PASS",
+    "error_code": null,
+    "missing_hashes": [],
+    "missing_fields": [],
+    "invalid_hashes": []
+  },
+  "fixed_caliber_binding": {
+    "status": "FAIL",
+    "error_code": "SF_FIXED_CALIBER_VIOLATION",
+    "fixed_caliber_id": "AG2-FIXED-CALIBER-TG1-20260304",
+    "error_details": [
+      {
+        "file": "demand",
+        "expected": ".tmp/pr1_smoke/demand.json",
+        "provided": "docs\\2026-02-25\\verification\\evidence_pass_snapshot\\MANIFEST.json",
+        "expected_normalized": ".tmp\\pr1_smoke\\demand.json",
+        "provided_normalized": "docs\\2026-02-25\\verification\\evidence_pass_snapshot\\MANIFEST.json"
+      }
+    ],
+    "expected_paths": {
+      "permit": "permits/default/tg1_baseline_permit.json",
+      "demand": ".tmp/pr1_smoke/demand.json",
+      "contract": ".tmp/pr1_smoke/contract.json",
+      "decision": ".tmp/pr1_smoke/decision.json"
+    },
+    "provided_paths": {
+      "permit": "permits\\default\\tg1_baseline_permit.json",
+      "demand": "docs\\2026-02-25\\verification\\evidence_pass_snapshot\\MANIFEST.json",
+      "contract": ".tmp\\pr1_smoke\\contract.json",
+      "decision": ".tmp\\pr1_smoke\\decision.json"
+    }
+  },
+  "permit_hash_consistency": null,
+  "delivery_completeness": null,
+  "three_hash": null,
+  "checked_at": "2026-03-04T14:54:50.205208+00:00",
+  "guard_version": "Antigravity-2",
+  "execution_environment": "LOCAL-ANTIGRAVITY",
+  "fail_closed_policy": true
+}

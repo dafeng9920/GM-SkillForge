@@ -1,0 +1,119 @@
+{
+  "task_id": "T-FE-05",
+  "executor": "vs--cc2",
+  "reviewer": "Antigravity-1",
+  "compliance_officer": "Kior-C",
+  "wave": "Wave 2",
+  "compliance_mode": "B Guard 硬审",
+  "reviewed_at": "2026-03-12T23:00:00Z",
+  "decision": "PASS",
+
+  "violations": [],
+
+  "evidence_refs": [
+    {
+      "id": "EV-COMP-FE05-001",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:209-228",
+      "description": "Dashboard 页面禁止字段：GateHealthCard 8 项（threshold/weight/rule_expression/probe_code/decision_logic/triggered_rule_details/rule_to_gate_mapping/decision_path_visualization）+ EvidenceCoverageCard 7 项"
+    },
+    {
+      "id": "EV-COMP-FE05-002",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:372-387",
+      "description": "Audit Detail 页面禁止字段：GateCard 5 项（rule_threshold/weight/details/probe_code/internal_topology）+ EvidenceRefItem 3 项 + 所有组件 3 项（exception_stack/module_name/call_chain）"
+    },
+    {
+      "id": "EV-COMP-FE05-003",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:514-524",
+      "description": "Permit 页面禁止字段 5 项：rule_threshold/weight/details/decision_logic_details/compliance_internal_notes"
+    },
+    {
+      "id": "EV-COMP-FE05-004",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:824-869",
+      "description": "Section 3.7 Never-in-DOM 字段清单：Layer 3 绝对禁止区 18 类（规则机制/探针实现/执行细节/系统架构/异常信息/判定逻辑/证据收集/证据处理）+ 三页额外禁止"
+    },
+    {
+      "id": "EV-COMP-FE05-005",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:790-821",
+      "description": "Section 3.6 API 层裁剪责任清单：核心原则明确'由 API 按角色返回不同 payload，敏感字段不得进入前端响应'，明确'不应在前端通过角色判断后再裁剪字段，不应全量下发给前端再隐藏'"
+    },
+    {
+      "id": "EV-COMP-FE05-006",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:802-810",
+      "description": "Section 3.6.2 按 API 端点裁剪清单：按端点（/dashboard/audit/:id/permit/:id/evidence/:id）、按角色、按允许字段/禁止字段三维分类"
+    },
+    {
+      "id": "EV-COMP-FE05-007",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:812-820",
+      "description": "Section 3.6.3 角色与可见性映射：明确 Executor/Reviewer/Compliance 可访问页面与层级，所有角色均不得访问 Layer 3"
+    },
+    {
+      "id": "EV-COMP-FE05-008",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:527-718",
+      "description": "Section 3.4 共享组件清单 6 个：StatusLabel（禁止营销词）/HashDisplay（禁止省略 hash）/EvidenceRefPanel（禁止全量展示）/PowerBoundary（禁止弱化三权分立）/PermitHeader（禁止成功页样式）/FooterActionBar（禁止错误状态 CTA）"
+    },
+    {
+      "id": "EV-COMP-FE05-009",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:720-787",
+      "description": "Section 3.5 页面间共享状态机：资产状态机（7 状态）+ Permit 状态机（6 状态）+ 跨页面状态同步，仅包含业务状态，无机制泄露"
+    },
+    {
+      "id": "EV-COMP-FE05-010",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:61-67",
+      "description": "Section 2.1 绝对禁止：包含'让前端接收 threshold/weight/internal topology'和'通过前端角色判断隐藏敏感字段'"
+    },
+    {
+      "id": "EV-COMP-FE05-011",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:14-22",
+      "description": "Section 1.1 Fail-Closed 风险枚举：前端权限裁剪、机制信息泄漏、混淆共享与专属、越权进入实现层、Builder 叙事残留防御措施"
+    },
+    {
+      "id": "EV-COMP-FE05-012",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/前端重构_AI军团任务分发单_v2.md:426-433",
+      "description": "参考文档任务书 T-FE-05 约束：必须明确哪些字段只能后端裁剪后返回，不得让前端接收 threshold/weight/internal topology，不得通过前端角色判断隐藏敏感字段"
+    }
+  ],
+
+  "required_changes": [],
+
+  "compliance_notes": [
+    "交付物全面覆盖三页组件树与数据边界，严格遵守 B Guard 合规约束",
+    "Section 3.7 Never-in-DOM 字段清单是核心防护：Layer 3 绝对禁止区 18 类完整定义，覆盖规则机制（threshold/weight/rule_expression）、探针实现（probe_code/probe_config）、执行细节（blocking_trigger_path/bypass_path）、系统架构（internal_execution_topology/api_call_dependency_order）、异常信息（internal_exception_stack/module_name/call_chain）、判定逻辑（decision_tree_details/scoring_algorithm）、证据收集（evidence_collection_method/evidence_source_probe_info）、证据处理（evidence_weight_calculation/evidence_classification_criteria）",
+    "Section 3.6 API 层裁剪责任明确区分 API 层裁剪与前端层裁剪，强制'由 API 按角色返回不同 payload，敏感字段不得进入前端响应'，明确禁止'在前端通过角色判断后再裁剪字段'和'全量下发给前端再隐藏'的危险模式",
+    "三页禁止字段完整且一致：Dashboard 16 项、Audit Detail 9 项、Permit 5 项，所有组件都明确禁止接收 threshold/weight/internal topology",
+    "共享组件设计安全：StatusLabel 禁止营销词、HashDisplay 禁止省略、EvidenceRefPanel 禁止全量展示、PowerBoundary 禁止弱化三权分立、PermitHeader 禁止成功页样式、FooterActionBar 禁止错误状态 CTA",
+    "状态机与字段映射无机制泄露：资产状态机和 Permit 状态机仅包含业务状态流转，不涉及判定逻辑或执行细节",
+    "组件树停留在组件/字段层面，未进入实现代码层（无 hooks/utils/CSS/动画），符合任务约束",
+    "数据边界服务治理型前端：无 Generate/Build/Create 模式，无 builder-first 数据结构，所有组件服务治理中枢定位",
+    "EvidenceRef 充足（18 个引用），覆盖交付物、依赖规格、关键章节"
+  ],
+
+  "positive_findings": [
+    "逐页组件树完整：Dashboard 70+ 节点、Audit Detail 60+ 节点、Permit 50+ 节点",
+    "逐页字段需求详细：每页包含 5-10 个核心组件的完整字段定义（类型/说明/示例）",
+    "逐页禁止字段明确：Dashboard 16 项、Audit Detail 9 项、Permit 5 项，每项都说明原因",
+    "共享组件规格优秀：6 个组件（StatusLabel/HashDisplay/EvidenceRefPanel/PowerBoundary/PermitHeader/FooterActionBar）每个包含完整字段需求、禁止事项、展示规范",
+    "页面间共享状态机完整：资产状态机（7 状态流转）、Permit 状态机（6 状态流转）、跨页面状态同步",
+    "API 层裁剪责任清晰：按端点/角色/可见性三维分类，明确 API 层裁剪原则与禁止前端裁剪",
+    "Never-in-DOM 清单完整：Layer 3 绝对禁止区 18 类 + 三页额外禁止，覆盖所有敏感机制信息",
+    "三段式结构完整：PreflightChecklist（5 类风险枚举）/ExecutionContract（输入约束与输出定义）/RequiredChanges（7 大交付物）",
+    "Gate 自检全部 PASS：10 项检查全部通过，包括逐页组件树、字段需求、禁止字段、共享组件、状态机、API 裁剪、Never-in-DOM 清单",
+    "依赖任务全部 ALLOW：T-FE-02/T-FE-03/T-FE-04 三页规格已通过",
+    "数据边界严格服务治理型前端：无 builder 叙事残留，无 Generate/Build/Create 模式"
+  ],
+
+  "b_guard_notes": "作为合规官 Kior-C，我已完成 B Guard 式硬审。交付物在核心合规约束方面完整且正确，未发现触发 Zero Exception Directives 的违规项。执行者 vs--cc2 的 T-FE-05 执行质量优秀：组件树完整、禁止字段明确、API 层裁剪责任清晰、Never-in-DOM 清单完整、共享组件安全、状态机无机制泄露。决策：PASS。",
+
+  "acknowledged_review_findings": "已 acknowledge Antigravity-1 的 Review Decision（ALLOW）与 18 个 evidence_refs。Reviewer 的正面评价准确反映了交付物质量：组件树完整、共享组件设计优秀、API 层裁剪责任明确、Never-in-DOM 清单完整、数据边界服务治理型前端、未越权进入实现层、EvidenceRef 充足、三段式结构完整。"
+}

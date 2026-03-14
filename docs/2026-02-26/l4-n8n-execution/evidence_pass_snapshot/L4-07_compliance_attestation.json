@@ -1,0 +1,258 @@
+{
+  "document_type": "L4-07_compliance_attestation",
+  "task_id": "L4-07",
+  "attestation_date": "2026-02-26",
+  "compliance_officer": "Antigravity-2",
+  "version": "1.0.0",
+
+  "attestation_summary": {
+    "decision": "PASS",
+    "summary": "L4-07 CI smoke gate 接入符合合规要求。CI 中可触发 L4 smoke，smoke 失败时 fail-closed 阻断合并。实现完整，测试充分，与 L4-06 正确集成。"
+  },
+
+  "input_documents": {
+    "execution_report": "docs/2026-02-26/l4-n8n-execution/verification/L4-07_execution_report.yaml",
+    "gate_decision": "docs/2026-02-26/l4-n8n-execution/verification/L4-07_gate_decision.json",
+    "l4_06_gate": "docs/2026-02-26/l4-n8n-execution/verification/L4-06_gate_decision.json"
+  },
+
+  "compliance_validation": {
+    "gate_decision_verdict": "ALLOW",
+    "gate_reviewer": "Kior-B",
+    "no_concerns_raised": true,
+    "no_required_changes": true,
+    "all_evidence_refs_present": true
+  },
+
+  "hard_rule_compliance": {
+    "evidence_integrity": {
+      "rule": "无 EvidenceRef 不得宣称完成",
+      "status": "PASS",
+      "evidence": {
+        "evidence_refs_count": 4,
+        "covers_script": true,
+        "covers_ci": true,
+        "covers_documentation": true
+      }
+    },
+
+    "no_bypass": {
+      "rule": "不得绕过 Compliance PASS 直接执行",
+      "status": "PASS",
+      "evidence": {
+        "gate_decision": "ALLOW",
+        "gate_decision_precedes_execution": true,
+        "compliance_attestation_follows_review": true
+      }
+    },
+
+    "dependency_satisfaction": {
+      "rule": "不得跳过 depends_on",
+      "status": "PASS",
+      "evidence": {
+        "depends_on": ["L4-06"],
+        "l4_06_status": "ALLOW",
+        "l4_06_compliance": "PASS",
+        "l4_06_chain_verified": "Diagnosis -> AEV full chain"
+      }
+    },
+
+    "no_side_effects_without_permit": {
+      "rule": "涉及副作用操作的任务必须获得 permit=VALID",
+      "status": "PASS",
+      "evidence": {
+        "task_scope": "CI 配置修改（基础设施变更）",
+        "permit_required": false,
+        "permit_status": "N/A",
+        "note": "CI 配置变更属于标准基础设施维护"
+      }
+    },
+
+    "only_modified_designated_files": {
+      "rule": "不得越权修改其他任务输出文件",
+      "status": "PASS",
+      "evidence": {
+        "modified_files": [
+          ".github/workflows/ci.yml"
+        ],
+        "created_files": [
+          "scripts/run_l4_smoke.py"
+        ],
+        "cross_task_violations": "无"
+      }
+    }
+  },
+
+  "dod_compliance": {
+    "dod_1_ci_can_trigger_l4_smoke": {
+      "criteria": "CI 中可触发 L4 smoke",
+      "status": "PASS",
+      "evidence": {
+        "l4_smoke_gate_job": "Added to .github/workflows/ci.yml",
+        "trigger_conditions": "push/PR to main branch",
+        "command": "python scripts/run_l4_smoke.py",
+        "runs_after": "contract-tests"
+      }
+    },
+
+    "dod_2_fail_closed_on_smoke_failure": {
+      "criteria": "smoke 失败时 fail-closed",
+      "status": "PASS",
+      "evidence": {
+        "script_behavior": "Exits code 1 on any test failure",
+        "final_gate_check": "Checks l4-smoke-gate.result",
+        "failure_path": "Failed smoke → exit 1 → merge blocked",
+        "ci_behavior": "FAIL status blocks PR merge"
+      }
+    }
+  },
+
+  "smoke_tests_compliance": {
+    "total_tests": 5,
+    "coverage_adequate": true,
+    "test_areas": [
+      {
+        "area": "Module Loading",
+        "tests": ["Diagnosis module loads"]
+      },
+      {
+        "area": "Data Validation",
+        "tests": ["AEV builder creates valid output"]
+      },
+      {
+        "area": "Chain Integration",
+        "tests": ["Diagnosis -> AEV chain"]
+      },
+      {
+        "area": "Evidence Integrity",
+        "tests": ["Evidence refs present"]
+      },
+      {
+        "area": "Calculation Correctness",
+        "tests": ["AEV total calculation"]
+      }
+    ],
+    "all_tests_passable": true,
+    "status": "COMPLIANT"
+  },
+
+  "ci_integration_compliance": {
+    "workflow_file": ".github/workflows/ci.yml",
+    "job_name": "l4-smoke-gate",
+    "timeout_minutes": 10,
+    "needs": ["contract-tests"],
+    "final_gate_included": true,
+    "artifact_upload": true,
+    "fail_closed": true,
+    "status": "COMPLIANT"
+  },
+
+  "security_compliance": {
+    "fail_closed_principle": {
+      "description": "Any failure blocks merge",
+      "status": "COMPLIANT",
+      "evidence": {
+        "script_exit_1_on_failure": true,
+        "final_gate_blocks_on_failure": true
+      }
+    },
+
+    "isolation": {
+      "description": "Smoke tests run in isolated environment",
+      "status": "COMPLIANT",
+      "evidence": {
+        "dedicated_ci_job": true,
+        "no_external_network_calls": true,
+        "dependency_isolation": "uses project-local modules"
+      }
+    },
+
+    "reporting": {
+      "description": "Failure reports persisted",
+      "status": "COMPLIANT",
+      "evidence": {
+        "artifact_upload": "l4-smoke-reports",
+        "retention_days": 30,
+        "report_format": "JSON"
+      }
+    }
+  },
+
+  "dependency_integration": {
+    "l4_06_chain_verification": {
+      "dependency_status": "SATISFIED",
+      "integration_method": "Smoke tests verify Diagnosis -> AEV chain",
+      "l4_06_run_id": "AEV-L4-005-0156B2C9",
+      "l4_06_diagnosis_id": "DX-L4-001-A1B2C3D4",
+      "l4_06_checks": "10/10 passed"
+    }
+  },
+
+  "downstream_impact": {
+    "l4_08_final_gate": {
+      "status": "UNBLOCKED",
+      "enables": "L4-08 可汇总 L4-01~L4-07 三件套并输出最终裁决"
+    }
+  },
+
+  "documentation_compliance": {
+    "execution_report_exists": true,
+    "report_path": "docs/2026-02-26/l4-n8n-execution/verification/L4-07_execution_report.yaml",
+    "script_documented": true,
+    "ci_integration_documented": true,
+    "fail_closed_behavior_documented": true
+  },
+
+  "cross_reference_validation": {
+    "execution_report_status": "完成",
+    "gate_decision_verdict": "ALLOW",
+    "all_dod_met": true,
+    "all_inputs_consistent": true,
+    "consistency_notes": "三个输入文档结论一致：L4-07 CI smoke gate 实现完整，DoD 完全达成"
+  },
+
+  "evidence_references": [
+    {
+      "id": "EV-L4-07-COMP-001",
+      "source": "L4-07_execution_report.yaml",
+      "locator": "deliverables",
+      "description": "交付物清单"
+    },
+    {
+      "id": "EV-L4-07-COMP-002",
+      "source": "L4-07_gate_decision.json",
+      "locator": "dod_verification",
+      "description": "DoD 验证"
+    },
+    {
+      "id": "EV-L4-07-COMP-003",
+      "source": "scripts/run_l4_smoke.py",
+      "locator": "main() function",
+      "description": "Smoke test 主函数实现"
+    },
+    {
+      "id": "EV-L4-07-COMP-004",
+      "source": ".github/workflows/ci.yml",
+      "locator": "l4-smoke-gate job",
+      "description": "CI smoke gate 配置"
+    }
+  ],
+
+  "compliance_notes": [
+    "L4 smoke gate 与 L3/L6 gates 并行，不延长 CI 总时间",
+    "Smoke tests 快速（<10 秒），适合每次运行",
+    "Fail-closed 确保问题立即暴露",
+    "报告持久化便于事后分析"
+  ],
+
+  "final_attestation": {
+    "decision": "PASS",
+    "dod_satisfied": true,
+    "security_compliant": true,
+    "ci_integration_compliant": true,
+    "test_coverage_adequate": true,
+    "documentation_complete": true,
+    "attestation_signature": "Antigravity-2",
+    "attestation_timestamp": "2026-02-26T22:30:00Z"
+  }
+}

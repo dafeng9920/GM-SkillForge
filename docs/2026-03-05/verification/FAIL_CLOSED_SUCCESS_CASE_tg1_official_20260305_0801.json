@@ -1,0 +1,56 @@
+{
+  "schema_version": "fail_closed_success_case_v1",
+  "case_id": "FAIL-CLOSED-SUCCESS-2026-03-05-001",
+  "task_id": "tg1-official-20260305-0801-4eca",
+  "case_type": "successful_failure",
+  "description": "Fail-closed policy correctly rejected task that failed due to environment mismatch",
+  "timestamp": "2026-03-05T08:02:03Z",
+  "execution_summary": {
+    "contract_environment": "CLOUD-ROOT (Linux)",
+    "actual_environment": "Windows",
+    "receipt_status": "failure",
+    "exit_code": 1,
+    "commands_total": 6,
+    "commands_executed": 6,
+    "linux_commands_skipped": 3
+  },
+  "dual_gate_response": {
+    "gate_1_receipt_verification": {
+      "decision": "FAIL",
+      "reason": "receipt status must be success, got: failure"
+    },
+    "gate_2_cloud_lobster_mandatory": {
+      "decision": "DENY",
+      "error_code": "SF_CLOUD_LOBSTER_BYPASS_ATTEMPT"
+    },
+    "overall": "FAIL (0/2 passed)"
+  },
+  "fail_closed_verification": {
+    "policy_name": "CLOUD-LOBSTER-CLOSED-LOOP-MANDATORY",
+    "expected_behavior": "Block failed tasks from passing verification",
+    "actual_behavior": "Both gates correctly rejected the failed task",
+    "verdict": "CORRECT - Fail-closed policy worked as designed"
+  },
+  "lessons_learned": [
+    "Environment mismatch (Windows vs Linux) causes task failure",
+    "Linux-specific commands (ss, free, uptime) cannot run on Windows",
+    "Dual gate system correctly prevents failed tasks from passing",
+    "Receipt status must be 'success' for verification to pass"
+  ],
+  "remediation": {
+    "root_cause": "Task executed on wrong environment (Windows instead of CLOUD-ROOT)",
+    "required_action": "Re-execute task on correct CLOUD-ROOT environment",
+    "prevention": "Add environment pre-check before dispatch"
+  },
+  "evidence_refs": {
+    "task_contract": ".tmp/openclaw-dispatch/tg1-official-20260305-0801-4eca/task_contract.json",
+    "execution_receipt": ".tmp/openclaw-dispatch/tg1-official-20260305-0801-4eca/execution_receipt.json",
+    "dual_gate_report": "docs/2026-03-05/verification/tg1-official-20260305-0801-4eca_dual_gate_verification.json"
+  },
+  "signature": {
+    "reviewer": "Kior-C",
+    "timestamp": "2026-03-05T08:05:00Z",
+    "decision": "CONFIRMED_CORRECT_BEHAVIOR",
+    "environment": "LOCAL-ANTIGRAVITY"
+  }
+}

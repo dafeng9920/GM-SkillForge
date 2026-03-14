@@ -1,0 +1,197 @@
+{
+  "test_id": "C_incremental_delta_enforced",
+  "timestamp_utc": "2026-03-05T15:10:04Z",
+  "workspace": "C:\\Users\\Aorus\\AppData\\Local\\Temp\\l3-delta-brw09c6n",
+  "commands": [
+    {
+      "round": 1,
+      "command": [
+        "D:\\GM-SkillForge\\.venv\\Scripts\\python.exe",
+        "-m",
+        "skillforge.src.cli",
+        "refine",
+        "--mode",
+        "nl",
+        "--output",
+        "C:\\Users\\Aorus\\AppData\\Local\\Temp\\l3-delta-brw09c6n\\round1.json",
+        "生成一个量化交易系统Skill蓝图"
+      ],
+      "returncode": 0,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    },
+    {
+      "round": 2,
+      "command": [
+        "D:\\GM-SkillForge\\.venv\\Scripts\\python.exe",
+        "-m",
+        "skillforge.src.cli",
+        "refine",
+        "--mode",
+        "nl",
+        "--output",
+        "C:\\Users\\Aorus\\AppData\\Local\\Temp\\l3-delta-brw09c6n\\round2.json",
+        "在已有量化交易系统Skill基础上新增实时风险监控"
+      ],
+      "returncode": 0,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    },
+    {
+      "round": 3,
+      "command": [
+        "D:\\GM-SkillForge\\.venv\\Scripts\\python.exe",
+        "-m",
+        "skillforge.src.cli",
+        "refine",
+        "--mode",
+        "nl",
+        "--output",
+        "C:\\Users\\Aorus\\AppData\\Local\\Temp\\l3-delta-brw09c6n\\round3.json",
+        "在已有量化交易系统Skill基础上新增实时风险监控并升级异常告警"
+      ],
+      "returncode": 0,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    }
+  ],
+  "round_outputs_snapshot": [
+    {
+      "round": 1,
+      "status": "completed",
+      "publish_result": {
+        "skill_id": "skill-general-skill",
+        "version": "0.1.0",
+        "status": "published",
+        "registry_url": "http://localhost:8080/skills/skill-general-skill/0.1.0",
+        "timestamp": "2026-03-05T15:09:53Z"
+      },
+      "gate_decisions": [
+        {
+          "schema_version": "0.1.0",
+          "gate_id": "constitution_risk_gate",
+          "node_id": "constitution_risk_gate",
+          "decision": "ALLOW",
+          "reason": "Risk score 0.00 is within acceptable limits",
+          "details": {
+            "risk_score": 0.0,
+            "risk_categories": [],
+            "mitigations_required": [],
+            "constitution_version": "constitution_v1.md",
+            "constitution_hash": "17ce83276c6e4f42c1a5becbc348a614bfdab3783f0ac854f1cb2a040f88a5f6"
+          },
+          "ruling": {
+            "verdict": "ALLOW",
+            "rule_id": "RISK_SCORE_ACCEPTABLE",
+            "evidence_ref": "risk_score=0.00, categories=[]",
+            "blocked": false
+          },
+          "timestamp": "2026-03-05T15:09:48Z"
+        }
+      ],
+      "error": null
+    },
+    {
+      "round": 2,
+      "status": "completed",
+      "publish_result": {
+        "skill_id": "skill-general-skill",
+        "version": "0.1.1",
+        "status": "published",
+        "registry_url": "http://localhost:8080/skills/skill-general-skill/0.1.1",
+        "timestamp": "2026-03-05T15:09:59Z"
+      },
+      "gate_decisions": [
+        {
+          "schema_version": "0.1.0",
+          "gate_id": "constitution_risk_gate",
+          "node_id": "constitution_risk_gate",
+          "decision": "ALLOW",
+          "reason": "Risk score 0.00 is within acceptable limits",
+          "details": {
+            "risk_score": 0.0,
+            "risk_categories": [],
+            "mitigations_required": [],
+            "constitution_version": "constitution_v1.md",
+            "constitution_hash": "17ce83276c6e4f42c1a5becbc348a614bfdab3783f0ac854f1cb2a040f88a5f6"
+          },
+          "ruling": {
+            "verdict": "ALLOW",
+            "rule_id": "RISK_SCORE_ACCEPTABLE",
+            "evidence_ref": "risk_score=0.00, categories=[]",
+            "blocked": false
+          },
+          "timestamp": "2026-03-05T15:09:53Z"
+        }
+      ],
+      "error": null
+    },
+    {
+      "round": 3,
+      "status": "completed",
+      "publish_result": {
+        "skill_id": "skill-general-skill",
+        "version": "0.1.2",
+        "status": "published",
+        "registry_url": "http://localhost:8080/skills/skill-general-skill/0.1.2",
+        "timestamp": "2026-03-05T15:10:04Z"
+      },
+      "gate_decisions": [
+        {
+          "schema_version": "0.1.0",
+          "gate_id": "constitution_risk_gate",
+          "node_id": "constitution_risk_gate",
+          "decision": "ALLOW",
+          "reason": "Risk score 0.00 is within acceptable limits",
+          "details": {
+            "risk_score": 0.0,
+            "risk_categories": [],
+            "mitigations_required": [],
+            "constitution_version": "constitution_v1.md",
+            "constitution_hash": "17ce83276c6e4f42c1a5becbc348a614bfdab3783f0ac854f1cb2a040f88a5f6"
+          },
+          "ruling": {
+            "verdict": "ALLOW",
+            "rule_id": "RISK_SCORE_ACCEPTABLE",
+            "evidence_ref": "risk_score=0.00, categories=[]",
+            "blocked": false
+          },
+          "timestamp": "2026-03-05T15:09:59Z"
+        }
+      ],
+      "error": null
+    }
+  ],
+  "evaluation": {
+    "passed": true,
+    "checks": {
+      "version_or_skill_evolves": true,
+      "graph_update_exposed": true,
+      "release_manifest_or_rollback_exposed": true
+    },
+    "observed": {
+      "skill_ids": [
+        "skill-general-skill",
+        "skill-general-skill",
+        "skill-general-skill"
+      ],
+      "versions": [
+        "0.1.0",
+        "0.1.1",
+        "0.1.2"
+      ],
+      "unique_skill_id_count": 1,
+      "unique_version_count": 3,
+      "graph_signals_by_round": [
+        true,
+        true,
+        true
+      ],
+      "manifest_signals_by_round": [
+        true,
+        true,
+        true
+      ]
+    }
+  }
+}

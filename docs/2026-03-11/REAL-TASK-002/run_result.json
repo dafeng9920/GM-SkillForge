@@ -1,0 +1,103 @@
+{
+  "schema_version": "runtime_interface_v0.1",
+  "task_id": "REAL-TASK-002",
+  "run_id": "REAL-TASK-002-ABSORB",
+  "executor": "absorb_with_manifest.py",
+  "status": "success",
+  "started_at": "2026-03-10T16:34:48.143559Z",
+  "finished_at": "2026-03-10T16:34:48.164102Z",
+  "executed_commands": [
+    "absorb_with_manifest.py REAL-TASK-002"
+  ],
+  "exit_code": 0,
+  "output": {},
+  "summary": "Absorbed 6 artifacts and 4 evidence items",
+  "evidence_refs": [
+    {
+      "issue_key": "REAL-TASK-002",
+      "source_locator": "docs\\2026-03-11\\REAL-TASK-002",
+      "content_hash": "sha256:d425c669d0c58d2643bab09912fcd6ff23201cb87beff37fdbeb4b546afbd8a4",
+      "tool_revision": "runtime_interface_v0.1",
+      "timestamp": "2026-03-10T16:34:48.164102Z",
+      "kind": "FILE"
+    }
+  ],
+  "contract_ref": null,
+  "permit_ref": null,
+  "receipt_ref": null,
+  "manifest": {
+    "schema_version": "runtime_interface_v0.1",
+    "task_id": "REAL-TASK-002",
+    "run_id": "REAL-TASK-002-ABSORB",
+    "artifacts": [
+      {
+        "path": "blueprint.md",
+        "kind": "blueprint",
+        "content_hash": "sha256:8be5b9571450ec7d426d3937db277c76960b4ea426d8002f5fd7cf365c1b3905",
+        "size_bytes": 718
+      },
+      {
+        "path": "risk_statement.md",
+        "kind": "documentation",
+        "content_hash": "sha256:3dbccfc360404cfe9eb2439f596712c0f56e4b7d32af96548ea8a73255471c20",
+        "size_bytes": 570
+      },
+      {
+        "path": "changes.diff",
+        "kind": "other",
+        "content_hash": "sha256:47caf63f5d941a40f02e0dbae07f2e5a7df9554ad0fdd58d95fc6b0c73d73a8d",
+        "size_bytes": 485
+      },
+      {
+        "path": "test_report.md",
+        "kind": "test",
+        "content_hash": "sha256:9db209a6b44a5cca9feab56f4a0912d04840b68fbde04bbbdaca43440b2ce052",
+        "size_bytes": 388
+      },
+      {
+        "path": "completion_record.md",
+        "kind": "documentation",
+        "content_hash": "sha256:5dac769ddb8540e93f980f670b63ae4bbcd79b8deadb199389ce1ec31773962e",
+        "size_bytes": 632
+      },
+      {
+        "path": "manifest.json",
+        "kind": "config",
+        "content_hash": "sha256:557e98741bbdcc775933ae64944a8e1046ba03f745f7de5c212a33a769885f3d",
+        "size_bytes": 559
+      }
+    ],
+    "evidence": [
+      {
+        "path": "evidence/p2_doc_integration_report.md",
+        "kind": "evidence",
+        "content_hash": "sha256:c5610c2711b1e5e069d7886ee7f8daff1f4fc6ef14b14133272c5878c0bc6f0d",
+        "size_bytes": 1647
+      },
+      {
+        "path": "evidence/p3_baseline_inventory.md",
+        "kind": "evidence",
+        "content_hash": "sha256:5fbbef6e6d29d9088a597ad23b407e63c0290df5acd1fc8d55982aa036c69b17",
+        "size_bytes": 3317
+      },
+      {
+        "path": "evidence/REAL-TASK-002_合规审查口径_2026-03-09.md",
+        "kind": "evidence",
+        "content_hash": "sha256:5a357462cb83fae65e0f993929de02cc9556a5a0a6256101901975f6ad43cba3",
+        "size_bytes": 3856
+      },
+      {
+        "path": "evidence/REAL-TASK-002_冻结结论_2026-03-09.md",
+        "kind": "evidence",
+        "content_hash": "sha256:d4c52ab4f30f9ef8b89e7b579f86ed32d5b091746b7267f6a32492ac0442cfcd",
+        "size_bytes": 2036
+      }
+    ],
+    "env": {
+      "APP_ROOT": "D:/GM-SkillForge",
+      "DROPZONE_ROOT": "D:/GM-SkillForge/dropzone",
+      "DOCS_ROOT": "D:/GM-SkillForge/docs"
+    },
+    "created_at": "2026-03-10T16:34:48.143559+00:00"
+  }
+}

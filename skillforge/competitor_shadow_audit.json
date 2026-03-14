@@ -1,0 +1,116 @@
+{
+  "scan_date": "2026-02-26T17:45:00Z",
+  "mission": "Task 3: Competitive Pathogen Scan",
+  "objective": "Identify AIO SEO competitor citation gaps for counter-marketing",
+  "top_5_competitors": [
+    {
+      "rank": 1,
+      "name": "PROFOUND",
+      "backing": "Sequoia Capital, NVIDIA",
+      "strengths": [
+        "High SGE citation rate",
+        "Batch content generation (1000+ articles)",
+        "Global multi-market deployment"
+      ],
+      "weaknesses": [
+        "Primarily focused on overseas markets (US/Europe)",
+        "High price point ($5000+/month)",
+        "Limited China market coverage"
+      ],
+      "citation_gaps": [
+        "No Perplexity-specific optimization",
+        "Weak ChatGPT Search visibility",
+        "Missing DeepSeek integration for China market"
+      ],
+      "counter_marketing_angle": "We dominate AI search visibility across ALL platforms including China-focused AI (DeepSeek, Baidu ERNIE), not just Google SGE"
+    },
+    {
+      "rank": 2,
+      "name": "GenOptima (智推时代)",
+      "strengths": [
+        "99.7% semantic accuracy",
+        "48-hour adaptation to 25+ AI platforms",
+        "Strong China market presence"
+      ],
+      "weaknesses": [
+        "Primarily China-focused",
+        "Limited English documentation",
+        "Unknown international coverage"
+      ],
+      "citation_gaps": [
+        "Weak Reddit/forum citation strategy",
+        "No community engagement features",
+        "Limited real-time monitoring"
+      ],
+      "counter_marketing_angle": "Real-time AI citation monitoring + community-driven visibility amplification"
+    },
+    {
+      "rank": 3,
+      "name": "GNA (质安华)",
+      "strengths": [
+        "96% renewal rate",
+        "99% achievement rate",
+        "FMCG/consumer electronics expertise"
+      ],
+      "weaknesses": [
+        "Niche vertical focus",
+        "Limited SaaS/tech coverage",
+        "Traditional SEO baggage"
+      ],
+      "citation_gaps": [
+        "Zero developer/technical content optimization",
+        "No API-first approach",
+        "Missing Zero-click strategy"
+      ],
+      "counter_marketing_angle": "Built for SaaS and tech companies, not just FMCG"
+    },
+    {
+      "rank": 4,
+      "name": "Trendee",
+      "strengths": [
+        "Multi-platform optimization",
+        "Consumer insights system"
+      ],
+      "weaknesses": [
+        "Consumer-focused only",
+        "No B2B specialization"
+      ],
+      "citation_gaps": [
+        "No enterprise feature set",
+        "Missing compliance/security angle",
+        "Weak ABM integration"
+      ],
+      "counter_marketing_angle": "Enterprise-grade GEO with compliance-ready reporting"
+    },
+    {
+      "rank": 5,
+      "name": "文拓引擎",
+      "strengths": [
+        "99.95% semantic precision",
+        "150+ language support"
+      ],
+      "weaknesses": [
+        "Enterprise-only pricing",
+        "Complex implementation"
+      ],
+      "citation_gaps": [
+        "Slow time-to-value",
+        "No self-service option",
+        "Missing SMB-friendly features"
+      ],
+      "counter_marketing_angle": "Deploy in hours, not months. Self-service GEO for agile teams"
+    }
+  ],
+  "market_intelligence": {
+    "china_geo_market_2025": "480B RMB",
+    "annual_growth_rate": "68%",
+    "key_trend": "Shift from traditional SEO to AEO/GEO",
+    "winner_takes_most": "Sites cited in AI Overviews see 35% click increase, others see dramatic drops"
+  },
+  "actionable_intelligence": [
+    "Target competitors' China market blindspots",
+    "Emphasize multi-AI-platform coverage (Perplexity, ChatGPT, DeepSeek, Gemini)",
+    "Counter 'enterprise-only' positioning with agile/self-service messaging",
+    "Highlight real-time monitoring vs competitors' batch-processing approach"
+  ]
+}

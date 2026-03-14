@@ -1,0 +1,262 @@
+---
+task_id: "T-FE-02"
+executor: "vs--cc1"
+reviewer: "Kior-A"
+compliance_officer: "Kior-B"
+wave: "Wave 1"
+depends_on: ["T-FE-01"]
+status: "R1返工完成"
+started_at: "2026-03-12T20:00:00Z"
+completed_at: "2026-03-12T20:45:00Z"
+r1_remediation_started_at: "2026-03-12T22:00:00Z"
+r1_remediation_completed_at: "2026-03-12T22:45:00Z"
+review_round: "R1"
+
+# 交付物清单
+deliverables:
+  - path: "docs/2026-03-12/verification/T-FE-02_dashboard_spec.md"
+    action: "新建 + R1修改"
+    lines_added: 580
+    lines_modified_r1: 180
+    sections: 10
+    r1_sections_added: 1
+
+# Gate 自检结果
+gate_self_check:
+  - check: "是否先看状态，再看风险，再看可执行动作"
+    result: "PASS - KPI Row 置于首屏最高位置，Priority Queue 紧随，8 Gate Health 展示风险分布"
+  - check: "是否保留 8 Gate / Priority Queue / Evidence Coverage / Permit Events / Revision Watch"
+    result: "PASS - 五个核心模块全部保留，分别定义为 P0/P1/P2 优先级"
+  - check: "是否未把 Dashboard 做成炫图表 BI 大屏"
+    result: "PASS - 明确禁止炫图表，使用简洁的数字+状态标签，强调治理总控定位"
+  - check: "是否未把 Generate / Build / Create 做成主 CTA"
+    result: "PASS - 主 CTA 定义为 Run Audit，明确禁止 Generate/Build/Create"
+  - check: "R1: 8 Gate Health 是否移除机制泄露入口"
+    result: "PASS - 已删除'触发规则数'，新增'受影响资产数量'，强化禁止展示项至 9 项"
+  - check: "R1: Evidence Coverage 是否限定为充分性/完整性层"
+    result: "PASS - 已新增 7 项禁止展示项，明确禁止证据收集方法/权重计算/探针信息"
+  - check: "R1: 是否新增未来扩展约束"
+    result: "PASS - 已新增 Section 3.7.2，明确禁止渐进式机制暴露等 6 类硬约束"
+  - check: "R1: Permit readiness 与 issuance 是否明确区分"
+    result: "PASS - 已修改辅助文案为'eligible for permit issuance'"
+  - check: "R1: Forge 是否明确为次级入口"
+    result: "PASS - 已新增导航视觉权重分级，Forge 为次级视觉权重"
+  - check: "R1: 空状态 CTA 是否避免 builder 叙事"
+    result: "PASS - 已修改为'Read Governance Guidelines'，避免引导进入创建流程"
+
+# EvidenceRef
+evidence_refs:
+  - id: "EV-FE02-001"
+    kind: "FILE"
+    locator: "docs/2026-03-12/verification/T-FE-02_dashboard_spec.md"
+    description: "Dashboard 页面规格书完整文档，R1修订版"
+  - id: "EV-FE02-R1-001"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/verification/T-FE-02_dashboard_spec.md:210-243"
+    description: "Section 3.4.2 R1修订: 8 Gate Health，移除机制泄露入口，强化禁止展示项"
+  - id: "EV-FE02-R1-002"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/verification/T-FE-02_dashboard_spec.md:269-297"
+    description: "Section 3.4.4 R1修订: Evidence Coverage，限定为充分性/完整性层，新增 7 项禁止展示项"
+  - id: "EV-FE02-R1-003"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/verification/T-FE-02_dashboard_spec.md:432-501"
+    description: "Section 3.7.2 R1新增: 未来扩展约束，明确禁止渐进式机制暴露等 6 类硬约束"
+  - id: "EV-FE02-R1-004"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/verification/T-FE-02_dashboard_spec.md:200"
+    description: "Section 3.4.1 R1修订: Ready for Permit 辅助文案改为'eligible for permit issuance'"
+  - id: "EV-FE02-R1-005"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/verification/T-FE-02_dashboard_spec.md:520-530"
+    description: "Section 3.9.1 R1修订: Top Nav 新增导航视觉权重分级，Forge 为次级入口"
+  - id: "EV-FE02-R1-006"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/verification/T-FE-02_dashboard_spec.md:358-367"
+    description: "Section 3.6.1 R1修订: 空状态 CTA 改为'Read Governance Guidelines'"
+  - id: "EV-FE02-R1-007"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/verification/T-FE-02_dashboard_spec.md:503-521"
+    description: "Section 四 R1新增: R1 合规返工修订记录，包含 6 个问题点的修复说明"
+  - id: "EV-FE02-002"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/verification/T-FE-02_dashboard_spec.md:90-120"
+    description: "Section 3.1.1 核心定位：Dashboard 是全局治理总控台，不是 BI 大屏"
+  - id: "EV-FE02-003"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/verification/T-FE-02_dashboard_spec.md:182-230"
+    description: "Section 3.2 Dashboard 页面骨架 (ASCII 线框图)"
+  - id: "EV-FE02-010"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/verification/T-FE-01_gate_decision.json"
+    description: "T-FE-01 已 ALLOW，满足 depends_on 条件"
+
+# 输入文档引用
+input_evidence:
+  - path: "docs/2026-03-12/前端重构_AI军团任务分发单_v2.md"
+    purpose: "任务分发单与 DoD 定义"
+  - path: "docs/2026-03-12/Dashboard-Audit Detail-Permit 三页文字线框图.md"
+    purpose: "Dashboard 骨架与模块定义"
+  - path: "docs/2026-03-12/\"治理与放行中枢\"的前端设计.md"
+    purpose: "治理中枢定位与首页叙事原则"
+  - path: "docs/2026-03-12/verification/T-FE-01_ia_spec.md"
+    purpose: "IA 规格与导航定义"
+  - path: "multi-ai-collaboration.md"
+    purpose: "三权分立流程与证据格式"
+  - path: "docs/2026-02-21/架构方向的提问和回复/EXECUTION_GUARD_A_PROPOSAL_SKILL_v1.md"
+    purpose: "A Guard 三段式结构规范"
+  - path: "docs/2026-02-21/架构方向的提问和回复/EXECUTION_GUARD_B_EXECUTION_SKILL_v1.md"
+    purpose: "B Guard 合规拦截规则"
+  - path: "docs/2026-03-12/verification/T-FE-02_compliance_attestation.json"
+    purpose: "Compliance FAIL 决定与 required_changes"
+
+# R1 合规返工修复详情
+r1_remediation:
+  issues_fixed: 6
+  critical_issues_fixed: 2
+  high_issues_fixed: 1
+  medium_issues_fixed: 1
+  low_issues_fixed: 2
+  lines_added_r1: 120
+  lines_modified_r1: 60
+  new_sections_r1: 2
+
+  fixes:
+    - issue_key: "SF_FE02_001"
+      severity: "CRITICAL"
+      description: "8 Gate Health 展开项存在暴露规则阈值、权重、探针逻辑的潜在设计入口"
+      fix: "删除'触发规则数'，新增'受影响资产数量'；强化禁止展示项，明确禁止规则细节/阈值/权重/判定逻辑等 9 项"
+      location: "Section 3.4.2"
+    - issue_key: "SF_FE02_002"
+      severity: "CRITICAL"
+      description: "Evidence Coverage 模块可能暴露证据收集机制与判定逻辑"
+      fix: "新增 7 项禁止展示项，明确禁止证据收集方法/权重计算/探针信息等，限定为仅展示充分性/完整性层"
+      location: "Section 3.4.4"
+    - issue_key: "SF_FE02_003"
+      severity: "HIGH"
+      description: "Layer 3 禁止列表没有约束未来扩展边界"
+      fix: "新增 Section 3.7.2 '未来扩展约束'，明确禁止渐进式机制暴露、规则详情、判定逻辑可视化等 6 类硬约束"
+      location: "Section 3.7.2"
+    - issue_key: "SF_FE02_004"
+      severity: "MEDIUM"
+      description: "Permit readiness 与 Permit issuance 概念混同"
+      fix: "修正 Ready for Permit 辅助文案，从'waiting release approval'改为'eligible for permit issuance'"
+      location: "Section 3.4.1"
+    - issue_key: "SF_FE02_005"
+      severity: "LOW"
+      description: "Top Nav 中 Forge 导航项没有明确标记为次级入口"
+      fix: "新增'导航视觉权重分级'，明确 Forge 为次级视觉权重，UI 层需弱化处理"
+      location: "Section 3.9.1"
+    - issue_key: "SF_FE02_006"
+      severity: "LOW"
+      description: "空状态 CTA 可能引导用户进入资产创建流程"
+      fix: "修改空状态 CTA 从'Go to Registry'改为'Read Governance Guidelines'"
+      location: "Section 3.6.1"
+
+# 合规自检
+compliance_self_check:
+  - item: "未把 Dashboard 做成炫图表 BI 大屏"
+    status: "PASS"
+    evidence: "Section 3.7.3 明确禁止炫图表，Section 3.1.2 设计原则第一项为'状态先行'"
+  - item: "未把 Generate/Build/Create 做成主 CTA"
+    status: "PASS"
+    evidence: "Section 3.5 CTA 列表主 CTA 为 Run Audit，Section 3.7.3 明确禁止生成类 CTA"
+  - item: "未把生成动作放到最高视觉权重"
+    status: "PASS"
+    evidence: "Section 3.4.1 KPI Row 定义为首屏最高视觉权重，包含五态而非生成动作"
+  - item: "未越权写到具体组件实现"
+    status: "PASS"
+    evidence: "规格停留在模块/字段/交互层面，未涉及具体组件代码实现"
+  - item: "保留 8 Gate / Priority Queue / Evidence Coverage / Permit Events / Revision Watch"
+    status: "PASS"
+    evidence: "Section 3.3 模块列表与 Section 3.4 核心模块详细规格"
+  - item: "先看状态，再看风险，再看可执行动作"
+    status: "PASS"
+    evidence: "Section 3.2 页面骨架与 Section 3.4.1 KPI Row 定义"
+  - item: "Layer 3 禁止前端呈现区已列出"
+    status: "PASS"
+    evidence: "Section 3.7.1 绝对禁止前端呈现 (Layer 3)"
+  - item: "R1: 8 Gate Health 移除机制泄露入口"
+    status: "PASS"
+    evidence: "Section 3.4.2 展开'禁止展示'至 9 项，删除'触发规则数'"
+  - item: "R1: Evidence Coverage 限定为充分性/完整性层"
+    status: "PASS"
+    evidence: "Section 3.4.4 新增 7 项禁止展示项，明确禁止机制透出"
+  - item: "R1: 未来扩展约束已明确"
+    status: "PASS"
+    evidence: "Section 3.7.2 新增'未来扩展约束'，6 类硬约束以禁止语气陈述"
+  - item: "R1: Permit readiness 与 issuance 明确区分"
+    status: "PASS"
+    evidence: "Section 3.4.1 辅助文案修改为'eligible for permit issuance'"
+  - item: "R1: Forge 明确为次级入口"
+    status: "PASS"
+    evidence: "Section 3.9.1 新增'导航视觉权重分级'"
+  - item: "R1: 空状态 CTA 避免 builder 叙事"
+    status: "PASS"
+    evidence: "Section 3.6.1 CTA 修改为'Read Governance Guidelines'"
+
+# 完成度检查
+completion_checklist:
+  - item: "输出 Dashboard 页面目标"
+    status: "完成"
+    location: "Section 3.1"
+  - item: "输出 Dashboard 页面骨架"
+    status: "完成"
+    location: "Section 3.2"
+  - item: "输出模块列表与模块优先级"
+    status: "完成"
+    location: "Section 3.3"
+  - item: "输出 CTA 列表"
+    status: "完成"
+    location: "Section 3.5"
+  - item: "输出空状态 / 高风险状态 / 待签发状态"
+    status: "完成"
+    location: "Section 3.6"
+  - item: "输出禁止展示项"
+    status: "完成"
+    location: "Section 3.7"
+  - item: "强化 Run Audit / Review Gaps / Issue Permit / View Audit Trail"
+    status: "完成"
+    location: "Section 3.5.3"
+  - item: "三段式结构 (PreflightChecklist/ExecutionContract/RequiredChanges)"
+    status: "完成"
+    location: "Section 一/二/三"
+  - item: "R1: 修复 8 Gate Health 机制泄露入口"
+    status: "完成"
+    location: "Section 3.4.2"
+  - item: "R1: 修复 Evidence Coverage 机制泄露"
+    status: "完成"
+    location: "Section 3.4.4"
+  - item: "R1: 新增未来扩展约束"
+    status: "完成"
+    location: "Section 3.7.2"
+  - item: "R1: 修正 Permit readiness 语义"
+    status: "完成"
+    location: "Section 3.4.1"
+  - item: "R1: 明确 Forge 为次级入口"
+    status: "完成"
+    location: "Section 3.9.1"
+  - item: "R1: 修正空状态 CTA"
+    status: "完成"
+    location: "Section 3.6.1"
+
+# 交付摘要
+summary:
+  total_lines: 580
+  total_sections: 10
+  r1_sections_added: 2
+  p0_modules: 3
+  p1_modules: 2
+  p2_modules: 2
+  cta_primary: "Run Audit"
+  cta_secondary: ["Review Gaps", "Issue Permit", "View Audit Trail"]
+  cta_forbidden: ["Generate", "Build", "Create"]
+
+# 备注
+notes:
+  - "Dashboard 定位为治理总控台，明确区别于 BI 大屏"
+  - "所有模块按 P0/P1/P2 优先级分类，便于分阶段实现"
+  - "CTA 设计严格遵循'非 builder 叙事'原则"
+  - "R1 返工重点: 强化机制泄露防御，新增未来扩展约束，明确禁止渐进式暴露"
+  - "禁止展示项完整列出 Layer 3 内容与 Dashboard 特定禁止项"
+  - "状态设计涵盖空状态、高风险、待签发、Permit 失效四种典型场景"

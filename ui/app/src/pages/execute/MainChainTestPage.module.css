@@ -1,0 +1,277 @@
+/**
+ * MainChainTestPage Styles
+ */
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* Header */
+.header {
+  text-align: center;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1F2937;
+  margin: 0 0 8px 0;
+}
+
+.description {
+  font-size: 14px;
+  color: #6B7280;
+  margin: 0;
+}
+
+/* Control Panel */
+.controlPanel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background-color: #F9FAFB;
+  border-radius: 8px;
+  border: 1px solid #E5E7EB;
+}
+
+.dataSourceSection {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dataSourceLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.dataSourceButton {
+  padding: 8px 16px;
+  background-color: #FFFFFF;
+  color: #374151;
+  border: 1px solid #D1D5DB;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dataSourceButton:hover {
+  background-color: #F3F4F6;
+  border-color: #9CA3AF;
+}
+
+.dataSourceButton.active {
+  background-color: #3B82F6;
+  color: #FFFFFF;
+  border-color: #3B82F6;
+}
+
+.reloadButton {
+  padding: 8px 16px;
+  background-color: #3B82F6;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.reloadButton:hover {
+  background-color: #2563EB;
+}
+
+/* Loading State */
+.loadingState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  gap: 16px;
+  color: #6B7280;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #E5E7EB;
+  border-top-color: #3B82F6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Error State */
+.errorState {
+  padding: 32px;
+  background-color: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.errorState h3 {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  color: #991B1B;
+}
+
+.errorState p {
+  margin: 0 0 8px 0;
+  color: #7F1D1D;
+}
+
+.errorHint {
+  font-size: 13px;
+  color: #92400E;
+  margin-bottom: 16px !important;
+}
+
+.errorHint code {
+  padding: 2px 6px;
+  background-color: #FEF3C7;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 12px;
+}
+
+.retryButton {
+  padding: 8px 16px;
+  background-color: #DC2626;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 16px;
+}
+
+.retryButton:hover {
+  background-color: #B91C1C;
+}
+
+/* Content */
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.panelSection {
+  padding: 20px;
+  background-color: #FFFFFF;
+  border-radius: 8px;
+  border: 1px solid #E5E7EB;
+}
+
+.sectionTitle {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1F2937;
+}
+
+/* Debug Section */
+.debugSection {
+  padding: 16px;
+  background-color: #F9FAFB;
+  border-radius: 8px;
+  border: 1px solid #E5E7EB;
+}
+
+.debugSection summary {
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  user-select: none;
+}
+
+.debugSection summary:hover {
+  color: #1F2937;
+}
+
+.jsonPreview {
+  margin-top: 12px;
+  padding: 16px;
+  background-color: #1F2937;
+  color: #E5E7EB;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  overflow: auto;
+  max-height: 400px;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* Usage Section */
+.usageSection {
+  padding: 20px;
+  background-color: #FFFFFF;
+  border-radius: 8px;
+  border: 1px solid #E5E7EB;
+}
+
+.usageContent {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.usageContent h3 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.usageList {
+  margin: 0;
+  padding-left: 20px;
+  list-style: disc;
+}
+
+.usageList li {
+  margin-bottom: 4px;
+  font-size: 13px;
+  color: #374151;
+}
+
+.usageList code {
+  padding: 2px 6px;
+  background-color: #F3F4F6;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 12px;
+  color: #DC2626;
+}
+
+.codeExample {
+  padding: 16px;
+  background-color: #1F2937;
+  color: #E5E7EB;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  overflow: auto;
+  white-space: pre;
+  margin: 0;
+}

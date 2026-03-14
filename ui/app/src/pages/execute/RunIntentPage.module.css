@@ -99,6 +99,31 @@
     background-color: var(--gm-color-base-100);
 }
 
+/* TASK-MAIN-04C PATH A: Real Data button style - 加载真实结果按钮 */
+.btn-real {
+    background-color: #059669;
+    color: white;
+    border: none;
+    position: relative;
+}
+
+.btn-real:hover {
+    background-color: #047857;
+}
+
+.btn-real::before {
+    content: '📂 真实数据';
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #10B981;
+    color: white;
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
 .is-loading {
     opacity: 0.6;
     cursor: wait;

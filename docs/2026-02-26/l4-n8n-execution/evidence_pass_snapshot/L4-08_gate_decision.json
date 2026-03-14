@@ -1,0 +1,30 @@
+{
+  "task_id": "L4-08",
+  "job_id": "L4-N8N-MVP-20260226-001",
+  "timestamp": "2026-02-26T15:08:44Z",
+  "decision": "ALLOW",
+  "rule_triggered": "all_green",
+  "summary": {
+    "missing_triplet_count": 0,
+    "non_pass_compliance_count": 0,
+    "tasks_checked": 7
+  },
+  "missing_triplets": [],
+  "non_pass_compliance": [],
+  "evidence_refs": [
+    "docs\\2026-02-26\\l4-n8n-execution\\verification\\L4-01_gate_decision.json",
+    "docs\\2026-02-26\\l4-n8n-execution\\verification\\L4-02_gate_decision.json",
+    "docs\\2026-02-26\\l4-n8n-execution\\verification\\L4-03_gate_decision.json",
+    "docs\\2026-02-26\\l4-n8n-execution\\verification\\L4-04_gate_decision.json",
+    "docs\\2026-02-26\\l4-n8n-execution\\verification\\L4-05_gate_decision.json",
+    "docs\\2026-02-26\\l4-n8n-execution\\verification\\L4-06_gate_decision.json",
+    "docs\\2026-02-26\\l4-n8n-execution\\verification\\L4-07_gate_decision.json",
+    "docs\\2026-02-26\\l4-n8n-execution\\verification\\L4-01_compliance_attestation.json",
+    "docs\\2026-02-26\\l4-n8n-execution\\verification\\L4-02_compliance_attestation.json",
+    "docs\\2026-02-26\\l4-n8n-execution\\verification\\L4-03_compliance_attestation.json",
+    "docs\\2026-02-26\\l4-n8n-execution\\verification\\L4-04_compliance_attestation.json",
+    "docs\\2026-02-26\\l4-n8n-execution\\verification\\L4-05_compliance_attestation.json",
+    "docs\\2026-02-26\\l4-n8n-execution\\verification\\L4-06_compliance_attestation.json",
+    "docs\\2026-02-26\\l4-n8n-execution\\verification\\L4-07_compliance_attestation.json"
+  ]
+}

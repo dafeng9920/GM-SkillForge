@@ -1,0 +1,32 @@
+{
+  "channels": {
+    "discord": {
+      "enabled": true,
+      "token": "YOUR_DISCORD_TOKEN_HERE",
+      "groupPolicy": "allowlist",
+      "streaming": "partial",
+      "threadBindings": {
+        "spawnSubagentSessions": true
+      }
+    }
+  },
+  "gateway": {
+    "mode": "local",
+    "controlUi": {
+      "dangerouslyAllowHostHeaderOriginFallback": false
+    },
+    "auth": {
+      "mode": "token",
+      "token": "YOUR_GATEWAY_TOKEN_HERE"
+    },
+    "bind": "loopback",
+    "port": 18789
+  },
+  "agents": {
+    "defaults": {
+      "sandbox": {
+        "mode": "all"
+      }
+    }
+  }
+}

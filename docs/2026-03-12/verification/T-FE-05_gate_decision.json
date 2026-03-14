@@ -1,0 +1,142 @@
+{
+  "task_id": "T-FE-05",
+  "decision": "ALLOW",
+  "reviewer": "Antigravity-1",
+  "reviewed_at": "2026-03-12T22:30:00Z",
+  "reasons": [
+    "T-FE-05 前端组件树与数据边界映射文档完整，全面覆盖三页（Dashboard/Audit Detail/Permit）的组件树、字段需求、禁止字段。",
+    "6 个共享组件（StatusLabel/HashDisplay/EvidenceRefPanel/PowerBoundary/PermitHeader/FooterActionBar）已单列，每个包含完整规格：字段需求、禁止事项、展示规范、状态映射。",
+    "页面间共享状态机（资产状态机 + Permit 状态机）已定义，包含状态流转图、状态字段、关键事件、跨页面状态同步。",
+    "API 层裁剪责任清单明确：按端点（GET /api/dashboard/audit/:id/permit/:id/evidence/:id）、按角色（Executor/Reviewer/Compliance）、按可见性分类，明确禁止前端裁剪。",
+    "Never-in-DOM 字段清单完整：Layer 3 绝对禁止区 18 类禁止字段（规则机制、探针实现、执行细节、系统架构、异常信息、判定逻辑、证据收集、证据处理），覆盖三页额外禁止项。",
+    "所有组件设计服务治理型前端，未滑回 builder 叙事。无 Generate/Build/Create 模式，无 builder-first 数据结构。",
+    "组件树停留在组件/字段层面，未进入实现代码层。无 hooks/utils/CSS/动画等实现细节。",
+    "依赖任务 T-FE-02/T-FE-03/T-FE-04 全部 ALLOW，映射文档正确引用三页规格。",
+    "EvidenceRef 充足（18 个引用），足以支撑映射结论。"
+  ],
+  "evidence_refs": [
+    {
+      "id": "EV-REVIEW-TFE05-001",
+      "kind": "FILE",
+      "locator": "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:1-908",
+      "description": "前端组件树与数据边界映射完整文档"
+    },
+    {
+      "id": "EV-REVIEW-TFE05-002",
+      "kind": "SNIPPET",
+      "locator": "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:12-40",
+      "description": "PreflightChecklist: 5 类 Fail-Closed 风险枚举完整"
+    },
+    {
+      "id": "EV-REVIEW-TFE05-003",
+      "kind": "SNIPPET",
+      "locator": "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:108-178",
+      "description": "Dashboard 页面组件树（完整树状结构，70+ 节点）"
+    },
+    {
+      "id": "EV-REVIEW-TFE05-004",
+      "kind": "SNIPPET",
+      "locator": "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:209-228",
+      "description": "Dashboard 页面禁止字段（GateHealthCard 9 项 + EvidenceCoverageCard 7 项，含 threshold/weight/rule_expression 等禁止项）"
+    },
+    {
+      "id": "EV-REVIEW-TFE05-005",
+      "kind": "SNIPPET",
+      "locator": "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:234-329",
+      "description": "Audit Detail 页面组件树（完整树状结构，60+ 节点）"
+    },
+    {
+      "id": "EV-REVIEW-TFE05-006",
+      "kind": "SNIPPET",
+      "locator": "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:372-387",
+      "description": "Audit Detail 页面禁止字段（GateCard 5 项 + EvidenceRefItem 3 项 + 所有组件 3 项，含 rule_threshold/weight/internal_topology 等禁止项）"
+    },
+    {
+      "id": "EV-REVIEW-TFE05-007",
+      "kind": "SNIPPET",
+      "locator": "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:393-466",
+      "description": "Permit 页面组件树（完整树状结构，50+ 节点）"
+    },
+    {
+      "id": "EV-REVIEW-TFE05-008",
+      "kind": "SNIPPET",
+      "locator": "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:514-524",
+      "description": "Permit 页面禁止字段（5 项，含 rule_threshold/weight/details/decision_logic_details/compliance_internal_notes）"
+    },
+    {
+      "id": "EV-REVIEW-TFE05-009",
+      "kind": "SNIPPET",
+      "locator": "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:527-718",
+      "description": "6 个共享组件完整规格（StatusLabel: 状态映射表 + 禁止状态词；HashDisplay: 展示规范；EvidenceRefPanel: 可见性级别处理；PowerBoundary: 三权分立边界；PermitHeader: 证书抬头；FooterActionBar: CTA 状态机）"
+    },
+    {
+      "id": "EV-REVIEW-TFE05-010",
+      "kind": "SNIPPET",
+      "locator": "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:720-787",
+      "description": "页面间共享状态机（资产状态机 Draft → In Audit → Passed/Blocked → Permit Active，Permit 状态机 Pending → Issued → Active → Revoked/Expired/Superseded）"
+    },
+    {
+      "id": "EV-REVIEW-TFE05-011",
+      "kind": "SNIPPET",
+      "locator": "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:789-821",
+      "description": "API 层裁剪责任清单（按端点/角色/可见性分类，明确 API 必须按角色返回不同 payload，禁止前端裁剪）"
+    },
+    {
+      "id": "EV-REVIEW-TFE05-012",
+      "kind": "SNIPPET",
+      "locator": "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:824-870",
+      "description": "Never-in-DOM 字段清单（Layer 3 绝对禁止区 18 类，包含 threshold/weight/rule_expression/probe_code/bypass_path/internal_topology/exception_stack 等）"
+    },
+    {
+      "id": "EV-REVIEW-TFE05-013",
+      "kind": "SNIPPET",
+      "locator": "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:871-892",
+      "description": "交付物验收清单（18 项全部完成，包括逐页组件树、字段需求、禁止字段、共享组件、状态机、API 裁剪、Never-in-DOM 清单、数据边界服务治理型前端）"
+    },
+    {
+      "id": "EV-REVIEW-TFE05-014",
+      "kind": "FILE",
+      "locator": "docs/2026-03-12/verification/T-FE-02_dashboard_spec.md",
+      "description": "依赖 T-FE-02 Dashboard 规格（ALLOW）"
+    },
+    {
+      "id": "EV-REVIEW-TFE05-015",
+      "kind": "FILE",
+      "locator": "docs/2026-03-12/verification/T-FE-03_audit_detail_spec.md",
+      "description": "依赖 T-FE-03 Audit Detail 规格（ALLOW）"
+    },
+    {
+      "id": "EV-REVIEW-TFE05-016",
+      "kind": "FILE",
+      "locator": "docs/2026-03-12/verification/T-FE-04_permit_spec.md",
+      "description": "依赖 T-FE-04 Permit 规格（ALLOW）"
+    },
+    {
+      "id": "EV-REVIEW-TFE05-017",
+      "kind": "FILE",
+      "locator": "docs/2026-03-12/verification/T-FE-05_execution_report.yaml",
+      "description": "执行报告：所有 gate self_check PASS，18 evidence refs"
+    },
+    {
+      "id": "EV-REVIEW-TFE05-018",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/前端重构_AI军团任务分发单_v2.md:397-443",
+      "description": "任务书 T-FE-05 约束定义"
+    }
+  ],
+  "positive_notes": [
+    "严格逐页输出组件树：Dashboard 70+ 节点，Audit Detail 60+ 节点，Permit 50+ 节点，结构清晰无歧义",
+    "逐页输出字段需求：每页 5-10 个核心组件的详细字段定义，包含类型、说明、示例",
+    "逐页输出禁止字段：Dashboard 16 项，Audit Detail 9 项，Permit 5 项，明确原因",
+    "共享组件设计优秀：6 个组件（StatusLabel/HashDisplay/EvidenceRefPanel/PowerBoundary/PermitHeader/FooterActionBar）规格完整，包含状态映射表、展示规范、禁止事项",
+    "页面间共享状态机完整：资产状态机（7 状态流转）、Permit 状态机（6 状态流转）、跨页面状态同步明确",
+    "API 层裁剪责任清晰：按端点/角色/可见性三维分类，明确禁止前端裁剪",
+    "Never-in-DOM 清单完整：Layer 3 绝对禁止区 18 类，覆盖规则机制、探针实现、执行细节、系统架构、异常信息、判定逻辑、证据收集、证据处理",
+    "数据边界服务治理型前端：无 Generate/Build/Create 模式，无 builder-first 数据结构，所有组件服务治理中枢定位",
+    "未越权进入实现层：无 hooks/utils/CSS/动画/具体代码实现，停留在组件名称/字段需求/禁止字段层面",
+    "EvidenceRef 充足：18 个证据引用，覆盖交付物、依赖规格、关键章节",
+    "三段式结构（PreflightChecklist/ExecutionContract/RequiredChanges）完整，符合 A Guard 要求"
+  ],
+  "compliance_delegation": "Compliance 审查由 Kior-C 负责，本 Review Decision 不替代 Compliance Attestation。",
+  "final_notes": "vs--cc2 的 T-FE-05 执行质量优秀。映射文档全面覆盖三页组件树与数据边界，共享组件设计完整，API 层裁剪责任明确，Never-in-DOM 清单完整。数据边界严格服务治理型前端，未滑回 builder 叙事。所有交付物符合任务约束，无越权进入实现层。"
+}

@@ -1,0 +1,37 @@
+{
+  "status": "FAIL",
+  "error_code": "SF_DELIVERY_EVIDENCE_MISSING",
+  "missing_items": [
+    {
+      "category": "Evidence",
+      "pattern": "artifacts/*/"
+    }
+  ],
+  "present_items": [
+    {
+      "category": "Blueprint",
+      "path": "contracts\\dsl\\demand_dsl_v0.schema.yml"
+    },
+    {
+      "category": "Skill",
+      "path": "skills\\ai-response-improvement-skill"
+    },
+    {
+      "category": "n8n",
+      "path": "workflows\\skillforge_dispatcher.json"
+    },
+    {
+      "category": "AuditPack",
+      "path": "audit_pack\\tg1_audit_pack.json"
+    },
+    {
+      "category": "Permit",
+      "path": "permits\\default\\tg1_baseline_permit.json"
+    }
+  ],
+  "required_changes": [
+    "add required delivery item: Evidence at pattern artifacts/*/"
+  ],
+  "checked_at": "2026-03-04T12:28:07.504783+00:00",
+  "base_path": "."
+}

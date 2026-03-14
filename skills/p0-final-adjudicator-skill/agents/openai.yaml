@@ -1,0 +1,46 @@
+name: p0-final-adjudicator-skill
+description: 聚合 T01-T11 三权记录并输出 final_gate_decision.json 的终局裁决。
+version: v1.0.0
+frozen_at: 2026-02-26
+owner: platform-governance
+tags:
+  - l6
+  - p0
+  - final-gate
+  - adjudication
+  - governance
+default_prompt: |
+  汇总 T01-T11 的 execution/gate/compliance，按规则输出 final_gate_decision.json 和阻断证据。
+
+capabilities:
+  - final_gate_aggregation
+  - rule_based_adjudication
+  - blocking_evidence_listing
+  - machine_readable_decision_output
+
+input_schema:
+  verification_dir:
+    type: string
+    required: true
+    description: 验证目录
+  tasks:
+    type: array
+    required: true
+    description: 任务列表
+  rules:
+    type: object
+    required: true
+    description: 裁决规则
+
+output_schema:
+  final_decision_file:
+    type: string
+    description: final_gate_decision.json 路径
+  decision:
+    type: string
+    enum: [ALLOW, REQUIRES_CHANGES, DENY]
+    description: 最终裁决
+  required_changes:
+    type: array
+    description: 必需整改项
+

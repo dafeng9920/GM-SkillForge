@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0.0",
+  "mode": "absorb",
+  "decision": "DENY",
+  "decision_time": "2026-03-10T16:34:24.233344+00:00",
+  "checks": {
+    "pre_absorb_check": {
+      "script": "d:\\GM-SkillForge\\scripts\\pre_absorb_check.sh",
+      "exit_code": 127,
+      "stdout": "",
+      "stderr": "/bin/bash: d:GM-SkillForgescriptspre_absorb_check.sh: No such file or directory",
+      "status": "FAIL"
+    }
+  },
+  "errors": [
+    {
+      "code": "ABSORB_CHECK_FAIL",
+      "message": "Pre-absorb check failed"
+    }
+  ],
+  "warnings": [],
+  "required_changes": [
+    "Review task package completeness and environment variables"
+  ],
+  "evidence_refs": [],
+  "summary": {
+    "total_checks": 1,
+    "failed_checks": 1
+  }
+}

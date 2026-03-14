@@ -1,0 +1,26 @@
+{
+  "job_id": "P0-L6-AUTH-20260226-001",
+  "scope": "P0 L6 authenticity closure (ISSUE-00 ~ ISSUE-10)",
+  "decision": "ALLOW",
+  "summary": {
+    "tasks_total": 11,
+    "tasks_with_execution_report": 11,
+    "tasks_with_gate_decision": 11,
+    "tasks_with_compliance_attestation": 11,
+    "all_gate_allow": true,
+    "all_compliance_pass": true
+  },
+  "blocking_evidence": [],
+  "required_changes": [],
+  "key_evidence": [
+    "docs/2026-02-26/p0-governed-execution/verification/T09_protocol_tests_report.md",
+    "docs/2026-02-26/p0-governed-execution/verification/T10_pipeline_gate_report.md",
+    "docs/2026-02-26/p0-governed-execution/verification/T11_external_verify_report.md"
+  ],
+  "notes": [
+    "T01-T11 triple records are complete and machine-readable",
+    "Wave 1-4 gates are fully closed with ALLOW/PASS",
+    "P0 DoD satisfied: third-party verification + protocol tests in CI"
+  ]
+}
+

@@ -1,0 +1,140 @@
+---
+task_id: "T-FE-03"
+executor: "Antigravity-1"
+status: "R1 返工完成"
+remediation_round: "R1"
+original_completed_at: "2026-03-12T19:30:00Z"
+r1_completed_at: "2026-03-12T21:00:00Z"
+
+# 交付物清单
+deliverables:
+  - path: "docs/2026-03-12/verification/T-FE-03_audit_detail_spec.md"
+    action: "R1 修订"
+    original_lines: 450
+    r1_added_lines: 85
+    description: "Audit Detail 页面规格书（R1 补齐 Contract/Control Snapshot 模块）"
+
+# Gate 自检结果
+gate_self_check:
+  - check: "结论 → 原因 → 证据 → 修复 顺序"
+    result: "PASS - 已强制在规格中定义不可逆顺序"
+  - check: "红线与可修复项分离"
+    result: "PASS - 已明确定义左右分栏，视觉权重不同"
+  - check: "EvidenceRef 可见性级别"
+    result: "PASS - 已定义 visible/summary-only/restricted 三级"
+  - check: "三权分立边界展示"
+    result: "PASS - 已定义 Power Boundary 模块"
+  - check: "绝对禁止前端呈现区"
+    result: "PASS - 已定义 Layer 3 禁止清单"
+  - check: "Contract/Control Snapshot 模块规格"
+    result: "PASS - R1 已补完整模块规格（参考线框图 L719-735）"
+  - check: "Input Constraints 文件引用"
+    result: "PASS - R1 已增加 gate_decision 和 compliance_attestation 引用"
+
+# R1 返工修复点
+r1_remediations:
+  - issue_key: "FE03-002"
+    severity: "HIGH"
+    location: "Section 3.3 模块详细规格"
+    original_problem: "缺少 Contract / Control Snapshot 模块详细规格定义"
+    remediation: "新增 Section 3.3 [7.5] Contract / Control Snapshot，包含字段定义、与其他模块关系、禁止事项"
+    evidence: "docs/2026-03-12/verification/T-FE-03_audit_detail_spec.md:478-550"
+  - issue_key: "FE03-001"
+    severity: "MEDIUM"
+    location: "Section 2.1 Input Constraints"
+    original_problem: "文件引用可能因时间差导致失效"
+    remediation: "已增加 gate_decision.json 和 compliance_attestation.json 引用，用于 R1 复审上下文"
+    evidence: "docs/2026-03-12/verification/T-FE-03_audit_detail_spec.md:44-56"
+
+# EvidenceRef
+evidence_refs:
+  - id: "EV-TFE03-001"
+    kind: "FILE"
+    locator: "docs/2026-03-12/verification/T-FE-03_audit_detail_spec.md:1-550"
+    description: "Audit Detail 页面规格书完整文档（R1 修订版）"
+  - id: "EV-TFE03-002"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/verification/T-FE-03_audit_detail_spec.md:14-41"
+    description: "PreflightChecklist 风险枚举"
+  - id: "EV-TFE03-003"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/verification/T-FE-03_audit_detail_spec.md:44-92"
+    description: "ExecutionContract 约束定义（R1 已更新 Input Constraints）"
+  - id: "EV-TFE03-004"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/verification/T-FE-03_audit_detail_spec.md:94-550"
+    description: "页面规格完整定义"
+  - id: "EV-TFE03-005"
+    kind: "SNIPPET"
+    locator: "docs/2026-03-12/verification/T-FE-03_audit_detail_spec.md:196-262"
+    description: "Decision Header + Decision Summary 规格"
+  - id: "EV-TFE03-006"
+    kind: "SNIPPET"
+    locator: "docs/2026-03-12/verification/T-FE-03_audit_detail_spec.md:283-316"
+    description: "Power Boundary 三权分立展示"
+  - id: "EV-TFE03-007"
+    kind: "SNIPPET"
+    locator: "docs/2026-03-12/verification/T-FE-03_audit_detail_spec.md:359-414"
+    description: "8 Gate Timeline / Gate Details 规格"
+  - id: "EV-TFE03-008"
+    kind: "SNIPPET"
+    locator: "docs/2026-03-12/verification/T-FE-03_audit_detail_spec.md:415-457"
+    description: "EvidenceRef Panel 含可见性级别"
+  - id: "EV-TFE03-009"
+    kind: "SNIPPET"
+    locator: "docs/2026-03-12/verification/T-FE-03_audit_detail_spec.md:458-517"
+    description: "Issue Breakdown 红线与可修复项分栏"
+  - id: "EV-TFE03-010"
+    kind: "SNIPPET"
+    locator: "docs/2026-03-12/verification/T-FE-03_audit_detail_spec.md:575-607"
+    description: "绝对禁止前端呈现区 Layer 3 定义"
+  - id: "EV-TFE03-R1-001"
+    kind: "SNIPPET"
+    locator: "docs/2026-03-12/verification/T-FE-03_audit_detail_spec.md:478-550"
+    description: "R1 新增：[7.5] Contract / Control Snapshot 完整模块规格"
+  - id: "EV-TFE03-R1-002"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/Dashboard-Audit Detail-Permit 三页文字线框图.md:721-735"
+    description: "R1 参考：线框图中 Contract / Control Snapshot 定义"
+  - id: "EV-TFE03-R1-003"
+    kind: "FILE"
+    locator: "docs/2026-03-12/verification/T-FE-03_gate_decision.json"
+    description: "R1 参考：vs--cc2 的 Review Decision 与 required_changes"
+  - id: "EV-TFE03-R1-004"
+    kind: "FILE"
+    locator: "docs/2026-03-12/verification/T-FE-03_compliance_attestation.json"
+    description: "R1 参考：Kior-C 的 Compliance Attestation（PASS）"
+
+# 依赖检查
+dependency_check:
+  task: "T-FE-01"
+  status: "ALLOW"
+  evidence: "docs/2026-03-12/verification/T-FE-01_ia_spec.md exists"
+
+# 请 Reviewer 复核的重点
+review_attention:
+  - "R1 新增的 [7.5] Contract / Control Snapshot 模块规格是否完整"
+  - "Contract / Control Snapshot 与其他模块的关系是否明确"
+  - "Input Constraints 文件引用是否已修正"
+  - "Decision Summary 仍然实现结论先行"
+  - "Red Lines 与 Fixable Gaps 的左右分栏仍然明确"
+  - "EvidenceRef 的 visible/summary-only/restricted 语义仍然完整"
+
+compliance_attention:
+  - "R1 新增模块未触及 Layer 3 禁止区"
+  - "Contract / Control Snapshot 只展示版本号和摘要，未展开规则细节"
+  - "仍然维持 Evidence/Rule/Gate/Gap 分离"
+  - "仍然未暴露规则阈值、权重、探针逻辑"
+  - "仍然未把内部异常栈、模块名、调用拓扑带到用户可见层"
+
+# 备注
+notes: |
+  本规格 R1 返工已完成：
+  1. 补齐了 Contract / Control Snapshot 模块完整规格（参考线框图 L719-735）
+  2. 更新了 Input Constraints，增加 gate_decision 和 compliance_attestation 引用
+  3. 本规格仍然严格遵循"结论 → 原因 → 证据 → 修复"不可逆顺序
+  4. 三权分立边界显式展示，不隐藏、不弱化
+  5. EvidenceRef 区分三级可见性，敏感证据受控展示
+  6. Red Lines 与 Fixable Gaps 左右分栏，视觉权重明确区分
+  7. Layer 3 绝对禁止前端呈现区已完整定义
+  8. 新增模块未破坏原有合规边界（Compliance 保持 PASS）

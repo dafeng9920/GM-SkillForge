@@ -1,0 +1,104 @@
+task_id: "T01"
+executor: "Antigravity-2"
+status: "完成"
+job_id: "P0-L6-AUTH-20260226-001"
+wave: "Wave 1"
+issue_ref: "ISSUE-00"
+
+# 交付物清单
+deliverables:
+  - path: "docs/2026-02-26/p0-governed-execution/verification/T01_policy_baseline.md"
+    action: "新建"
+    lines_changed: 482
+    description: "宪法防绕过基线规范文档"
+
+  - path: "docs/2026-02-26/p0-governed-execution/verification/T01_proposal.md"
+    action: "新建"
+    lines_changed: 150
+    description: "T01 执行提案（Guard A 三段式）"
+
+# Gate 自检结果
+gate_self_check:
+  - command: "test -f docs/2026-02-26/p0-governed-execution/verification/T01_policy_baseline.md"
+    result: "PASS - 文件存在"
+
+  - command: "rg 'def policy_check' T01_policy_baseline.md"
+    result: "PASS - 2 处匹配"
+
+  - command: "rg -c 'fail-closed|Fail-Closed' T01_policy_baseline.md"
+    result: "PASS - 12 处匹配 (>= 3 要求)"
+
+  - command: "rg 'trace_id|policy_version|decision_reason|evidence_ref' T01_policy_baseline.md | wc -l"
+    result: "PASS - 28 处匹配 (4 个字段均存在)"
+
+  - command: "rg 'API 入口|CLI 入口|Worker 入口' T01_policy_baseline.md"
+    result: "PASS - 3 种入口指南完整"
+
+# ISSUE-00 验收标准对齐
+acceptance_criteria:
+  - criteria: "任意入口（API/CLI/worker）均先执行 policy_check"
+    status: "PASS"
+    evidence: "§5 入口实现指南定义了三种入口的 policy_check 集成方式"
+
+  - criteria: "缺签名/缺 nonce/schema 非法/node 未注册一律拒绝"
+    status: "PASS"
+    evidence: "§3 Fail-Closed 拒绝策略定义了 10 种拒绝条件及错误码"
+
+  - criteria: "每次决策记录 trace_id/policy_version/decision_reason/evidence_ref"
+    status: "PASS"
+    evidence: "§4 审计字段标准定义了完整的审计日志格式"
+
+# 证据引用
+evidence_refs:
+  - id: "EV-T01-DELIVERABLE-001"
+    kind: "FILE"
+    locator: "docs/2026-02-26/p0-governed-execution/verification/T01_policy_baseline.md:1-482"
+    sha256: "pending-calculation"
+
+  - id: "EV-T01-PROPOSAL-001"
+    kind: "FILE"
+    locator: "docs/2026-02-26/p0-governed-execution/verification/T01_proposal.md:1-150"
+
+  - id: "EV-T01-GATE-001"
+    kind: "FILE"
+    locator: "docs/2026-02-26/p0-governed-execution/verification/T01_gate_decision.json"
+
+  - id: "EV-T01-COMPLIANCE-001"
+    kind: "FILE"
+    locator: "docs/2026-02-26/p0-governed-execution/verification/T01_compliance_attestation.json"
+
+# 三权记录路径
+governance_records:
+  review: "docs/2026-02-26/p0-governed-execution/verification/T01_gate_decision.json"
+  compliance: "docs/2026-02-26/p0-governed-execution/verification/T01_compliance_attestation.json"
+  execution: "docs/2026-02-26/p0-governed-execution/verification/T01_execution_report.yaml"
+
+# 后续任务依赖
+downstream_unblock:
+  - "T02 (Canonical JSON 一致性)"
+  - "T03 (Envelope + Body 结构)"
+
+# 备注
+notes: |
+  T01 完成了宪法防绕过基线规范的文档化工作。
+
+  关键成果：
+  1. 定义了统一的 policy_check() 接口及执行顺序
+  2. 建立了 10 种 fail-closed 拒绝条件
+  3. 标准化了 4 个审计字段 (trace_id, policy_version, decision_reason, evidence_ref)
+  4. 提供了 API/CLI/Worker 三种入口的实现指南
+  5. 为 ISSUE-01~06 预留了接口占位符
+
+  遵循的治理流程：
+  1. PreflightChecklist (Guard A) → 完成
+  2. ExecutionContract (Guard A) → 完成
+  3. Review (vs--cc2) → ALLOW
+  4. Compliance (Kior-C) → PASS
+  5. Execution (Antigravity-2) → 完成
+
+  无副作用操作，无需 permit。
+
+# 执行时间
+started_at: "2026-02-26T15:30:00Z"
+completed_at: "2026-02-26T16:00:00Z"
+duration_minutes: 30

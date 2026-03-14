@@ -1,0 +1,85 @@
+﻿{
+    "summary":  {
+                    "deny":  0,
+                    "generated_at":  "2026-02-26T11:51:32.8573021Z",
+                    "pass":  0,
+                    "total":  8,
+                    "batch":  "P0",
+                    "overall_decision":  "REQUIRES_CHANGES",
+                    "requires_changes":  8
+                },
+    "results":  [
+                    {
+                        "openai_yaml":  false,
+                        "skill_md":  true,
+                        "required_changes":  [
+                                                 "Missing agents/openai.yaml"
+                                             ],
+                        "skill":  "wave-gate-orchestrator-skill",
+                        "decision":  "REQUIRES_CHANGES"
+                    },
+                    {
+                        "openai_yaml":  false,
+                        "skill_md":  true,
+                        "required_changes":  [
+                                                 "Missing agents/openai.yaml"
+                                             ],
+                        "skill":  "triple-record-validator-skill",
+                        "decision":  "REQUIRES_CHANGES"
+                    },
+                    {
+                        "openai_yaml":  false,
+                        "skill_md":  true,
+                        "required_changes":  [
+                                                 "Missing agents/openai.yaml"
+                                             ],
+                        "skill":  "decision-schema-normalizer-skill",
+                        "decision":  "REQUIRES_CHANGES"
+                    },
+                    {
+                        "openai_yaml":  false,
+                        "skill_md":  true,
+                        "required_changes":  [
+                                                 "Missing agents/openai.yaml"
+                                             ],
+                        "skill":  "wave-recheck-generator-skill",
+                        "decision":  "REQUIRES_CHANGES"
+                    },
+                    {
+                        "openai_yaml":  false,
+                        "skill_md":  true,
+                        "required_changes":  [
+                                                 "Missing agents/openai.yaml"
+                                             ],
+                        "skill":  "dispatch-broadcast-builder-skill",
+                        "decision":  "REQUIRES_CHANGES"
+                    },
+                    {
+                        "openai_yaml":  false,
+                        "skill_md":  true,
+                        "required_changes":  [
+                                                 "Missing agents/openai.yaml"
+                                             ],
+                        "skill":  "p0-final-adjudicator-skill",
+                        "decision":  "REQUIRES_CHANGES"
+                    },
+                    {
+                        "openai_yaml":  false,
+                        "skill_md":  true,
+                        "required_changes":  [
+                                                 "Missing agents/openai.yaml"
+                                             ],
+                        "skill":  "evidence-freeze-board-skill",
+                        "decision":  "REQUIRES_CHANGES"
+                    },
+                    {
+                        "openai_yaml":  false,
+                        "skill_md":  true,
+                        "required_changes":  [
+                                                 "Missing agents/openai.yaml"
+                                             ],
+                        "skill":  "protocol-gate-ci-checker-skill",
+                        "decision":  "REQUIRES_CHANGES"
+                    }
+                ]
+}

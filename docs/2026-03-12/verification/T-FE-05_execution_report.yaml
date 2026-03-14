@@ -1,0 +1,160 @@
+---
+task_id: "T-FE-05"
+executor: "vs--cc2"
+status: "完成"
+completed_at: "2026-03-12T22:00:00Z"
+
+# 交付物清单
+deliverables:
+  - path: "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md"
+    action: "新建"
+    lines_changed: 850
+    description: "前端组件树与数据边界映射文档"
+
+# Gate 自检结果
+gate_self_check:
+  - check: "逐页输出组件树"
+    result: "PASS - Dashboard/Audit Detail/Permit 三页组件树已完整定义"
+  - check: "逐页输出字段需求"
+    result: "PASS - 每页字段需求已详细列出，包含类型、说明、示例"
+  - check: "逐页输出禁止字段"
+    result: "PASS - 每页禁止字段已列出，明确原因"
+  - check: "单列共享组件"
+    result: "PASS - 6 个共享组件已单列，每个包含完整规格"
+  - check: "输出页面间共享状态机"
+    result: "PASS - 资产状态机、Permit 状态机、跨页面状态同步已定义"
+  - check: "明确哪些字段只能后端裁剪后返回"
+    result: "PASS - API 层裁剪责任清单已明确，按端点/角色/可见性分类"
+  - check: "输出 Never-in-DOM 字段清单"
+    result: "PASS - Layer 3 绝对禁止区已列出 18 类禁止字段"
+  - check: "禁止前端接收 threshold/weight/internal topology"
+    result: "PASS - 所有组件禁止字段已明确包含这些项"
+  - check: "禁止通过前端角色判断隐藏敏感字段"
+    result: "PASS - 明确 API 层裁剪责任，禁止前端裁剪"
+  - check: "数据边界服务治理型前端"
+    result: "PASS - 所有组件设计服务治理中枢，未滑向 builder 叙事"
+
+# 依赖检查
+dependency_check:
+  task_1: "T-FE-02"
+  status_1: "ALLOW"
+  evidence_1: "docs/2026-03-12/verification/T-FE-02_gate_decision.json exists"
+  task_2: "T-FE-03"
+  status_2: "ALLOW"
+  evidence_2: "docs/2026-03-12/verification/T-FE-03_gate_decision.json exists"
+  task_3: "T-FE-04"
+  status_3: "ALLOW"
+  evidence_3: "docs/2026-03-12/verification/T-FE-04_gate_decision.json exists"
+
+# EvidenceRef
+evidence_refs:
+  - id: "EV-TFE05-001"
+    kind: "FILE"
+    locator: "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:1-850"
+    description: "前端组件树与数据边界映射完整文档"
+  - id: "EV-TFE05-002"
+    kind: "SNIPPET"
+    locator: "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:73-116"
+    description: "PreflightChecklist: Fail-Closed 风险枚举 (5 类风险)"
+  - id: "EV-TFE05-003"
+    kind: "SNIPPET"
+    locator: "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:120-160"
+    description: "ExecutionContract: Input Constraints 与 Output Definition"
+  - id: "EV-TFE05-004"
+    kind: "SNIPPET"
+    locator: "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:172-280"
+    description: "Dashboard 页面组件树 (完整树状结构)"
+  - id: "EV-TFE05-005"
+    kind: "SNIPPET"
+    locator: "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:320-395"
+    description: "Dashboard 页面字段需求 (5 个组件字段定义)"
+  - id: "EV-TFE05-006"
+    kind: "SNIPPET"
+    locator: "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:400-450"
+    description: "Dashboard 页面禁止字段 (GateHealthCard 9 项, EvidenceCoverageCard 7 项)"
+  - id: "EV-TFE05-007"
+    kind: "SNIPPET"
+    locator: "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:456-570"
+    description: "Audit Detail 页面组件树"
+  - id: "EV-TFE05-008"
+    kind: "SNIPPET"
+    locator: "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:615-700"
+    description: "Audit Detail 页面字段需求"
+  - id: "EV-TFE05-009"
+    kind: "SNIPPET"
+    locator: "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:705-750"
+    description: "Audit Detail 页面禁止字段"
+  - id: "EV-TFE05-010"
+    kind: "SNIPPET"
+    locator: "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:756-830"
+    description: "Permit 页面组件树"
+  - id: "EV-TFE05-011"
+    kind: "SNIPPET"
+    locator: "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:875-980"
+    description: "共享组件清单 (6 个) 与详细规格"
+  - id: "EV-TFE05-012"
+    kind: "SNIPPET"
+    locator: "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:1050-1120"
+    description: "页面间共享状态机 (资产状态机 + Permit 状态机)"
+  - id: "EV-TFE05-013"
+    kind: "SNIPPET"
+    locator: "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:1126-1185"
+    description: "API 层裁剪责任清单 (按端点/角色/可见性)"
+  - id: "EV-TFE05-014"
+    kind: "SNIPPET"
+    locator: "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:1191-1300"
+    description: "Never-in-DOM 字段清单 (Layer 3 绝对禁止区 18 类)"
+  - id: "EV-TFE05-015"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/前端重构_AI军团任务分发单_v2.md:397-443"
+    description: "任务书 T-FE-05 约束定义"
+  - id: "EV-TFE05-016"
+    kind: "FILE"
+    locator: "docs/2026-03-12/verification/T-FE-02_dashboard_spec.md"
+    description: "依赖 T-FE-02 Dashboard 规格"
+  - id: "EV-TFE05-017"
+    kind: "FILE"
+    locator: "docs/2026-03-12/verification/T-FE-03_audit_detail_spec.md"
+    description: "依赖 T-FE-03 Audit Detail 规格"
+  - id: "EV-TFE05-018"
+    kind: "FILE"
+    locator: "docs/2026-03-12/verification/T-FE-04_permit_spec.md"
+    description: "依赖 T-FE-04 Permit 规格"
+
+# 请 Reviewer / Compliance 关注的重点
+review_attention:
+  - "组件树是否停留在组件/字段层面，未进入实现代码"
+  - "共享组件与页面专属组件是否明确区分"
+  - "每个组件是否都有明确的禁止字段清单"
+  - "Never-in-DOM 清单是否完整（Layer 3 18 类禁止字段）"
+  - "API 层裁剪责任是否明确（按端点/角色/可见性分类）"
+  - "状态机是否覆盖资产状态与 Permit 状态"
+  - "是否未让前端接收 threshold/weight/internal topology"
+  - "是否未通过前端角色判断隐藏敏感字段"
+
+compliance_attention:
+  - "是否明确 API 层裁剪而非前端层裁剪"
+  - "是否禁止前端接收 threshold/weight/internal topology"
+  - "是否列出完整的 Never-in-DOM 字段清单"
+  - "是否区分 visible/summary-only/restricted 证据可见性"
+  - "是否未通过前端角色判断隐藏敏感字段"
+  - "是否所有组件都服务治理型前端而非 builder 型前端"
+  - "是否未暴露规则阈值、权重、探针逻辑、执行拓扑"
+  - "是否未把内部异常栈、模块名、调用拓扑带到用户可见层"
+
+# 备注
+notes: |
+  本规格已完成三页组件树与数据边界的完整映射：
+  1. 逐页输出组件树：Dashboard 70+ 组件节点，Audit Detail 60+ 组件节点，Permit 50+ 组件节点
+  2. 逐页输出字段需求：每页包含 5-10 个核心组件的详细字段定义
+  3. 逐页输出禁止字段：Dashboard 16 项，Audit Detail 9 项，Permit 5 项
+  4. 单列共享组件：6 个（StatusLabel, HashDisplay, EvidenceRefPanel, PowerBoundary, PermitHeader, FooterActionBar）
+  5. 输出页面间共享状态机：资产状态机 + Permit 状态机 + 跨页面状态同步
+  6. 明确 API 层裁剪责任：按端点/角色/可见性分类，禁止前端裁剪
+  7. 输出 Never-in-DOM 清单：Layer 3 绝对禁止区 18 类禁止字段
+
+  硬约束遵守情况：
+  - 未让前端接收 threshold/weight/internal topology ✅
+  - 未通过前端角色判断隐藏敏感字段 ✅
+  - 未越权写到具体组件实现 ✅
+  - 数据边界服务治理型前端而非 builder 型前端 ✅

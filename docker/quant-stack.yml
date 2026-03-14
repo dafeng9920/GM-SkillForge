@@ -1,0 +1,159 @@
+version: '3.8'
+
+services:
+  # ========================
+  # 元数据库 (策略配置、用户权限、Gate规则、Tick数据)
+  # ========================
+  postgres:
+    image: postgres:15-alpine
+    container_name: quant-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=quant_meta
+      - POSTGRES_USER=quant_admin
+      - POSTGRES_PASSWORD=quant_secure_change_me
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - quant-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U quant_admin"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ========================
+  # Redis (缓存、消息队列、会话状态)
+  # ========================
+  redis:
+    image: redis:7-alpine
+    container_name: quant-redis
+    ports:
+      - "6379:6379"
+    command: >
+      redis-server
+      --appendonly yes
+      --appendfsync everysec
+      --maxmemory 2gb
+      --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    networks:
+      - quant-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    restart: unless-stopped
+
+  # ========================
+  # MinIO (对象存储 - Audit Pack、Evidence、回测报告)
+  # ========================
+  minio:
+    image: minio/minio:latest
+    container_name: quant-minio
+    ports:
+      - "9001:9001"   # MinIO Console
+      - "9000:9000"   # MinIO API
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin_change_me
+      - MINIO_DEFAULT_BUCKETS=audit-packs,evidence,backtest-reports,strategy-snapshots
+    volumes:
+      - minio_data:/data
+    networks:
+      - quant-net
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    restart: unless-stopped
+
+  # ========================
+  # PGAdmin (PostgreSQL管理界面)
+  # ========================
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: quant-pgadmin
+    ports:
+      - "5050:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@quant.local
+      - PGADMIN_DEFAULT_PASSWORD=admin_change_me
+      - PGADMIN_CONFIG_SERVER_MODE=False
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - quant-net
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+  # ========================
+  # Grafana (监控面板)
+  # ========================
+  grafana:
+    image: grafana/grafana:10.0.0
+    container_name: quant-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin_change_me
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    networks:
+      - quant-net
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+
+  # ========================
+  # Prometheus (指标采集)
+  # ========================
+  prometheus:
+    image: prom/prometheus:v2.45.0
+    container_name: quant-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    networks:
+      - quant-net
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  minio_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+  grafana_data:
+    driver: local
+  prometheus_data:
+    driver: local
+
+networks:
+  quant-net:
+    driver: bridge

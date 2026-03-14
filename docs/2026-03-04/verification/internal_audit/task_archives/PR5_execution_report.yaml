@@ -1,0 +1,433 @@
+artifacts:
+  audit_pack:
+    checksums:
+      contract_hash: d078e33a0d801d8a08bccd283c6769b843686d783bf6981acd9c97e391061ec7
+      decision_hash: 2aecf617b766d8c6d4d326b492bc4563f27d89aecca8f797f97423466108df42
+      decisions_hash: sha256:4823638ba792c2b2d9aaf3cd6801457137129527c2589c8a94e0b43273b51ad9
+      demand_hash: 3d54cc32e36fe7b44e16e0038b6eb4e65507789bb1074c580f41af7165ee7b3a
+      manifest_hash: sha256:2b69780664e9f4de3bd4243ff46fe36d54d5e9caddde66ccc370d39d96fd3e10
+    created_at: '2026-03-04T10:29:02.626842+00:00'
+    evidence_refs: []
+    gate_decisions: &id004
+    - &id006
+      decision: ALLOW
+      details:
+        warning: using_fallback_implementation
+      gate_id: gate-834b258a-32f7-4684-bf3d-7107e6ce746c
+      gate_name: intake_repo
+      node_id: intake_repo
+      reason: Fallback gate engine - no specialized evaluator
+      schema_version: 0.1.0
+      timestamp: '2026-03-04T10:29:02Z'
+    - &id007
+      decision: ALLOW
+      details:
+        warning: using_fallback_implementation
+      gate_id: gate-f9f3c491-8478-4b06-8d68-6b46cc04ca44
+      gate_name: license_gate
+      node_id: license_gate
+      reason: Fallback gate engine - no specialized evaluator
+      schema_version: 0.1.0
+      timestamp: '2026-03-04T10:29:02Z'
+    - &id008
+      decision: ALLOW
+      details:
+        warning: using_fallback_implementation
+      gate_id: gate-ca8cca97-75a1-43c8-87d3-a7ee99fa41de
+      gate_name: repo_scan_fit_score
+      node_id: repo_scan_fit_score
+      reason: Fallback gate engine - no specialized evaluator
+      schema_version: 0.1.0
+      timestamp: '2026-03-04T10:29:02Z'
+    - decision: ALLOW
+      details:
+        warning: using_fallback_implementation
+      gate_id: gate-68738fb6-b2f9-4c06-a012-c9ac2f44293d
+      gate_name: draft_skill_spec
+      node_id: draft_skill_spec
+      reason: Fallback gate engine - no specialized evaluator
+      schema_version: 0.1.0
+      timestamp: '2026-03-04T10:29:02Z'
+    - decision: ALLOW
+      details:
+        warning: using_fallback_implementation
+      gate_id: gate-f783eb9f-4875-4339-828c-9815713778e5
+      gate_name: constitution_risk_gate
+      node_id: constitution_risk_gate
+      reason: Fallback gate engine - no specialized evaluator
+      schema_version: 0.1.0
+      timestamp: '2026-03-04T10:29:02Z'
+    - decision: ALLOW
+      details:
+        warning: using_fallback_implementation
+      gate_id: gate-6ed7f0cb-9028-4e4b-995a-5bc8d3bbbee7
+      gate_name: scaffold_skill_impl
+      node_id: scaffold_skill_impl
+      reason: Fallback gate engine - no specialized evaluator
+      schema_version: 0.1.0
+      timestamp: '2026-03-04T10:29:02Z'
+    - decision: ALLOW
+      details:
+        warning: using_fallback_implementation
+      gate_id: gate-3d1cb036-a5af-4539-b2bb-8a9b078bfe0c
+      gate_name: sandbox_test_and_trace
+      node_id: sandbox_test_and_trace
+      reason: Fallback gate engine - no specialized evaluator
+      schema_version: 0.1.0
+      timestamp: '2026-03-04T10:29:02Z'
+    - decision: ALLOW
+      details:
+        warning: using_fallback_implementation
+      gate_id: gate-04d27b89-8be9-4ccd-b953-97cc9ce06581
+      gate_name: pack_audit_and_publish
+      node_id: pack_audit_and_publish
+      reason: Fallback gate engine - no specialized evaluator
+      schema_version: 0.1.0
+      timestamp: '2026-03-04T10:29:02Z'
+    manifest: &id003
+      acceptance:
+        quality_gates:
+          min_test_pass_rate: 1.0
+          security_scan_required: true
+        success_criteria:
+        - check_type: static_check
+          criterion: Manifest is valid per demand_dsl_v0.schema.yml
+        - check_type: automated_test
+          criterion: Dry-run execution completes without errors
+      constraints:
+        execution_mode: dry_run
+        human_approval_points: &id001
+        - constitution_risk_gate
+        - pack_audit_and_publish
+        network_policy: deny_by_default
+        resource_limits: &id002
+          max_duration_seconds: 300
+          max_memory_mb: 512
+        secrets: []
+      destinations:
+      - format: python
+        kind: skill
+        locator: skills/generated_skill
+        write_mode: create
+      intent_id: f8690a595bd0470881319bac79cbc74b
+      mode: generate_skill
+      schema_version: demand_dsl_v0
+      sources:
+      - format: text
+        kind: nl_text
+        locator: Generate a skill that emails PDFs to Notion
+      transforms: []
+      trigger:
+        source: test_user
+        timestamp: '2026-03-04T10:29:02.595445+00:00'
+        type: nl_prompt
+    pack_id: AP-test_skill-C2EC8115
+    policy_matrix:
+      final_decision: ALLOW
+      gates_denied: 0
+      gates_evaluated: 8
+      gates_passed: 8
+      gates_requires_changes: 0
+    revision: test_rev_001
+    schema_version: pack_and_permit_v0
+  canonicalize_test:
+    canonical: '{"a":2,"m":3,"z":1}'
+    hash: ebba85cfdc0a724b6cc327ecc545faeb38b9fe02eca603b430eb872f5cf75370
+    input:
+      a: 2
+      m: 3
+      z: 1
+  contract: &id005
+    controls:
+      execution_mode: dry_run
+      human_approval_points: *id001
+      network_policy: deny_by_default
+      resource_limits: *id002
+    gate_plan:
+    - intake_repo
+    - license_gate
+    - repo_scan_fit_score
+    - draft_skill_spec
+    - constitution_risk_gate
+    - scaffold_skill_impl
+    - sandbox_test_and_trace
+    - pack_audit_and_publish
+    goals:
+      non_goals:
+      - Architecture Blueprint IR / PlanSpec auto-generation
+      - Multi-Agent autonomous planning
+      - Complex state machine execution
+      - Real external system execution (except tests-only/dry-run)
+      - Unlimited API calls
+      - Full DDD deconstruction
+      - Autonomous feature planning
+      primary:
+      - description: Generate a new skill from natural language description
+        goal_id: generate_skill_from_nl
+        success_metrics:
+        - Skill manifest is valid
+        - Dry-run execution succeeds
+        - No BLOCKER findings from static analysis
+    intent_id: f8690a595bd0470881319bac79cbc74b
+    io:
+      inputs:
+      - format: text
+        kind: nl_text
+        locator: Generate a skill that emails PDFs to Notion
+      outputs:
+      - format: python
+        kind: skill
+        locator: skills/generated_skill
+        write_mode: create
+    quality:
+      acceptance_criteria:
+      - check_type: static_check
+        criterion: Manifest is valid per demand_dsl_v0.schema.yml
+      - check_type: automated_test
+        criterion: Dry-run execution completes without errors
+      min_documentation_score: 0.7
+      min_test_coverage: 0.8
+      min_test_pass_rate: 1.0
+      must_have:
+      - schema_version
+      - skill_id
+      - skill_version
+      - capabilities
+      - controls
+      security_scan_required: true
+    risk:
+      allowed_actions:
+      - read_manifest
+      - validate_schema
+      - static_analysis
+      - dry_run_execution
+      - generate_code
+      - write_to_workspace
+      deny_list:
+      - SUBPROCESS
+      - SYS_ENV_WRITE
+      - DYNAMIC_IMPORT
+      - PERSIST_STORAGE
+      risk_tier: L0
+    schema_version: constitution_contract_v0
+  demand_dsl: *id003
+  evidence_refs:
+  - content_hash: sha256:c97841160851add9c18e9d6ad977b227e0200f9b880ba0b924d95d1214b85a2c
+    ref_id: test_ref_0
+    source_locator: test://evidence/0
+    timestamp: '2026-03-04T10:29:02Z'
+    tool_revision: test_v0
+    type: test_evidence
+  - content_hash: sha256:218ff4da726aaad1be81393881ac64d30b6217f5b7e83d26bc80f6e10d7475c3
+    ref_id: test_ref_1
+    source_locator: test://evidence/1
+    timestamp: '2026-03-04T10:29:02Z'
+    tool_revision: test_v0
+    type: test_evidence
+  - content_hash: sha256:30fcf190d3c8818f0b2bc45bbedf997709f049d6f9b3cec0703aceb0a8342191
+    ref_id: test_ref_2
+    source_locator: test://evidence/2
+    timestamp: '2026-03-04T10:29:02Z'
+    tool_revision: test_v0
+    type: test_evidence
+  gate_decisions: *id004
+  permit:
+    audit_pack_hash: sha256:ff3e30ae8f68990d72db024658becb70fc75463cdbdefdec94a14d98d46c15ef
+    contract_hash: d078e33a0d801d8a08bccd283c6769b843686d783bf6981acd9c97e391061ec7
+    decision_hash: 2aecf617b766d8c6d4d326b492bc4563f27d89aecca8f797f97423466108df42
+    demand_hash: 3d54cc32e36fe7b44e16e0038b6eb4e65507789bb1074c580f41af7165ee7b3a
+    expires_at: null
+    issued_at: '2026-03-04T10:29:02.626842+00:00'
+    issuer: gm-skillforge-v0
+    permit_id: PERMIT-test_skill-DC235D43
+    restrictions: {}
+    revision: test_rev_001
+    schema_version: pack_and_permit_v0
+    skill_id: test_skill
+    status: ISSUED
+  three_hashes:
+    canonical_inputs:
+      contract:
+        controls:
+          execution_mode: dry_run
+          human_approval_points:
+          - constitution_risk_gate
+          - pack_audit_and_publish
+          network_policy: deny_by_default
+          resource_limits:
+            max_duration_seconds: 300
+            max_memory_mb: 512
+        gate_plan:
+        - intake_repo
+        - license_gate
+        - repo_scan_fit_score
+        - draft_skill_spec
+        - constitution_risk_gate
+        - scaffold_skill_impl
+        - sandbox_test_and_trace
+        - pack_audit_and_publish
+        goals:
+          non_goals:
+          - Architecture Blueprint IR / PlanSpec auto-generation
+          - Autonomous feature planning
+          - Complex state machine execution
+          - Full DDD deconstruction
+          - Multi-Agent autonomous planning
+          - Real external system execution (except tests-only/dry-run)
+          - Unlimited API calls
+          primary:
+          - description: Generate a new skill from natural language description
+            goal_id: generate_skill_from_nl
+            success_metrics:
+            - Skill manifest is valid
+            - Dry-run execution succeeds
+            - No BLOCKER findings from static analysis
+        intent_id: f8690a595bd0470881319bac79cbc74b
+        io:
+          inputs:
+          - format: text
+            kind: nl_text
+            locator: Generate a skill that emails PDFs to Notion
+          outputs:
+          - format: python
+            kind: skill
+            locator: skills/generated_skill
+            write_mode: create
+        quality:
+          acceptance_criteria:
+          - check_type: static_check
+            criterion: Manifest is valid per demand_dsl_v0.schema.yml
+          - check_type: automated_test
+            criterion: Dry-run execution completes without errors
+          min_documentation_score: 0.7
+          min_test_coverage: 0.8
+          min_test_pass_rate: 1.0
+          must_have:
+          - capabilities
+          - controls
+          - schema_version
+          - skill_id
+          - skill_version
+          security_scan_required: true
+        risk:
+          allowed_actions:
+          - dry_run_execution
+          - generate_code
+          - read_manifest
+          - static_analysis
+          - validate_schema
+          - write_to_workspace
+          deny_list:
+          - DYNAMIC_IMPORT
+          - PERSIST_STORAGE
+          - SUBPROCESS
+          - SYS_ENV_WRITE
+          risk_tier: L0
+        schema_version: constitution_contract_v0
+      decision:
+        gate_decisions: []
+      demand:
+        acceptance:
+          quality_gates:
+            min_test_pass_rate: 1.0
+            security_scan_required: true
+          success_criteria:
+          - check_type: automated_test
+            criterion: Dry-run execution completes without errors
+          - check_type: static_check
+            criterion: Manifest is valid per demand_dsl_v0.schema.yml
+        constraints:
+          execution_mode: dry_run
+          human_approval_points:
+          - constitution_risk_gate
+          - pack_audit_and_publish
+          network_policy: deny_by_default
+          resource_limits:
+            max_duration_seconds: 300
+            max_memory_mb: 512
+          secrets: []
+        destinations:
+        - format: python
+          kind: skill
+          locator: skills/generated_skill
+          write_mode: create
+        intent_id: f8690a595bd0470881319bac79cbc74b
+        mode: generate_skill
+        schema_version: demand_dsl_v0
+        sources:
+        - format: text
+          kind: nl_text
+          locator: Generate a skill that emails PDFs to Notion
+        transforms: []
+        trigger:
+          source: test_user
+          type: nl_prompt
+    contract_hash: d078e33a0d801d8a08bccd283c6769b843686d783bf6981acd9c97e391061ec7
+    decision_hash: 2aecf617b766d8c6d4d326b492bc4563f27d89aecca8f797f97423466108df42
+    demand_hash: 3d54cc32e36fe7b44e16e0038b6eb4e65507789bb1074c580f41af7165ee7b3a
+    hash_spec_version: v0
+blocking_point: null
+end_time: '2026-03-04T10:29:02.628101+00:00'
+passed_steps: 8
+start_time: '2026-03-04T10:29:02.584934+00:00'
+steps:
+- artifacts:
+    demand_dsl: *id003
+  details: 'Successfully parsed NL to Demand DSL. Mode: generate_skill'
+  name: NL to Demand DSL
+  status: PASS
+  step: 1
+  timestamp: '2026-03-04T10:29:02.595445+00:00'
+- artifacts: {}
+  details: All required fields present
+  name: Validate Demand DSL
+  status: PASS
+  step: 2
+  timestamp: '2026-03-04T10:29:02.595445+00:00'
+- artifacts:
+    contract: *id005
+  details: Successfully compiled contract with 8 gates
+  name: Compile to Contract
+  status: PASS
+  step: 3
+  timestamp: '2026-03-04T10:29:02.595445+00:00'
+- artifacts: {}
+  details: 'Canonical JSON working, hash: ebba85cfdc0a724b...'
+  name: Canonicalize Test
+  status: PASS
+  step: 4
+  timestamp: '2026-03-04T10:29:02.600608+00:00'
+- artifacts: {}
+  details: 'demand_hash: 3d54cc32e36fe7b4..., contract_hash: d078e33a0d801d8a...,
+    decision_hash: 2aecf617b766d8c6...'
+  name: Calculate Three Hashes
+  status: PASS
+  step: 5
+  timestamp: '2026-03-04T10:29:02.621823+00:00'
+- artifacts:
+    gate_decisions:
+    - *id006
+    - *id007
+    - *id008
+  details: 'Executed 8 gates, decisions: 8 ALLOW'
+  name: Execute Gate Engine
+  status: PASS
+  step: 6
+  timestamp: '2026-03-04T10:29:02.623843+00:00'
+- artifacts: {}
+  details: Created and stored 3 evidence refs
+  name: Evidence Store Test
+  status: PASS
+  step: 7
+  timestamp: '2026-03-04T10:29:02.625843+00:00'
+- artifacts:
+    audit_pack_id: AP-test_skill-C2EC8115
+    permit_id: PERMIT-test_skill-DC235D43
+    permit_status: ISSUED
+  details: 'Permit issued, pack_id: AP-test_skill-C2EC8115'
+  name: Pack and Permit
+  status: PASS
+  step: 8
+  timestamp: '2026-03-04T10:29:02.626842+00:00'
+success: true
+total_steps: 8

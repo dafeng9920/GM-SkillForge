@@ -1,0 +1,53 @@
+{
+  "schema_version": "rationale_v0",
+  "revision": "rev_...",
+  "revision_id": "rev_...",
+  "created_at": "UTC_TIMESTAMP",
+  "hashes": {
+    "demand_hash": "sha256:...",
+    "contract_hash": "sha256:...",
+    "decision_hash": "sha256:..."
+  },
+  "change_summary": {
+    "title": "Brief title of the change",
+    "one_liner": "Single sentence description of what changed and why",
+    "change_type": "bug_fix|feature_enhancement|security_patch|refactor|breaking_change"
+  },
+  "change_rationale": {
+    "why_this_change": "Explanation of the business or technical reason for this change",
+    "problem_statement": "What problem does this change solve?",
+    "alternative_approaches_considered": [
+      {
+        "approach": "Description of alternative",
+        "why_rejected": "Reason for not choosing this approach"
+      }
+    ],
+    "tradeoffs": {
+      "benefits": ["Benefit 1", "Benefit 2"],
+      "drawbacks": ["Drawback 1", "Drawback 2"],
+      "mitigations": ["How drawbacks are mitigated"]
+    }
+  },
+  "impact_assessment": {
+    "affected_components": [],
+    "affected_gates": [],
+    "backward_compatibility": true,
+    "migration_required": false,
+    "rollback_plan": "Description of rollback procedure if needed"
+  },
+  "validation_approach": {
+    "how_validated": "Description of testing/validation approach",
+    "test_coverage": "Description of test coverage",
+    "manual_verification": []
+  },
+  "references": {
+    "policy_refs": [],
+    "asset_refs": [],
+    "related_issues": [],
+    "related_revisions": []
+  },
+  "approvals": {
+    "required": [],
+    "obtained": []
+  }
+}

@@ -1,0 +1,127 @@
+{
+  "task_id": "T-FE-06",
+  "executor": "Kior-A",
+  "reviewer": "vs--cc1",
+  "compliance_officer": "Antigravity-2",
+  "wave": "Wave 2",
+  "depends_on": ["T-FE-05"],
+  "compliance_mode": "B Guard 硬审",
+  "reviewed_at": "2026-03-12T23:55:00Z",
+  "decision": "PASS",
+
+  "violations": [],
+
+  "evidence_refs": [
+    {
+      "id": "EV-COMP-FE06-001",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-06_visibility_and_permission_matrix.md:94-123",
+      "description": "Section 3.1 四层信息分层模型，Layer 3 定义为绝对禁止区，任何角色均不得访问"
+    },
+    {
+      "id": "EV-COMP-FE06-002",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-06_visibility_and_permission_matrix.md:187-250",
+      "description": "Section 3.3 Never-in-DOM 清单，30 类禁止字段，覆盖 9 大类别，完整定义敏感机制信息禁止区"
+    },
+    {
+      "id": "EV-COMP-FE06-003",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-06_visibility_and_permission_matrix.md:248-275",
+      "description": "Section 3.4.1 API payload 裁剪责任原则，禁止'后端全量返回+前端隐藏'模式，要求后端按角色裁剪"
+    },
+    {
+      "id": "EV-COMP-FE06-004",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-06_visibility_and_permission_matrix.md:276-286",
+      "description": "Section 3.4.2 按 API 端点裁剪责任表，明确所有角色共同禁止字段为全部 Layer 3 字段"
+    },
+    {
+      "id": "EV-COMP-FE06-005",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-06_visibility_and_permission_matrix.md:287-310",
+      "description": "Section 3.4.3 API 响应结构约束，禁止在响应中包含 Layer 3 字段，禁止提供'获取完整数据'端点"
+    },
+    {
+      "id": "EV-COMP-FE06-006",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-06_visibility_and_permission_matrix.md:312-349",
+      "description": "Section 3.5 角色与信息密度映射，强化'Compliance 角色也不得访问 Layer 3' (Section 3.5.3)"
+    },
+    {
+      "id": "EV-COMP-FE06-007",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-06_visibility_and_permission_matrix.md:351-418",
+      "description": "Section 3.6 页面级权限裁剪规则，明确 restricted 级别证据通过 API 裁剪而非前端隐藏"
+    },
+    {
+      "id": "EV-COMP-FE06-008",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-06_visibility_and_permission_matrix.md:420-480",
+      "description": "Section 3.7 字段级禁止下发清单，30 类禁止字段按类型分组，提供后端/前端/Code Review 检查清单"
+    },
+    {
+      "id": "EV-COMP-FE06-009",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-06_visibility_and_permission_matrix.md:482-650",
+      "description": "Section 3.8 可直接供前后端接口使用的约束结构，TypeScript Schema 可直接用于接口约束"
+    },
+    {
+      "id": "EV-COMP-FE06-010",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-06_visibility_and_permission_matrix.md:651-695",
+      "description": "Section 3.9 前后端协作指南，后端/前端/Code Review 三方检查清单，禁止'后端全量返回+前端隐藏'"
+    },
+    {
+      "id": "EV-COMP-FE06-011",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md:790-820",
+      "description": "T-FE-05 API 层裁剪责任清单，明确'由 API 按角色返回不同 payload，敏感字段不得进入前端响应'"
+    },
+    {
+      "id": "EV-COMP-FE06-012",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/Dashboard-Audit Detail-Permit 三页文字线框图.md:288-297",
+      "description": "参考文档：四层信息分层模型，Layer 3 为禁止前端呈现区"
+    },
+    {
+      "id": "EV-COMP-FE06-013",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/前端重构_AI军团任务分发单_v2.md:447-490",
+      "description": "参考文档：T-FE-06 任务书，定义权限裁剪与禁止前端呈现区设计目标"
+    }
+  ],
+
+  "required_changes": [],
+
+  "compliance_notes": [
+    "交付物在所有 B Guard Zero Exception Directives 方面完整且正确",
+    "Layer 3 绝对禁止区定义完整（30 类禁止字段），覆盖规则机制/探针实现/执行细节/系统架构/异常信息/判定逻辑/证据收集/证据处理/合规内部 9 大类",
+    "API 层裁剪原则明确严格，禁止'后端全量返回+前端隐藏'模式，要求后端按角色和层级裁剪 payload，敏感字段不得进入前端响应",
+    "角色权限边界明确，所有角色（包括 Compliance）均不得访问 Layer 3，Section 3.5.3 强化'仍不能访问任何 Layer 3 字段'",
+    "可见性矩阵完整且正确，按页面（Dashboard/Audit Detail/Permit）和字段类别分别定义 Layer 0/1/2/3 可见性，restricted 级别证据通过 API 裁剪而非前端隐藏",
+    "前后端接口约束结构完整，TypeScript Schema（APIResponseConstraint、FieldVisibilityConstraint、PagePermissionConstraint）可直接用于前后端接口约束",
+    "EvidenceRef 完整，13 个证据项覆盖所有关键章节与参考文档",
+    "未发现任何允许敏感机制信息进入前端响应的设计",
+    "未发现任何前端角色判断隐藏敏感字段的设计倾向",
+    "未发现 Never-in-DOM 清单或 Layer 3 禁止区不完整的情况",
+    "前后端协作指南实用，提供后端/前端/Code Review 三方检查清单，确保实施阶段落实 API 层裁剪"
+  ],
+
+  "positive_findings": [
+    "Layer 3 绝对禁止区定义极其严格：30 类禁止字段覆盖 9 大类别，从规则机制到合规内部，任何角色均不得访问，不得进入 DOM，不得进入前端响应",
+    "API 层裁剪原则执行极其严格：Section 3.4.1 提供禁止模式（后端全量返回+前端隐藏）与要求模式（后端按角色裁剪）对比，明确强制要求模式",
+    "角色权限溢出风险防护到位：Section 3.5.3 强化'仍不能访问任何 Layer 3 字段'，明确 Compliance 角色也不得访问绝对禁止区，防止权限溢出攻击",
+    "Evidence visibility 裁剪规则明确：Section 3.6.2 明确 restricted 级别证据通过 API 裁剪（显示'需权限验证'提示），禁止前端通过角色判断隐藏",
+    "约束结构可直接用于实施：Section 3.8 提供完整 TypeScript Schema，可直接用于前后端接口约束，降低实施成本和误解风险",
+    "前后端协作指南完整：Section 3.9 提供后端/前端/Code Review 三方检查清单，确保实施阶段落实 API 层裁剪，防止'后端全量返回+前端隐藏'模式回归",
+    "按 API 端点裁剪责任表完整：Section 3.4.2 定义 6 个 API 端点的裁剪责任，明确共同禁止字段为全部 Layer 3 字段，防止任何端点泄露敏感机制信息",
+    "禁止事项列表完整：Section 3.8.3 禁止事项明确列出（在响应中包含 Layer 3 字段、在 meta 中暴露被过滤字段具体值、提供'获取完整数据'端点或参数）",
+    "与 T-FE-05 一致性良好：T-FE-05 的组件树/字段需求/禁止字段在本规格中扩展为完整的权限矩阵和 Never-in-DOM 清单",
+    "四层信息分层模型清晰：Layer 0/1/2/3 定义明确，层级递进需授权，Layer 3 为永久禁止，API 层裁剪前端层展示，符合最小权限原则"
+  ],
+
+  "b_guard_notes": "作为合规官 Antigravity-2，我已完成 B Guard 式硬审。交付物在所有 Zero Exception Directives 方面完整且正确，未发现任何触发 FAIL 条款的违规项。Layer 3 绝对禁止区定义极其严格（30 类禁止字段），API 层裁剪原则执行极其严格（禁止'后端全量返回+前端隐藏'模式），角色权限溢出风险防护到位（所有角色包括 Compliance 均不得访问 Layer 3）。交付物可直接用于指导前后端开发实施。决策：PASS。",
+
+  "acknowledged_review_findings": "已 acknowledge vs--cc1 的 Review 决定（ALLOW）。Review 识别的所有 21 项 ALLOW 理由与我的 B Guard 硬审结论一致，交付物在核心合规约束（Layer 3 禁止区、API 层裁剪、角色权限边界、Evidence 裁剪）方面完整且正确。"
+}

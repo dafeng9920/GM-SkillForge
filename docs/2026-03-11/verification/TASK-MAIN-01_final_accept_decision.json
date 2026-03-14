@@ -1,0 +1,39 @@
+{
+  "schema_version": "final_accept_v1",
+  "version": "1.0.0",
+  "adjudicated_at_utc": "2026-03-10T16:35:39Z",
+  "task_id": "TASK-MAIN-01",
+  "decision": "DENY",
+  "summary": "Final Accept Decision: DENY\n\nTask ID: TASK-MAIN-01\nAdjudicated At: 2026-03-10T16:35:39Z\n\nVerification Results:\n  - Triad Completeness: FAIL\n  - Compliance Precedence: PASS\n  - Local Accept: PASS\n  - Gate Decision: PASS\n  - Evidence Refs: PASS\n\nBlockers (1):\n  - Missing triad records: ['gate_decision (Review)', 'compliance_attestation']\n\nWarnings (1):\n  - Local accept has REQUIRES_CHANGES",
+  "verification_results": {
+    "triad_completeness": false,
+    "compliance_precedence": true,
+    "local_accept": true,
+    "gate_decision": true,
+    "evidence_refs": true
+  },
+  "blocking_evidence": {
+    "blockers": [
+      "Missing triad records: ['gate_decision (Review)', 'compliance_attestation']"
+    ],
+    "warnings": [
+      "Local accept has REQUIRES_CHANGES"
+    ]
+  },
+  "required_changes": [
+    {
+      "issue_key": "FA-TASK-MAIN-01-1",
+      "reason": "Local accept has REQUIRES_CHANGES",
+      "next_action": "Review and resolve warning"
+    }
+  ],
+  "next_steps": [
+    "Resolve all blockers before final accept"
+  ],
+  "triad_records": {
+    "execution_report": "docs\\2026-03-11\\verification\\TASK-MAIN-01_execution_report.yaml",
+    "gate_decision": null,
+    "compliance_attestation": null
+  },
+  "local_accept_record": "docs\\2026-03-11\\verification\\TASK-MAIN-01_local_accept_decision.json"
+}

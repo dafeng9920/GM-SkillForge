@@ -1,0 +1,45 @@
+name: protocol-gate-ci-checker-skill
+description: 验证协议测试门禁（T1-T5）已接入 CI 且保持 fail-closed。
+version: v1.0.0
+frozen_at: 2026-02-26
+owner: platform-governance
+tags:
+  - l6
+  - protocol
+  - ci
+  - gate
+  - fail-closed
+default_prompt: |
+  检查 CI 配置中 l6-protocol-gate 与 final-gate 链路，确认协议测试失败会阻断合并。
+
+capabilities:
+  - ci_gate_presence_check
+  - protocol_test_linkage_check
+  - fail_closed_enforcement_check
+  - gate_report_output
+
+input_schema:
+  ci_file:
+    type: string
+    required: true
+    description: CI 工作流文件路径
+  protocol_tests:
+    type: array
+    required: true
+    description: 协议测试文件列表
+  gate_script:
+    type: string
+    required: true
+    description: 协议门禁脚本路径
+
+output_schema:
+  ci_gate_report:
+    type: string
+    description: 门禁检查报告路径
+  gate_present:
+    type: boolean
+    description: 是否存在门禁 job
+  fail_closed:
+    type: boolean
+    description: 是否 fail-closed
+

@@ -1,0 +1,42 @@
+name: triple-record-validator-skill
+description: 校验 execution/gate/compliance 三件套完整性与机读状态，输出阻断清单。
+version: v1.0.0
+frozen_at: 2026-02-26
+owner: platform-governance
+tags:
+  - l6
+  - verification
+  - triple-record
+  - audit
+  - fail-closed
+default_prompt: |
+  扫描指定 task 范围的三件套文件，输出每个任务的存在性、decision、解析状态和阻断原因。
+
+capabilities:
+  - triple_record_scan
+  - json_parse_validation
+  - decision_extraction
+  - blocker_matrix_output
+
+input_schema:
+  verification_dir:
+    type: string
+    required: true
+    description: 三件套目录
+  task_range:
+    type: string
+    required: true
+    description: 任务范围（如 T01-T11）
+
+output_schema:
+  validation_table:
+    type: array
+    description: 任务级验证结果表
+  blockers:
+    type: array
+    description: 阻断项列表
+  overall_decision:
+    type: string
+    enum: [ALLOW, REQUIRES_CHANGES, DENY]
+    description: 总体判定
+

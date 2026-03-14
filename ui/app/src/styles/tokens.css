@@ -11,33 +11,34 @@
      ========================================================================== */
   
   /* Base Dark Palette */
-  --gm-color-base-100: #0a0c10; /* Deepest background */
-  --gm-color-base-200: #12151c; /* Secondary containers (Sidebar/Glass) */
-  --gm-color-base-300: #1b1f27; /* Tertiary elements, hover states */
-  --gm-color-base-400: #2a313c; /* Borders, dividers */
+  --gm-color-base-50: #09090b; /* Page background */
+  --gm-color-base-100: #0b0b0d; /* Deepest background */
+  --gm-color-base-200: #141414; /* Secondary containers (Sidebar/Glass) */
+  --gm-color-base-300: #1d1d20; /* Tertiary elements, hover states */
+  --gm-color-base-400: #312b25; /* Borders, dividers */
   
   /* Solid Information Card Backgrounds (Constraint: High Contrast, NO Glass) */
-  --gm-color-card-solid: #161920; 
-  --gm-color-card-border: #333a45;
+  --gm-color-card-solid: #161515;
+  --gm-color-card-border: #2f2923;
 
   /* Typography Colors (Constraint: WCAG AA) */
-  --gm-color-text-primary: #e6edf8; /* High contrast white-blue */
-  --gm-color-text-secondary: #9aa4b5; /* Dimmer for metadata */
-  --gm-color-text-muted: #6f7887; /* For disabled or tertiary text */
+  --gm-color-text-primary: #f5f5f4; /* Warm high-contrast */
+  --gm-color-text-secondary: #b6afa5; /* Dimmer for metadata */
+  --gm-color-text-muted: #7c746b; /* For disabled or tertiary text */
 
   /* State Neon Colors (Constraint: Limited usage to state dots/thin borders) */
-  --gm-color-state-pass: #00d2ff;     /* Cyan */
-  --gm-color-state-pass-bg: rgba(0, 210, 255, 0.1); 
+  --gm-color-state-pass: #34d399;     /* Mint green */
+  --gm-color-state-pass-bg: rgba(52, 211, 153, 0.12); 
   
-  --gm-color-state-block: #ff2a55;    /* Red/Pink */
-  --gm-color-state-block-bg: rgba(255, 42, 85, 0.1);
+  --gm-color-state-block: #f87171;    /* Restrained red */
+  --gm-color-state-block-bg: rgba(248, 113, 113, 0.12);
   
-  --gm-color-state-warning: #ffb800;  /* Yellow/Orange */
-  --gm-color-state-warning-bg: rgba(255, 184, 0, 0.1);
+  --gm-color-state-warning: #f59e0b;  /* Amber */
+  --gm-color-state-warning-bg: rgba(245, 158, 11, 0.12);
 
   /* Primary Brand Action Color */
-  --gm-color-primary: #526af2;
-  --gm-color-primary-hover: #677ef5;
+  --gm-color-primary: #ea580c;
+  --gm-color-primary-hover: #f97316;
 
 
   /* ==========================================================================
@@ -87,15 +88,15 @@
      ========================================================================== */
   
   /* Constraint: Accessibility Focus Rings CANNOT be hidden */
-  --gm-focus-ring: 0 0 0 2px var(--gm-color-base-100), 0 0 0 4px var(--gm-color-primary);
+  --gm-focus-ring: 0 0 0 2px var(--gm-color-base-100), 0 0 0 4px rgba(234, 88, 12, 0.7);
 
   /* Elevation Shadows */
-  --gm-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
-  --gm-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
-  --gm-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  --gm-shadow-sm: 0 6px 16px rgba(0, 0, 0, 0.24);
+  --gm-shadow-md: 0 16px 36px rgba(0, 0, 0, 0.32);
+  --gm-shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.4);
 
   /* Constraint: Glassmorphism strictly for secondary containers */
-  --gm-glass-bg: rgba(18, 21, 28, 0.75);
+  --gm-glass-bg: rgba(20, 20, 20, 0.78);
   --gm-glass-blur: blur(12px);
   --gm-glass-border: 1px solid rgba(255, 255, 255, 0.05);
 

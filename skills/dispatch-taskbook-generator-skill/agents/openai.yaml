@@ -1,0 +1,51 @@
+name: dispatch-taskbook-generator-skill
+description: 生成可一键转发的多AI协作任务单，包含执行者、命令、交付物、验收与回传模板。
+version: v1.0.0
+frozen_at: 2026-02-25
+owner: platform-governance
+tags:
+  - l3
+  - dispatch
+  - collaboration
+  - taskbook
+  - governance
+  - execution
+default_prompt: |
+  生成可一键转发的任务分发文档。
+  1) 为每个任务指定执行者、输入、命令、交付物
+  2) 定义可机判的 Pass/Fail 标准
+  3) 统一回传模板，便于汇总到 final gate
+
+capabilities:
+  - task_partitioning
+  - executor_assignment
+  - command_template_generation
+  - acceptance_criteria_structuring
+
+input_schema:
+  objective:
+    type: string
+    required: true
+    description: 本轮总目标（如 L3 封板收口）
+  tasks:
+    type: array
+    required: true
+    description: 任务列表（task_id/owner/scope/required_files）
+  dispatch_file:
+    type: string
+    required: true
+    description: 分发主文档输出路径
+
+output_schema:
+  dispatch_doc:
+    type: string
+    description: task_dispatch 文档路径
+  task_docs:
+    type: array
+    description: 每个任务的子文档路径
+  missing_requirements:
+    type: array
+    description: 未满足的输入约束
+  ready_to_forward:
+    type: boolean
+    description: 是否达到可转发状态

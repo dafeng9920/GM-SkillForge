@@ -1,0 +1,139 @@
+{
+  "recheck_id": "T-G1-NIGHTLY-RECHECK-20260305-2100",
+  "environment": "LOCAL-ANTIGRAVITY",
+  "executed_at": "2026-03-05T21:00:00Z",
+  "executed_by": "Antigravity-1",
+  "baseline_freeze": "T-G1-NIGHTLY-RECHECK-FROZEN-20260304",
+  "baseline_frozen_at": "2026-03-04T21:20:00Z",
+  "hours_since_freeze": 24,
+  "recheck_summary": {
+    "overall_status": "PASS",
+    "decision": "ALLOW",
+    "drift_detected": false,
+    "drift_response": "NONE"
+  },
+  "validation_results": {
+    "permit_binding_check": {
+      "status": "PASS",
+      "permit_path": "permits/default/tg1_baseline_permit.json",
+      "baseline_comparison": {
+        "demand_hash": {
+          "baseline": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "current": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "match": true
+        },
+        "contract_hash": {
+          "baseline": "cc8321d6375c494d043fdd0260f21bc0ec51dacc9f6abb7f909cdcd3041b78bf",
+          "current": "cc8321d6375c494d043fdd0260f21bc0ec51dacc9f6abb7f909cdcd3041b78bf",
+          "match": true
+        },
+        "decision_hash": {
+          "baseline": "86ae35d58a6aa3b5742df94ef9d7162219f0106a911ae1954c1f0604aaec805d",
+          "current": "86ae35d58a6aa3b5742df94ef9d7162219f0106a911ae1954c1f0604aaec805d",
+          "match": true
+        },
+        "audit_pack_hash": {
+          "baseline": "15de68de777909c47fe5532449cfa1666bb0a96c4c903f395d497dceaec4624f",
+          "current": "15de68de777909c47fe5532449cfa1666bb0a96c4c903f395d497dceaec4624f",
+          "match": true
+        },
+        "revision": {
+          "baseline": "tg1_baseline_rev_001",
+          "current": "tg1_baseline_rev_001",
+          "match": true
+        }
+      },
+      "drifts": []
+    },
+    "delivery_completeness_check": {
+      "status": "PASS",
+      "completion_rate": "100%",
+      "baseline_comparison": {
+        "Blueprint": {
+          "baseline": "contracts/dsl/demand_dsl_v0.schema.yml",
+          "current": "contracts/dsl/demand_dsl_v0.schema.yml",
+          "match": true,
+          "exists": true
+        },
+        "Skill": {
+          "baseline": "skills/ai-response-improvement-skill",
+          "current": "skills/ai-response-improvement-skill",
+          "match": true,
+          "exists": true
+        },
+        "n8n": {
+          "baseline": "workflows/skillforge_dispatcher.json",
+          "current": "workflows/skillforge_dispatcher.json",
+          "match": true,
+          "exists": true
+        },
+        "Evidence": {
+          "baseline": "artifacts/tg1/tg1_baseline_evidence.json",
+          "current": "artifacts/tg1/tg1_baseline_evidence.json",
+          "match": true,
+          "exists": true
+        },
+        "AuditPack": {
+          "baseline": "audit_pack/tg1_audit_pack.json",
+          "current": "audit_pack/tg1_audit_pack.json",
+          "match": true,
+          "exists": true
+        },
+        "Permit": {
+          "baseline": "permits/default/tg1_baseline_permit.json",
+          "current": "permits/default/tg1_baseline_permit.json",
+          "match": true,
+          "exists": true
+        }
+      },
+      "drifts": []
+    },
+    "triad_records_check": {
+      "status": "PASS",
+      "baseline_comparison": {
+        "execution": {
+          "baseline": "PASS",
+          "current": "PASS",
+          "match": true
+        },
+        "review": {
+          "baseline": "ALLOW",
+          "current": "ALLOW",
+          "match": true
+        },
+        "compliance": {
+          "baseline": "PASS",
+          "current": "PASS",
+          "match": true
+        },
+        "all_consistent": {
+          "baseline": true,
+          "current": true,
+          "match": true
+        }
+      },
+      "drifts": []
+    }
+  },
+  "drift_analysis": {
+    "has_drift": false,
+    "drift_categories": [],
+    "drift_details": {},
+    "hours_stable": 24
+  },
+  "gate_decision": {
+    "gate_id": "T-G1-NIGHTLY-RECHECK-GATE-20260305-2100",
+    "decision": "ALLOW",
+    "orchestrator": "Antigravity-1",
+    "environment": "LOCAL-ANTIGRAVITY",
+    "decided_at": "2026-03-05T21:00:00Z",
+    "blocking_evidence": [],
+    "required_changes": [],
+    "reason": "All baseline checksums and paths match frozen baseline T-G1-NIGHTLY-RECHECK-FROZEN-20260304 after 24 hours"
+  },
+  "next_recheck": {
+    "scheduled": "2026-03-06T21:00:00Z",
+    "compare_against": "T-G1-NIGHTLY-RECHECK-FROZEN-20260304",
+    "fail_if_drift": true
+  }
+}

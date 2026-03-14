@@ -1,0 +1,22 @@
+{
+  "task_id": "REAL-TASK-002",
+  "artifacts": [
+    "blueprint.md",
+    "risk_statement.md",
+    "changes.diff",
+    "test_report.md",
+    "completion_record.md",
+    "manifest.json"
+  ],
+  "evidence": [
+    "evidence/p2_doc_integration_report.md",
+    "evidence/p3_baseline_inventory.md",
+    "evidence/REAL-TASK-002_合规审查口径_2026-03-09.md",
+    "evidence/REAL-TASK-002_冻结结论_2026-03-09.md"
+  ],
+  "env": {
+    "APP_ROOT": "D:/GM-SkillForge",
+    "DROPZONE_ROOT": "D:/GM-SkillForge/dropzone",
+    "DOCS_ROOT": "D:/GM-SkillForge/docs"
+  }
+}

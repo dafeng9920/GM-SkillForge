@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0.0",
+  "report_type": "dual_gate_verification",
+  "generated_at": "2026-03-05T09:08:19+00:00Z",
+  "task_id": "tg1-official-20260305-0901-b092",
+  "dual_gate_decision": {
+    "overall": "PASS",
+    "reason": "All gates passed"
+  },
+  "gates": {
+    "receipt_verification": {
+      "task_id": "tg1-official-20260305-0901-b092",
+      "timestamp": "2026-03-05T09:08:19+00:00Z",
+      "status": "PASS",
+      "exit_code": 0,
+      "stdout": "PASS\n- task_id: tg1-official-20260305-0901-b092\n- executed_commands: 14\n- acceptance_items: 5",
+      "stderr": ""
+    },
+    "cloud_lobster_mandatory_gate": {
+      "task_id": "tg1-official-20260305-0901-b092",
+      "timestamp": "2026-03-05T09:08:19+00:00Z",
+      "status": "ALLOW",
+      "exit_code": 0,
+      "stdout": "============================================================\n[CL-MG] Cloud Lobster Mandatory Gate\n[CL-MG] Started at 2026-03-05T09:08:19.525711+00:00\n[CL-MG] Environment: LOCAL-ANTIGRAVITY -> CLOUD-ROOT\n[CL-MG] Dispatch dir: .tmp\\openclaw-dispatch\n============================================================\n============================================================\n[CL-MG] Final Decision: ALLOW\n============================================================\n\n[CL-MG] ALLOW - All cloud tasks comply with mandatory gate\n[CL-MG] ✓ Task contract present and valid\n[CL-MG] ✓ Four artifacts complete\n[CL-MG] ✓ Receipt verification passed\n\n[CL-MG] Warnings (1):\n  - All 1 task(s) passed cloud lobster mandatory gate\nALLOW",
+      "stderr": ""
+    }
+  },
+  "summary": {
+    "total_gates": 2,
+    "passed": 2,
+    "failed": 0
+  }
+}

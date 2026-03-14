@@ -1,0 +1,31 @@
+{
+  "schema_version": "antigravity_final_gate_v1",
+  "antigravity_version": "1.0.0",
+  "adjudicated_at_utc": "2026-03-04T14:38:56Z",
+  "baseline_id": "AG1-20260304-140239-9612d57f",
+  "task_id": "ocb-20260304-140239-a3db40c0",
+  "decision": "ALLOW",
+  "summary": "Antigravity-1 Final Gate Adjudication\nDecision: ALLOW\n\nBaseline ID: AG1-20260304-140239-9612d57f\nTask ID: ocb-20260304-140239-a3db40c0\n\nVerification Results:\n  - Baseline Freeze: PASS\n  - Task Contract: PASS\n  - Consistency: PASS\n  - Audit Evidence: PASS",
+  "blocking_evidence": {
+    "blockers": [],
+    "warnings": []
+  },
+  "required_changes": [],
+  "next_steps": [
+    "Ready for cloud dispatch via Gemini relay"
+  ],
+  "artifacts": {
+    "baseline_manifest": ".tmp\\antigravity-baseline\\AG1-20260304-140239-9612d57f\\BASELINE_MANIFEST.json",
+    "baseline_activation": ".tmp\\antigravity-baseline\\AG1-20260304-140239-9612d57f\\ACTIVATION.json",
+    "task_contract": ".tmp\\openclaw-dispatch\\ocb-20260304-140239-a3db40c0\\task_contract.json",
+    "handoff_note": ".tmp\\openclaw-dispatch\\ocb-20260304-140239-a3db40c0\\handoff_note.md",
+    "dispatch_summary": ".tmp\\openclaw-dispatch\\ocb-20260304-140239-a3db40c0\\dispatch_summary.json",
+    "audit_evidence": "AuditPack\\evidence\\antigravity_baseline_activation_AG1-20260304-140239-9612d57f.json"
+  },
+  "verification_results": {
+    "baseline_freeze": true,
+    "task_contract": true,
+    "consistency": true,
+    "audit_evidence": true
+  }
+}

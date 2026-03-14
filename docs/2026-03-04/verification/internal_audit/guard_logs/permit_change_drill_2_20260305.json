@@ -1,0 +1,39 @@
+{
+  "schema_version": "permit_change_drill_v1",
+  "drill_id": "20260305",
+  "drill_number": 2,
+  "drill_type": "permit_change_simulation",
+  "drill_date": "2026-03-04",
+  "drilled_at": "2026-03-04T17:10:31Z",
+  "environment": "LOCAL-ANTIGRAVITY",
+  "orchestrator": "Antigravity-1",
+  "overall_status": "PASS",
+  "steps": {
+    "step_1_backup": "PASS",
+    "step_2_modify": "PASS",
+    "step_3_fail_closed_verify": "PASS",
+    "step_4_update_permit": "PASS",
+    "step_5_verify_new_permit": "PASS",
+    "step_6_restore": "PASS",
+    "step_7_restore_permit": "PASS"
+  },
+  "permit_changes": {
+    "from_revision": "tg1_baseline_rev_003",
+    "to_revision": "tg1_baseline_rev_004",
+    "final_revision": "tg1_baseline_rev_005",
+    "hash_changes": {
+      "demand": {
+        "old": "11a137deeb30eed2...",
+        "new": "fd16d148e935d9f7..."
+      }
+    }
+  },
+  "fail_closed_verification": {
+    "status": "PASS",
+    "description": "Verified that old permit is DENIED when file hashes change"
+  },
+  "new_permit_verification": {
+    "status": "PASS",
+    "description": "Verified that new permit is ALLOWED with updated hashes"
+  }
+}

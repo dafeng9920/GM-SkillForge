@@ -1,0 +1,30 @@
+{
+  "test_date": "2026-03-09T21:56:49.831869",
+  "total_tests": 5,
+  "passed": 5,
+  "failed": 0,
+  "pass_rate": "100.0%",
+  "all_passed": true,
+  "results": [
+    {
+      "name": "Data Quality Validator",
+      "status": "PASS"
+    },
+    {
+      "name": "Indicator Calculator",
+      "status": "PASS"
+    },
+    {
+      "name": "Backtest Engine",
+      "status": "PASS"
+    },
+    {
+      "name": "Signal Generator",
+      "status": "PASS"
+    },
+    {
+      "name": "Multi-Strategy Portfolio",
+      "status": "PASS"
+    }
+  ]
+}

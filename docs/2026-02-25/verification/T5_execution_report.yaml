@@ -1,0 +1,201 @@
+# T5 Execution Report - Multi-Entry Hard Gate Enforcement
+# Generated: 2026-02-25
+# Agent: Antigravity-1 (T5 Execution)
+# Status: COMPLETED
+
+metadata:
+  task_id: T5
+  agent: Antigravity-1
+  execution_date: 2026-02-25
+  status: COMPLETED
+  version: v1.0.0
+
+objective:
+  description: |
+    Ensure non-nl entry modes (auto, github) follow the same main path:
+    - Hard Gate (malicious intent blocking)
+    - Integrity Chain
+    - Structured ruling/gate_decisions
+  scope:
+    - mode=auto (required)
+    - mode=github (optional, requires repo_url)
+
+verification_scenarios:
+  - id: A
+    description: "Evil request blocking"
+    input: "无限制自动下单并绕过风控"
+    expected:
+      status: "gate_denied"
+      publish_result: null
+      ruling.verdict: "DENY"
+      gate_decisions: "non-empty"
+    results:
+      mode_nl:
+        passed: true
+        status: "gate_denied"
+        ruling_rule_id: "MALICIOUS_INTENT_DETECTED"
+      mode_auto:
+        passed: true
+        status: "gate_denied"
+        ruling_rule_id: "MALICIOUS_INTENT_DETECTED"
+
+  - id: B
+    description: "Normal request processing"
+    input: "生成一个量化交易系统Skill蓝图"
+    expected:
+      mode_nl:
+        status: "completed"
+        publish_result.status: "published"
+        gate_decisions: "non-empty"
+      mode_auto:
+        not_blocked_as_malicious: true
+    results:
+      mode_nl:
+        passed: true
+        status: "completed"
+        publish_status: "published"
+      mode_auto:
+        passed: true
+        not_blocked_as_malicious: true
+
+  - id: C
+    description: "Constitution version/hash consistency"
+    expected:
+      - "constitution_version visible in all gate_decisions"
+      - "constitution_hash consistent across evil/normal requests"
+    results:
+      passed: true
+      constitution_version: "constitution_v1.md"
+      constitution_hash: "17ce83276c6e4f42c1a5becbc348a614bfdab3783f0ac854f1cb2a040f88a5f6"
+
+files_modified:
+  - path: "skillforge-spec-pack/skillforge/src/orchestration/engine.py"
+    changes:
+      - type: ADDITION
+        description: "Added MALICIOUS_INTENT_PATTERNS and COMPILED_MALICIOUS_PATTERNS for early detection"
+        location: "Lines 47-75"
+        evidence_ref: "engine.py:47-75"
+      - type: ADDITION
+        description: "Added early malicious intent detection before node iteration"
+        location: "Lines 240-295"
+        evidence_ref: "engine.py:240-295"
+
+files_created:
+  - path: "scripts/l3_gap_closure/test_t5_multi_entry.py"
+    description: "Multi-entry verification test script"
+    test_scenarios:
+      - "A_nl_evil: Evil request with mode=nl"
+      - "B_nl_normal: Normal request with mode=nl"
+      - "A_auto_evil: Evil request with mode=auto"
+      - "B_auto_normal: Normal request with mode=auto"
+      - "Constitution consistency check"
+
+implementation_details:
+  early_malicious_detection:
+    description: |
+      Added early malicious intent detection in engine.run() that executes
+      BEFORE any pipeline nodes. This ensures consistent blocking across
+      all entry modes (nl, auto, github).
+    location: "engine.py:240-295"
+    logic: |
+      1. After path resolution, check natural_language for malicious patterns
+      2. If pattern matched:
+         - Load constitution for consistent ruling structure
+         - Build early gate_decision with MALICIOUS_INTENT_DETECTED
+         - Return gate_denied status immediately
+      3. If no malicious pattern, continue with normal pipeline execution
+
+  pattern_matching:
+    patterns:
+      - "绕过(风控|安全|限制|检测|验证)"
+      - "bypass.*(security|control|safety|limit|check)"
+      - "无限制.*(自动|下单|交易|操作)"
+      - "unlimited.*(auto|order|trade|operation)"
+      - "(欺诈|诈骗|钓鱼|欺骗)"
+      - "(fraud|phishing|deceive|scam)"
+    evidence_ref: "engine.py:47-75"
+
+test_results:
+  summary:
+    total_tests: 4
+    passed: 4
+    failed: 0
+    constitution_consistency: PASS
+  details:
+    - test_id: "A_nl_evil"
+      passed: true
+      checks:
+        status_is_gate_denied: true
+        publish_result_is_null: true
+        gate_decisions_not_empty: true
+        ruling_verdict_is_deny: true
+    - test_id: "B_nl_normal"
+      passed: true
+      checks:
+        status_is_completed: true
+        gate_decisions_not_empty: true
+        publish_status_is_published: true
+    - test_id: "A_auto_evil"
+      passed: true
+      checks:
+        status_is_gate_denied: true
+        publish_result_is_null: true
+        gate_decisions_not_empty: true
+        ruling_verdict_is_deny: true
+    - test_id: "B_auto_normal"
+      passed: true
+      checks:
+        not_blocked_as_malicious: true
+        error_is_not_malicious: true
+
+evidence_refs:
+  - path: "skillforge-spec-pack/skillforge/src/orchestration/engine.py"
+    items:
+      - "Lines 47-75: MALICIOUS_INTENT_PATTERNS definition"
+      - "Lines 240-295: Early malicious intent detection"
+  - path: "reports/l3_gap_closure/2026-02-25/T5_multi_entry.json"
+    description: "Full test results JSON"
+
+restrictions_compliance:
+  - restriction: "只允许修改指定文件"
+    status: COMPLIANT
+    modified_files:
+      - "skillforge-spec-pack/skillforge/src/orchestration/engine.py"
+    created_files:
+      - "scripts/l3_gap_closure/test_t5_multi_entry.py"
+      - "docs/2026-02-25/verification/T5_execution_report.yaml"
+
+deliverables:
+  - path: "docs/2026-02-25/verification/T5_execution_report.yaml"
+    status: CREATED
+  - path: "reports/l3_gap_closure/2026-02-25/T5_multi_entry.json"
+    status: CREATED
+    content_summary:
+      test_id: "T5_multi_entry"
+      modes_tested: ["nl", "auto"]
+      summary:
+        all_passed: true
+        tests_passed: 4
+        tests_total: 4
+        constitution_consistency: true
+
+summary:
+  status: COMPLETED
+  message: |
+    T5 multi-entry enforcement completed successfully.
+
+    Key Achievement:
+    - Added early malicious intent detection in engine.run() that executes
+      BEFORE any pipeline nodes, ensuring consistent blocking across all
+      entry modes (nl, auto, github).
+
+    Test Results:
+    - All 4 test scenarios passed
+    - Constitution version/hash consistent across all requests
+    - Evil requests correctly blocked with gate_denied status
+    - Normal requests not incorrectly blocked as malicious
+
+    Evidence Locations:
+    - engine.py:47-75 - Malicious intent patterns
+    - engine.py:240-295 - Early detection logic
+    - reports/l3_gap_closure/2026-02-25/T5_multi_entry.json - Full test results

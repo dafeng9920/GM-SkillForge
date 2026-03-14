@@ -1,0 +1,42 @@
+{
+  "schema_version": "local_accept_v1",
+  "version": "1.0.0",
+  "checked_at_utc": "2026-03-10T16:35:37Z",
+  "task_id": "TASK-MAIN-01",
+  "decision": "REQUIRES_CHANGES",
+  "summary": "Local Accept Decision: REQUIRES_CHANGES\n\nTask ID: TASK-MAIN-01\nChecked At: 2026-03-10T16:35:37Z\n\nVerification Results:\n  - Execution Report: PASS\n  - Deliverables: PASS\n  - Evidence Refs: PASS\n  - Gate Decision: PASS\n  - Compliance Attestation: PASS\n\nWarnings (2):\n  - Gate decision not found: docs\\2026-03-11\\verification\\TASK-MAIN-01_gate_decision.json\n  - Compliance attestation not found: docs\\2026-03-11\\verification\\TASK-MAIN-01_compliance_attestation.json",
+  "verification_results": {
+    "execution_report": true,
+    "deliverables": true,
+    "evidence_refs": true,
+    "gate_decision": true,
+    "compliance_attestation": true
+  },
+  "blocking_evidence": {
+    "blockers": [],
+    "warnings": [
+      "Gate decision not found: docs\\2026-03-11\\verification\\TASK-MAIN-01_gate_decision.json",
+      "Compliance attestation not found: docs\\2026-03-11\\verification\\TASK-MAIN-01_compliance_attestation.json"
+    ]
+  },
+  "required_changes": [
+    {
+      "issue_key": "LA-TASK-MAIN-01-1",
+      "reason": "Gate decision not found: docs\\2026-03-11\\verification\\TASK-MAIN-01_gate_decision.json",
+      "next_action": "Review and resolve warning"
+    },
+    {
+      "issue_key": "LA-TASK-MAIN-01-2",
+      "reason": "Compliance attestation not found: docs\\2026-03-11\\verification\\TASK-MAIN-01_compliance_attestation.json",
+      "next_action": "Review and resolve warning"
+    }
+  ],
+  "next_steps": [
+    "Review warnings and address if necessary"
+  ],
+  "artifacts": {
+    "execution_report": "docs\\2026-03-11\\verification\\TASK-MAIN-01_execution_report.yaml",
+    "gate_decision": null,
+    "compliance_attestation": null
+  }
+}

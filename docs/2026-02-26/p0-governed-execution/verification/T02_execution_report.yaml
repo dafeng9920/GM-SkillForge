@@ -1,0 +1,135 @@
+task_id: "T02"
+executor: "vs--cc1"
+status: "完成"
+job_id: "P0-L6-AUTH-20260226-001"
+wave: "Wave 1"
+issue_ref: "ISSUE-01"
+
+# 交付物清单
+deliverables:
+  - path: "skillforge-spec-pack/skillforge/src/utils/canonical_json.py"
+    action: "新建"
+    lines_changed: 108
+    description: "Canonical JSON 核心实现模块"
+
+  - path: "skillforge-spec-pack/skillforge/tests/test_canonical_json.py"
+    action: "新建"
+    lines_changed: 195
+    description: "Canonical JSON 测试套件 (19 个用例)"
+
+  - path: "skillforge-spec-pack/skillforge/src/utils/__init__.py"
+    action: "修改"
+    lines_changed: 8
+    description: "更新导出 canonical_json 模块"
+
+  - path: "docs/2026-02-26/p0-governed-execution/verification/T02_canonical_json_report.md"
+    action: "新建"
+    lines_changed: 145
+    description: "T02 实现报告"
+
+# Gate 自检结果
+gate_self_check:
+  - command: "test -f skillforge-spec-pack/skillforge/src/utils/canonical_json.py"
+    result: "PASS - 核心模块存在"
+
+  - command: "test -f skillforge-spec-pack/skillforge/tests/test_canonical_json.py"
+    result: "PASS - 测试文件存在"
+
+  - command: "cd skillforge-spec-pack && python -c 'from skillforge.src.utils.canonical_json import canonical_json, canonical_json_hash'"
+    result: "PASS - 导入成功"
+
+  - command: "cd skillforge-spec-pack && python -m pytest skillforge/tests/test_canonical_json.py -v"
+    result: "PASS - 19 passed in 0.08s"
+
+  - command: "cd skillforge-spec-pack && python -c \"from skillforge.src.utils.canonical_json import verify_canonical_consistency; r=verify_canonical_consistency({'test':1},100); print('consistent:', r['consistent'])\""
+    result: "PASS - consistent: True"
+
+# ISSUE-01 验收标准对齐
+acceptance_criteria:
+  - criteria: "同一 payload 在不同运行环境 hash 一致"
+    status: "PASS"
+    evidence: "verify_canonical_consistency() 100 次迭代，unique_hashes = 1"
+
+  - criteria: "提供 canonical_json 工具函数"
+    status: "PASS"
+    evidence: "canonical_json(), canonical_json_hash(), verify_canonical_consistency() 三个函数"
+
+  - criteria: "提供用例"
+    status: "PASS"
+    evidence: "19 个测试用例，覆盖键顺序、嵌套、hash 一致性等场景"
+
+# 证据引用
+evidence_refs:
+  - id: "EV-T02-CODE-001"
+    kind: "FILE"
+    locator: "skillforge-spec-pack/skillforge/src/utils/canonical_json.py:1-108"
+    description: "Canonical JSON 核心实现"
+
+  - id: "EV-T02-TEST-001"
+    kind: "FILE"
+    locator: "skillforge-spec-pack/skillforge/tests/test_canonical_json.py:1-195"
+    description: "19 个测试用例"
+
+  - id: "EV-T02-TEST-RUN-001"
+    kind: "OUTPUT"
+    locator: "pytest execution"
+    description: "测试运行结果: 19 passed in 0.08s"
+
+  - id: "EV-T02-REPORT-001"
+    kind: "FILE"
+    locator: "docs/2026-02-26/p0-governed-execution/verification/T02_canonical_json_report.md"
+    description: "实现报告"
+
+# 三权记录路径
+governance_records:
+  review: "docs/2026-02-26/p0-governed-execution/verification/T02_gate_decision.json"
+  compliance: "docs/2026-02-26/p0-governed-execution/verification/T02_compliance_attestation.json"
+  execution: "docs/2026-02-26/p0-governed-execution/verification/T02_execution_report.yaml"
+
+# 后续任务依赖
+downstream_unblock:
+  - "T03 (Envelope + Body 结构)"
+  - "T04 (混合加密)"
+  - "T05 (Ed25519 签名)"
+
+# 测试覆盖
+test_coverage:
+  total_tests: 19
+  passed: 19
+  failed: 0
+  test_classes:
+    - name: "TestCanonicalJson"
+      tests: 9
+      status: "all passed"
+    - name: "TestCanonicalJsonHash"
+      tests: 5
+      status: "all passed"
+    - name: "TestVerifyCanonicalConsistency"
+      tests: 3
+      status: "all passed"
+    - name: "TestEvidenceEnvelopeUseCase"
+      tests: 2
+      status: "all passed"
+
+# 备注
+notes: |
+  T02 完成了 Canonical JSON 规范的实现和测试。
+
+  关键成果：
+  1. 实现了 canonical_json() 函数，保证同一对象序列化结果一致
+  2. 实现了 canonical_json_hash() 函数，计算 SHA-256 hash
+  3. 实现了 verify_canonical_consistency() 函数，验证一致性
+  4. 编写了 19 个测试用例，全部通过
+  5. 遵循 JCS (RFC 8785) 原则
+
+  验证结果：
+  - 键顺序不影响输出: {"b":2,"a":1} 和 {"a":1,"b":2} 输出相同
+  - 100 次迭代 hash 一致: unique_hashes = 1
+  - 测试运行: 19 passed in 0.08s
+
+  无副作用操作，无需 permit。
+
+# 执行时间
+started_at: "2026-02-26T17:00:00Z"
+completed_at: "2026-02-26T17:30:00Z"
+duration_minutes: 30

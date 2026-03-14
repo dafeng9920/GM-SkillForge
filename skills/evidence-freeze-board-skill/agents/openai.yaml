@@ -1,0 +1,45 @@
+name: evidence-freeze-board-skill
+description: 一键冻结封板证据，生成 MANIFEST、BOARD_FREEZE 与归档压缩包。
+version: v1.0.0
+frozen_at: 2026-02-26
+owner: platform-governance
+tags:
+  - l6
+  - freeze
+  - evidence
+  - manifest
+  - board
+default_prompt: |
+  将 verification 目录中封板证据复制到快照目录，生成哈希清单和 BOARD_FREEZE，并打包 zip。
+
+capabilities:
+  - evidence_snapshot
+  - manifest_generation
+  - board_freeze_generation
+  - archive_packaging
+
+input_schema:
+  source_verification_dir:
+    type: string
+    required: true
+    description: 源验证目录
+  snapshot_dir:
+    type: string
+    required: true
+    description: 快照目录
+  include_patterns:
+    type: array
+    required: true
+    description: 需要冻结的文件匹配规则
+
+output_schema:
+  manifest:
+    type: string
+    description: MANIFEST.json 路径
+  board_freeze:
+    type: string
+    description: BOARD_FREEZE.json 路径
+  archive:
+    type: string
+    description: zip 路径
+

@@ -1,0 +1,85 @@
+﻿{
+    "summary":  {
+                    "deny":  0,
+                    "generated_at":  "2026-02-26T11:57:21.7113490Z",
+                    "pass":  8,
+                    "total":  8,
+                    "batch":  "P0",
+                    "overall_decision":  "ALLOW",
+                    "requires_changes":  0
+                },
+    "results":  [
+                    {
+                        "openai_yaml":  true,
+                        "skill_md":  true,
+                        "required_changes":  [
+
+                                             ],
+                        "skill":  "wave-gate-orchestrator-skill",
+                        "decision":  "PASS"
+                    },
+                    {
+                        "openai_yaml":  true,
+                        "skill_md":  true,
+                        "required_changes":  [
+
+                                             ],
+                        "skill":  "triple-record-validator-skill",
+                        "decision":  "PASS"
+                    },
+                    {
+                        "openai_yaml":  true,
+                        "skill_md":  true,
+                        "required_changes":  [
+
+                                             ],
+                        "skill":  "decision-schema-normalizer-skill",
+                        "decision":  "PASS"
+                    },
+                    {
+                        "openai_yaml":  true,
+                        "skill_md":  true,
+                        "required_changes":  [
+
+                                             ],
+                        "skill":  "wave-recheck-generator-skill",
+                        "decision":  "PASS"
+                    },
+                    {
+                        "openai_yaml":  true,
+                        "skill_md":  true,
+                        "required_changes":  [
+
+                                             ],
+                        "skill":  "dispatch-broadcast-builder-skill",
+                        "decision":  "PASS"
+                    },
+                    {
+                        "openai_yaml":  true,
+                        "skill_md":  true,
+                        "required_changes":  [
+
+                                             ],
+                        "skill":  "p0-final-adjudicator-skill",
+                        "decision":  "PASS"
+                    },
+                    {
+                        "openai_yaml":  true,
+                        "skill_md":  true,
+                        "required_changes":  [
+
+                                             ],
+                        "skill":  "evidence-freeze-board-skill",
+                        "decision":  "PASS"
+                    },
+                    {
+                        "openai_yaml":  true,
+                        "skill_md":  true,
+                        "required_changes":  [
+
+                                             ],
+                        "skill":  "protocol-gate-ci-checker-skill",
+                        "decision":  "PASS"
+                    }
+                ]
+}

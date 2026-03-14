@@ -1,0 +1,35 @@
+{
+  "report_type": "cloud_lobster_violation",
+  "generated_at": "2026-03-05T07:36:04.894147+00:00",
+  "task_id": "tg1-skilltest-20260306-001",
+  "decision": "DENY",
+  "error_code": "SF_CLOUD_LOBSTER_NO_RECEIPT",
+  "errors": [
+    {
+      "code": "SF_CLOUD_LOBSTER_NO_RECEIPT",
+      "message": "No execution_receipt.json found for task tg1-skilltest-20260306-001"
+    }
+  ],
+  "warnings": [],
+  "required_changes": [
+    "Ensure all four artifacts (execution_receipt.json, stdout.log, stderr.log, audit_event.json) are returned"
+  ],
+  "violation_evidence": {
+    "violation_type": "artifacts_incomplete",
+    "task_id": "tg1-skilltest-20260306-001",
+    "missing_artifacts": []
+  },
+  "task_info": {
+    "task_id": "tg1-skilltest-20260306-001",
+    "task_dir": ".tmp\\openclaw-dispatch\\tg1-skilltest-20260306-001",
+    "has_contract": true,
+    "contract_path": ".tmp\\openclaw-dispatch\\tg1-skilltest-20260306-001\\task_contract.json",
+    "receipt_path": null
+  },
+  "governance_context": {
+    "enforcement_environment": "LOCAL-ANTIGRAVITY",
+    "target_environment": "CLOUD-ROOT",
+    "enforced_skill": "cloud-lobster-closed-loop-skill",
+    "fail_closed_policy": true
+  }
+}

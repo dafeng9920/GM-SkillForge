@@ -1,0 +1,156 @@
+{
+  "diagnosis_id": "DX-L4-001-A1B2C3D4",
+  "skill_id": "skill-seo-audit-001",
+  "skill_name": "SEO Audit Skill",
+  "overall_health": "HEALTHY",
+  "health_score": 85.5,
+  "categories": [
+    {
+      "name": "code_quality",
+      "status": "PASS",
+      "score": 90,
+      "findings": [
+        {
+          "severity": "INFO",
+          "message": "Code follows PEP 8 style guidelines",
+          "evidence_ref": "EV-DX-001-A1B2C3D4",
+          "category": "code_quality",
+          "location": "src/analyzers/seo_analyzer.py"
+        }
+      ],
+      "weight": 1.0
+    },
+    {
+      "name": "test_coverage",
+      "status": "PASS",
+      "score": 85,
+      "findings": [
+        {
+          "severity": "INFO",
+          "message": "Test coverage at 85%, above 80% threshold",
+          "evidence_ref": "EV-DX-002-B2C3D4E5",
+          "category": "test_coverage"
+        }
+      ],
+      "weight": 1.5
+    },
+    {
+      "name": "documentation",
+      "status": "PASS",
+      "score": 80,
+      "findings": [
+        {
+          "severity": "WARNING",
+          "message": "Some functions missing docstrings",
+          "evidence_ref": "EV-DX-003-C3D4E5F6",
+          "category": "documentation",
+          "location": "src/utils/helpers.py:45-60"
+        }
+      ],
+      "weight": 1.0
+    },
+    {
+      "name": "security",
+      "status": "PASS",
+      "score": 95,
+      "findings": [
+        {
+          "severity": "INFO",
+          "message": "No critical security vulnerabilities detected",
+          "evidence_ref": "EV-DX-004-D4E5F6G7",
+          "category": "security"
+        }
+      ],
+      "weight": 2.0
+    },
+    {
+      "name": "performance",
+      "status": "WARN",
+      "score": 75,
+      "findings": [
+        {
+          "severity": "WARNING",
+          "message": "Large payload processing may cause latency",
+          "evidence_ref": "EV-DX-005-E5F6G7H8",
+          "category": "performance",
+          "location": "src/processors/batch_processor.py"
+        }
+      ],
+      "weight": 1.0
+    },
+    {
+      "name": "maintainability",
+      "status": "PASS",
+      "score": 88,
+      "findings": [
+        {
+          "severity": "INFO",
+          "message": "Low cyclomatic complexity, easy to maintain",
+          "evidence_ref": "EV-DX-006-F6G7H8I9",
+          "category": "maintainability"
+        }
+      ],
+      "weight": 1.0
+    }
+  ],
+  "recommendations": [
+    {
+      "priority": "MEDIUM",
+      "action": "Add docstrings to helper functions",
+      "evidence_ref": "EV-DX-003-C3D4E5F6",
+      "impact": "Improve documentation score by 10%",
+      "effort": "2 hours"
+    },
+    {
+      "priority": "HIGH",
+      "action": "Optimize batch processor for large payloads",
+      "evidence_ref": "EV-DX-005-E5F6G7H8",
+      "impact": "Reduce latency by 40%",
+      "effort": "1 day"
+    }
+  ],
+  "evidence_refs": [
+    {
+      "id": "EV-DX-001-A1B2C3D4",
+      "kind": "OUTPUT",
+      "locator": "lint://pylint/src/analyzers/seo_analyzer.py",
+      "description": "Pylint analysis of seo_analyzer.py - 9.5/10 rating"
+    },
+    {
+      "id": "EV-DX-002-B2C3D4E5",
+      "kind": "METRIC",
+      "locator": "coverage://pytest/coverage.xml",
+      "description": "pytest coverage report - 85% line coverage"
+    },
+    {
+      "id": "EV-DX-003-C3D4E5F6",
+      "kind": "SNIPPET",
+      "locator": "src/utils/helpers.py:45-60",
+      "description": "Functions missing docstrings in helpers module"
+    },
+    {
+      "id": "EV-DX-004-D4E5F6G7",
+      "kind": "OUTPUT",
+      "locator": "security://bandit/report.json",
+      "description": "Bandit security scan - 0 high/critical issues"
+    },
+    {
+      "id": "EV-DX-005-E5F6G7H8",
+      "kind": "METRIC",
+      "locator": "performance://benchmark/batch_processor.json",
+      "description": "Batch processor benchmark - 2.5s for 10K items"
+    },
+    {
+      "id": "EV-DX-006-F6G7H8I9",
+      "kind": "METRIC",
+      "locator": "complexity://radon/cc.json",
+      "description": "Cyclomatic complexity analysis - avg 3.2 (low)"
+    }
+  ],
+  "generated_at": "2026-02-26T21:45:00Z",
+  "metadata": {
+    "tool_version": "1.0.0",
+    "contract_id": "L4-N8N-CONTRACT-20260226-001",
+    "analyzer": "diagnosis_module_v1"
+  }
+}

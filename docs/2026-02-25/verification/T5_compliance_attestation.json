@@ -1,0 +1,174 @@
+{
+  "document_type": "T5_compliance_attestation",
+  "task_id": "T5",
+  "attestation_date": "2026-02-25",
+  "compliance_officer": "Kior-B",
+  "version": "1.0.0",
+
+  "attestation_summary": {
+    "decision": "PASS",
+    "summary": "T5 多入口恶意请求阻断机制实现符合合规要求。nl/auto 入口的恶意请求均被正确阻断并生成结构化门禁证据，无入口分叉绕过风险。"
+  },
+
+  "input_documents": {
+    "execution_report": "docs/2026-02-25/verification/T5_execution_report.yaml",
+    "gate_decision": "docs/2026-02-25/verification/T5_gate_decision.json",
+    "test_result": "reports/l3_gap_closure/2026-02-25/T5_multi_entry.json"
+  },
+
+  "hard_rule_compliance": {
+    "non_nl_entry_structured_evidence": {
+      "rule": "非 nl 入口若无法给出结构化门禁证据 => FAIL",
+      "status": "PASS",
+      "evidence": {
+        "A_auto_evil": {
+          "mode": "auto",
+          "status": "gate_denied",
+          "gate_decisions_count": 1,
+          "ruling": {
+            "verdict": "DENY",
+            "rule_id": "MALICIOUS_INTENT_DETECTED",
+            "evidence_ref": "matched_text='绕过风控', pattern='绕过(风控|安全|限制|检测|验证)'",
+            "blocked": true
+          },
+          "structured_evidence_provided": true
+        }
+      },
+      "analysis": "auto 模式恶意请求产生完整结构化门禁证据：gate_decisions、ruling（含 verdict/rule_id/evidence_ref/blocked）"
+    },
+
+    "no_entry_bypass": {
+      "rule": "发现入口分叉绕过 hard gate/integrity chain => FAIL",
+      "status": "PASS",
+      "evidence": {
+        "unified_detection_path": "engine.py:272-329 (early malicious detection before any pipeline node)",
+        "modes_covered": ["nl", "auto", "github"],
+        "nl_evil_blocked": {
+          "test_id": "A_nl_evil",
+          "blocked": true,
+          "ruling_verdict": "DENY"
+        },
+        "auto_evil_blocked": {
+          "test_id": "A_auto_evil",
+          "blocked": true,
+          "ruling_verdict": "DENY"
+        },
+        "bypass_detected": false
+      },
+      "analysis": "早期恶意检测在所有入口模式下统一执行（在 pipeline 节点之前），无入口分叉绕过路径"
+    }
+  },
+
+  "compliance_checks": {
+    "evil_request_blocking": {
+      "description": "恶意请求硬拒绝且无发布",
+      "status": "PASS",
+      "evidence": {
+        "A_nl_evil": {
+          "status": "gate_denied",
+          "publish_result": null,
+          "ruling_blocked": true
+        },
+        "A_auto_evil": {
+          "status": "gate_denied",
+          "publish_result": null,
+          "ruling_blocked": true
+        }
+      }
+    },
+
+    "normal_request_processing": {
+      "description": "正常请求不被误判为恶意",
+      "status": "PASS",
+      "evidence": {
+        "B_nl_normal": {
+          "status": "completed",
+          "publish_status": "published",
+          "not_blocked_as_malicious": true
+        },
+        "B_auto_normal": {
+          "not_blocked_as_malicious": true,
+          "error_type": "INPUT_VALIDATION (commit_sha required)",
+          "error_not_malicious_related": true
+        }
+      }
+    },
+
+    "constitution_consistency": {
+      "description": "Constitution 版本/hash 一致性",
+      "status": "PASS",
+      "evidence": {
+        "constitution_version": "constitution_v1.md",
+        "constitution_hash": "17ce83276c6e4f42c1a5becbc348a614bfdab3783f0ac854f1cb2a040f88a5f6",
+        "consistency_matrix": {
+          "A_nl_evil": "consistent",
+          "B_nl_normal": "consistent",
+          "A_auto_evil": "consistent"
+        }
+      }
+    },
+
+    "test_coverage": {
+      "description": "测试覆盖充分",
+      "status": "PASS",
+      "evidence": {
+        "total_tests": 4,
+        "tests_passed": 4,
+        "tests_failed": 0,
+        "scenarios_covered": [
+          "A_nl_evil: nl 模式恶意请求阻断",
+          "B_nl_normal: nl 模式正常请求发布",
+          "A_auto_evil: auto 模式恶意请求阻断",
+          "B_auto_normal: auto 模式正常请求（非恶意误判）"
+        ]
+      }
+    }
+  },
+
+  "cross_reference_validation": {
+    "execution_report_status": "COMPLETED",
+    "gate_decision_verdict": "ALLOW",
+    "l3_test_summary": {
+      "all_passed": true,
+      "tests_passed": 4,
+      "tests_total": 4
+    },
+    "all_inputs_consistent": true,
+    "consistency_notes": "三个输入文档结论一致：T5 多入口恶意阻断机制正确实现"
+  },
+
+  "evidence_references": [
+    {
+      "id": "EV-T5-COMP-001",
+      "source": "T5_multi_entry.json",
+      "locator": "results[2] (A_auto_evil)",
+      "description": "auto 模式恶意请求结构化门禁证据"
+    },
+    {
+      "id": "EV-T5-COMP-002",
+      "source": "T5_gate_decision.json",
+      "locator": "early_detection_verification",
+      "description": "统一早期检测路径验证"
+    },
+    {
+      "id": "EV-T5-COMP-003",
+      "source": "T5_execution_report.yaml",
+      "locator": "implementation_details.early_malicious_detection",
+      "description": "早期恶意检测实现细节"
+    }
+  ],
+
+  "notes": [
+    "B_auto_normal 的 failed 状态是输入验证失败（缺少 commit_sha），非恶意检测问题",
+    "T5 核心目标（多入口恶意阻断 + 结构化门禁证据）已达成",
+    "无入口分叉绕过 hard gate/integrity chain 的风险"
+  ],
+
+  "final_attestation": {
+    "decision": "PASS",
+    "non_nl_structured_evidence": true,
+    "no_entry_bypass": true,
+    "attestation_signature": "Kior-B",
+    "attestation_timestamp": "2026-02-25T11:45:00Z"
+  }
+}

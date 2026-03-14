@@ -1,0 +1,137 @@
+# ============================================================
+# Outer Intent Ingest Intent Contract (Canonical)
+# ============================================================
+# Priority: P1
+# Canonical Intent ID: outer_intent_ingest
+# Source: docs/2026-02-16/完整版模块清单 + 全量接口契约目录.md
+# Normalized: 2026-03-07
+# ============================================================
+
+intent_id: outer_intent_ingest
+summary: |
+  外螺旋意图摄取：从外部仓库摄取意图/技能定义，进行初步验证和适配性评估。
+  核心流程：仓库接收 → 契约扫描 → 适配性评分 → 摄取回执
+contract_version: v1.0.0
+schema_hash: TBD_SHA256
+
+# ============================================================
+# Inputs Schema
+# ============================================================
+inputs_schema:
+  required:
+    - name: repo_url
+      type: string
+      pattern: "^(https?|git)://.+$"
+      description: External repository URL
+
+    - name: commit_sha
+      type: string
+      pattern: "^[a-f0-9]{7,40}$"
+      description: Git commit SHA for point-in-time checkout
+
+  optional:
+    - name: at_time
+      type: string
+      format: ISO8601
+      description: Point-in-time reference for replay
+
+    - name: issue_key
+      type: string
+      pattern: "^[A-Z]+-[A-Z0-9]+$"
+      description: Unique tracking identifier
+
+# ============================================================
+# Required Gates
+# ============================================================
+required_gates:
+  - intake_repo
+  - repo_scan_fit_score
+
+# ============================================================
+# Minimum Level
+# ============================================================
+minimum_level: L4
+
+# ============================================================
+# Required Evidence
+# ============================================================
+required_evidence:
+  - intent_ingest_receipt    # IntakeManifest from intake_repo gate
+  - scan_report              # ScanReport from repo_scan_fit_score gate
+  - fit_score                # Numeric fit score (0-100)
+  - component_id             # Extracted component identifier
+
+# ============================================================
+# Outputs
+# ============================================================
+outputs:
+  - name: ingest_status
+    type: string
+    enum: ["ACCEPTED", "REJECTED", "DEFERRED"]
+
+  - name: gate_decision
+    type: string
+    enum: ["ALLOW", "DENY"]
+
+  - name: intent_manifest
+    type: object
+    description: Parsed intent/contract manifest from external source
+
+  - name: fit_score
+    type: number
+    minimum: 0
+    maximum: 100
+    description: Repository fit score for migration
+
+  - name: evidence_refs
+    type: array
+    items:
+      type: object
+    description: References to all generated evidence
+
+# ============================================================
+# Canonical Naming Reference
+# ============================================================
+canonical_naming:
+  intent_id: outer_intent_ingest
+  legacy_aliases:
+    - axis_intent_ingest    # Original axis_top10 identifier
+  dispatch_reference: "skillforge/src/orchestration/intent_map.yml:70"
+  authoritative_location: "contracts/intents/outer_intent_ingest.yml"
+
+# ============================================================
+# Migration Metadata
+# ============================================================
+migration:
+  task_id: T2-F2
+  promoted_at: "2026-03-07"
+  previous_level: l42_planned
+  current_level: mainline
+  promotion_reason: "Selective migration - high fit for contracts-first pipeline"
+  value_score: 7.5
+  risk_level: Medium
+
+# ============================================================
+# Gate Path Alignment
+# ============================================================
+gate_path:
+  - gate: intake_repo
+    produces: IntakeManifest
+    evidence_ref: intent_ingest_receipt
+
+  - gate: repo_scan_fit_score
+    produces: ScanReport
+    evidence_ref: scan_report
+
+# ============================================================
+# Integration Notes
+# ============================================================
+integration_notes: |
+  This intent serves as the entry point for external intent/skill ingestion.
+  It is deliberately positioned at L4 to allow proper governance before
+  mainline integration. The two-gate path ensures:
+  1. Repository is valid and accessible (intake_repo)
+  2. Repository meets minimum quality threshold (repo_scan_fit_score)
+
+  Evidence produced by these gates forms the basis for downstream
+  decisions about further migration or rejection.

@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "boundary": "N+3_TIME_WINDOW_ENFORCEMENT",
+  "summary": "Execution completed within time window",
+  "details": {
+    "time_elapsed_sec": 98,
+    "max_duration_sec": 300,
+    "command_count": 6,
+    "max_commands": 50,
+    "utilization_pct": 32.67
+  }
+}

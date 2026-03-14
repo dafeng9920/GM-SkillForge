@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0.0",
+  "mode": "quick",
+  "decision": "DENY",
+  "decision_time": "2026-03-10T15:40:03.089866+00:00",
+  "checks": {
+    "antigravity_2_guard_quick": {
+      "script": "d:\\GM-SkillForge\\scripts\\antigravity_2_guard.py",
+      "exit_code": 1,
+      "stdout": "============================================================\n[AG-2] Antigravity-2 Compliance Guard\n[AG-2] Started at 2026-03-10T15:40:03.554327+00:00\n============================================================\n[AG-2] Stage 1: Validating permit binding (五字段校验)\n[AG-2]   Permit: permits\\default\\tg1_baseline_permit.json\n[AG-2]   Result: PASS\n[AG-2] Stage 1.2: Validating fixed-caliber binding (禁止跨批次混用)\n[AG-2]   Config: orchestration\\fixed_caliber_binding.yml\n[AG-2]   Result: FAIL - Three-rights paths not explicitly provided\n============================================================\n[AG-2] Final Decision: DENY\n============================================================\n\n[AG-2] DENY - Compliance check failed\n[AG-2] Error code: SF_FIXED_CALIBER_PATHS_REQUIRED\n\n[AG-2] Errors (1):\n  [SF_FIXED_CALIBER_PATHS_REQUIRED] Fixed-caliber validation requires explicit demand/contract/decision paths\n\n[AG-2] Required changes (1):\n  1. Re-run with --demand, --contract, --decision arguments to match fixed-caliber binding",
+      "stderr": "",
+      "status": "FAIL"
+    }
+  },
+  "errors": [
+    {
+      "code": "QUICK_VALIDATION_FAIL",
+      "message": "Quick validation failed"
+    }
+  ],
+  "warnings": [],
+  "required_changes": [
+    "Fix permit binding or delivery completeness"
+  ],
+  "evidence_refs": [],
+  "summary": {
+    "total_checks": 1,
+    "failed_checks": 1
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "schema_version": "verification_pack_normalizer_v1",
+  "prefix": "PR5",
+  "verification_dir": "docs\\2026-03-04\\verification",
+  "normalized": true,
+  "canonical": {
+    "execution": "PR5_execution_report.yaml",
+    "review": "PR5_review_decision.json",
+    "compliance": "PR5_compliance_attestation.json",
+    "final_gate": "PR5_final_gate_decision.json"
+  },
+  "variants": {
+    "execution": [
+      "PR5_execution_report.yaml"
+    ],
+    "review": [
+      "PR5_review_decision.json",
+      "PR5_review_decision_AG2.json"
+    ],
+    "compliance": [
+      "PR5_compliance_attestation.json"
+    ],
+    "final_gate": [
+      "PR5_final_gate_decision.json"
+    ]
+  },
+  "actions": [],
+  "missing": []
+}

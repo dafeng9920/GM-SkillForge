@@ -1,0 +1,138 @@
+{
+  "test_id": "T5_multi_entry",
+  "timestamp_utc": "2026-02-25T11:38:09Z",
+  "modes_tested": [
+    "nl",
+    "auto"
+  ],
+  "summary": {
+    "all_passed": true,
+    "tests_passed": 4,
+    "tests_total": 4,
+    "constitution_consistency": true
+  },
+  "constitution_info": {
+    "version": "constitution_v1.md",
+    "hash": "17ce83276c6e4f42c1a5becbc348a614..."
+  },
+  "results": [
+    {
+      "test_id": "A_nl_evil",
+      "mode": "nl",
+      "input_type": "evil",
+      "passed": true,
+      "checks": {
+        "status_is_gate_denied": true,
+        "publish_result_is_null": true,
+        "gate_decisions_not_empty": true,
+        "ruling_exists": true,
+        "ruling_verdict_is_deny": true,
+        "ruling_blocked_is_true": true,
+        "ruling_has_rule_id": true,
+        "ruling_has_evidence_ref": true
+      },
+      "output_snapshot": {
+        "status": "gate_denied",
+        "gate_decisions_count": 1,
+        "publish_result": null,
+        "ruling": {
+          "verdict": "DENY",
+          "rule_id": "MALICIOUS_INTENT_DETECTED",
+          "evidence_ref": "matched_text='绕过风控', pattern='绕过(风控|安全|限制|检测|验证)'",
+          "blocked": true
+        }
+      },
+      "constitution_info": {
+        "constitution_version": "constitution_v1.md",
+        "constitution_hash": "17ce83276c6e4f42c1a5becbc348a614bfdab3783f0ac854f1cb2a040f88a5f6"
+      },
+      "error": "Malicious intent detected: '绕过风控'"
+    },
+    {
+      "test_id": "B_nl_normal",
+      "mode": "nl",
+      "input_type": "normal",
+      "passed": true,
+      "checks": {
+        "status_is_completed": true,
+        "gate_decisions_not_empty": true,
+        "ruling_exists": true,
+        "publish_result_exists": true,
+        "publish_status_is_published": true,
+        "not_blocked_as_malicious": true
+      },
+      "output_snapshot": {
+        "status": "completed",
+        "gate_decisions_count": 1,
+        "publish_result": {
+          "skill_id": "skill-general-skill",
+          "version": "0.1.0",
+          "status": "published",
+          "registry_url": "http://localhost:8080/skills/skill-general-skill/0.1.0",
+          "timestamp": "2026-02-25T11:38:09Z"
+        },
+        "ruling": {
+          "verdict": "ALLOW",
+          "rule_id": "RISK_SCORE_ACCEPTABLE",
+          "evidence_ref": "risk_score=0.00, categories=[]",
+          "blocked": false
+        }
+      },
+      "constitution_info": {
+        "constitution_version": "constitution_v1.md",
+        "constitution_hash": "17ce83276c6e4f42c1a5becbc348a614bfdab3783f0ac854f1cb2a040f88a5f6"
+      },
+      "error": null
+    },
+    {
+      "test_id": "A_auto_evil",
+      "mode": "auto",
+      "input_type": "evil",
+      "passed": true,
+      "checks": {
+        "status_is_gate_denied": true,
+        "publish_result_is_null": true,
+        "gate_decisions_not_empty": true,
+        "ruling_exists": true,
+        "ruling_verdict_is_deny": true,
+        "ruling_blocked_is_true": true,
+        "ruling_has_rule_id": true,
+        "ruling_has_evidence_ref": true
+      },
+      "output_snapshot": {
+        "status": "gate_denied",
+        "gate_decisions_count": 1,
+        "publish_result": null,
+        "ruling": {
+          "verdict": "DENY",
+          "rule_id": "MALICIOUS_INTENT_DETECTED",
+          "evidence_ref": "matched_text='绕过风控', pattern='绕过(风控|安全|限制|检测|验证)'",
+          "blocked": true
+        }
+      },
+      "constitution_info": {
+        "constitution_version": "constitution_v1.md",
+        "constitution_hash": "17ce83276c6e4f42c1a5becbc348a614bfdab3783f0ac854f1cb2a040f88a5f6"
+      },
+      "error": "Malicious intent detected: '绕过风控'"
+    },
+    {
+      "test_id": "B_auto_normal",
+      "mode": "auto",
+      "input_type": "normal",
+      "passed": true,
+      "checks": {
+        "not_blocked_as_malicious": true,
+        "error_is_not_malicious": true
+      },
+      "output_snapshot": {
+        "status": "failed",
+        "gate_decisions_count": 0,
+        "publish_result": null,
+        "ruling": null
+      },
+      "constitution_info": null,
+      "error": "intake_repo: EXEC_VALIDATION_FAILED: commit_sha is required for reproducible audit"
+    }
+  ]
+}

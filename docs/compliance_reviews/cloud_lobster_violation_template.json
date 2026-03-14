@@ -1,0 +1,77 @@
+{
+  "$schema": "./cloud_lobster_violation_schema.json",
+  "report_type": "cloud_lobster_violation",
+  "description": "Cloud Lobster Mandatory Gate 违规报告模板",
+
+  "report_meta": {
+    "generated_at": "ISO-8601 timestamp",
+    "generated_by": "scripts/cloud_lobster_mandatory_gate.py",
+    "report_version": "1.0"
+  },
+
+  "violation_details": {
+    "task_id": "example-task-20260305-1200",
+    "decision": "DENY",
+    "error_code": "SF_CLOUD_LOBSTER_*",
+    "severity": "CRITICAL",
+    "violation_type": "no_contract|artifacts_incomplete|receipt_verification_failed|bypass_attempt"
+  },
+
+  "errors": [
+    {
+      "code": "SF_CLOUD_LOBSTER_NO_CONTRACT",
+      "message": "No task_contract.json found for task example-task-20260305-1200"
+    }
+  ],
+
+  "warnings": [],
+
+  "required_changes": [
+    "Use cloud-lobster-closed-loop-skill to generate valid task_contract.json",
+    "Ensure all four artifacts are returned from CLOUD-ROOT execution",
+    "Run verify_execution_receipt.py to validate receipt before submission"
+  ],
+
+  "violation_evidence": {
+    "task_id": "example-task-20260305-1200",
+    "task_dir": ".tmp/openclaw-dispatch/example-task-20260305-1200",
+    "has_contract": false,
+    "contract_path": null,
+    "receipt_path": ".tmp/openclaw-dispatch/example-task-20260305-1200/execution_receipt.json",
+    "missing_artifacts": ["stdout.log", "stderr.log", "audit_event.json"],
+    "verifier_output": ""
+  },
+
+  "governance_context": {
+    "enforcement_environment": "LOCAL-ANTIGRAVITY",
+    "target_environment": "CLOUD-ROOT",
+    "enforced_skill": "cloud-lobster-closed-loop-skill",
+    "fail_closed_policy": true,
+    "mandatory_since": "2026-03-05",
+    "reference_document": "skills/cloud-lobster-closed-loop-skill/SKILL.md"
+  },
+
+  "remediation": {
+    "immediate_actions": [
+      "STOP: Do not proceed with any CLOUD-ROOT execution without proper contract",
+      "CREATE: Generate task_contract.json using cloud-lobster-closed-loop-skill",
+      "EXECUTE: Re-run task with proper contract and four-piece artifacts"
+    ],
+    "prevention": [
+      "Always use cloud-lobster-closed-loop-skill for CLOUD-ROOT tasks",
+      "Run mandatory gate before accepting any execution results",
+      "Review violation reports in docs/compliance_reviews/ regularly"
+    ]
+  },
+
+  "approval_workflow": {
+    "status": "BLOCKED",
+    "unblock_conditions": [
+      "Original task completed via cloud-lobster-closed-loop-skill",
+      "All validation checks pass (contract, artifacts, receipt)",
+      "Mandatory gate returns ALLOW"
+    ],
+    "reviewer": "Kior-C",
+    "gatekeeper": "Antigravity-1"
+  }
+}

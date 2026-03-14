@@ -1,0 +1,21 @@
+{
+  "summary": {
+    "batch": "P0|P1|P2|ALL",
+    "generated_at": "2026-02-26T00:00:00Z",
+    "total": 0,
+    "pass": 0,
+    "requires_changes": 0,
+    "deny": 0,
+    "overall_decision": "ALLOW | REQUIRES_CHANGES | DENY"
+  },
+  "results": [
+    {
+      "skill": "example-skill",
+      "skill_md": true,
+      "openai_yaml": true,
+      "decision": "PASS | REQUIRES_CHANGES | DENY",
+      "required_changes": []
+    }
+  ]
+}
+

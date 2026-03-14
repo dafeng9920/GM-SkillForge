@@ -1,0 +1,121 @@
+{
+  "task_id": "T-FE-07",
+  "executor": "vs--cc3",
+  "reviewer": "Kior-B",
+  "compliance_officer": "Kior-C",
+  "wave": "Wave 2",
+  "compliance_mode": "B Guard 硬审",
+  "reviewed_at": "2026-03-13T00:00:00Z",
+  "decision": "PASS",
+
+  "violations": [],
+
+  "evidence_refs": [
+    {
+      "id": "EV-COMP-FE07-001",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md:115-130",
+      "description": "Section 3.1.2 首页 Headline：'Governed Asset Intelligence' + 3 种替代方案，禁止 'Build AI Skills Faster'/'Generate Anything with AI'/'Your AI Skill Builder'"
+    },
+    {
+      "id": "EV-COMP-FE07-002",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md:132-150",
+      "description": "Section 3.1.3 首页 Subheadline：'Audit decisions backed by evidence. Release authorization bound to permits.'，禁止 'Build production-ready skills in minutes'/'The fastest way to create AI workflows'/'No code required'"
+    },
+    {
+      "id": "EV-COMP-FE07-003",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md:152-186",
+      "description": "Section 3.1.4 首页 CTA：主 CTA 'Run an Audit'，次 CTA 'See a Permit Example'，禁止 'Build a Skill'/'Create Workflow'/'Generate Now'/'Start Building'/'Try It Free'"
+    },
+    {
+      "id": "EV-COMP-FE07-004",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md:239-297",
+      "description": "Section 3.2.1 Builder-first 叙事禁用词（CRITICAL）：8 项禁用词（Build/Create/Generate/Builder/Workflow/Canvas/Template/Marketplace/Gallery），每项都有替代方案"
+    },
+    {
+      "id": "EV-COMP-FE07-005",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md:299-335",
+      "description": "Section 3.2.2 魔法式承诺禁用词（HIGH）：8 项禁用词（Magic/Instant/One-click/Automatic/Effortless/Zero-code/No-code/Drag-and-drop），每项都有替代方案"
+    },
+    {
+      "id": "EV-COMP-FE07-006",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md:337-375",
+      "description": "Section 3.2.3 审计放行混淆禁用词（CRITICAL）：7 项禁用词，明确禁止 'Audit pass = Approved'/'Approved for release'/'Ready to deploy'/'Live'/'Success'/'Done'/'Signed off'"
+    },
+    {
+      "id": "EV-COMP-FE07-007",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md:417-437",
+      "description": "Section 3.5.1 核心区分原则：'Audit pass is not release approval. Permit is.'，权力归属表（Audit Role vs Compliance Role），决策依据表"
+    },
+    {
+      "id": "EV-COMP-FE07-008",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md:439-466",
+      "description": "Section 3.5.2 语义对照表：状态标签（Passed vs Permit Active）/辅助文案（Eligible for permit issuance vs Issued for production release）/CTA（Submit for Permit vs Issue Permit）/通知区分"
+    },
+    {
+      "id": "EV-COMP-FE07-009",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md:467-489",
+      "description": "Section 3.5.4 禁止的混淆表述：明确禁止 'Audit passed = Approved for release'/'Ready to deploy'/'Approved'/'All set to go live'，提供正确表述"
+    },
+    {
+      "id": "EV-COMP-FE07-010",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md:512-521",
+      "description": "EvidenceRef：8 份参考文档列表，包含行号引用，足以支撑规范结论"
+    },
+    {
+      "id": "EV-COMP-FE07-011",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/Dashboard-Audit Detail-Permit 三页文字线框图.md:1086-1142",
+      "description": "参考文档：首页与应用内叙事分工（首页讲价值、应用内讲状态/裁决/证据/放行）+ 首页 CTA 方向（Run an Audit/See a Permit Example）"
+    },
+    {
+      "id": "EV-COMP-FE07-012",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/前端重构_AI军团任务分发单_v2.md:521-539",
+      "description": "任务书 T-FE-07：定义文案与 CTA 输出目标（首页 headline/subheadline/CTA/场景区/禁用词清单/应用内 CTA/首页与应用内语言边界/Audit pass != Permit granted）与约束"
+    }
+  ],
+
+  "required_changes": [],
+
+  "compliance_notes": [
+    "交付物全面覆盖 B Guard 合规约束：首页叙事完全脱离 builder-first，文案禁用词清单分为 5 大类 50+ 禁用词，每项都有禁用理由和替代方案",
+    "Section 3.1 首页叙事规范准确定位价值传达与边界教育层：首页讲'这是什么'/'不是什么'/'为什么需要'/'如何开始'，核心定位为治理中枢/审计工作台/放行控制层",
+    "Section 3.2 Builder-first 叙事禁用词（CRITICAL）完整：8 项禁用词（Build/Create/Generate/Builder/Workflow/Canvas/Template/Marketplace/Gallery）全部禁止，替代方案明确",
+    "Section 3.2.2 魔法式承诺禁用词（HIGH）完整：8 项禁用词（Magic/Instant/One-click/Automatic/Effortless/Zero-code/No-code/Drag-and-drop）全部禁止，防止过度承诺",
+    "Section 3.2.3 审计放行混淆禁用词（CRITICAL）完整：7 项禁用词，明确禁止 'Audit pass = Approved'/'Approved for release'/'Ready to deploy'/'Live'/'Success'/'Done'/'Signed off'",
+    "Section 3.5 Audit pass 与 Permit granted 语义区分完整：核心区分原则 'Audit pass is not release approval. Permit is.' 在多个章节显式强化，语义对照表与禁止混淆表述完整",
+    "Section 3.3 应用内 CTA 语言规范完整：Dashboard/Audit Detail/Permit 三页 CTA 全部使用治理语义（Run Audit/Open Audit/Review Gaps/Issue Permit/Submit for Permit/Export AuditPack），无营销语义",
+    "Section 3.4 首页与应用内语言边界明确：首页讲价值与边界（Landing/Marketing 层），应用内讲状态与裁决与证据与放行（Dashboard/Audit/Release 层），边界转换点与禁止的边界混淆完整定义",
+    "Section 3.6 状态标签语言规范统一：审计状态标签（Draft/In Audit/Passed/Fix Required/Blocked/Ready for Permit）与许可证状态标签（Pending/Active/Revoked/Expired/Superseded）明确区分",
+    "依赖任务 T-FE-02/T-FE-03/T-FE-04 全部 ALLOW，Dashboard CTA（Run Audit）、Audit Detail CTA（Submit for Permit）、Permit CTA（Issue Permit）与语义定义已对齐",
+    "EvidenceRef 充足：8 份参考文档列表，包含行号引用，execution_report 包含 15 项 evidence_refs"
+  ],
+
+  "positive_findings": [
+    "首页定位精准：'Governed Asset Intelligence' 与 'Audit decisions backed by evidence. Release authorization bound to permits.' 明确治理中枢定位，完全脱离 builder-first 叙事",
+    "首页 CTA 准确：主 CTA 'Run an Audit'，次 CTA 'See a Permit Example'，第三 CTA 'Learn More About Governance'，完全符合治理型前端要求，未使用 Build/Create/Generate Now",
+    "场景区文案完整：Audit（Evidence-Backed Decisions）/Permit（Bound Release Authorization）/Governance（Three-Pillar Separation）三个场景区文案结构完整，未使用功能列表式/效果承诺式/魔法式描述",
+    "禁用词清单完整可执行：5 大类（Builder-first/魔法式承诺/审计放行混淆/营销式语言/成功页式语言）50+ 禁用词，每项都有明确的禁用理由和替代方案，可直接作为设计/前端/产品的检查清单",
+    "审计放行区分清晰：'Audit pass is not release approval. Permit is.' 核心区分原则在 Section 3.5.1/3.5.2/3.5.3/3.5.4 多次强化，语义对照表与禁止混淆表述完整",
+    "应用内 CTA 规范完整：Dashboard（Run Audit/Open Audit/Review Gaps/Issue Permit）/Audit Detail（View Critical Fixes/Go to Gap Analysis/Submit for Permit）/Permit（Export Permit/View Linked Audit/Revoke Permit）三页 CTA 全部使用治理语义",
+    "首页与应用内边界明确：首页叙事（价值主张/定位/边界/可信性/入口）与应用内叙事（状态/裁决/证据/放行）清晰分离，边界转换点（点击 CTA 从首页进入应用）与禁止的边界混淆完整定义",
+    "状态标签规范统一：审计状态标签（5 项）与许可证状态标签（5 项）明确区分，每项列出禁用的替代词",
+    "替代方案完整：首页 Headline/Subheadline 各提供 3 种替代方案，可适应不同产品定位需求",
+    "三段式结构完整：PreflightChecklist（5 类 Fail-Closed 风险枚举）/ExecutionContract（Input Constraints/Output Definition/Gate Check）/RequiredChanges（8 个章节）",
+    "交付物验收清单完整：10 项验收清单全部完成，8 个核心交付物已输出"
+  ],
+
+  "b_guard_notes": "作为合规官 Kior-C，我已完成 B Guard 式硬审。交付物在核心合规约束方面完整且正确，未发现触发 Zero Exception Directives 的违规项。执行者 vs--cc3 的 T-FE-07 执行质量优秀：成功实现从 builder 叙事到治理叙事的切换，首页讲价值、应用内讲状态/裁决/证据/放行的边界清晰明确，Audit pass 与 Permit granted 语义区分显式强化，5 大类 50+ 禁用词清单可作为设计/前端/产品的检查清单使用。决策：PASS。",
+
+  "acknowledged_review_findings": "已 acknowledge Kior-B 的 Review Decision（ALLOW）与 15 个 evidence_refs。Reviewer 的正面评价准确反映了交付物质量：首页定位精准、CTA 准确、场景区文案完整、禁用词清单完整、审计放行区分清晰、应用内 CTA 规范完整、首页与应用内边界明确、状态标签规范统一、替代方案完整、三段式结构完整、交付物验收清单完整、EvidenceRef 充足。Reviewer 提出的 2 个 LOW 严重性建议（空状态 CTA 'Register Asset' 隐含创建操作、headline 'Intelligence' 可能暗示数据分析工具）属于优化建议，不影响合规判定。"
+}

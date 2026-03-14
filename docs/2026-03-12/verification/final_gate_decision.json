@@ -1,0 +1,187 @@
+{
+  "batch_id": "FE-GOV-REFACTOR-2026-03-12",
+  "decision": "ALLOW",
+  "summary": [
+    "T-FE-01 至 T-FE-07 已完成三权闭环，全部具备 ExecutionReport、GateDecision、ComplianceAttestation。",
+    "全部任务已满足 Review=ALLOW 且 Compliance=PASS，Wave 1 与 Wave 2 依赖链均已闭环。",
+    "前端主叙事已从 builder 型界面切换为治理型前端，Dashboard / Audit Detail / Permit 三页主链已确立。",
+    "三权分立、EvidenceRef、Hash、Revision、Permit 绑定关系已在信息架构、页面规格、组件映射和权限矩阵中保留。",
+    "Never-in-DOM / Layer 3 绝对禁止区、API 层裁剪原则、首页与应用内语言边界、Audit pass 与 Permit granted 语义区分均已建立。"
+  ],
+  "task_statuses": [
+    {
+      "task_id": "T-FE-01",
+      "execution": "COMPLETE",
+      "review": "ALLOW",
+      "compliance": "PASS"
+    },
+    {
+      "task_id": "T-FE-02",
+      "execution": "COMPLETE",
+      "review": "ALLOW",
+      "compliance": "PASS"
+    },
+    {
+      "task_id": "T-FE-03",
+      "execution": "COMPLETE",
+      "review": "ALLOW",
+      "compliance": "PASS"
+    },
+    {
+      "task_id": "T-FE-04",
+      "execution": "COMPLETE",
+      "review": "ALLOW",
+      "compliance": "PASS"
+    },
+    {
+      "task_id": "T-FE-05",
+      "execution": "COMPLETE",
+      "review": "ALLOW",
+      "compliance": "PASS"
+    },
+    {
+      "task_id": "T-FE-06",
+      "execution": "COMPLETE",
+      "review": "ALLOW",
+      "compliance": "PASS"
+    },
+    {
+      "task_id": "T-FE-07",
+      "execution": "COMPLETE",
+      "review": "ALLOW",
+      "compliance": "PASS"
+    }
+  ],
+  "evidence_refs": [
+    {
+      "id": "EV-FG-001",
+      "kind": "FILE",
+      "locator": "docs/2026-03-12/verification/T-FE-01_gate_decision.json",
+      "description": "T-FE-01 Review 最终为 ALLOW。"
+    },
+    {
+      "id": "EV-FG-002",
+      "kind": "FILE",
+      "locator": "docs/2026-03-12/verification/T-FE-01_compliance_attestation.json",
+      "description": "T-FE-01 Compliance 最终为 PASS。"
+    },
+    {
+      "id": "EV-FG-003",
+      "kind": "FILE",
+      "locator": "docs/2026-03-12/verification/T-FE-02_gate_decision.json",
+      "description": "T-FE-02 Review 最终为 ALLOW。"
+    },
+    {
+      "id": "EV-FG-004",
+      "kind": "FILE",
+      "locator": "docs/2026-03-12/verification/T-FE-02_compliance_attestation.json",
+      "description": "T-FE-02 Compliance 最终为 PASS。"
+    },
+    {
+      "id": "EV-FG-005",
+      "kind": "FILE",
+      "locator": "docs/2026-03-12/verification/T-FE-03_gate_decision.json",
+      "description": "T-FE-03 Review 最终为 ALLOW。"
+    },
+    {
+      "id": "EV-FG-006",
+      "kind": "FILE",
+      "locator": "docs/2026-03-12/verification/T-FE-03_compliance_attestation.json",
+      "description": "T-FE-03 Compliance 最终为 PASS。"
+    },
+    {
+      "id": "EV-FG-007",
+      "kind": "FILE",
+      "locator": "docs/2026-03-12/verification/T-FE-04_gate_decision.json",
+      "description": "T-FE-04 Review 最终为 ALLOW。"
+    },
+    {
+      "id": "EV-FG-008",
+      "kind": "FILE",
+      "locator": "docs/2026-03-12/verification/T-FE-04_compliance_attestation.json",
+      "description": "T-FE-04 Compliance 最终为 PASS。"
+    },
+    {
+      "id": "EV-FG-009",
+      "kind": "FILE",
+      "locator": "docs/2026-03-12/verification/T-FE-05_gate_decision.json",
+      "description": "T-FE-05 Review 最终为 ALLOW。"
+    },
+    {
+      "id": "EV-FG-010",
+      "kind": "FILE",
+      "locator": "docs/2026-03-12/verification/T-FE-05_compliance_attestation.json",
+      "description": "T-FE-05 Compliance 最终为 PASS。"
+    },
+    {
+      "id": "EV-FG-011",
+      "kind": "FILE",
+      "locator": "docs/2026-03-12/verification/T-FE-06_gate_decision.json",
+      "description": "T-FE-06 Review 最终为 ALLOW。"
+    },
+    {
+      "id": "EV-FG-012",
+      "kind": "FILE",
+      "locator": "docs/2026-03-12/verification/T-FE-06_compliance_attestation.json",
+      "description": "T-FE-06 Compliance 最终为 PASS。"
+    },
+    {
+      "id": "EV-FG-013",
+      "kind": "FILE",
+      "locator": "docs/2026-03-12/verification/T-FE-07_gate_decision.json",
+      "description": "T-FE-07 Review 最终为 ALLOW。"
+    },
+    {
+      "id": "EV-FG-014",
+      "kind": "FILE",
+      "locator": "docs/2026-03-12/verification/T-FE-07_compliance_attestation.json",
+      "description": "T-FE-07 Compliance 最终为 PASS。"
+    },
+    {
+      "id": "EV-FG-015",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-01_ia_spec.md:94-95",
+      "description": "首页讲价值与边界，应用内讲状态、裁决、证据与放行。"
+    },
+    {
+      "id": "EV-FG-016",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-01_ia_spec.md:168-172",
+      "description": "Dashboard / Audit / Permit 作为治理三页主链被明确保留。"
+    },
+    {
+      "id": "EV-FG-017",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-04_permit_spec.md:248-262",
+      "description": "Permit 页面显式强化 Audit pass is not release approval. Permit is. 且要求 revision/hash 绑定。"
+    },
+    {
+      "id": "EV-FG-018",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-06_visibility_and_permission_matrix.md:107-121",
+      "description": "Layer 3 为绝对禁止区，API 层负责裁剪，禁止后端全量返回加前端隐藏。"
+    },
+    {
+      "id": "EV-FG-019",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-06_visibility_and_permission_matrix.md:187-253",
+      "description": "Never-in-DOM 清单与 API payload 裁剪责任归属已形成专门设计文档。"
+    },
+    {
+      "id": "EV-FG-020",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md:157-183",
+      "description": "首页主 CTA 为 Run an Audit，明确禁用 Build / Create / Generate 等 builder-first 语言。"
+    },
+    {
+      "id": "EV-FG-021",
+      "kind": "LINE_REF",
+      "locator": "docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md:421-462",
+      "description": "Audit pass 与 Permit granted 的语义区分已在文案规范中显式建立。"
+    }
+  ],
+  "residual_risks": [
+    "当前批次完成的是治理前端规格、映射、权限与文案层的重构闭环；后续进入真实产品实现时，仍需确保代码实现继续遵守 Never-in-DOM、API 层裁剪与 Permit 语义约束。"
+  ],
+  "next_action": "Archive this governance-spec batch and move to implementation or handoff under the established constraints."
+}

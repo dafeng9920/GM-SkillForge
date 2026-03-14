@@ -1,0 +1,51 @@
+name: multi-entry-consistency-checker-skill
+description: 验证多入口/多模式是否一致执行 Hard Gate 与 Integrity Chain，防止入口分叉绕过。
+version: v1.0.0
+frozen_at: 2026-02-25
+owner: platform-governance
+tags:
+  - l3
+  - multi-entry
+  - consistency
+  - hard-gate
+  - integrity-chain
+  - cli-modes
+default_prompt: |
+  验证不同入口模式的一致性约束。
+  1) 分别执行 evil/normal 两类请求
+  2) 检查每个入口均触发相同 gate 与 integrity 规则
+  3) 输出 entry_consistency_report.json 与差异项
+
+capabilities:
+  - multi_mode_execution
+  - hard_gate_consistency_check
+  - integrity_chain_consistency_check
+  - constitution_version_alignment
+
+input_schema:
+  entry_modes:
+    type: array
+    required: true
+    description: 需要验证的一组 mode/入口
+  scenarios:
+    type: array
+    required: true
+    description: 恶意请求与正常请求测试集合
+  output_dir:
+    type: string
+    required: true
+    description: 一致性报告输出目录
+
+output_schema:
+  consistency_report:
+    type: string
+    description: entry_consistency_report.json 路径
+  mode_results:
+    type: array
+    description: 各入口执行结果
+  invariant_violations:
+    type: array
+    description: 不一致项
+  passed:
+    type: boolean
+    description: 是否一致通过

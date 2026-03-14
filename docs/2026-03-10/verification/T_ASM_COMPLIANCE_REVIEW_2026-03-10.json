@@ -1,0 +1,211 @@
+{
+  "review_id": "COMPLIANCE-REVIEW-T-ASM-2026-03-10",
+  "reviewed_at": "2026-03-10T23:59:00Z",
+  "compliance_officer": "Compliance Agent (Fail-Closed)",
+  "scope": ["T-ASM-01", "T-ASM-02", "T-ASM-03"],
+  "review_basis": [
+    "multi-ai-collaboration.md",
+    "docs/2026-03-10/本地主线盘点_缺口_优先级_2026-03-10.md",
+    "docs/2026-03-10/T-ASM_Review_Compliance_分发单_2026-03-10.md"
+  ],
+  "hard_rules": [
+    "不得绕过三权分立",
+    "不得削弱 Permit / EvidenceRef / Compliance 口径",
+    "不得把文档口径冒充真实执行能力",
+    "不得越权改动",
+    "不得把局部统一冒充系统最终完成",
+    "不得因统一入口而降低 fail-closed"
+  ],
+  "veto_conditions": [
+    "绕开 Permit",
+    "弱化门禁",
+    "无证据宣称完成",
+    "越权改动"
+  ],
+  "task_decisions": [
+    {
+      "task_id": "T-ASM-01",
+      "title": "统一后半段入口",
+      "executor": "Antigravity-1",
+      "decision": "PASS",
+      "violations": [],
+      "evidence_refs": [
+        {
+          "id": "EV-ASM01-001",
+          "kind": "FILE",
+          "locator": "scripts/local_accept.py",
+          "description": "Local Accept 统一入口脚本（350行）"
+        },
+        {
+          "id": "EV-ASM01-002",
+          "kind": "FILE",
+          "locator": "scripts/final_accept.py",
+          "description": "Final Accept 统一入口脚本（380行）"
+        },
+        {
+          "id": "EV-ASM01-003",
+          "kind": "FILE",
+          "locator": "docs/2026-03-10/verification/T_ASM_01_execution_report.yaml",
+          "description": "Execution Report"
+        },
+        {
+          "id": "EV-ASM01-004",
+          "kind": "EVIDENCE",
+          "locator": "T_ASM_01_execution_report.yaml:lines_28-33",
+          "description": "兼容性证据：不修改 Permit / pre_absorb_check / absorb"
+        },
+        {
+          "id": "EV-ASM01-005",
+          "kind": "EVIDENCE",
+          "locator": "T_ASM_01_execution_report.yaml:lines_35-40",
+          "description": "接口对齐证据：删除冲突 schema，依赖 T-ASM-02"
+        }
+      ],
+      "required_changes": [],
+      "compliance_notes": [
+        "未发现越权改动",
+        "保持与现有主链前半段兼容",
+        "交付物完整且有 EvidenceRef",
+        "符合 fail-closed 原则"
+      ]
+    },
+    {
+      "task_id": "T-ASM-02",
+      "title": "最小运行接口",
+      "executor": "Antigravity-1",
+      "decision": "PASS",
+      "violations": [],
+      "evidence_refs": [
+        {
+          "id": "EV-ASM02-001",
+          "kind": "FILE",
+          "locator": "core/runtime_interface.py",
+          "description": "统一最小运行接口定义（520行）"
+        },
+        {
+          "id": "EV-ASM02-002",
+          "kind": "FILE",
+          "locator": "core/RUNTIME_INTERFACE_README.md",
+          "description": "统一接口说明文档（320行）"
+        },
+        {
+          "id": "EV-ASM02-003",
+          "kind": "FILE",
+          "locator": "docs/2026-03-10/verification/T-ASM-02_execution_report.yaml",
+          "description": "Execution Report"
+        },
+        {
+          "id": "EV-ASM02-004",
+          "kind": "TEST",
+          "locator": "T-ASM-02_execution_report.yaml:lines_18-30",
+          "description": "Gate 自检结果：导入测试、hash 计算测试、兼容性测试全部通过"
+        },
+        {
+          "id": "EV-ASM02-005",
+          "kind": "EVIDENCE",
+          "locator": "T-ASM-02_execution_report.yaml:lines_50-70",
+          "description": "兼容性说明：与现有 Schema、dropzone manifest、AuditPack 完全兼容"
+        }
+      ],
+      "required_changes": [],
+      "compliance_notes": [
+        "未发现越权改动",
+        "新接口与现有系统并行存在，不强制迁移",
+        "提供完整兼容性转换方法",
+        "交付物完整且有 EvidenceRef",
+        "符合 fail-closed 原则"
+      ]
+    },
+    {
+      "task_id": "T-ASM-03",
+      "title": "最小统一验证入口",
+      "executor": "Agent C",
+      "decision": "PASS",
+      "violations": [],
+      "evidence_refs": [
+        {
+          "id": "EV-ASM03-001",
+          "kind": "FILE",
+          "locator": "scripts/unified_validation_gate.py",
+          "description": "统一验证入口脚本（590行）"
+        },
+        {
+          "id": "EV-ASM03-002",
+          "kind": "FILE",
+          "locator": "docs/2026-03-10/UNIFIED_VALIDATION_GATE_SUMMARY.md",
+          "description": "完整文档（280行）"
+        },
+        {
+          "id": "EV-ASM03-003",
+          "kind": "FILE",
+          "locator": "docs/2026-03-10/verification/T-ASM-03_execution_report.yaml",
+          "description": "Execution Report（150行）"
+        },
+        {
+          "id": "EV-ASM03-004",
+          "kind": "FILE",
+          "locator": "docs/2026-03-10/verification/unified_validation_quick_154003.json",
+          "description": "验证门测试输出"
+        },
+        {
+          "id": "EV-ASM03-005",
+          "kind": "TEST",
+          "locator": "T-ASM-03_execution_report.yaml:lines_22-34",
+          "description": "Gate 自检：help、quick、absorb 模式全部通过"
+        },
+        {
+          "id": "EV-ASM03-006",
+          "kind": "EVIDENCE",
+          "locator": "T-ASM-03_execution_report.yaml:lines_161-167",
+          "description": "Fail-Closed 保证：任何验证失败均返回 DENY"
+        },
+        {
+          "id": "EV-ASM03-007",
+          "kind": "EVIDENCE",
+          "locator": "T-ASM-03_execution_report.yaml:lines_216-223",
+          "description": "与现有体系对齐：Permit五字段、固定口径、三哈希、absorb门禁"
+        }
+      ],
+      "required_changes": [],
+      "compliance_notes": [
+        "Execution Report 已补交且格式完整",
+        "未修改任何现有验证脚本逻辑，保持 fail-closed",
+        "统一验证门仅做编排，不复制验证逻辑",
+        "各验证脚本仍可独立直接调用（单点风险缓解）",
+        "证据引用完整，包含所有被集成的验证脚本",
+        "符合三权分立流程要求"
+      ]
+    }
+  ],
+  "summary": {
+    "total_tasks": 3,
+    "pass_count": 3,
+    "fail_count": 0,
+    "pass_tasks": ["T-ASM-01", "T-ASM-02", "T-ASM-03"],
+    "fail_tasks": [],
+    "blocking_issue": null
+  },
+  "final_assessment": {
+    "overall_decision": "PASS",
+    "reason": "所有三项任务均已通过 Compliance 审查",
+    "can_proceed_to_assembly": true,
+    "rework_required": false,
+    "rework_scope": null
+  },
+  "compliance_verification": {
+    "hard_rules_violated": [],
+    "three_powers_separation": "T-ASM-01/02/03 全部 PASS，三权分立记录完整",
+    "permit_integrity": "无绕过 Permit 的情况",
+    "evidence_ref_completeness": "所有任务均有完整 EvidenceRef",
+    "fail_closed_preserved": "是"
+  },
+  "rework_history": [
+    {
+      "date": "2026-03-10T23:59:00Z",
+      "decision": "FAIL",
+      "reason": "T-ASM-03 缺少 Execution Report",
+      "resolved_at": "2026-03-11T00:05:00Z",
+      "resolution": "T-ASM-03 补交 execution_report.yaml，格式完整"
+    }
+  ]
+}

@@ -1,0 +1,125 @@
+{
+  "task_id": "CLOUD-ROOT-MIGRATION-FINAL-2026-03-05",
+  "gate_name": "CLOUD-ROOT Operation Final Gate",
+  "gate_type": "FINAL_OPERATION_VERIFICATION",
+  "executor": "Codex",
+  "status": "PENDING_EVIDENCE_COLLECTION",
+  "timestamp": "2026-03-05T10:15:00Z",
+  "execution_environment": "LOCAL-ANTIGRAVITY",
+  "decision": "PENDING",
+  "ruling": {
+    "verdict": "PENDING",
+    "summary": "Awaiting live CLOUD-ROOT service status evidence. Configuration deployment complete, but final gate decision requires actual systemctl is-active/is-enabled outputs from CLOUD-ROOT server.",
+    "blocking_issues": [
+      {
+        "issue": "Live CLOUD-ROOT evidence not yet collected",
+        "details": "Need to execute collect_cloud_root_live_status.sh on CLOUD-ROOT server",
+        "action": "SSH into CLOUD-ROOT and execute the collection script",
+        "priority": "P0"
+      }
+    ],
+    "non_blocking_issues": [],
+    "overall_assessment": "Configuration deployment is complete and correct. Pending live verification from actual CLOUD-ROOT server."
+  },
+  "evidence_required": {
+    "script": "openclaw-box/scripts/collect_cloud_root_live_status.sh",
+    "execution_location": "CLOUD-ROOT (must run on actual server)",
+    "output_location": "docs/2026-03-05/verification/",
+    "expected_files": [
+      "cloud_root_live_status_<timestamp>.txt",
+      "cloud_root_live_status_<timestamp>.json"
+    ]
+  },
+  "verification_commands": {
+    "service_active": "systemctl is-active cloud-root-*",
+    "service_enabled": "systemctl is-enabled cloud-root-*",
+    "health_check_1": "curl -s http://localhost:8081/health",
+    "health_check_2": "curl -s http://localhost:8082/health",
+    "process_check": "ps aux | grep -E 'contract_generator|dispatch_queue'",
+    "directory_check": "ls -la /var/lib/gm-skillforge/"
+  },
+  "gate_criteria": {
+    "services_active_required": 4,
+    "services_enabled_required": 5,
+    "health_endpoints_required": 2,
+    "fail_closed_required": true
+  },
+  "expected_outcomes": {
+    "contract_generator": {
+      "is_active": "active",
+      "is_enabled": "enabled",
+      "health_check": "200 OK"
+    },
+    "dispatch_queue": {
+      "is_active": "active",
+      "is_enabled": "enabled",
+      "health_check": "200 OK"
+    },
+    "mandatory_gate": {
+      "is_active": "inactive",
+      "is_enabled": "enabled",
+      "type": "oneshot"
+    },
+    "receipt_verifier": {
+      "is_active": "active",
+      "is_enabled": "enabled"
+    },
+    "audit_archive": {
+      "is_active": "active",
+      "is_enabled": "enabled"
+    }
+  },
+  "pending_evidence": {
+    "cloud_root_live_status_txt": {
+      "path": "docs/2026-03-05/verification/cloud_root_live_status_<timestamp>.txt",
+      "status": "NOT_COLLECTED",
+      "required": true
+    },
+    "cloud_root_live_status_json": {
+      "path": "docs/2026-03-05/verification/cloud_root_live_status_<timestamp>.json",
+      "status": "NOT_COLLECTED",
+      "required": true
+    }
+  },
+  "existing_evidence": {
+    "configuration_files": {
+      "systemd_services": 5,
+      "monitoring_config": 1,
+      "deployment_script": 1,
+      "test_script": 1
+    },
+    "template_evidence": {
+      "stdout_log": "docs/2026-03-05/verification/cloud_root_migration_stdout.log",
+      "stderr_log": "docs/2026-03-05/verification/cloud_root_migration_stderr.log",
+      "audit_event": "docs/2026-03-05/verification/cloud_root_migration_audit.json",
+      "service_status": "docs/2026-03-05/verification/cloud_root_service_status.md"
+    }
+  },
+  "decision_matrix": {
+    "if_all_pass": {
+      "decision": "ALLOW",
+      "file": "CLOUD_ROOT_OPERATION_FINAL_ALLOW.json",
+      "signature": "CLOUD_ROOT_OPERATIONAL_FULL_ALLOW"
+    },
+    "if_any_fail": {
+      "decision": "REQUIRES_CHANGES",
+      "file": "CLOUD_ROOT_OPERATION_REQUIRES_CHANGES.json",
+      "blocking": false
+    }
+  },
+  "compliance": {
+    "configuration_deployment": "COMPLETE",
+    "auto_start_configured": "YES",
+    "retry_enabled": "YES",
+    "alerting_enabled": "YES",
+    "fail_closed_enforced": "YES",
+    "live_verification": "PENDING"
+  },
+  "metadata": {
+    "gate_version": "1.0",
+    "schema_version": "1.0",
+    "generated_by": "Codex",
+    "reviewed_by": "Antigravity-1",
+    "approval_status": "PENDING_EVIDENCE"
+  }
+}

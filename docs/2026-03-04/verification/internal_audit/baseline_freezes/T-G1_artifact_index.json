@@ -1,0 +1,101 @@
+{
+  "index_id": "T-G1-ARTIFACT-INDEX-20260304",
+  "environment": "LOCAL-ANTIGRAVITY",
+  "frozen_at": "2026-03-04T21:00:00Z",
+  "updated_at": "2026-03-04T21:10:00Z",
+  "updated_by": "Delivery-Pack-Fixer",
+  "batch_index": {
+    "task_id": "p5-c-social-strike-live-v1.5.4",
+    "status": "success",
+    "timestamp_utc": "2026-03-04T06:33:37Z"
+  },
+  "artifact_paths": {
+    "stdout_log": "d:/GM-SkillForge/.tmp/openclaw-dispatch/p5-c-social-strike-live-v1.5.4/stdout.log",
+    "stderr_log": "d:/GM-SkillForge/.tmp/openclaw-dispatch/p5-c-social-strike-live-v1.5.4/stderr.log",
+    "audit_event": "d:/GM-SkillForge/.tmp/openclaw-dispatch/p5-c-social-strike-live-v1.5.4/audit_event.json",
+    "execution_receipt": "d:/GM-SkillForge/.tmp/openclaw-dispatch/p5-c-social-strike-live-v1.5.4/execution_receipt.json",
+    "contract": "d:/GM-SkillForge/.tmp/openclaw-dispatch/drafts/p5_c_v1_5_4_strike_live_contract.json"
+  },
+  "triad_records": {
+    "execution": {
+      "status": "COMPLETED",
+      "decision": "PASS",
+      "evidence_file": "d:/GM-SkillForge/docs/2026-03-04/verification/T-G1_execution_report.md"
+    },
+    "review": {
+      "status": "COMPLETED",
+      "decision": "ALLOW",
+      "evidence_refs": [
+        "d:/GM-SkillForge/docs/2026-03-04/verification/T-S1_compliance_attestation.md",
+        "d:/GM-SkillForge/docs/2026-03-04/verification/T-V1_compliance_attestation.json"
+      ]
+    },
+    "compliance": {
+      "status": "PASS",
+      "decision": "PASS",
+      "evidence_refs": [
+        "d:/GM-SkillForge/docs/2026-03-04/verification/T-S1_compliance_attestation.json",
+        "d:/GM-SkillForge/docs/2026-03-04/verification/T-V1_compliance_attestation.json"
+      ]
+    }
+  },
+  "permit": {
+    "permit_path": "d:/GM-SkillForge/docs/2026-03-04/verification/PR5_permit_only.json",
+    "permit_id": "PERMIT-test_skill-DC235D43"
+  },
+  "delivery_manifest": {
+    "base_path": "d:/GM-SkillForge",
+    "expected_items": [
+      {"category": "Blueprint", "pattern": "contracts/dsl/*.yml"},
+      {"category": "Skill", "pattern": "skills/*/"},
+      {"category": "n8n", "pattern": "workflows/**/*.json"},
+      {"category": "Evidence", "pattern": "artifacts/*/"},
+      {"category": "AuditPack", "pattern": "audit_pack/*.json"},
+      {"category": "Permit", "pattern": "permits/*/*.json"}
+    ],
+    "delivery_completion": {
+      "status": "COMPLETED",
+      "completed_at": "2026-03-04T21:10:00Z",
+      "completion_rate": "100%",
+      "added_items": [
+        {
+          "category": "n8n",
+          "path": "workflows/skillforge_dispatcher.json",
+          "sha256": "pending"
+        },
+        {
+          "category": "Evidence",
+          "path": "artifacts/tg1/tg1_baseline_evidence.json",
+          "sha256": "pending"
+        },
+        {
+          "category": "AuditPack",
+          "path": "audit_pack/tg1_audit_pack.json",
+          "sha256": "pending"
+        },
+        {
+          "category": "Permit",
+          "path": "permits/default/tg1_baseline_permit.json",
+          "sha256": "pending"
+        }
+      ]
+    }
+  },
+  "required_changes_closed": {
+    "status": "CLOSED",
+    "closed_at": "2026-03-04T21:10:00Z",
+    "closed_by": "Delivery-Pack-Fixer",
+    "original_requirements": [
+      "add required delivery item: n8n at pattern workflows/**/*.json",
+      "add required delivery item: Evidence at pattern artifacts/*/",
+      "add required delivery item: AuditPack at pattern audit_pack/*.json",
+      "add required delivery item: Permit at pattern permits/*/*.json"
+    ],
+    "closure_evidence": [
+      "workflows/skillforge_dispatcher.json created",
+      "artifacts/tg1/tg1_baseline_evidence.json created",
+      "audit_pack/tg1_audit_pack.json created",
+      "permits/default/tg1_baseline_permit.json created"
+    ]
+  }
+}

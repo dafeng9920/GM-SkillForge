@@ -1,0 +1,166 @@
+---
+task_id: "T-FE-06"
+executor: "Kior-A"
+reviewer: "vs--cc1"
+compliance_officer: "Antigravity-2"
+wave: "Wave 2"
+depends_on: ["T-FE-05"]
+status: "完成"
+started_at: "2026-03-12T22:00:00Z"
+completed_at: "2026-03-12T22:45:00Z"
+
+# 交付物清单
+deliverables:
+  - path: "docs/2026-03-12/verification/T-FE-06_visibility_and_permission_matrix.md"
+    action: "新建"
+    lines_added: 650
+    sections: 9
+
+# Gate 自检结果
+gate_self_check:
+  - check: "是否输出 Layer 0/1/2/3 可见性矩阵"
+    result: "PASS - Section 3.1 定义四层信息分层模型，Section 3.2 输出完整可见性矩阵"
+  - check: "是否输出 Never-in-DOM 清单"
+    result: "PASS - Section 3.3 输出 30 类禁止字段，覆盖规则/探针/执行/判定/证据/合规维度"
+  - check: "是否输出 API payload 裁剪责任归属"
+    result: "PASS - Section 3.4 明确 API 层裁剪原则，提供禁止模式和要求模式对比"
+  - check: "是否输出角色与信息密度映射"
+    result: "PASS - Section 3.5 定义 Executor/Reviewer/Compliance 三角色与层级访问权限"
+  - check: "是否输出页面级权限裁剪规则"
+    result: "PASS - Section 3.6 分别定义 Dashboard/Audit Detail/Permit 三页权限规则"
+  - check: "是否输出字段级禁止下发清单"
+    result: "PASS - Section 3.7 输出 30 类禁止字段，按类型分组并提供使用指南"
+  - check: "是否输出可直接供前后端接口使用的约束结构"
+    result: "PASS - Section 3.8 提供 TypeScript Schema，可直接用于前后端接口约束"
+  - check: "是否强化 API 层裁剪"
+    result: "PASS - 明确禁止'后端全量返回+前端隐藏'模式，要求 API 层按角色裁剪"
+  - check: "是否强化 Layer 3 绝对禁止区"
+    result: "PASS - Section 3.3.1 单独成节，明确'任何角色都不得访问 Layer 3'"
+  - check: "是否强化可见性矩阵与三页主链一致"
+    result: "PASS - Section 3.2.1 按三页主链分别定义可见性矩阵"
+  - check: "文档是否可直接作为前后端接口约束文档使用"
+    result: "PASS - 提供完整约束 Schema 和前后端协作指南"
+
+# EvidenceRef
+evidence_refs:
+  - id: "EV-FE06-001"
+    kind: "FILE"
+    locator: "docs/2026-03-12/verification/T-FE-06_visibility_and_permission_matrix.md"
+    description: "权限裁剪与禁止前端呈现区设计文档完整版，9 个章节，650 行"
+  - id: "EV-FE06-002"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/verification/T-FE-06_visibility_and_permission_matrix.md:23-52"
+    description: "Section 3.1 四层信息分层模型，定义 Layer 0/1/2/3 与核心原则"
+  - id: "EV-FE06-003"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/verification/T-FE-06_visibility_and_permission_matrix.md:54-150"
+    description: "Section 3.2 Layer 0/1/2/3 可见性矩阵，按页面和字段类别分别定义"
+  - id: "EV-FE06-004"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/verification/T-FE-06_visibility_and_permission_matrix.md:152-250"
+    description: "Section 3.3 Never-in-DOM 清单，30 类禁止字段，按页面分类"
+  - id: "EV-FE06-005"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/verification/T-FE-06_visibility_and_permission_matrix.md:252-310"
+    description: "Section 3.4 API payload 裁剪责任归属，明确 API 层裁剪原则与端点责任"
+  - id: "EV-FE06-006"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/verification/T-FE-06_visibility_and_permission_matrix.md:312-360"
+    description: "Section 3.5 角色与信息密度映射，定义三角色与页面访问权限"
+  - id: "EV-FE06-007"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/verification/T-FE-06_visibility_and_permission_matrix.md:362-430"
+    description: "Section 3.6 页面级权限裁剪规则，三页主链分别定义"
+  - id: "EV-FE06-008"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/verification/T-FE-06_visibility_and_permission_matrix.md:432-480"
+    description: "Section 3.7 字段级禁止下发清单，30 类禁止字段按类型分组"
+  - id: "EV-FE06-009"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/verification/T-FE-06_visibility_and_permission_matrix.md:482-610"
+    description: "Section 3.8 可直接供前后端接口使用的约束结构，TypeScript Schema"
+  - id: "EV-FE06-010"
+    kind: "LINE_REF"
+    locator: "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md"
+    description: "T-FE-05 已 ALLOW，满足 depends_on 条件"
+  - id: "EV-FE06-011"
+    kind: "DOC"
+    locator: "docs/2026-03-12/Dashboard-Audit Detail-Permit 三页文字线框图.md"
+    description: "参考文档: 四层信息分层模型与禁止前端呈现区定义"
+  - id: "EV-FE06-012"
+    kind: "DOC"
+    locator: "docs/2026-03-12/前端重构_AI军团任务分发单_v2.md"
+    description: "参考文档: T-FE-06 任务书与约束条件"
+
+# 输入文档引用
+input_evidence:
+  - path: "docs/2026-03-12/前端重构_AI军团任务分发单_v2.md"
+    purpose: "T-FE-06 任务书与 DoD 定义"
+  - path: "docs/2026-03-12/verification/T-FE-05_frontend_mapping.md"
+    purpose: "组件与数据边界映射，共享组件清单"
+  - path: "docs/2026-03-12/Dashboard-Audit Detail-Permit 三页文字线框图.md"
+    purpose: "四层信息分层模型与禁止前端呈现区"
+  - path: "multi-ai-collaboration.md"
+    purpose: "三权分立流程与证据格式"
+  - path: "docs/2026-02-21/架构方向的提问和回复/EXECUTION_GUARD_A_PROPOSAL_SKILL_v1.md"
+    purpose: "A Guard 三段式结构规范"
+  - path: "docs/2026-02-21/架构方向的提问和回复/EXECUTION_GUARD_B_EXECUTION_SKILL_v1.md"
+    purpose: "B Guard 合规拦截规则"
+
+# 完成度检查
+completion_checklist:
+  - item: "输出 Layer 0/1/2/3 可见性矩阵"
+    status: "完成"
+    location: "Section 3.1 + Section 3.2"
+  - item: "输出 Never-in-DOM 清单"
+    status: "完成"
+    location: "Section 3.3"
+  - item: "输出 API payload 裁剪责任归属"
+    status: "完成"
+    location: "Section 3.4"
+  - item: "输出角色与信息密度映射"
+    status: "完成"
+    location: "Section 3.5"
+  - item: "输出页面级权限裁剪规则"
+    status: "完成"
+    location: "Section 3.6"
+  - item: "输出字段级禁止下发清单"
+    status: "完成"
+    location: "Section 3.7"
+  - item: "输出可直接供前后端接口使用的约束结构"
+    status: "完成"
+    location: "Section 3.8"
+  - item: "强化 API 层裁剪"
+    status: "完成"
+    location: "Section 3.4.1"
+  - item: "强化 Layer 3 绝对禁止区"
+    status: "完成"
+    location: "Section 3.3.1"
+  - item: "强化可见性矩阵与三页主链一致"
+    status: "完成"
+    location: "Section 3.2.1"
+  - item: "文档可直接作为前后端接口约束文档使用"
+    status: "完成"
+    location: "Section 3.8 + Section 3.9"
+  - item: "三段式结构"
+    status: "完成"
+    location: "Section 一/二/三"
+
+# 交付摘要
+summary:
+  total_lines: 650
+  total_sections: 9
+  layer_3_forbidden_fields: 30
+  roles_defined: 3
+  pages_covered: 3
+  constraint_schemas_provided: 4
+  api_endpoints_specified: 6
+
+# 备注
+notes:
+  - "Layer 3 定义为绝对禁止区，任何角色均不得访问"
+  - "API 层裁剪原则: 后端按角色裁剪 payload，敏感字段不得进入前端响应"
+  - "Never-in-DOM 清单: 30 类禁止字段，覆盖规则/探针/执行/判定/证据/合规维度"
+  - "可见性矩阵: 按 Layer 0/1/2/3 和三页主链分别定义"
+  - "约束结构: 提供 TypeScript Schema，可直接用于前后端接口约束"
+  - "前后端协作指南: 提供后端、前端、Code Review 检查清单"

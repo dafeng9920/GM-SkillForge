@@ -1,19 +1,28 @@
 /**
  * Application Router Configuration
  *
- * v1.0 五页路由：
- * - /execute/run-intent    执行意图
- * - /execute/import-skill  外部技能导入
- * - /audit/packs           AuditPack 浏览
- * - /audit/rag-query       RAG 查询
- * - /system/health         健康监控
+ * v2.0 治理主链路由：
+ * - /home                   极简 AI 首页（默认首页）
+ * - /dashboard              治理总控台
+ * - /intake/vetting         外部 Skill Vetting 入口
+ * - /intake/vetting/report  Vetting 报告
+ * - /registry               资产登记
+ * - /audit/detail           审计详情
+ * - /permit                 放行凭证
+ * - /release/vetting-permit Vetting Permit 决策页
+ * - /forge                  构建（次级入口）
+ * - /policies               策略配置
+ * - /history                历史记录
  *
  * 设计规范：
- * - 不出现 n8n 顶层一级导航
- * - 按业务域分组（execute/audit/system）
+ * - 治理主链：Dashboard / Audit Detail / Permit
+ * - 次级导航：Registry / Forge / Policies / History
+ * - 禁止 builder-first 一级导航
+ * - 首页讲价值，应用内讲状态、裁决、证据与放行
  *
  * @module app/router
- * @see docs/2026-02-20/FRONTEND_REQUIREMENTS_v1.md
+ * @see docs/2026-03-12/verification/T-FE-01_ia_spec.md
+ * @see docs/2026-03-12/verification/T-FE-07_copy_and_cta_spec.md
  */
 
 import React from 'react';
@@ -21,15 +30,24 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import { AppShell } from './layout/AppShell';
 
-// Pages
-import { RunIntentPage } from '../pages/execute/RunIntentPage';
-import { ImportSkillPage } from '../pages/execute/ImportSkillPage';
-import { AuditPacksPage } from '../pages/audit/AuditPacksPage';
+const HomePage = React.lazy(() => import('../pages/governance/HomePage'));
+const DashboardPage = React.lazy(() => import('../pages/governance/DashboardPage'));
+const VettingHomePage = React.lazy(() => import('../pages/governance/VettingHomePage'));
+const VettingReportPage = React.lazy(() => import('../pages/governance/VettingReportPage'));
+const VettingPermitDecisionPage = React.lazy(() => import('../pages/governance/VettingPermitDecisionPage'));
+const RegistryPage = React.lazy(() => import('../pages/governance/RegistryPage'));
+const AuditDetailPage = React.lazy(() => import('../pages/governance/AuditDetailPage'));
+const PermitPage = React.lazy(() => import('../pages/governance/PermitPage'));
+const ForgePage = React.lazy(() => import('../pages/governance/ForgePage'));
+const PoliciesPage = React.lazy(() => import('../pages/governance/PoliciesPage'));
+const HistoryPage = React.lazy(() => import('../pages/governance/HistoryPage'));
 
-// Placeholder pages - to be implemented by other tasks
+// Legacy pages - maintained for backward compatibility, not promoted to main navigation
+const RunIntentPage = React.lazy(() => import('../pages/execute/RunIntentPage'));
+const ImportSkillPage = React.lazy(() => import('../pages/execute/ImportSkillPage'));
+const AuditPacksPage = React.lazy(() => import('../pages/audit/AuditPacksPage'));
 const RagQueryPage = React.lazy(() => import('../pages/audit/RagQueryPage'));
 const HealthPage = React.lazy(() => import('../pages/system/HealthPage'));
-const SkillAuditPage = React.lazy(() => import('../pages/audit/SkillAuditPage'));
 
 /**
  * Simple loading component for lazy-loaded pages
@@ -87,50 +105,183 @@ const spinnerStyles: React.CSSProperties = {
 };
 
 /**
- * Route configuration for v1.0
+ * Route configuration for v2.0 (Governance-First)
  *
  * Structure:
- * /                        → Redirect to /execute/run-intent
- * /execute/run-intent      → Run Intent page
- * /execute/import-skill    → Import Skill page
- * /audit/packs             → Audit Packs page
- * /audit/rag-query         → RAG Query page
- * /audit/skill-audit       → Skill Audit page (P1-1)
- * /system/health           → Health page
+ * /                        → Redirect to /home
+ * /home                    → Minimal AI-style homepage
+ * /dashboard               → Dashboard page (治理总控台)
+ * /intake/vetting          → Vetting intake gate page
+ * /intake/vetting/report   → Vetting report page
+ * /registry                → Registry page (资产登记 - P2)
+ * /audit/detail            → Audit Detail page (审计详情 - P0)
+ * /permit                  → Permit page (放行凭证 - P0)
+ * /release/vetting-permit  → Vetting permit decision page
+ * /forge                   → Forge page (构建 - 次级入口)
+ * /policies                → Policies page (策略配置 - P3)
+ * /history                 → History page (历史记录 - P3)
+ *
+ * Legacy routes (maintained for backward compatibility):
+ * /execute/*               → Legacy execute pages
+ * /audit/packs             → Legacy Audit Packs page
+ * /audit/rag-query         → Legacy RAG Query page
+ * /system/health           → Legacy Health page
  */
 export const router = createBrowserRouter([
   {
     path: '/',
     element: <AppShell />,
     children: [
-      // Default redirect to Run Intent (primary action)
+      // Default redirect to Home
       {
         index: true,
-        element: <Navigate to="/execute/run-intent" replace />,
+        element: <Navigate to="/home" replace />,
       },
 
-      // Execute group
+      {
+        path: 'home',
+        element: (
+          <React.Suspense fallback={<PageLoader />}>
+            <HomePage />
+          </React.Suspense>
+        ),
+      },
+
+      // === Main Chain: Dashboard / Audit Detail / Permit ===
+
+      // Dashboard - 治理总控台 (P1)
+      {
+        path: 'dashboard',
+        element: (
+          <React.Suspense fallback={<PageLoader />}>
+            <DashboardPage />
+          </React.Suspense>
+        ),
+      },
+
+      {
+        path: 'intake/vetting',
+        element: (
+          <React.Suspense fallback={<PageLoader />}>
+            <VettingHomePage />
+          </React.Suspense>
+        ),
+      },
+      {
+        path: 'intake/vetting/report',
+        element: (
+          <React.Suspense fallback={<PageLoader />}>
+            <VettingReportPage />
+          </React.Suspense>
+        ),
+      },
+
+      // Audit Detail - 审计详情 (P0)
+      {
+        path: 'audit/detail',
+        element: (
+          <React.Suspense fallback={<PageLoader />}>
+            <AuditDetailPage />
+          </React.Suspense>
+        ),
+      },
+
+      // Permit - 放行凭证 (P0)
+      {
+        path: 'permit',
+        element: (
+          <React.Suspense fallback={<PageLoader />}>
+            <PermitPage />
+          </React.Suspense>
+        ),
+      },
+      {
+        path: 'release/vetting-permit',
+        element: (
+          <React.Suspense fallback={<PageLoader />}>
+            <VettingPermitDecisionPage />
+          </React.Suspense>
+        ),
+      },
+
+      // === Secondary Navigation: Registry / Forge / Policies / History ===
+
+      // Registry - 资产登记 (P2)
+      {
+        path: 'registry',
+        element: (
+          <React.Suspense fallback={<PageLoader />}>
+            <RegistryPage />
+          </React.Suspense>
+        ),
+      },
+
+      // Forge - 构建 (次级入口, P4)
+      {
+        path: 'forge',
+        element: (
+          <React.Suspense fallback={<PageLoader />}>
+            <ForgePage />
+          </React.Suspense>
+        ),
+      },
+
+      // Policies - 策略配置 (P3)
+      {
+        path: 'policies',
+        element: (
+          <React.Suspense fallback={<PageLoader />}>
+            <PoliciesPage />
+          </React.Suspense>
+        ),
+      },
+
+      // History - 历史记录 (P3)
+      {
+        path: 'history',
+        element: (
+          <React.Suspense fallback={<PageLoader />}>
+            <HistoryPage />
+          </React.Suspense>
+        ),
+      },
+
+      // === Legacy Routes (maintained for backward compatibility, not in main navigation) ===
+
+      // Legacy execute routes
       {
         path: 'execute',
         children: [
           {
             path: 'run-intent',
-            element: <RunIntentPage />,
+            element: (
+              <React.Suspense fallback={<PageLoader />}>
+                <RunIntentPage />
+              </React.Suspense>
+            ),
           },
           {
             path: 'import-skill',
-            element: <ImportSkillPage />,
+            element: (
+              <React.Suspense fallback={<PageLoader />}>
+                <ImportSkillPage />
+              </React.Suspense>
+            ),
           },
         ],
       },
 
-      // Audit group
+      // Legacy audit routes
       {
         path: 'audit',
         children: [
           {
             path: 'packs',
-            element: <AuditPacksPage />,
+            element: (
+              <React.Suspense fallback={<PageLoader />}>
+                <AuditPacksPage />
+              </React.Suspense>
+            ),
           },
           {
             path: 'rag-query',
@@ -140,18 +291,10 @@ export const router = createBrowserRouter([
               </React.Suspense>
             ),
           },
-          {
-            path: 'skill-audit',
-            element: (
-              <React.Suspense fallback={<PageLoader />}>
-                <SkillAuditPage />
-              </React.Suspense>
-            ),
-          },
         ],
       },
 
-      // System group
+      // Legacy system routes
       {
         path: 'system',
         children: [
@@ -166,10 +309,10 @@ export const router = createBrowserRouter([
         ],
       },
 
-      // Catch-all: redirect unknown routes to home
+      // Catch-all: redirect unknown routes to Home
       {
         path: '*',
-        element: <Navigate to="/execute/run-intent" replace />,
+        element: <Navigate to="/home" replace />,
       },
     ],
   },

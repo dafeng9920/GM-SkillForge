@@ -1,0 +1,19 @@
+{
+  "schema_version": "v0_seal_decision_v1",
+  "seal_id": "V0-SEAL-20260304",
+  "date": "2026-03-04",
+  "source_of_truth": "docs/2026-03-04/v0-L5/GM-SkillForge v0 封板范围声明（10 个必须模块）.md",
+  "status": "ALLOW",
+  "v0_seal": "GRANTED",
+  "checks": {
+    "missing_files": [],
+    "invalid_decisions": [],
+    "pr_status": {
+      "PR1_final_gate_decision.json": "ALLOW",
+      "PR2_final_gate_decision.json": "ALLOW",
+      "PR3_final_gate_decision.json": "ALLOW",
+      "PR4_final_gate_decision.json": "ALLOW",
+      "PR5_final_gate_decision.json": "ALLOW"
+    }
+  }
+}

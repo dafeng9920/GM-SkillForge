@@ -1,0 +1,102 @@
+# T-ASM-01 Execution Report - Local Main Chain Back-End Unified Entry
+# Generated: 2026-03-10T14:30:00Z
+# Agent: Antigravity-1 (Execution / T-ASM-01)
+
+metadata:
+  task_id: T-ASM-01
+  agent: Antigravity-1
+  execution_date: 2026-03-10
+  status: COMPLETED
+  depends_on: []
+  prerequisites_verified: []
+
+objective: "补齐本地主链后半段，形成统一的 local accept 和 final accept 入口"
+
+acceptance_criteria:
+  - criterion: "创建 local_accept.py 统一入口脚本"
+    status: PASS
+    evidence:
+      path: "scripts/local_accept.py"
+      exists: true
+
+  - criterion: "创建 final_accept.py 统一入口脚本"
+    status: PASS
+    evidence:
+      path: "scripts/final_accept.py"
+      exists: true
+
+  - criterion: "与现有 Permit / pre_absorb_check / absorb 保持兼容"
+    status: PASS
+    evidence:
+      pre_absorb_check: "不修改"
+      absorb: "不修改"
+      permit: "不修改"
+
+  - criterion: "接口定义与 T-ASM-02 (core/runtime_interface.py) 对齐"
+    status: PASS
+    evidence:
+      action: "删除冲突的 schema，依赖 T-ASM-02 的 Python 定义"
+      t_asm_02_ref: "core/runtime_interface.py"
+
+implementation_changes:
+  - file: "scripts/local_accept.py"
+    changes:
+      - description: "新建 Local Accept 统一入口脚本"
+        details:
+          - "在 absorb 完成后执行"
+          - "检查 Execution Report 是否存在且完整"
+          - "检查 Deliverables 是否齐全"
+          - "检查 Evidence Refs 是否有效"
+          - "生成 Local Accept Decision"
+          - "输出到 docs/{date}/verification/{task_id}_local_accept_decision.json"
+
+  - file: "scripts/final_accept.py"
+    changes:
+      - description: "新建 Final Accept 统一入口脚本"
+        details:
+          - "聚合 Local Accept / Gate Decision / Compliance Attestation"
+          - "验证三权分立记录完整性"
+          - "检查 Compliance 先于 Execution (precedence)"
+          - "执行最终裁决：ALLOW / REQUIRES_CHANGES / DENY"
+          - "输出到 docs/{date}/verification/{task_id}_final_accept_decision.json"
+
+  - file: "schemas/ (删除)"
+    changes:
+      - description: "删除与 T-ASM-02 冲突的 schema 文件"
+        details:
+          - "删除 local_run_request.schema.json"
+          - "删除 local_run_result.schema.json"
+          - "删除 artifact_manifest.schema.json"
+          - "原因：T-ASM-02 已在 core/runtime_interface.py 定义完整接口"
+
+deliverables:
+  - path: "scripts/local_accept.py"
+    status: CREATED
+    lines_changed: 350
+  - path: "scripts/final_accept.py"
+    status: CREATED
+    lines_changed: 380
+  - path: "docs/2026-03-10/verification/T_ASM_01_execution_report.yaml"
+    status: CREATED
+
+summary:
+  status: COMPLETED
+  message: |
+    T-ASM-01 执行完成。已补齐本地主链后半段统一入口：
+
+    主链现已完整：
+    Permit → pre_absorb_check → absorb → local_accept → final_accept
+
+    核心交付：
+    1. local_accept.py - 在 absorb 后执行，检查执行完整性
+    2. final_accept.py - 聚合三权记录，执行最终裁决
+    3. 与 T-ASM-02 对齐 - 删除冲突 schema，依赖 core/runtime_interface.py
+
+    使用方法：
+    python scripts/local_accept.py --task-id T-LOCAL-01
+    python scripts/final_accept.py --task-id T-LOCAL-01
+
+    兼容性：
+    - 不修改 Permit / pre_absorb_check / absorb
+    - 与现有 gate 脚本并存
+    - 接口定义依赖 T-ASM-02 (core/runtime_interface.py)

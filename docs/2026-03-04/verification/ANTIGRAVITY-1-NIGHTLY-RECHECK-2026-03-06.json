@@ -1,0 +1,52 @@
+{
+  "schema_version": "antigravity_nightly_recheck_v1",
+  "recheck_id": "ANTIGRAVITY-1-NIGHTLY-RECHECK-2026-03-06",
+  "check_date": "2026-03-06",
+  "checked_at": "2026-03-06T06:49:19Z",
+  "fixed_caliber_id": "AG2-FIXED-CALIBER-TG1-20260304",
+  "environment": "LOCAL-ANTIGRAVITY",
+  "orchestrator": "Antigravity-1",
+  "overall_status": "PASS",
+  "drift_detected": false,
+  "drift_details": [],
+  "checks": {
+    "permit_binding": {
+      "status": "PASS",
+      "drift": "NONE"
+    },
+    "three_rights_integrity": {
+      "status": "PASS",
+      "drift": "NONE",
+      "details": {
+        "demand": {
+          "status": "OK",
+          "hash": "11a137deeb30eed253140b7a6635f751708d360e9c39ab6fa16422476004e1d5"
+        },
+        "contract": {
+          "status": "OK",
+          "hash": "ff29ff0c71feb9847c9e622a33d55e838c01f6a203327403d4fc4ef51ba02729"
+        },
+        "decision": {
+          "status": "OK",
+          "hash": "1db3c191897d68671144193610d35c18e11233c1051dcbae369be7558abffa60"
+        },
+        "manifest": {
+          "status": "OK",
+          "hash": "65b441c02e70907e10fb5859cc4343c92557f2b3d07fad6678facc5401ce2884"
+        }
+      }
+    },
+    "fixed_caliber_binding": {
+      "status": "PASS",
+      "drift": "NONE",
+      "config_path": "orchestration\\fixed_caliber_binding.yml"
+    },
+    "delivery_completeness": {
+      "status": "PASS",
+      "drift": "NONE",
+      "completion_rate": "100%"
+    }
+  },
+  "consecutive_days": 3,
+  "target_consecutive_days": 14
+}

@@ -1,0 +1,97 @@
+{
+  "task_id": "U1-2026-03-06",
+  "task_name": "dispatch skill registry verification",
+  "generated_at_utc": "2026-03-06T05:50:06Z",
+  "scope": {
+    "config": "configs/dispatch_skill_registry.json",
+    "registry_jsonl": "registry/skills.jsonl"
+  },
+  "summary": {
+    "dispatch_skill_count": 8,
+    "path_exists_count": 8,
+    "registered_or_alias_count": 8,
+    "overall_status": "PASS"
+  },
+  "integrity": {
+    "dispatch_registry_sha256": "ccdcd46acf9324f26b6e367b817c052518c5b12d792ad51bdc3884bf5a1cbf55",
+    "dispatch_registry_bytes": 1898
+  },
+  "checks": [
+    {
+      "name": "governance-orchestrator-skill",
+      "path": "skills/governance-orchestrator-skill/SKILL.md",
+      "path_exists": true,
+      "registered_in_skills_jsonl": true,
+      "registered_via_alias": false,
+      "status": "PASS"
+    },
+    {
+      "name": "seed-gate-validator-skill",
+      "path": "skills/seed-gate-validator-skill/SKILL.md",
+      "path_exists": true,
+      "registered_in_skills_jsonl": true,
+      "registered_via_alias": false,
+      "status": "PASS"
+    },
+    {
+      "name": "master-signoff-skill",
+      "path": "skills/master-signoff-skill/SKILL.md",
+      "path_exists": true,
+      "registered_in_skills_jsonl": true,
+      "registered_via_alias": false,
+      "status": "PASS"
+    },
+    {
+      "name": "task-pack-writer-skill",
+      "path": "skills/task-pack-writer-skill/SKILL.md",
+      "path_exists": true,
+      "registered_in_skills_jsonl": true,
+      "registered_via_alias": false,
+      "status": "PASS"
+    },
+    {
+      "name": "drill-evidence-collector-skill",
+      "path": "skills/drill-evidence-collector-skill/SKILL.md",
+      "path_exists": true,
+      "registered_in_skills_jsonl": true,
+      "registered_via_alias": false,
+      "status": "PASS"
+    },
+    {
+      "name": "experience-template-retriever-skill",
+      "path": "skills/experience-template-retriever-skill/SKILL.md",
+      "path_exists": true,
+      "registered_in_skills_jsonl": true,
+      "registered_via_alias": false,
+      "status": "PASS"
+    },
+    {
+      "name": "trinity-dispatch-orchestrator-skill",
+      "path": "skills/trinity-dispatch-orchestrator-skill/SKILL.md",
+      "path_exists": true,
+      "registered_in_skills_jsonl": true,
+      "registered_via_alias": false,
+      "status": "PASS"
+    },
+    {
+      "name": "GOVERNANCE_PROTOCOL",
+      "path": "skills/governance-protocol-skill/SKILL.md",
+      "path_exists": true,
+      "registered_in_skills_jsonl": false,
+      "registered_via_alias": true,
+      "status": "PASS"
+    }
+  ],
+  "findings": [
+    {
+      "severity": "INFO",
+      "message": "GOVERNANCE_PROTOCOL is treated as a dispatch alias mapped to governance-protocol-skill in registry/skills.jsonl."
+    }
+  ],
+  "actions": [
+    {
+      "type": "FIX",
+      "description": "Updated invalid path .agents/skills/governance_protocol/SKILL.md -> skills/governance-protocol-skill/SKILL.md"
+    }
+  ]
+}

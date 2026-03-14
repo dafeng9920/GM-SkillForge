@@ -1,0 +1,35 @@
+{
+  "report_type": "cloud_lobster_violation",
+  "generated_at": "2026-03-05T08:24:29.342134+00:00",
+  "task_id": "tg1-official-20260305-0824-5823",
+  "decision": "DENY",
+  "error_code": "SF_CLOUD_LOBSTER_VERIFICATION_FAILED",
+  "errors": [
+    {
+      "code": "SF_CLOUD_LOBSTER_VERIFICATION_FAILED",
+      "message": "Verification failed: FAIL"
+    }
+  ],
+  "warnings": [],
+  "required_changes": [
+    "Fix execution receipt to pass verify_execution_receipt.py validation"
+  ],
+  "violation_evidence": {
+    "violation_type": "receipt_verification_failed",
+    "task_id": "tg1-official-20260305-0824-5823",
+    "verifier_output": "FAIL"
+  },
+  "task_info": {
+    "task_id": "tg1-official-20260305-0824-5823",
+    "task_dir": ".tmp\\openclaw-dispatch\\tg1-official-20260305-0824-5823",
+    "has_contract": true,
+    "contract_path": ".tmp\\openclaw-dispatch\\tg1-official-20260305-0824-5823\\task_contract.json",
+    "receipt_path": ".tmp\\openclaw-dispatch\\tg1-official-20260305-0824-5823\\execution_receipt.json"
+  },
+  "governance_context": {
+    "enforcement_environment": "LOCAL-ANTIGRAVITY",
+    "target_environment": "CLOUD-ROOT",
+    "enforced_skill": "cloud-lobster-closed-loop-skill",
+    "fail_closed_policy": true
+  }
+}

@@ -1,0 +1,158 @@
+# ============================================================
+# Outer Contract Freeze Intent Contract (Canonical)
+# ============================================================
+# Priority: P1
+# Canonical Intent ID: outer_contract_freeze
+# Source: docs/2026-02-16/完整版模块清单 + 全量接口契约目录.md
+# Normalized: 2026-03-07
+# ============================================================
+
+intent_id: outer_contract_freeze
+summary: |
+  外螺旋合同冻结：将外部契约/规范转换为不可变的生产级合同快照。
+  核心流程：规范起草 → 宪法风险审查 → 合同冻结 → 回执
+contract_version: v1.0.0
+schema_hash: TBD_SHA256
+
+# ============================================================
+# Inputs Schema
+# ============================================================
+inputs_schema:
+  required:
+    - name: spec_draft
+      type: object
+      description: Draft skill/contract specification
+
+    - name: source_intent_id
+      type: string
+      description: Source intent identifier
+
+  optional:
+    - name: freeze_reason
+      type: string
+      description: Reason for contract freeze
+
+    - name: issue_key
+      type: string
+      pattern: "^[A-Z]+-[A-Z0-9]+$"
+      description: Unique tracking identifier
+
+# ============================================================
+# Required Gates
+# ============================================================
+required_gates:
+  - draft_skill_spec
+  - constitution_risk_gate
+
+# ============================================================
+# Minimum Level
+# ============================================================
+minimum_level: L4
+
+# ============================================================
+# Required Evidence
+# ============================================================
+required_evidence:
+  - draft_spec               # SkillSpec from draft_skill_spec gate
+  - risk_assessment          # RiskAssessment from constitution_risk_gate
+  - contract_freeze_receipt  # Final freeze confirmation with hash
+  - constitution_hash        # Reference to governing constitution
+
+# ============================================================
+# Outputs
+# ============================================================
+outputs:
+  - name: freeze_status
+    type: string
+    enum: ["FROZEN", "REJECTED", "DEFERRED"]
+
+  - name: gate_decision
+    type: string
+    enum: ["ALLOW", "DENY"]
+
+  - name: frozen_contract
+    type: object
+    description: Immutable contract snapshot with content hash
+
+  - name: contract_hash
+    type: string
+    description: SHA-256 hash of frozen contract content
+
+  - name: risk_assessment
+    type: object
+    description: Full risk assessment from constitution gate
+
+  - name: evidence_refs
+    type: array
+    items:
+      type: object
+    description: References to all generated evidence
+
+# ============================================================
+# Canonical Naming Reference
+# ============================================================
+canonical_naming:
+  intent_id: outer_contract_freeze
+  legacy_aliases:
+    - axis_contract_freeze   # Original axis_top10 identifier
+  dispatch_reference: "skillforge/src/orchestration/intent_map.yml:90"
+  authoritative_location: "contracts/intents/outer_contract_freeze.yml"
+
+# ============================================================
+# Migration Metadata
+# ============================================================
+migration:
+  task_id: T2-F2
+  promoted_at: "2026-03-07"
+  previous_level: l42_planned
+  current_level: mainline
+  promotion_reason: "Selective migration - essential for contracts-first governance"
+  value_score: 7.8
+  risk_level: Medium
+
+# ============================================================
+# Gate Path Alignment
+# ============================================================
+gate_path:
+  - gate: draft_skill_spec
+    produces: SkillSpec
+    evidence_ref: draft_spec
+    description: "Transforms raw input into structured skill specification"
+
+  - gate: constitution_risk_gate
+    produces: RiskAssessment
+    evidence_ref: risk_assessment
+    description: "FAIL-CLOSED safety gate enforcing constitutional red lines"
+
+# ============================================================
+# Constitution Alignment
+# ============================================================
+constitution_alignment:
+  ssot: "docs/2026-02-16/constitution_v1.md"
+  red_lines:
+    - "Must NOT allow override_governance flag"
+    - "Must NOT modify Constitution definitions"
+    - "Risk score >= 0.7 triggers automatic REJECT"
+
+  fail_closed: true
+  constitution_reference_required: true
+
+# ============================================================
+# Integration Notes
+# ============================================================
+integration_notes: |
+  This intent implements the contract freeze step of the contracts-first
+  pipeline. It ensures that before any external specification enters the
+  mainline, it passes:
+
+  1. Structured specification (draft_skill_spec gate)
+  2. FAIL-CLOSED constitutional safety review (constitution_risk_gate)
+
+  The frozen contract output includes a content hash, ensuring immutability
+  and traceability. This is a critical governance checkpoint preventing
+  unauthorized or unsafe code from entering the system.
+
+  Evidence produced by these gates forms the basis for:
+  - pack_audit_and_publish decisions
+  - downstream skill implementation (scaffold_skill_impl)
+  - compliance verification and replay

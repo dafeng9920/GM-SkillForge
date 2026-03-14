@@ -1,0 +1,109 @@
+{
+  "test_id": "B_registry_graph_integrity",
+  "timestamp_utc": "2026-03-05T15:09:48Z",
+  "workspace": "C:\\Users\\Aorus\\AppData\\Local\\Temp\\l3-integrity-npm1rtd3",
+  "first_command": [
+    "D:\\GM-SkillForge\\.venv\\Scripts\\python.exe",
+    "-m",
+    "skillforge.src.cli",
+    "refine",
+    "--mode",
+    "nl",
+    "--output",
+    "C:\\Users\\Aorus\\AppData\\Local\\Temp\\l3-integrity-npm1rtd3\\round1_baseline.json",
+    "生成一个量化交易系统Skill蓝图"
+  ],
+  "first_returncode": 0,
+  "second_command": [
+    "D:\\GM-SkillForge\\.venv\\Scripts\\python.exe",
+    "-m",
+    "skillforge.src.cli",
+    "refine",
+    "--mode",
+    "nl",
+    "--output",
+    "C:\\Users\\Aorus\\AppData\\Local\\Temp\\l3-integrity-npm1rtd3\\round2_after_tamper.json",
+    "在现有量化Skill基础上新增实时风险监控与异常告警能力"
+  ],
+  "second_returncode": 0,
+  "db_path": "C:\\Users\\Aorus\\AppData\\Local\\Temp\\l3-integrity-npm1rtd3\\db\\skillforge.sqlite",
+  "tamper_result": {
+    "tampered": true,
+    "revision_id": "audit-763709af",
+    "original_manifest_sha256": "150c19a17f1ea33ab61af9027f5b7479962623cdeb4c6a50ba6a78ef9503a2b0",
+    "new_manifest_sha256": "tampered-manifest-sha256-for-l3-test"
+  },
+  "first_output_snapshot": {
+    "status": "completed",
+    "publish_result": {
+      "skill_id": "skill-general-skill",
+      "version": "0.1.0",
+      "status": "published",
+      "registry_url": "http://localhost:8080/skills/skill-general-skill/0.1.0",
+      "timestamp": "2026-03-05T15:09:42Z"
+    },
+    "error": null
+  },
+  "second_output_snapshot": {
+    "status": "completed",
+    "gate_decisions": [
+      {
+        "schema_version": "0.1.0",
+        "gate_id": "constitution_risk_gate",
+        "node_id": "constitution_risk_gate",
+        "decision": "ALLOW",
+        "reason": "Risk score 0.00 is within acceptable limits",
+        "details": {
+          "risk_score": 0.0,
+          "risk_categories": [],
+          "mitigations_required": [],
+          "constitution_version": "constitution_v1.md",
+          "constitution_hash": "17ce83276c6e4f42c1a5becbc348a614bfdab3783f0ac854f1cb2a040f88a5f6"
+        },
+        "ruling": {
+          "verdict": "ALLOW",
+          "rule_id": "RISK_SCORE_ACCEPTABLE",
+          "evidence_ref": "risk_score=0.00, categories=[]",
+          "blocked": false
+        },
+        "timestamp": "2026-03-05T15:09:43Z"
+      }
+    ],
+    "publish_result": {
+      "skill_id": "skill-general-skill",
+      "version": "0.1.1",
+      "status": "rejected",
+      "registry_url": "http://localhost:8080/skills/skill-general-skill/0.1.1",
+      "timestamp": "2026-03-05T15:09:48Z",
+      "ruling": {
+        "verdict": "DENY",
+        "rule_id": "INTEGRITY_TAMPER_DETECTED",
+        "description": "Registry/graph integrity verification failed - tampering detected",
+        "evidence": {
+          "tampering_detected": true,
+          "stored_hash": "2cf85c095806267fb32b81cab8179e9368c60b453e41129f7cecec2eb3a22428",
+          "computed_hash": "570c893f1999c2f46b653fbdb9ede87b127a3e9f31042d92ec4d9d5a6066b38f",
+          "chain_type": "registry",
+          "entity_id": "skill-general-skill",
+          "timestamp": "2026-03-05T15:09:48Z",
+          "modified_revisions": [
+            {
+              "revision_id": "audit-763709af",
+              "manifest_sha256": "tampered-manifest-sha256-for-l3-test"
+            }
+          ]
+        },
+        "blocked": true,
+        "remediation": "Restore original registry state or reset integrity chain"
+      }
+    },
+    "error": null
+  },
+  "evaluation": {
+    "passed": true,
+    "checks": {
+      "tamper_applied": true,
+      "conflict_or_block_detected": true
+    }
+  }
+}

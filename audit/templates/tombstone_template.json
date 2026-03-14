@@ -1,0 +1,39 @@
+{
+  "schema_version": "tombstone_v0",
+  "revision_id": "rev_...",
+  "revision_being_deprecated": "rev_...",
+  "tombstone_type": "superseded|replaced|withdrawn|security_vulnerability",
+  "created_at": "UTC_TIMESTAMP",
+  "deprecation": {
+    "effective_date": "UTC_TIMESTAMP",
+    "grace_period_ends": "UTC_TIMESTAMP",
+    "withdrawn_date": "UTC_TIMESTAMP"
+  },
+  "hashes_of_deprecated": {
+    "demand_hash": "sha256:...",
+    "contract_hash": "sha256:...",
+    "decision_hash": "sha256:..."
+  },
+  "replacement": {
+    "new_revision_id": "rev_...",
+    "migration_path": "Description of how to migrate from deprecated to new",
+    "breaking_changes": []
+  },
+  "reason_for_tombstone": {
+    "primary_reason": "Why this revision is being deprecated",
+    "detailed_explanation": "Full explanation",
+    "references": []
+  },
+  "impact": {
+    "affected_deployments": [],
+    "affected_users": [],
+    "action_required": "What users/operators need to do",
+    "support_ends": "UTC_TIMESTAMP"
+  },
+  "audit_trail": {
+    "created_by": "system|user_id",
+    "approved_by": [],
+    "related_incidents": [],
+    "postmortem_ref": null
+  }
+}

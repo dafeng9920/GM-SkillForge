@@ -1,0 +1,132 @@
+{
+  "schema_version": "verification_index_v1",
+  "archive_date": "2026-03-04",
+  "archive_id": "AG1-FIXED-CALIBER-TG1-20260304",
+  "execution_environment": "LOCAL-ANTIGRAVITY",
+  "fail_closed_policy": true,
+  "fixed_caliber_binding": {
+    "caliber_id": "AG2-FIXED-CALIBER-TG1-20260304",
+    "status": "ACTIVE",
+    "permit": "permits/default/tg1_baseline_permit.json",
+    "revision": "tg1_baseline_rev_002",
+    "config": "orchestration/fixed_caliber_binding.yml"
+  },
+  "final_gate_decision": {
+    "decision": "ALLOW",
+    "file": "Antigravity-1_Final_Gate_Decision_ALLOW.json",
+    "issued_at": "2026-03-04T15:10:20Z"
+  },
+  "executed_tasks": [
+    {
+      "task_id": "tg1-fixed-caliber-20260304",
+      "baseline_id": "AG1-FIXED-CALIBER-20260304",
+      "status": "SUCCESS",
+      "exit_code": 0,
+      "executor": "Antigravity-3 (小龙虾)",
+      "environment": "Linux CLOUD-ROOT",
+      "command_stats": {
+        "total": 6,
+        "executed": 6,
+        "skipped": 0,
+        "failed": 0
+      }
+    },
+    {
+      "task_id": "ocb-20260304-140239-a3db40c0",
+      "baseline_id": "AG1-20260304-140239-9612d57f",
+      "status": "SUCCESS",
+      "exit_code": 0,
+      "executor": "小龙虾 (CLOUD-ROOT/Antigravity-3)",
+      "environment": "Linux CLOUD-ROOT",
+      "command_stats": {
+        "total": 6,
+        "executed": 6,
+        "skipped": 0,
+        "failed": 0
+      }
+    }
+  ],
+  "evidence_refs": {
+    "final_gate_decision": "docs/2026-03-04/verification/Antigravity-1_Final_Gate_Decision_ALLOW.json",
+    "ag2_verification": "docs/2026-03-04/AG2_fixed_caliber_final.json",
+    "fixed_caliber_binding": "orchestration/fixed_caliber_binding.yml",
+    "task_contracts": [
+      ".tmp/openclaw-dispatch/tg1-fixed-caliber-20260304/task_contract.json",
+      ".tmp/openclaw-dispatch/ocb-20260304-140239-a3db40c0/task_contract.json"
+    ],
+    "execution_receipts": [
+      ".tmp/openclaw-dispatch/tg1-fixed-caliber-20260304/execution_receipt.json",
+      ".tmp/openclaw-dispatch/ocb-20260304-140239-a3db40c0/execution_receipt.json"
+    ],
+    "execution_reports": [
+      ".tmp/openclaw-dispatch/tg1-fixed-caliber-20260304/execution_report.json",
+      ".tmp/openclaw-dispatch/ocb-20260304-140239-a3db40c0/execution_report.json"
+    ],
+    "artifacts": {
+      "tg1-fixed-caliber-20260304": {
+        "stdout": ".tmp/openclaw-dispatch/tg1-fixed-caliber-20260304/stdout.log",
+        "stderr": ".tmp/openclaw-dispatch/tg1-fixed-caliber-20260304/stderr.log",
+        "audit": ".tmp/openclaw-dispatch/tg1-fixed-caliber-20260304/audit_event.json",
+        "handoff": ".tmp/openclaw-dispatch/tg1-fixed-caliber-20260304/handoff_note.md"
+      },
+      "ocb-20260304-140239-a3db40c0": {
+        "stdout": ".tmp/openclaw-dispatch/ocb-20260304-140239-a3db40c0/stdout.log",
+        "stderr": ".tmp/openclaw-dispatch/ocb-20260304-140239-a3db40c0/stderr.log",
+        "audit": ".tmp/openclaw-dispatch/ocb-20260304-140239-a3db40c0/audit_event.json",
+        "handoff": ".tmp/openclaw-dispatch/ocb-20260304-140239-a3db40c0/handoff_note.md"
+      }
+    },
+    "baselines": {
+      "AG1-FIXED-CALIBER-20260304": {
+        "manifest": ".tmp/antigravity-baseline/AG1-FIXED-CALIBER-20260304/BASELINE_MANIFEST.json",
+        "activation": ".tmp/antigravity-baseline/AG1-FIXED-CALIBER-20260304/ACTIVATION.json",
+        "sha256": "a9d8dee770a1975292b301d0e57ddd0e8831e4a16c289445e6a2035afd4ce71d"
+      },
+      "AG1-20260304-140239-9612d57f": {
+        "manifest": ".tmp/antigravity-baseline/AG1-20260304-140239-9612d57f/BASELINE_MANIFEST.json",
+        "activation": ".tmp/antigravity-baseline/AG1-20260304-140239-9612d57f/ACTIVATION.json",
+        "sha256": "7d7f9a686b6f0a587933a50430b93ec13b1bc1c07d07c8c788b58ca5791a877f"
+      }
+    },
+    "permit": {
+      "path": "permits/default/tg1_baseline_permit.json",
+      "permit_id": "PERMIT-TG1-BASELINE-20260304-RESIGNED",
+      "revision": "tg1_baseline_rev_002"
+    },
+    "three_rights": {
+      "demand": ".tmp/pr1_smoke/demand.json",
+      "contract": ".tmp/pr1_smoke/contract.json",
+      "decision": ".tmp/pr1_smoke/decision.json",
+      "manifest": ".tmp/pr1_smoke/MANIFEST.json"
+    }
+  },
+  "hash_chain_integrity": {
+    "demand_hash": "0aadae06454b317fbefc9c997e63336128752993552909090ead5ccfd8039429",
+    "contract_hash": "cf9436bed520a4d6edd0e084ab3da4df1b3cf7a6c540a571daf8503a20465f8a",
+    "decision_hash": "80bbb0b07dc13e01e32a93f8c405686f0f011bae172749b8a3e39db3f7d51e2a",
+    "audit_pack_hash": "15de68de777909c47fe5532449cfa1666bb0a96c4c903f395d497dceaec4624f",
+    "verified_at": "2026-03-04T14:53:31Z"
+  },
+  "compliance_summary": {
+    "permit_binding": "PASS",
+    "fixed_caliber_binding": "PASS",
+    "permit_hash_consistency": "PASS",
+    "delivery_completeness": "PASS",
+    "three_hash_guard": "PASS",
+    "cloud_execution": "PASS",
+    "execution_receipt_verification": "PASS",
+    "overall": "ALLOW"
+  },
+  "next_tasks": {
+    "fixed_caliber": "AG2-FIXED-CALIBER-TG1-20260304",
+    "fail_closed_chain": "ACTIVE",
+    "next_revision": "tg1_baseline_rev_003",
+    "note": "Subsequent tasks must use the same fixed-caliber binding unless explicitly updated via orchestration/fixed_caliber_binding.yml"
+  },
+  "audit_trail": {
+    "created_at": "2026-03-04T15:10:20Z",
+    "created_by": "Antigravity-1 (LOCAL-ANTIGRAVITY)",
+    "guard_version": "Antigravity-2",
+    "evidence_frozen": true
+  }
+}

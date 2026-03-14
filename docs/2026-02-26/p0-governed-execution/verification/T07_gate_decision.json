@@ -1,0 +1,265 @@
+{
+  "task_id": "T07",
+  "reviewer": "Kior-B",
+  "decision": "ALLOW",
+  "review_date": "2026-02-26",
+
+  "review_summary": {
+    "deliverables_count": 4,
+    "code_modules_created": 1,
+    "test_files_created": 1,
+    "tests_written": 58,
+    "documentation_files_created": 1,
+    "all_acceptance_criteria_met": true
+  },
+
+  "execution_contract_validation": {
+    "preflight_checklist": "PASS",
+    "execution_contract": "PASS",
+    "required_changes": "COMPLETE"
+  },
+
+  "dependency_check": {
+    "t01_status": "ALLOW",
+    "t05_status": "ALLOW",
+    "dependencies_satisfied": true
+  },
+
+  "review_checks": [
+    {
+      "check_id": "CHK-T07-001",
+      "description": "交付物与 ISSUE-06 目标一致",
+      "status": "PASS",
+      "evidence": {
+        "ISSUE-06": "Node Registry 与身份校验 - 建立 node_id -> pubkey/cert/status 注册表",
+        "deliverable": "node_registry.py 实现 NodeRegistry, NodeInfo, TrustDecision, NodeStatus, NodeRegistryError",
+        "alignment": "完全对齐"
+      }
+    },
+    {
+      "check_id": "CHK-T07-002",
+      "description": "未知节点全部拒绝 (NODE_UNTRUSTED)",
+      "status": "PASS",
+      "evidence": {
+        "function": "verify_node_trust()",
+        "fail_closed_mode": "默认启用",
+        "unknown_node_behavior": "返回 NODE_UNTRUSTED 错误码",
+        "test_ref": "test_unknown_node_rejected_fail_closed"
+      }
+    },
+    {
+      "check_id": "CHK-T07-003",
+      "description": "失效节点全部拒绝",
+      "status": "PASS",
+      "evidence": {
+        "disabled_node": "返回 NODE_DISABLED 错误码",
+        "revoked_node": "返回 NODE_UNTRUSTED 错误码",
+        "pending_node": "返回 NODE_UNTRUSTED 错误码 (除非 allow_pending=True)",
+        "test_refs": [
+          "test_disabled_node_rejected",
+          "test_revoked_node_rejected",
+          "test_pending_node_rejected_by_default"
+        ]
+      }
+    },
+    {
+      "check_id": "CHK-T07-004",
+      "description": "registry 读取层功能完整",
+      "status": "PASS",
+      "evidence": {
+        "get_node": "按 node_id 查询节点信息",
+        "get_public_key": "获取节点公钥",
+        "list_nodes": "列出所有节点或按状态过滤",
+        "is_node_trusted": "快速检查节点是否受信任",
+        "verify_node_trust": "详细验证并返回 TrustDecision"
+      }
+    },
+    {
+      "check_id": "CHK-T07-005",
+      "description": "T01 (policy_check) 依赖正确集成",
+      "status": "PASS",
+      "evidence": {
+        "check_node_registry": "已在报告中定义集成方式",
+        "policy_check_flow": "Step 4 调用 check_node_registry()",
+        "compatible_with": "T01 定义的 PolicyDecision 结构"
+      }
+    },
+    {
+      "check_id": "CHK-T07-006",
+      "description": "T05 (Ed25519) 依赖正确集成",
+      "status": "PASS",
+      "evidence": {
+        "stores_public_key_hex": "NodeInfo.public_key_hex 存储 Ed25519 公钥",
+        "key_validation": "验证 64 字符十六进制格式",
+        "integration_test": "test_store_ed25519_public_key",
+        "verify_flow": "verify_node_trust() 返回公钥用于验签"
+      }
+    },
+    {
+      "check_id": "CHK-T07-007",
+      "description": "测试覆盖充分",
+      "status": "PASS",
+      "evidence": {
+        "total_tests": 58,
+        "test_classes": 12,
+        "coverage_areas": [
+          "NodeInfo 数据类",
+          "注册表创建",
+          "节点注册",
+          "节点查询",
+          "信任验证（核心）",
+          "状态管理",
+          "持久化",
+          "工具方法",
+          "便捷函数",
+          "Ed25519 集成",
+          "常量",
+          "错误码"
+        ]
+      }
+    },
+    {
+      "check_id": "CHK-T07-008",
+      "description": "无越权修改其他任务输出文件",
+      "status": "PASS",
+      "evidence": {
+        "modified_files": [
+          "skillforge-spec-pack/skillforge/src/utils/__init__.py"
+        ],
+        "created_files": [
+          "skillforge-spec-pack/skillforge/src/utils/node_registry.py",
+          "skillforge-spec-pack/skillforge/tests/test_node_registry.py",
+          "docs/2026-02-26/p0-governed-execution/verification/T07_registry_report.md"
+        ],
+        "cross_task_modifications": "无",
+        "init_modification": "仅添加 node_registry 导出"
+      }
+    },
+    {
+      "check_id": "CHK-T07-009",
+      "description": "三件套产物路径完整",
+      "status": "PASS",
+      "evidence": {
+        "execution_report": "docs/2026-02-26/p0-governed-execution/verification/T07_execution_report.yaml",
+        "gate_decision": "docs/2026-02-26/p0-governed-execution/verification/T07_gate_decision.json",
+        "compliance_attestation": "docs/2026-02-26/p0-governed-execution/verification/T07_compliance_attestation.json"
+      }
+    },
+    {
+      "check_id": "CHK-T07-010",
+      "description": "EvidenceRef 完整",
+      "status": "PASS",
+      "evidence": {
+        "evidence_refs_count": 6,
+        "covers_implementation": true,
+        "covers_tests": true,
+        "covers_documentation": true
+      }
+    }
+  ],
+
+  "acceptance_criteria_matrix": {
+    "registry_structure": {
+      "criteria": "建立 node_id -> pubkey/cert/status 注册表",
+      "status": "PASS",
+      "evidence_refs": ["EV-T07-001", "EV-T07-006"],
+      "test_ref": "TestNodeRegistry"
+    },
+    "registry_read_layer": {
+      "criteria": "registry 读取层",
+      "status": "PASS",
+      "evidence_refs": ["EV-T07-001"],
+      "test_ref": "TestNodeQuery"
+    },
+    "node_untrusted_rejection": {
+      "criteria": "NODE_UNTRUSTED 裁决",
+      "status": "PASS",
+      "evidence_refs": ["EV-T07-004", "EV-T07-005"],
+      "test_ref": "TestTrustVerification"
+    },
+    "unknown_node_rejection": {
+      "criteria": "未知节点全部拒绝",
+      "status": "PASS",
+      "evidence_refs": ["EV-T07-004"],
+      "test_ref": "test_unknown_node_rejected_fail_closed"
+    },
+    "disabled_node_rejection": {
+      "criteria": "失效节点全部拒绝",
+      "status": "PASS",
+      "evidence_refs": ["EV-T07-004"],
+      "test_ref": "test_disabled_node_rejected, test_revoked_node_rejected"
+    }
+  },
+
+  "downstream_unblock_validation": {
+    "T08_Receipt_Hash": {
+      "status": "UNBLOCKED",
+      "reason": "可使用 registry.get_public_key() 获取公钥验证回执签名"
+    },
+    "T09_Protocol_Tests": {
+      "status": "UNBLOCKED",
+      "reason": "可使用 registry.verify_node_trust() 验证节点身份"
+    }
+  },
+
+  "security_review": {
+    "fail_closed_default": "PASS - 未知节点默认拒绝",
+    "key_validation": "PASS - Ed25519 公钥格式验证",
+    "status_management": "PASS - REVOKED 状态不可逆",
+    "error_codes": "PASS - 8 种错误码覆盖所有场景",
+    "status": "COMPLIANT"
+  },
+
+  "restrictions_compliance": {
+    "deny_list_compliance": "PASS",
+    "no_bypass": "PASS",
+    "no_side_effects_without_permit": "PASS (文档和代码修改，无运行时副作用)",
+    "only_modified_designated_files": "PASS"
+  },
+
+  "concerns": [],
+
+  "required_changes": [],
+
+  "final_assessment": {
+    "t07_objective": "Node Registry 与身份校验",
+    "objective_achieved": true,
+    "key_achievements": [
+      "完整的 NodeRegistry 实现，支持节点注册、查询、验证",
+      "Fail-closed 默认行为：未知节点一律拒绝",
+      "8 种错误码（NODE_UNTRUSTED, NODE_DISABLED 等）",
+      "4 种节点状态（ACTIVE, DISABLED, REVOKED, PENDING）",
+      "持久化支持（JSON 格式保存/加载）",
+      "与 T05 Ed25519 模块集成：存储和检索公钥",
+      "58 个测试用例，覆盖所有功能和边界情况",
+      "与 T01 policy_check 集成路径已定义"
+    ],
+    "decision": "ALLOW",
+    "reason": "所有验收标准已达成，实现完整，测试充分，符合安全要求"
+  },
+
+  "evidence_refs": [
+    {
+      "id": "EV-T07-REVIEW-001",
+      "kind": "FILE",
+      "locator": "skillforge-spec-pack/skillforge/src/utils/node_registry.py"
+    },
+    {
+      "id": "EV-T07-REVIEW-002",
+      "kind": "FILE",
+      "locator": "skillforge-spec-pack/skillforge/tests/test_node_registry.py"
+    },
+    {
+      "id": "EV-T07-REVIEW-003",
+      "kind": "FILE",
+      "locator": "docs/2026-02-26/p0-governed-execution/verification/T07_execution_report.yaml"
+    },
+    {
+      "id": "EV-T07-REVIEW-004",
+      "kind": "FILE",
+      "locator": "docs/2026-02-26/p0-governed-execution/verification/T07_registry_report.md"
+    }
+  ],
+
+  "reviewed_at": "2026-02-26T21:15:00Z"
+}

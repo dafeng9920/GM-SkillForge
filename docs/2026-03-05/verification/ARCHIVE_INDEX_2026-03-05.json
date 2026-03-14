@@ -1,0 +1,117 @@
+{
+  "schema_version": "verification_archive_index_v1",
+  "archive_date": "2026-03-05",
+  "archive_id": "AG2-FIXED-CALIBER-ARCHIVE-20260305",
+  "execution_environment": "LOCAL-ANTIGRAVITY",
+  "baseline_id": "AG2-FIXED-CALIBER-TG1-20260304",
+  "permit_revision": "tg1_baseline_rev_005",
+  "archive_status": {
+    "formal_release": "APPROVED",
+    "fail_closed_chain": "ACTIVE",
+    "evidence_frozen": true
+  },
+  "final_gate_decision": {
+    "decision": "ALLOW",
+    "file": "docs/2026-03-05/verification/Final_Gate_Decision_AG2_TG1.json",
+    "issued_at": "2026-03-04T17:41:48.315021Z",
+    "issued_by": "Antigravity-1"
+  },
+  "executed_tasks": [
+    {
+      "task_id": "ag3-drill-20260305-011554",
+      "baseline_id": "AG2-FIXED-CALIBER-TG1-20260304",
+      "status": "SUCCESS",
+      "exit_code": 0,
+      "executor": "Antigravity-3 (小龙虾)",
+      "environment": "LOCAL-ANTIGRAVITY -> CLOUD-ROOT -> LOCAL-ANTIGRAVITY",
+      "command_stats": {
+        "total": 6,
+        "executed": 6,
+        "skipped": 0,
+        "failed": 0
+      }
+    },
+    {
+      "task_id": "tg1-official-20260305-1417",
+      "baseline_id": "AG2-SOVEREIGNTY-ROOT-2026-03-05",
+      "status": "SUCCESS",
+      "exit_code": 0,
+      "executor": "Antigravity-3 (Lobster)",
+      "environment": "CLOUD-ROOT",
+      "command_stats": {
+        "total": 8,
+        "executed": 8,
+        "skipped": 0,
+        "failed": 0
+      }
+    }
+  ],
+  "evidence_refs": {
+    "final_gate_decision": "docs/2026-03-05/verification/Final_Gate_Decision_AG2_TG1.json",
+    "review_decisions": [
+      "docs/2026-03-05/verification/Kior_C_review_decision_AG2_TG1.json",
+      "docs/2026-03-05/verification/tg1_official_20260305_review_decision.json"
+    ],
+    "tg1_official_cloud_deployment": {
+      "task_id": "tg1-official-20260305-1417",
+      "baseline_id": "AG2-SOVEREIGNTY-ROOT-2026-03-05",
+      "review_decision": "docs/2026-03-05/verification/tg1_official_20260305_review_decision.json",
+      "final_gate": "docs/2026-03-05/verification/tg1_official_20260305_final_gate.json",
+      "task_contract": ".tmp/openclaw-dispatch/tg1-official-20260305-1417/task_contract.json",
+      "execution_receipt": ".tmp/openclaw-dispatch/tg1-official-20260305-1417/execution_receipt.json"
+    },
+    "drill_reports": [
+      "docs/2026-03-05/verification/AG3_DRILL_REPORT.json",
+      "docs/2026-03-05/verification/PROGRESS_REPORT_2026-03-05.md",
+      "docs/2026-03-05/verification/DAILY_ROUTINE.md"
+    ],
+    "boundary_verifications": [
+      "docs/2026-03-04/verification/N+1_command_allowlist_ag3-drill-20260305-011554.json",
+      "docs/2026-03-04/verification/N+2_artifact_completeness_ag3-drill-20260305-011554.json",
+      "docs/2026-03-04/verification/N+3_time_window_ag3-drill-20260305-011554.json"
+    ],
+    "nightly_recheck": "docs/2026-03-04/verification/ANTIGRAVITY-1-NIGHTLY-RECHECK-2026-03-05.json",
+    "permit_change_drill": "docs/2026-03-04/verification/permit_change_drill_2_20260305.json"
+  },
+  "compliance_summary": {
+    "permit_binding": "PASS",
+    "fixed_caliber_binding": "PASS",
+    "permit_hash_consistency": "PASS",
+    "delivery_completeness": "PASS",
+    "three_hash": "PASS",
+    "verify_execution_receipt": "PASS",
+    "overall": "ALLOW"
+  },
+  "milestones": {
+    "G1_nightly_recheck": "IN_PROGRESS (2/14 days)",
+    "G2_incremental_boundaries": "COMPLETED (N+1/N+2/N+3)",
+    "G3_permit_change_drills": "COMPLETED (2/2 drills)",
+    "G4_closure_report": "PENDING (requires G1 completion)"
+  },
+  "next_actions": [
+    "Continue daily nightly recheck (13 days remaining)",
+    "Generate Final Closure Report after G1 completion",
+    "Transition to maintenance mode"
+  ],
+  "audit_trail": {
+    "created_at": "2026-03-05T00:00:00Z",
+    "created_by": "Antigravity-1",
+    "last_updated": "2026-03-04T17:46:50.743758Z",
+    "guard_version": "Antigravity-2",
+    "evidence_frozen": true,
+    "last_recheck": {
+      "date": "2026-03-05",
+      "status": "PASS",
+      "drift_detected": false,
+      "report_file": "docs/2026-03-04/verification/ANTIGRAVITY-1-NIGHTLY-RECHECK-2026-03-05.json"
+    }
+  },
+  "daily_progress": {
+    "2026-03-05": {
+      "recheck_status": "PASS",
+      "drift_detected": false,
+      "consecutive_days": 2,
+      "remaining_days": 12
+    }
+  }
+}

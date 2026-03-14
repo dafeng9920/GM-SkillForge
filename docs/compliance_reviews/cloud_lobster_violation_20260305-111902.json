@@ -1,0 +1,39 @@
+{
+  "report_type": "cloud_lobster_violation",
+  "generated_at": "2026-03-05T11:19:02.954237+00:00",
+  "task_id": "v1-l3-gap-closure-20260306-0900",
+  "decision": "DENY",
+  "error_code": "SF_CLOUD_LOBSTER_VERIFICATION_FAILED",
+  "errors": [
+    {
+      "code": "SF_CLOUD_LOBSTER_VERIFICATION_FAILED",
+      "message": "Verification failed: "
+    },
+    {
+      "code": "SF_CLOUD_LOBSTER_VERIFICATION_FAILED",
+      "message": "Error: Traceback (most recent call last):\n  File \"D:\\GM-SkillForge\\skills\\openclaw-cloud-bridge-skill\\scripts\\verify_execution_receipt.py\", line 112, in <module>\n    sys.exit(main())\n             ^^^^^^\n  File \"D:\\GM-SkillForge\\skills\\openclaw-cloud-bridge-skill\\scripts\\verify_execution_receipt.py\", line 93, in main\n    if not receipt.get(\"summary\", \"\").strip():\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'dict' object has no attribute 'strip'"
+    }
+  ],
+  "warnings": [],
+  "required_changes": [
+    "Fix execution receipt to pass verify_execution_receipt.py validation"
+  ],
+  "violation_evidence": {
+    "violation_type": "receipt_verification_failed",
+    "task_id": "v1-l3-gap-closure-20260306-0900",
+    "verifier_output": ""
+  },
+  "task_info": {
+    "task_id": "v1-l3-gap-closure-20260306-0900",
+    "task_dir": ".tmp\\openclaw-dispatch\\v1-l3-gap-closure-20260306-0900",
+    "has_contract": true,
+    "contract_path": ".tmp\\openclaw-dispatch\\v1-l3-gap-closure-20260306-0900\\task_contract.json",
+    "receipt_path": ".tmp\\openclaw-dispatch\\v1-l3-gap-closure-20260306-0900\\execution_receipt.json"
+  },
+  "governance_context": {
+    "enforcement_environment": "LOCAL-ANTIGRAVITY",
+    "target_environment": "CLOUD-ROOT",
+    "enforced_skill": "cloud-lobster-closed-loop-skill",
+    "fail_closed_policy": true
+  }
+}

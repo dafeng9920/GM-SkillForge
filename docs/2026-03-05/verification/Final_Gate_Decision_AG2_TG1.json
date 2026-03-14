@@ -1,0 +1,86 @@
+{
+  "schema_version": "final_gate_decision_v1",
+  "decision": "ALLOW",
+  "decision_issued_at": "2026-03-04T17:41:48.315021Z",
+  "decision_issued_by": "Antigravity-1",
+  "execution_environment": "LOCAL-ANTIGRAVITY",
+  "baseline_id": "AG2-FIXED-CALIBER-TG1-20260304",
+  "permit_revision": "tg1_baseline_rev_005",
+  "blocking_evidence": [],
+  "required_changes": [],
+  "review_findings": {
+    "kior_c_review": {
+      "reviewer": "Kior-C",
+      "review_type": "execution_receipt_contract_verification",
+      "status": "ALLOW",
+      "previous_decision": "DENY",
+      "current_decision": "ALLOW",
+      "blocking_issues_resolved": 3
+    },
+    "ag3_drill_verification": {
+      "drill_type": "ANTIGRAVITY-3_FULL_CYCLE_DRILL",
+      "overall_status": "PASS",
+      "formal_release_status": "APPROVED",
+      "fail_closed_enforced": true
+    }
+  },
+  "verification_summary": {
+    "verify_execution_receipt_py": "PASS",
+    "n1_command_allowlist": "PASS",
+    "n2_artifact_completeness": "PASS",
+    "n3_time_window": "PASS",
+    "receipt_schema_compliance": "PASS"
+  },
+  "evidence_refs": {
+    "review_decisions": [
+      "docs/2026-03-05/verification/Kior_C_review_decision_AG2_TG1.json"
+    ],
+    "drill_reports": [
+      "docs/2026-03-05/verification/AG3_DRILL_REPORT.json"
+    ],
+    "execution_artifacts": [
+      ".tmp/openclaw-dispatch/ag3-drill-20260305-011554/execution_receipt.json",
+      ".tmp/openclaw-dispatch/ag3-drill-20260305-011554/stdout.log",
+      ".tmp/openclaw-dispatch/ag3-drill-20260305-011554/stderr.log",
+      ".tmp/openclaw-dispatch/ag3-drill-20260305-011554/audit_event.json",
+      ".tmp/openclaw-dispatch/ag3-drill-20260305-011554/task_contract.json"
+    ],
+    "boundary_verifications": [
+      "docs/2026-03-04/verification/N+1_command_allowlist_ag3-drill-20260305-011554.json",
+      "docs/2026-03-04/verification/N+2_artifact_completeness_ag3-drill-20260305-011554.json",
+      "docs/2026-03-04/verification/N+3_time_window_ag3-drill-20260305-011554.json"
+    ],
+    "compliance_evidence": [
+      "docs/2026-03-04/AG2_fixed_caliber_final.json",
+      "docs/2026-03-04/verification/Antigravity-1_Final_Gate_Decision_ALLOW.json",
+      "docs/2026-03-04/verification/verification_index_2026-03-04.json",
+      "permits/default/tg1_baseline_permit.json",
+      "orchestration/fixed_caliber_binding.yml"
+    ],
+    "baseline_artifacts": [
+      ".tmp/antigravity-baseline/AG1-FIXED-CALIBER-20260304/BASELINE_MANIFEST.json",
+      ".tmp/antigravity-baseline/AG1-FIXED-CALIBER-20260304/ACTIVATION.json"
+    ]
+  },
+  "signatures": {
+    "review": {
+      "reviewer": "Kior-C",
+      "role": "Review, LOCAL-ANTIGRAVITY",
+      "timestamp": "2026-03-05T00:00:00Z"
+    },
+    "gate": {
+      "gatekeeper": "Antigravity-1",
+      "role": "Final Gate Adjudicator",
+      "timestamp": "2026-03-04T17:41:48.315021Z"
+    }
+  },
+  "summary": {
+    "overall_decision": "ALLOW",
+    "rationale": "All verification checks PASSED. No blocking evidence. No required changes. System ready for formal release.",
+    "next_steps": [
+      "Proceed to evidence archival",
+      "Update verification index",
+      "Transition to maintenance mode (pending G1 completion)"
+    ]
+  }
+}

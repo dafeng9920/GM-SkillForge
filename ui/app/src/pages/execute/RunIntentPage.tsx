@@ -16,7 +16,9 @@ import React, { useState } from 'react';
 import { DecisionHeroCard } from '../../components/governance/DecisionHeroCard';
 import { BlockReasonCard } from '../../components/governance/BlockReasonCard';
 import { DualChannelWorkbench } from '../../components/governance/DualChannelWorkbench';
+import { MainChainStepPanel, generateMockMainChainSteps, type MainChainStep } from '../../components/governance/MainChainStepPanel';
 import type { GateDecision } from '../../types/orchestrationProjection';
+import { mainChainService } from '../../services/mainChainService'; // TASK-MAIN-04C: Import main chain service
 import styles from './RunIntentPage.module.css';
 
 // 类型定义
@@ -32,7 +34,7 @@ interface RunIntentForm {
 
 interface RunIntentResult {
   run_id: string;
-  gate_decision: 'ALLOW' | 'BLOCK';
+  gate_decision: 'ALLOW' | 'BLOCK' | 'DENY' | 'REQUIRES_CHANGES' | 'UNKNOWN';
   release_allowed: boolean;
   evidence_ref: string;
   permit_id?: string;
@@ -53,6 +55,10 @@ export const RunIntentPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // TASK-MAIN-04A: Main chain steps state
+  const [mainChainSteps, setMainChainSteps] = useState<MainChainStep[]>([]);
+  const [showMainChainPanel, setShowMainChainPanel] = useState(false);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -63,6 +69,8 @@ export const RunIntentPage: React.FC = () => {
     setLoading(true);
     setError(null);
     setResult(null);
+    setMainChainSteps([]);
+    setShowMainChainPanel(false);
 
     try {
       // TODO: 实际 API 调用
@@ -72,18 +80,75 @@ export const RunIntentPage: React.FC = () => {
       //   body: JSON.stringify(form),
       // });
 
-      // 模拟响应
+      // 模拟响应 - 先显示 running 状态
       await new Promise((resolve) => setTimeout(resolve, 1500));
+      const runId = `RUN-N8N-${Date.now()}`;
+      const evidenceRef = `EV-${Date.now()}`;
+
+      // 首先设置为 running 状态
       setResult({
-        run_id: `RUN-N8N-${Date.now()}`,
+        run_id: runId,
         gate_decision: 'ALLOW',
         release_allowed: true,
-        evidence_ref: `EV-${Date.now()}`,
+        evidence_ref: evidenceRef,
         permit_id: `PERMIT-${Date.now()}`,
-        execution_status: 'COMPLETED',
+        execution_status: 'RUNNING',
       });
+      setMainChainSteps(generateMockMainChainSteps('running'));
+      setShowMainChainPanel(true);
+
+      // 模拟执行完成 - 2秒后更新为 pass 状态
+      setTimeout(() => {
+        setResult({
+          run_id: runId,
+          gate_decision: 'ALLOW',
+          release_allowed: true,
+          evidence_ref: evidenceRef,
+          permit_id: `PERMIT-${Date.now()}`,
+          execution_status: 'COMPLETED',
+        });
+        setMainChainSteps(generateMockMainChainSteps('pass'));
+      }, 2000);
     } catch (err) {
       setError(err instanceof Error ? err.message : '执行失败');
+      setMainChainSteps(generateMockMainChainSteps('fail'));
+      setShowMainChainPanel(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // TASK-MAIN-04C PATH A: 加载真实已有链路结果处理函数
+  // ⚠️ This loads REAL execution results from existing tasks
+  // This does NOT trigger new execution
+  const handleLoadRealResult = async () => {
+    setLoading(true);
+    setError(null);
+    setResult(null);
+    setMainChainSteps([]);
+    setShowMainChainPanel(false);
+
+    try {
+      // 调用真实数据加载服务
+      const realResult = await mainChainService.loadRealTaskResult();
+
+      // 设置真实结果
+      setResult({
+        run_id: realResult.run_id,
+        gate_decision: realResult.gate_decision,
+        release_allowed: realResult.release_allowed,
+        evidence_ref: realResult.evidence_ref,
+        permit_id: realResult.permit_id,
+        execution_status: realResult.execution_status,
+      });
+
+      // 设置主链步骤（真实数据）
+      setMainChainSteps(realResult.steps);
+      setShowMainChainPanel(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '加载真实结果失败');
+      setMainChainSteps(generateMockMainChainSteps('fail'));
+      setShowMainChainPanel(true);
     } finally {
       setLoading(false);
     }
@@ -100,10 +165,24 @@ export const RunIntentPage: React.FC = () => {
     });
     setResult(null);
     setError(null);
+    setMainChainSteps([]);
+    setShowMainChainPanel(false);
   };
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
+  };
+
+  // TASK-MAIN-04A: Main chain step handlers
+  const handleStepClick = (step: MainChainStep) => {
+    console.log('Step clicked:', step);
+    // TODO: Open step details drawer/modal
+  };
+
+  const handleEvidenceClick = (evidenceRef: string) => {
+    console.log('Evidence clicked:', evidenceRef);
+    copyToClipboard(evidenceRef);
+    // TODO: Open evidence drawer or navigate to evidence page
   };
 
   // Build the Header Governance Logic
@@ -163,6 +242,18 @@ export const RunIntentPage: React.FC = () => {
   // Build the Channel B (Execution) slot
   const renderExecutionSlot = () => (
     <>
+      {/* TASK-MAIN-04A: Main Chain Step Panel - 显示在表单之前 */}
+      {showMainChainPanel && (
+        <div className={styles.card}>
+          <MainChainStepPanel
+            steps={mainChainSteps}
+            runId={result?.run_id}
+            onStepClick={handleStepClick}
+            onEvidenceClick={handleEvidenceClick}
+          />
+        </div>
+      )}
+
       <div className={styles.card}>
         <h2 className={styles.title}>
           <span>📝</span>
@@ -264,6 +355,16 @@ export const RunIntentPage: React.FC = () => {
               className={`${styles.btn} ${styles['btn-primary']} ${loading ? styles['is-loading'] : ''}`}
             >
               {loading ? '执行中...' : '执行'}
+            </button>
+            {/* TASK-MAIN-04C PATH A: 加载真实已有链路结果按钮 */}
+            <button
+              type="button"
+              onClick={handleLoadRealResult}
+              disabled={loading}
+              className={`${styles.btn} ${styles['btn-real']}`}
+              title="📂 加载真实已有链路结果 - 从 REAL-TASK-002 读取真实执行数据"
+            >
+              📂 加载真实结果
             </button>
             <button type="button" onClick={handleReset} className={`${styles.btn} ${styles['btn-secondary']}`}>
               重置

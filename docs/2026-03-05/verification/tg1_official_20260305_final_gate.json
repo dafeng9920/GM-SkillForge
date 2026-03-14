@@ -1,0 +1,17 @@
+{
+  "decision": "ALLOW",
+  "task_id": "tg1-official-20260305-1417",
+  "baseline_id": "AG2-SOVEREIGNTY-ROOT-2026-03-05",
+  "auditor": "Kior-C",
+  "execution_environment": "LOCAL-ANTIGRAVITY",
+  "verdict": "Official Cloud-Root deployment verified - all 4 checks passed",
+  "issued_at": "2026-03-05T14:30:00Z",
+  "blocking_evidence": [],
+  "required_changes": [],
+  "summary": {
+    "check_1_task_id_consistency": "PASS",
+    "check_2_allowlist_compliance": "PASS (8/8 commands)",
+    "check_3_receipt_completeness": "PASS",
+    "check_4_compliance_gate": "PASS (redline_check: PASS)"
+  }
+}

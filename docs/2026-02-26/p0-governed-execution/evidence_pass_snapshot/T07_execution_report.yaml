@@ -1,0 +1,204 @@
+---
+task_id: "T07"
+executor: "vs--cc2"
+reviewer: "Kior-B"
+compliance_officer: "Kior-C"
+wave: "Wave 2"
+status: "完成"
+executed_at: "2026-02-26T21:00:00Z"
+
+# 交付物清单
+deliverables:
+  - path: "skillforge-spec-pack/skillforge/src/utils/node_registry.py"
+    action: "新建"
+    lines_changed: 550
+    description: "Node Registry 核心实现"
+
+  - path: "skillforge-spec-pack/skillforge/tests/test_node_registry.py"
+    action: "新建"
+    lines_changed: 600
+    description: "Node Registry 测试套件"
+
+  - path: "skillforge-spec-pack/skillforge/src/utils/__init__.py"
+    action: "修改"
+    lines_changed: 15
+    description: "添加 node_registry 模块导出"
+
+  - path: "docs/2026-02-26/p0-governed-execution/verification/T07_registry_report.md"
+    action: "新建"
+    lines_changed: 350
+    description: "T07 实现报告文档"
+
+# Gate 自检结果
+gate_self_check:
+  - command: "test -f skillforge-spec-pack/skillforge/src/utils/node_registry.py"
+    result: "文件存在"
+    status: "PASS"
+
+  - command: "test -f skillforge-spec-pack/skillforge/tests/test_node_registry.py"
+    result: "文件存在"
+    status: "PASS"
+
+  - command: "rg -c 'class NodeRegistry' skillforge-spec-pack/skillforge/src/utils/node_registry.py"
+    result: "1"
+    status: "PASS"
+
+  - command: "rg -c 'NODE_UNTRUSTED' skillforge-spec-pack/skillforge/src/utils/node_registry.py"
+    result: "8"
+    status: "PASS"
+
+  - command: "rg -c 'NodeStatus' skillforge-spec-pack/skillforge/src/utils/node_registry.py"
+    result: "15"
+    status: "PASS"
+
+# ISSUE-06 验收标准验证
+acceptance_criteria:
+  - criterion: "建立 node_id -> pubkey/cert/status 注册表"
+    status: "PASS"
+    evidence:
+      - "NodeRegistry 类实现"
+      - "NodeInfo 数据类包含所有必需字段"
+      - "NodeStatus 枚举定义 4 种状态"
+
+  - criterion: "registry 读取层"
+    status: "PASS"
+    evidence:
+      - "get_node() - 按 ID 查询"
+      - "get_public_key() - 获取公钥"
+      - "list_nodes() - 列出节点"
+      - "verify_node_trust() - 验证信任"
+
+  - criterion: "NODE_UNTRUSTED 裁决"
+    status: "PASS"
+    evidence:
+      - "verify_node_trust() 返回 TrustDecision"
+      - "error_code 设置为 NODE_UNTRUSTED"
+      - "失败时返回详细错误信息"
+
+  - criterion: "未知节点全部拒绝"
+    status: "PASS"
+    evidence:
+      - "Fail-closed 模式默认拒绝未知节点"
+      - "test_unknown_node_rejected_fail_closed 测试通过"
+
+  - criterion: "失效节点全部拒绝"
+    status: "PASS"
+    evidence:
+      - "DISABLED 状态返回 NODE_DISABLED"
+      - "REVOKED 状态返回 NODE_UNTRUSTED"
+      - "PENDING 状态返回 NODE_UNTRUSTED (除非 allow_pending)"
+
+# 依赖集成验证
+dependency_integration:
+  - task: "T01"
+    status: "SATISFIED"
+    evidence:
+      - "check_node_registry() 可在 policy_check() 中调用"
+      - "与 T01 定义的 PolicyDecision 结构兼容"
+
+  - task: "T05"
+    status: "SATISFIED"
+    evidence:
+      - "可存储 Ed25519 public_key_hex"
+      - "verify_node_trust() 返回公钥用于验签"
+      - "test_store_ed25519_public_key 测试通过"
+
+# 测试覆盖统计
+test_coverage:
+  total_tests: 58
+  test_classes: 12
+  coverage_areas:
+    - "NodeInfo 数据类"
+    - "注册表创建"
+    - "节点注册"
+    - "节点查询"
+    - "信任验证（核心）"
+    - "状态管理"
+    - "持久化"
+    - "工具方法"
+    - "便捷函数"
+    - "Ed25519 集成"
+    - "常量"
+    - "错误码"
+
+# 关键实现特性
+key_features:
+  - feature: "Fail-Closed 默认行为"
+    description: "未知节点默认拒绝，需显式配置 fail_closed=False 才允许（不推荐）"
+
+  - feature: "详细的错误码"
+    description: "NodeRegistryError 枚举提供 8 种错误码"
+
+  - feature: "完整的节点生命周期"
+    description: "支持 ACTIVE/DISABLED/REVOKED/PENDING 四种状态"
+
+  - feature: "持久化支持"
+    description: "可保存到 JSON 文件并重新加载"
+
+  - feature: "与 T05 Ed25519 集成"
+    description: "可直接存储和检索 64 字符的十六进制公钥"
+
+# 限制与注意事项
+constraints:
+  - constraint: "无副作用操作"
+    status: "SATISFIED"
+    note: "仅代码新建和文档，无运行时副作用"
+
+  - constraint: "不得越权修改其他任务文件"
+    status: "SATISFIED"
+    note: "仅修改 __init__.py 添加导出，未修改其他任务文件"
+
+  - constraint: "必须有 EvidenceRef"
+    status: "SATISFIED"
+    note: "本报告包含所有证据引用"
+
+# 安全考虑
+security_considerations:
+  - "Fail-Closed 原则：未注册节点一律拒绝"
+  - "公钥验证：Ed25519 公钥必须是 64 字符十六进制"
+  - "状态管理：撤销状态不可逆（REVOKED）"
+  - "默认配置：fail_closed=True（推荐）"
+
+# 待后续任务
+future_work:
+  - "与 T01 policy_check() 的实际集成（由主控官协调）"
+  - "节点证书管理扩展（cert_fingerprint 字段已预留）"
+  - "节点过期机制（NODE_EXPIRED 错误码已预留）"
+
+# 备注说明
+notes:
+  - "T07 为文档和代码实现任务，不需要 permit"
+  - "与 T05 Ed25519 模块的集成路径已在代码中预留"
+  - "测试覆盖了所有核心功能和边界情况"
+
+# 证据引用
+evidence_refs:
+  - id: "EV-T07-001"
+    kind: "FILE"
+    locator: "skillforge-spec-pack/skillforge/src/utils/node_registry.py"
+    description: "Node Registry 核心实现"
+
+  - id: "EV-T07-002"
+    kind: "FILE"
+    locator: "skillforge-spec-pack/skillforge/tests/test_node_registry.py"
+    description: "Node Registry 测试套件"
+
+  - id: "EV-T07-003"
+    kind: "FILE"
+    locator: "docs/2026-02-26/p0-governed-execution/verification/T07_registry_report.md"
+    description: "T07 实现报告文档"
+
+  - id: "EV-T07-004"
+    kind: "SNIPPET"
+    locator: "node_registry.py:189-240"
+    description: "verify_node_trust() 实现代码"
+
+  - id: "EV-T07-005"
+    kind: "SNIPPET"
+    locator: "node_registry.py:24-40"
+    description: "NodeRegistryError 错误码定义"
+
+  - id: "EV-T07-006"
+    kind: "SNIPPET"
+    locator: "node_registry.py:57-82"
+    description: "NodeInfo 数据类定义"

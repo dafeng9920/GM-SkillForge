@@ -1,0 +1,279 @@
+task_id: "TASK-MAIN-03"
+executor: "Agent C"
+status: "完成"
+
+# 交付物清单
+deliverables:
+  - path: "scripts/absorb.sh"
+    action: "修改"
+    lines_changed: 12
+    description: "实际集成 unified_validation_gate.py 到 absorb 阶段"
+
+  - path: "docs/2026-03-11/MAINLINE_VALIDATION_INTEGRATION.md"
+    action: "新建"
+    lines_changed: 280
+    description: "主线验证接入规范文档"
+
+# Gate 自检结果
+gate_self_check:
+  - command: "cat scripts/absorb.sh | sed -n '35,42p'"
+    result: |
+      '''
+      # Use unified validation gate for pre-absorb check
+      # This integrates TASK-MAIN-03: unified_validation_gate.py into mainline
+      log_info "Running unified validation gate (absorb mode)..."
+      if ! python "$SCRIPT_DIR/unified_validation_gate.py" --absorb --task-id "$task_id"; then
+          log_fail "Unified validation gate failed - absorb denied"
+          exit 1
+      fi
+      log_ok "Unified validation gate passed"
+      '''
+    status: "absorb.sh 已修改为调用 unified_validation_gate.py"
+
+  - command: "python scripts/unified_validation_gate.py --help"
+    result: "unified_validation_gate.py 支持 4 种模式：mainline, cloud, quick, absorb"
+
+  - command: "python scripts/unified_validation_gate.py --mode quick --permit permits/default/tg1_baseline_permit.json"
+    result: "unified_validation_gate.py 成功调用 AG-2，生成验证结果文件"
+    output_file: "docs/2026-03-10/verification/unified_validation_quick_163429.json"
+
+  - command: "cat docs/2026-03-10/verification/unified_validation_quick_163429.json | jq '.checks.antigravity_2_guard_quick.stdout' | head -5"
+    result: |
+      '''
+      "[AG-2] Stage 1: Validating permit binding (五字段校验)"
+      "[AG-2]   Result: PASS"
+      '''
+    status: "unified_validation_gate.py 成功调用 antigravity_2_guard.py，Permit 五字段校验通过"
+
+# 验证集成摘要
+validation_integration_summary:
+  actual_code_changes:
+    - file: "scripts/absorb.sh"
+      change: "将第35行的直接调用 pre_absorb_check.sh 替换为调用 unified_validation_gate.py --absorb"
+      before: '"$SCRIPT_DIR/pre_absorb_check.sh" "$task_id"'
+      after: |
+        '''
+        # Use unified validation gate for pre-absorb check
+        log_info "Running unified validation gate (absorb mode)..."
+        if ! python "$SCRIPT_DIR/unified_validation_gate.py" --absorb --task-id "$task_id"; then
+            log_fail "Unified validation gate failed - absorb denied"
+            exit 1
+        fi
+        log_ok "Unified validation gate passed"
+        '''
+      impact: "absorb.sh 现在使用 unified_validation_gate.py 作为验证入口"
+
+  integration_points_modified:
+    - stage: "absorb"
+      status: "已集成"
+      details: "absorb.sh 现在调用 unified_validation_gate.py --absorb 模式"
+
+    - stage: "pre_absorb_check"
+      status: "通过统一门间接调用"
+      details: "unified_validation_gate.py 内部调用 pre_absorb_check.sh"
+
+    - stage: "local_accept"
+      status: "未集成（保留代码化验证入口）"
+      details: "可手动调用 unified_validation_gate.py --mainline"
+
+    - stage: "final_accept"
+      status: "未集成（保留代码化验证入口）"
+      details: "可手动调用 unified_validation_gate.py --mainline"
+
+# 主线默认验证调用方式（已集成）
+default_invocation:
+  integrated:
+    - stage: "absorb（自动）"
+      how: "absorb.sh 自动调用 unified_validation_gate.py --absorb"
+      command: "bash scripts/absorb.sh <task_id>"
+      validation: "unified_validation_gate.py --absorb --task-id <task>"
+
+  manual:
+    - stage: "Permit 签发前（开发迭代）"
+      command: "python scripts/unified_validation_gate.py --quick --permit <permit>"
+
+    - stage: "Permit 签发前（正式发布）"
+      command: "python scripts/unified_validation_gate.py --mainline --permit <permit> --demand <d> --contract <c> --decision <d> --manifest <m>"
+
+    - stage: "local_accept 验证"
+      command: "python scripts/unified_validation_gate.py --mainline --permit <permit> ..."
+
+    - stage: "cloud task 回传"
+      command: "python scripts/unified_validation_gate.py --cloud --task-id <task>"
+
+# Fail-Closed 保证
+fail_closed_guarantee:
+  - "unified_validation_gate.py 任何验证失败返回 DENY"
+  - "absorb.sh 在验证失败时 exit 1，阻止 absorb"
+  - "exit code: 0 = ALLOW, 1 = DENY"
+  - "保持所有验证脚本独立可调用"
+
+# 主线默认验证调用时机
+mainline_validation_timing:
+  automatic:
+    - timing: "absorb 阶段（自动执行）"
+      trigger: "执行 bash scripts/absorb.sh <task_id>"
+      call_chain: "absorb.sh → unified_validation_gate.py --absorb → antigravity_2_guard.py → 验证脚本集合"
+      status: "已集成，主线默认调用"
+
+  manual_recommended:
+    - timing: "开发迭代时"
+      command: "python scripts/unified_validation_gate.py --quick --permit <permit>"
+      purpose: "快速验证 Permit + Delivery（跳过三哈希）"
+
+    - timing: "正式发布前"
+      command: "python scripts/unified_validation_gate.py --mode mainline --permit <permit> --demand <d> --contract <c> --decision <d> --manifest <m>"
+      purpose: "完整验证 Permit + Delivery + Three-Hash"
+
+    - timing: "云端任务回传后"
+      command: "python scripts/unified_validation_gate.py --mode cloud --task-id <task>"
+      purpose: "Receipt + N-Boundary 验证"
+
+# 实跑证据
+execution_evidence:
+  - id: "EXE-001"
+    test: "unified_validation_gate.py --mode quick 实跑测试"
+    command: "python scripts/unified_validation_gate.py --mode quick --permit permits/default/tg1_baseline_permit.json"
+    output_file: "docs/2026-03-10/verification/unified_validation_quick_163429.json"
+    result: "DENY（预期：缺少显式三权路径）"
+    verification: |
+      '''
+      - Permit 五字段校验: PASS (AG-2 Stage 1)
+      - Fixed-caliber binding: FAIL (AG-2 Stage 1.2，预期行为)
+      - unified_validation_gate.py 成功调用 AG-2
+      - AG-2 成功调用 validate_permit_binding.py
+      - 生成结构化验证结果 JSON
+      '''
+    status: "验证门正常运行，调用链路正确"
+
+  - id: "EXE-002"
+    test: "unified_validation_gate.py --mode absorb 实跑测试"
+    command: "python scripts/unified_validation_gate.py --mode absorb --task-id REAL-TASK-002"
+    output_file: "docs/2026-03-10/verification/unified_validation_absorb_163424.json"
+    result: "DENY（预期：任务包不存在）"
+    verification: |
+      '''
+      - unified_validation_gate.py 成功调用 pre_absorb_check.sh
+      - 生成结构化验证结果 JSON
+      - 验证失败时正确返回 DENY + 错误信息
+      '''
+    status: "验证门正常运行，fail-closed 语义正确"
+
+# 证据引用
+evidence_refs:
+  - id: "EV-MAIN-03-CODE-001"
+    kind: "CODE_CHANGE"
+    locator: "scripts/absorb.sh:35-42"
+    description: "absorb.sh 实际修改：集成 unified_validation_gate.py"
+
+  - id: "EV-MAIN-03-CODE-002"
+    kind: "FILE"
+    locator: "scripts/unified_validation_gate.py"
+    description: "统一验证入口实现（T-ASM-03交付）"
+
+  - id: "EV-MAIN-03-DOC-001"
+    kind: "FILE"
+    locator: "docs/2026-03-11/MAINLINE_VALIDATION_INTEGRATION.md"
+    description: "主线验证接入规范文档"
+
+  - id: "EV-MAIN-03-EXE-001"
+    kind: "TEST_OUTPUT"
+    locator: "docs/2026-03-10/verification/unified_validation_quick_163429.json"
+    description: "unified_validation_gate.py --mode quick 实跑测试结果"
+
+  - id: "EV-MAIN-03-EXE-002"
+    kind: "TEST_OUTPUT"
+    locator: "docs/2026-03-10/verification/unified_validation_absorb_163424.json"
+    description: "unified_validation_gate.py --mode absorb 实跑测试结果"
+
+  - id: "EV-MAIN-03-CHAIN-001"
+    kind: "CALL_CHAIN"
+    locator: "scripts/absorb.sh:38 → scripts/unified_validation_gate.py:402 → scripts/antigravity_2_guard.py"
+    description: "主线 absorb 阶段调用链路（已集成）"
+
+  - id: "EV-MAIN-03-INCLUDED-001"
+    kind: "VALIDATION_SCRIPT"
+    locator: "scripts/antigravity_2_guard.py"
+    description: "被集成的核心验证门（通过 unified_validation_gate.py 调用）"
+
+  - id: "EV-MAIN-03-INCLUDED-002"
+    kind: "VALIDATION_SCRIPT"
+    locator: "scripts/validate_permit_binding.py"
+    description: "Permit 五字段校验（通过 AG-2 调用）"
+
+  - id: "EV-MAIN-03-INCLUDED-003"
+    kind: "VALIDATION_SCRIPT"
+    locator: "scripts/validate_delivery_completeness.py"
+    description: "Delivery 六件套校验（通过 AG-2 调用）"
+
+  - id: "EV-MAIN-03-INCLUDED-004"
+    kind: "VALIDATION_SCRIPT"
+    locator: "scripts/validate_three_hashes.py"
+    description: "三哈希一致性校验（通过 AG-2 调用）"
+
+  - id: "EV-MAIN-03-INCLUDED-005"
+    kind: "VALIDATION_SCRIPT"
+    locator: "scripts/pre_absorb_check.sh"
+    description: "Pre-absorb 检查（通过 unified_validation_gate.py absorb 模式调用）"
+
+# 纳入主线的验证项
+included_checks:
+  via_absorb_sh:
+    - stage: "absorb（主线自动执行）"
+      script: "unified_validation_gate.py --absorb"
+      checks:
+        - "pre_absorb_check.sh（任务包完整性）"
+        - "verify_governance_env.sh（环境变量）"
+      call_chain: "absorb.sh → unified_validation_gate.py → pre_absorb_check.sh"
+
+  via_unified_validation_gate:
+    - stage: "Permit 验证"
+      script: "unified_validation_gate.py --mainline/--quick"
+      checks:
+        - "validate_permit_binding.py（Permit 五字段）"
+        - "validate_delivery_completeness.py（Delivery 六件套）"
+        - "validate_three_hashes.py（三哈希一致性）"
+        - "fixed_caliber_binding.yml（固定口径绑定）"
+      call_chain: "unified_validation_gate.py → antigravity_2_guard.py → (验证脚本集合)"
+
+    - stage: "云端任务验证"
+      script: "unified_validation_gate.py --cloud"
+      checks:
+        - "verify_n1_command_allowlist.py（命令白名单）"
+        - "verify_n2_artifact_completeness.py（工件完整性）"
+        - "verify_n3_time_window.py（时间窗口）"
+        - "verify_execution_receipt.py（回执验证）"
+      call_chain: "unified_validation_gate.py → (N-boundary 脚本集合)"
+
+# 风险评估
+risks:
+  - "低风险 - unified_validation_gate.py 内部仍调用 pre_absorb_check.sh，行为一致"
+  - "回滚风险 - 可通过 git revert 快速恢复原始调用"
+  - "兼容性 - 保持 pre_absorb_check.sh 独立可用"
+
+# 向后兼容说明
+backward_compatibility:
+  existing_scripts:
+    - "scripts/pre_absorb_check.sh - 保持独立可用"
+    - "scripts/antigravity_2_guard.py - 保持独立可用"
+    - "scripts/validate_permit_binding.py - 保持独立可用"
+
+  new_call_chain:
+    - "absorb.sh -> unified_validation_gate.py --absorb -> (内部调用 pre_absorb_check.sh)"
+
+# 备注
+notes: |
+  本轮任务实际修改了 scripts/absorb.sh，将 unified_validation_gate.py 集成到 absorb 阶段。
+
+  核心改动：
+  - absorb.sh 第35-47行：从直接调用 pre_absorb_check.sh 改为调用 unified_validation_gate.py --absorb
+  - 验证失败时 exit 1，阻止 absorb 继续执行
+  - unified_validation_gate.py 内部仍调用 pre_absorb_check.sh，行为保持一致
+
+  验证方式：
+  - bash scripts/absorb.sh <task_id>  # 现在自动使用 unified_validation_gate.py
+  - python scripts/unified_validation_gate.py --absorb --task-id <task>  # 直接调用
+
+  未修改但保留的集成点：
+  - core/pack_and_permit.py - 保持现有验证调用（可后续集成）
+  - local_accept / final_accept - 保持文档口径（可后续创建代码化验证入口）

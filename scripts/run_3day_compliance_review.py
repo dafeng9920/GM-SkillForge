@@ -430,6 +430,124 @@ def check_l4p5_evidence_chain() -> CheckResult:
     )
 
 
+def check_t3a_core_artifacts() -> CheckResult:
+    base = ROOT / "docs" / "2026-03-08"
+    required = [
+        base / "execution_receipt.json",
+        base / "completion_record.md",
+        base / "resume_handoff.md",
+        base / "checkpoint" / "state.yaml",
+        base / "p2_doc_integration_report.md",
+        base / "p3_baseline_inventory.md",
+    ]
+    missing = [str(p) for p in required if not p.exists()]
+    ok = not missing
+    return CheckResult(
+        check_id="CR-014",
+        severity="HIGH",
+        passed=ok,
+        summary="T3-A core host-absorbed artifacts are present in authoritative repo paths",
+        evidence=json.dumps({"missing_files": missing}, ensure_ascii=False),
+        required_change="Restore missing T3-A host-absorbed artifacts under docs/2026-03-08 before closeout",
+        location=str(base),
+    )
+
+
+def check_t3a_p2_governor_alignment() -> CheckResult:
+    path = ROOT / "docs" / "2026-03-08" / "p2_doc_integration_report.md"
+    required_patterns = [
+        r"skills/lobster-cloud-execution-governor-skill/",
+        r"DEPRECATED / DO NOT USE",
+        r"skills/governor-skill/",
+        r"Authoritative Skill",
+    ]
+    missing = [p for p in required_patterns if not path.exists() or not _contains(path, p)]
+    bad_patterns = []
+    if path.exists():
+        if _contains(path, r"已删除"):
+            bad_patterns.append("claims_deleted_instead_of_deprecated")
+        if _contains(path, r"无 governor-skill"):
+            bad_patterns.append("claims_missing_governor_skill_dir")
+    ok = not missing and not bad_patterns
+    return CheckResult(
+        check_id="CR-015",
+        severity="HIGH",
+        passed=ok,
+        summary="T3-A P2 report aligns authoritative governor skill and deprecated alias semantics",
+        evidence=json.dumps(
+            {"missing_patterns": missing, "bad_patterns": bad_patterns},
+            ensure_ascii=False,
+        ),
+        required_change="Rewrite T3-A P2 report so lobster-cloud-execution-governor-skill is authoritative and governor-skill is deprecated, not deleted",
+        location=str(path),
+    )
+
+
+def check_t3a_p3_wave_split() -> CheckResult:
+    path = ROOT / "docs" / "2026-03-08" / "p3_baseline_inventory.md"
+    required_patterns = [
+        r"Wave 1",
+        r"Wave 2",
+        r"audit_repo_skill\.yml",
+        r"tombstone_skill\.yml",
+        r"defer",
+        r"promote_now",
+    ]
+    missing = [p for p in required_patterns if not path.exists() or not _contains(path, p)]
+    banned_patterns = []
+    if path.exists():
+        if _contains(path, r"无遗留或待处理项"):
+            banned_patterns.append("claims_no_remaining_items")
+        if _contains(path, r"defer \| 0"):
+            banned_patterns.append("claims_zero_defer")
+    ok = not missing and not banned_patterns
+    return CheckResult(
+        check_id="CR-016",
+        severity="HIGH",
+        passed=ok,
+        summary="T3-A P3 baseline reflects Wave 1 promoted items and Wave 2 deferred items",
+        evidence=json.dumps(
+            {"missing_patterns": missing, "banned_patterns": banned_patterns},
+            ensure_ascii=False,
+        ),
+        required_change="Correct T3-A P3 baseline so Wave 2 deferred items remain visible and not falsely collapsed into promote_now",
+        location=str(path),
+    )
+
+
+def check_t3a_state_alignment() -> CheckResult:
+    path = ROOT / "docs" / "2026-03-08" / "checkpoint" / "state.yaml"
+    required_patterns = [
+        r"host_absorb_manual:\s*true",
+        r"review_pending:\s*true",
+        r"compliance_pending:\s*true",
+        r"wave_2:",
+        r"audit_repo_skill\.yml",
+        r"tombstone_skill\.yml",
+        r"disposition:\s*defer",
+    ]
+    missing = [p for p in required_patterns if not path.exists() or not _contains(path, p)]
+    banned_patterns = []
+    if path.exists():
+        if _contains(path, r"all_promoted:\s*true"):
+            banned_patterns.append("all_promoted_true")
+        if _contains(path, r"files_inventoried:\s*3"):
+            banned_patterns.append("files_inventoried_three")
+    ok = not missing and not banned_patterns
+    return CheckResult(
+        check_id="CR-017",
+        severity="MEDIUM",
+        passed=ok,
+        summary="T3-A checkpoint state aligns with manual host absorb and corrected Wave 2 defer split",
+        evidence=json.dumps(
+            {"missing_patterns": missing, "banned_patterns": banned_patterns},
+            ensure_ascii=False,
+        ),
+        required_change="Rewrite T3-A checkpoint state to reflect host_absorb_manual and Wave 2 deferred items without stale all_promoted summary",
+        location=str(path),
+    )
+
+
 def check_3day_cadence(report_dir: Path, max_gap_days: int) -> CheckResult:
     now = datetime.now(timezone.utc)
     today = now.date()
@@ -522,6 +640,10 @@ def collect_checks(report_dir: Path, max_gap_days: int, run_tests: bool) -> list
         check_governance_dispatch_assets(),
         check_governance_openai_metadata(),
         check_l4p5_evidence_chain(),
+        check_t3a_core_artifacts(),
+        check_t3a_p2_governor_alignment(),
+        check_t3a_p3_wave_split(),
+        check_t3a_state_alignment(),
         check_3day_cadence(report_dir, max_gap_days),
     ]
     if run_tests:

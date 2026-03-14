@@ -1,0 +1,292 @@
+{
+  "document_type": "T05_compliance_attestation",
+  "task_id": "T05",
+  "attestation_date": "2026-02-26",
+  "compliance_officer": "Kior-C",
+  "version": "1.0.0",
+
+  "attestation_summary": {
+    "decision": "PASS",
+    "summary": "T05 Ed25519 签名与验签实现符合合规要求。节点可签名 evidence，服务端可验签，任意字段篡改均被检测。实现完整，测试充分，与 T02/T03 正确集成。"
+  },
+
+  "input_documents": {
+    "execution_report": "docs/2026-02-26/p0-governed-execution/verification/T05_execution_report.yaml",
+    "gate_decision": "docs/2026-02-26/p0-governed-execution/verification/T05_gate_decision.json",
+    "signature_report": "docs/2026-02-26/p0-governed-execution/verification/T05_signature_report.md"
+  },
+
+  "compliance_validation": {
+    "gate_decision_verdict": "ALLOW",
+    "gate_reviewer": "vs--cc1",
+    "no_concerns_raised": true,
+    "no_required_changes": true,
+    "all_evidence_refs_present": true
+  },
+
+  "hard_rule_compliance": {
+    "evidence_integrity": {
+      "rule": "无 EvidenceRef 不得宣称完成",
+      "status": "PASS",
+      "evidence": {
+        "evidence_refs_count": 7,
+        "covers_implementation": true,
+        "covers_tests": true,
+        "covers_documentation": true
+      }
+    },
+
+    "no_bypass": {
+      "rule": "不得绕过 Compliance PASS 直接执行",
+      "status": "PASS",
+      "evidence": {
+        "gate_decision": "ALLOW",
+        "gate_decision_precedes_execution": true,
+        "compliance_attestation_follows_review": true
+      }
+    },
+
+    "dependency_satisfaction": {
+      "rule": "不得跳过 depends_on",
+      "status": "PASS",
+      "evidence": {
+        "depends_on": ["T02", "T03"],
+        "t02_status": "完成",
+        "t03_status": "完成",
+        "t02_integration": "canonical_json() used for serialization",
+        "t03_integration": "envelope dict structure used"
+      }
+    },
+
+    "no_side_effects_without_permit": {
+      "rule": "涉及副作用操作的任务必须获得 permit=VALID",
+      "status": "PASS",
+      "evidence": {
+        "task_scope": "代码新建/修改 + 文档",
+        "no_runtime_side_effects": true,
+        "permit_required": false,
+        "permit_status": "N/A"
+      }
+    },
+
+    "only_modified_designated_files": {
+      "rule": "不得越权修改其他任务输出文件",
+      "status": "PASS",
+      "evidence": {
+        "modified_files": [
+          "skillforge/src/utils/__init__.py",
+          "pyproject.toml"
+        ],
+        "created_files": [
+          "skillforge/src/utils/ed25519_signature.py",
+          "skillforge/tests/test_ed25519_signature.py",
+          "docs/2026-02-26/p0-governed-execution/verification/T05_signature_report.md"
+        ],
+        "cross_task_violations": "无"
+      }
+    }
+  },
+
+  "acceptance_criteria_compliance": {
+    "node_can_sign": {
+      "criteria": "节点私钥签名 evidence",
+      "status": "PASS",
+      "evidence": {
+        "function": "sign_envelope()",
+        "function": "create_node_signature()",
+        "algorithm": "Ed25519",
+        "signature_size": "64 bytes"
+      }
+    },
+
+    "server_can_verify": {
+      "criteria": "服务端可验签",
+      "status": "PASS",
+      "evidence": {
+        "function": "verify_envelope_signature()",
+        "function": "verify_node_signature()",
+        "return_type": "bool or dict with 'valid' key"
+      }
+    },
+
+    "tamper_detection": {
+      "criteria": "改动 header/body 任意字段，验签失败",
+      "status": "PASS",
+      "evidence": {
+        "test_class": "TestTamperDetection",
+        "test_cases": 9,
+        "all_fail_verification": true,
+        "tested_fields": [
+          "header.envelope_id",
+          "header.schema_version",
+          "header.node_id",
+          "header.body_hash",
+          "header.nonce",
+          "ciphertext.iv",
+          "ciphertext.data",
+          "ciphertext.tag"
+        ]
+      }
+    },
+
+    "signed_fields_validation": {
+      "criteria": "signed_fields 校验",
+      "status": "PASS",
+      "evidence": {
+        "function": "verify_signed_fields()",
+        "default_fields_count": 11,
+        "custom_fields_supported": true
+      }
+    }
+  },
+
+  "security_compliance": {
+    "algorithm_validation": {
+      "algorithm": "Ed25519",
+      "status": "APPROVED",
+      "security_level": "256-bit",
+      "standard": "RFC 8032"
+    },
+
+    "key_management": {
+      "private_key_handling": "Private keys never leave signing node",
+      "key_formats": ["PEM", "hex (64 chars)"],
+      "key_size": "32 bytes (256 bits)",
+      "status": "COMPLIANT"
+    },
+
+    "signature_coverage": {
+      "default_signed_fields": 11,
+      "customizable": true,
+      "critical_fields_covered": true,
+      "status": "COMPLIANT"
+    },
+
+    "tamper_evidence": {
+      "any_modification_detected": true,
+      "false_positive_risk": "LOW",
+      "deterministic_signatures": true,
+      "status": "COMPLIANT"
+    }
+  },
+
+  "integration_compliance": {
+    "t02_canonical_json": {
+      "dependency_status": "SATISFIED",
+      "integration_method": "canonical_json() 用于确定性序列化",
+      "import_location": "ed25519_signature.py:39",
+      "usage_location": "ed25519_signature.py:215-230"
+    },
+
+    "t03_envelope_structure": {
+      "dependency_status": "SATISFIED",
+      "integration_method": "操作 envelope 字典",
+      "structure": "header/ciphertext 嵌套结构",
+      "field_access": "点表示法 (如 'header.envelope_id')"
+    }
+  },
+
+  "downstream_impact": {
+    "t06_nonce_challenge": {
+      "status": "UNBLOCKED",
+      "enables": "签名 challenge-response 防重放"
+    },
+    "t07_node_registry": {
+      "status": "UNBLOCKED",
+      "enables": "存储公钥并验证节点身份"
+    },
+    "t08_receipt_hash": {
+      "status": "UNBLOCKED",
+      "enables": "签名审计回执"
+    }
+  },
+
+  "test_coverage_validation": {
+    "total_tests": 50,
+    "test_classes": 11,
+    "coverage_areas": [
+      "密钥生成",
+      "签名操作",
+      "验签操作",
+      "字段验证",
+      "篡改检测",
+      "节点签名",
+      "错误处理",
+      "集成测试"
+    ],
+    "all_tests_passable": true,
+    "status": "COMPLIANT"
+  },
+
+  "dependency_compliance": {
+    "cryptography_library": {
+      "added_to_pyproject": true,
+      "version_constraint": ">=41.0.0",
+      "required_for": "Ed25519 operations",
+      "fallback_handling": "CRYPTOGRAPHY_AVAILABLE flag with graceful error",
+      "status": "COMPLIANT"
+    }
+  },
+
+  "documentation_compliance": {
+    "implementation_report_exists": true,
+    "report_path": "docs/2026-02-26/p0-governed-execution/verification/T05_signature_report.md",
+    "api_documentation": true,
+    "usage_examples": true,
+    "security_considerations": true
+  },
+
+  "cross_reference_validation": {
+    "execution_report_status": "完成",
+    "gate_decision_verdict": "ALLOW",
+    "all_acceptance_criteria_met": true,
+    "all_inputs_consistent": true,
+    "consistency_notes": "三个输入文档结论一致：T05 Ed25519 签名与验签功能完整实现，符合所有验收标准"
+  },
+
+  "evidence_references": [
+    {
+      "id": "EV-T05-COMP-001",
+      "source": "T05_execution_report.yaml",
+      "locator": "deliverables",
+      "description": "交付物清单"
+    },
+    {
+      "id": "EV-T05-COMP-002",
+      "source": "T05_gate_decision.json",
+      "locator": "acceptance_criteria_matrix",
+      "description": "验收标准矩阵验证"
+    },
+    {
+      "id": "EV-T05-COMP-003",
+      "source": "ed25519_signature.py",
+      "locator": "lines 260-320",
+      "description": "sign_envelope() 实现"
+    },
+    {
+      "id": "EV-T05-COMP-004",
+      "source": "test_ed25519_signature.py",
+      "locator": "TestTamperDetection class",
+      "description": "篡改检测测试验证"
+    }
+  ],
+
+  "compliance_notes": [
+    "cryptography 库需要环境安装（已添加到 pyproject.toml）",
+    "当 cryptography 不可用时，模块会优雅降级并给出明确错误",
+    "Ed25519 是 RFC 8032 标准算法，安全性经过广泛验证",
+    "确定性签名避免随机数生成器的潜在问题",
+    "所有关键字段默认被签名，确保完整性"
+  ],
+
+  "final_attestation": {
+    "decision": "PASS",
+    "acceptance_criteria_satisfied": true,
+    "security_compliant": true,
+    "integration_compliant": true,
+    "test_coverage_adequate": true,
+    "documentation_complete": true,
+    "attestation_signature": "Kior-C",
+    "attestation_timestamp": "2026-02-26T20:30:00Z"
+  }
+}

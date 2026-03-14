@@ -1,0 +1,71 @@
+{
+  "schema_version": "three_hash_permit_guard_v1",
+  "guard_status": "PASS",
+  "permit_check_exit_code": 0,
+  "delivery_check_exit_code": 0,
+  "permit_check": {
+    "status": "PASS",
+    "error_code": null,
+    "missing_hashes": [],
+    "invalid_hashes": [],
+    "missing_fields": [],
+    "required_changes": [],
+    "permit_data": {
+      "permit_id": "PERMIT-test_skill-DC235D43",
+      "schema_version": "pack_and_permit_v0",
+      "skill_id": "test_skill",
+      "revision": "test_rev_001",
+      "status": "ISSUED",
+      "demand_hash": "3d54cc32e36fe7b44e16e0038b6eb4e65507789bb1074c580f41af7165ee7b3a",
+      "contract_hash": "d078e33a0d801d8a08bccd283c6769b843686d783bf6981acd9c97e391061ec7",
+      "decision_hash": "2aecf617b766d8c6d4d326b492bc4563f27d89aecca8f797f97423466108df42",
+      "audit_pack_hash": "sha256:ff3e30ae8f68990d72db024658becb70fc75463cdbdefdec94a14d98d46c15ef",
+      "issued_at": "2026-03-04T10:29:02.626842+00:00",
+      "expires_at": null,
+      "issuer": "gm-skillforge-v0",
+      "restrictions": {}
+    },
+    "permit_path": "docs\\2026-03-04\\verification\\PR5_permit_only.json"
+  },
+  "delivery_check": {
+    "status": "PASS",
+    "error_code": null,
+    "missing_items": [],
+    "present_items": [
+      {
+        "category": "Blueprint",
+        "path": "contracts\\dsl\\demand_dsl_v0.schema.yml"
+      },
+      {
+        "category": "Skill",
+        "path": "skills\\ai-response-improvement-skill"
+      },
+      {
+        "category": "n8n",
+        "path": "workflows\\skillforge_dispatcher.json"
+      },
+      {
+        "category": "Evidence",
+        "path": "artifacts\\tg1"
+      },
+      {
+        "category": "AuditPack",
+        "path": "audit_pack\\tg1_audit_pack.json"
+      },
+      {
+        "category": "Permit",
+        "path": "permits\\default\\tg1_baseline_permit.json"
+      }
+    ],
+    "required_changes": [],
+    "checked_at": "2026-03-04T12:30:44.115714+00:00",
+    "base_path": "."
+  },
+  "blocking_reasons": [],
+  "raw": {
+    "permit_stdout": "status: PASS",
+    "permit_stderr": "",
+    "delivery_stdout": "status: PASS\nbase_path: .\nchecked_at: 2026-03-04T12:30:44.115714+00:00\n\npresent_items:\n  - Blueprint: contracts\\dsl\\demand_dsl_v0.schema.yml\n  - Skill: skills\\ai-response-improvement-skill\n  - n8n: workflows\\skillforge_dispatcher.json\n  - Evidence: artifacts\\tg1\n  - AuditPack: audit_pack\\tg1_audit_pack.json\n  - Permit: permits\\default\\tg1_baseline_permit.json",
+    "delivery_stderr": ""
+  }
+}

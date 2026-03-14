@@ -1,0 +1,53 @@
+name: final-gate-adjudicator-skill
+description: 基于三权记录与 killer tests 结果输出最终门禁裁决（ALLOW/REQUIRES_CHANGES/DENY）。
+version: v1.0.0
+frozen_at: 2026-02-25
+owner: platform-governance
+tags:
+  - l3
+  - final-gate
+  - adjudication
+  - compliance
+  - verification
+  - governance
+default_prompt: |
+  聚合三权记录与 killer tests，输出 final_gate_decision.json。
+  规则：
+  - 缺任一三权记录 => DENY
+  - 任一 compliance != PASS => REQUIRES_CHANGES
+  - killer tests 全绿且三权齐全 => ALLOW
+
+capabilities:
+  - load_triplet_records
+  - enforce_adjudication_policy
+  - generate_final_gate_decision
+  - blocking_evidence_summary
+
+input_schema:
+  verification_dir:
+    type: string
+    required: true
+    description: 三权记录目录（docs/{date}/verification）
+  killer_summary:
+    type: string
+    required: true
+    description: killer tests summary.json 路径
+  policy:
+    type: object
+    required: true
+    description: 缺失记录/合规失败/全绿等裁决规则
+
+output_schema:
+  final_gate_decision:
+    type: string
+    description: final_gate_decision.json 路径
+  decision:
+    type: string
+    enum: [ALLOW, REQUIRES_CHANGES, DENY]
+    description: 最终裁决
+  required_changes:
+    type: array
+    description: 必需整改项
+  blocking_evidence:
+    type: array
+    description: 阻断证据路径

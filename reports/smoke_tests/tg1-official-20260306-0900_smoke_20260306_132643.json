@@ -1,0 +1,36 @@
+{
+  "task_id": "tg1-official-20260306-0900",
+  "timestamp": "2026-03-06T13:26:43.533044+00:00",
+  "status": "PASS",
+  "checks": [
+    {
+      "name": "contract_exists",
+      "status": "PASS",
+      "path": ".tmp\\openclaw-dispatch\\tg1-official-20260306-0900\\task_contract.json"
+    },
+    {
+      "name": "contract_structure",
+      "status": "PASS"
+    },
+    {
+      "name": "command_allowlist",
+      "status": "PASS",
+      "count": 3
+    },
+    {
+      "name": "required_artifacts",
+      "status": "PASS",
+      "count": 4
+    },
+    {
+      "name": "environment",
+      "status": "PASS",
+      "value": "CLOUD-ROOT"
+    }
+  ],
+  "summary": {
+    "total": 5,
+    "passed": 5,
+    "failed": 0
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "decision": "DENY",
+  "error_code": "SF_DEMAND_HASH_MISSING",
+  "errors": [
+    {
+      "code": "SF_DEMAND_HASH_MISSING",
+      "message": "Permit binding incomplete: missing demand_hash, contract_hash, decision_hash, audit_pack_hash, demand_hash, contract_hash, decision_hash, audit_pack_hash, revision"
+    }
+  ],
+  "required_changes": [
+    "Add all required fields to permit (demand_hash, contract_hash, decision_hash, audit_pack_hash, revision)"
+  ],
+  "permit_binding": {
+    "status": "FAIL",
+    "error_code": "SF_DEMAND_HASH_MISSING",
+    "missing_hashes": [
+      "demand_hash",
+      "contract_hash",
+      "decision_hash",
+      "audit_pack_hash"
+    ],
+    "missing_fields": [
+      "demand_hash",
+      "contract_hash",
+      "decision_hash",
+      "audit_pack_hash",
+      "revision"
+    ],
+    "invalid_hashes": []
+  },
+  "delivery_completeness": null,
+  "checked_at": "2026-03-04T12:12:07.158802+00:00",
+  "guard_version": "v0",
+  "fail_closed_policy": true
+}

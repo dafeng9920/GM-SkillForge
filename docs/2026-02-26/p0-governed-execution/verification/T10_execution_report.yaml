@@ -1,0 +1,192 @@
+task_id: "T10"
+executor: "vs--cc3"
+status: "完成"
+job_id: "P0-L6-AUTH-20260226-001"
+wave: "Wave 3"
+issue_ref: "ISSUE-09"
+
+# 交付物清单
+deliverables:
+  - path: "skillforge-spec-pack/skillforge/tests/test_l6_protocol.py"
+    action: "新建"
+    lines_changed: 640
+    description: "L6 Authenticity Protocol T1-T5 测试套件"
+
+  - path: "scripts/run_l6_protocol_gate.py"
+    action: "新建"
+    lines_changed: 135
+    description: "L6 Protocol Gate CI 脚本"
+
+  - path: ".github/workflows/ci.yml"
+    action: "修改"
+    lines_changed: 62
+    description: "CI 新增 l6-protocol-gate 和 final-gate job"
+
+  - path: "docs/2026-02-26/p0-governed-execution/verification/T10_pipeline_gate_report.md"
+    action: "新建"
+    lines_changed: 100
+    description: "T10 实现报告"
+
+# Gate 自检结果
+gate_self_check:
+  - command: "test -f skillforge-spec-pack/skillforge/tests/test_l6_protocol.py"
+    result: "PASS - 协议测试文件存在"
+
+  - command: "test -f scripts/run_l6_protocol_gate.py"
+    result: "PASS - Gate 脚本存在"
+
+  - command: "cd skillforge-spec-pack && python -m pytest skillforge/tests/test_l6_protocol.py -v"
+    result: "PASS - 28 passed in 0.65s"
+
+  - command: "grep -q 'l6-protocol-gate' .github/workflows/ci.yml"
+    result: "PASS - CI workflow 包含 L6 gate"
+
+  - command: "grep -q 'final-gate' .github/workflows/ci.yml"
+    result: "PASS - CI workflow 包含 final-gate"
+
+# ISSUE-09 验收标准对齐
+acceptance_criteria:
+  - criteria: "将 T1-T5 加入 CI"
+    status: "PASS"
+    evidence: "CI 新增 l6-protocol-gate job，运行 test_l6_protocol.py"
+
+  - criteria: "未通过禁止合并"
+    status: "PASS"
+    evidence: "final-gate job 检查所有 required gates，任一失败则 exit 1"
+
+  - criteria: "任一协议测试失败时 pipeline fail-closed"
+    status: "PASS"
+    evidence: "pytest 返回非零退出码触发 CI 失败"
+
+# 协议测试覆盖
+protocol_tests:
+  T1_tampering_detection:
+    tests: 5
+    status: "all passed"
+    coverage:
+      - "ciphertext tampering"
+      - "header tampering"
+      - "body hash mismatch"
+      - "tag tampering"
+      - "iv tampering"
+
+  T2_replay_attack_prevention:
+    tests: 3
+    status: "all passed"
+    coverage:
+      - "replay detection"
+      - "nonce uniqueness"
+      - "used nonce rejection"
+
+  T3_expiration_detection:
+    tests: 3
+    status: "all passed"
+    coverage:
+      - "expired challenge rejection"
+      - "envelope expiration"
+      - "valid within TTL"
+
+  T4_forged_signature_detection:
+    tests: 4
+    status: "all passed"
+    coverage:
+      - "modified body detection"
+      - "algorithm mismatch"
+      - "missing signature"
+      - "canonical JSON consistency"
+
+  T5_unregistered_node_detection:
+    tests: 5
+    status: "all passed"
+    coverage:
+      - "unknown node rejection"
+      - "revoked node rejection"
+      - "disabled node rejection"
+      - "valid node acceptance"
+      - "public key mismatch"
+
+  integration_tests:
+    tests: 5
+    status: "all passed"
+    coverage:
+      - "full valid flow"
+      - "rejected at each stage"
+      - "error code verification"
+      - "schema validation"
+      - "encrypted envelope"
+
+# 证据引用
+evidence_refs:
+  - id: "EV-T10-TEST-001"
+    kind: "FILE"
+    locator: "skillforge-spec-pack/skillforge/tests/test_l6_protocol.py:1-640"
+    description: "L6 Protocol T1-T5 测试套件"
+
+  - id: "EV-T10-SCRIPT-001"
+    kind: "FILE"
+    locator: "scripts/run_l6_protocol_gate.py:1-135"
+    description: "L6 Protocol Gate CI 脚本"
+
+  - id: "EV-T10-CI-001"
+    kind: "FILE"
+    locator: ".github/workflows/ci.yml:105-166"
+    description: "CI workflow L6 gate 配置"
+
+  - id: "EV-T10-TEST-RUN-001"
+    kind: "OUTPUT"
+    locator: "pytest execution"
+    description: "测试运行结果: 28 passed in 0.65s"
+
+# 三权记录路径
+governance_records:
+  review: "docs/2026-02-26/p0-governed-execution/verification/T10_gate_decision.json"
+  compliance: "docs/2026-02-26/p0-governed-execution/verification/T10_compliance_attestation.json"
+  execution: "docs/2026-02-26/p0-governed-execution/verification/T10_execution_report.yaml"
+
+# 后续任务依赖
+downstream_unblock:
+  - "T11 (第三方独立验真脚本)"
+
+# CI Gate 结构
+ci_gates:
+  - name: "contract-tests"
+    type: "required"
+    description: "Contract tests for node handlers and adapters"
+
+  - name: "skillization-gate"
+    type: "required"
+    description: "Skill 化门禁"
+
+  - name: "l3-killer-gate"
+    type: "required"
+    description: "True-L3 Killer Gate"
+
+  - name: "l6-protocol-gate"
+    type: "required"
+    description: "L6 Authenticity Protocol Gate (T1-T5)"
+
+  - name: "final-gate"
+    type: "required"
+    description: "Final gate checking all required gates"
+
+# 备注
+notes: |
+  T10 完成了 CI Pipeline 接入与强制 Gate 实现。
+
+  关键成果：
+  1. 创建了 test_l6_protocol.py，包含 28 个测试用例覆盖 T1-T5 协议
+  2. 创建了 run_l6_protocol_gate.py CI gate 脚本
+  3. 更新了 CI workflow，新增 l6-protocol-gate 和 final-gate jobs
+  4. 实现了 fail-closed 机制：任一 gate 失败则 pipeline 失败
+
+  验收标准对齐：
+  - ✅ T1-T5 加入 CI: l6-protocol-gate job
+  - ✅ 未通过禁止合并: final-gate 检查
+  - ✅ fail-closed: pytest 非0退出码
+
+  无副作用操作（仅修改 CI 配置和新增测试文件），无需 permit。
+
+# 执行时间
+started_at: "2026-02-26T19:00:00Z"
+completed_at: "2026-02-26T19:45:00Z"
+duration_minutes: 45

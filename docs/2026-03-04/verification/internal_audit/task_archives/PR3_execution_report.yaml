@@ -1,0 +1,110 @@
+# PR3-T1 Execution Report
+# Diff / Rationale / Tombstone Minimum Infrastructure
+
+task_id: PR3-T1
+phase: Phase 4
+objective: PR3 Diff / Rationale / Tombstone 最小基础设施
+status: COMPLETED
+execution_log:
+  - step: 1
+    action: Create audit directory structure
+    result: SUCCESS
+    evidence: audit/diffs/, audit/rationale/, audit/tombstones/, audit/templates/
+    details: |
+      Created directory structure for iteration artifacts:
+      - audit/diffs/ - For demand/contract/decision diffs
+      - audit/rationale/ - For change rationale documents
+      - audit/tombstones/ - For deprecated revision records
+      - audit/templates/ - For template files
+
+  - step: 2
+    action: Create artifact template files
+    result: SUCCESS
+    evidence:
+      - audit/templates/diff_template.json
+      - audit/templates/rationale_template.json
+      - audit/templates/tombstone_template.json
+    details: |
+      diff_template.json: Structure for hash change diffs
+      rationale_template.json: Change justification and impact assessment
+      tombstone_template.json: Deprecation and replacement records
+
+  - step: 3
+    action: Implement validate_iteration_artifacts.py
+    result: SUCCESS
+    evidence: scripts/validate_iteration_artifacts.py
+    details: |
+      Validates iteration artifacts when three hashes change:
+      - Detects demand_hash/contract_hash/decision_hash changes
+      - Requires demand_diff.json, contract_diff.json, decision_diff.json
+      - Requires rationale.json or rationale.md
+      - Requires tombstone.json if replacing old revision
+      - Machine-readable PASS/FAIL output
+
+  - step: 4
+    action: Verify error codes match v0-L5 specification
+    result: SUCCESS
+    evidence: Error codes per docs/2026-03-04/v0-L5/
+    details: |
+      SF_ITERATION_DEMAND_DIFF_MISSING
+      SF_ITERATION_CONTRACT_DIFF_MISSING
+      SF_ITERATION_DECISION_DIFF_MISSING
+      SF_ITERATION_RATIONALE_MISSING
+      SF_ITERATION_TOMBSTONE_MISSING
+      SF_ITERATION_ARTIFACTS_INCOMPLETE
+      SF_HASH_DETECTION_FAILED
+      SF_REVISION_FORMAT_INVALID
+
+validation_results:
+  iteration_artifacts:
+    script: scripts/validate_iteration_artifacts.py
+    required_when_hash_changes:
+      - demand_diff.json
+      - contract_diff.json
+      - decision_diff.json
+      - rationale.(json|md)
+    required_when_superseding:
+      - tombstone.json
+    fail_closed: true
+    machine_readable: true
+
+  templates:
+    diff_schema: diff_v0
+    rationale_schema: rationale_v0
+    tombstone_schema: tombstone_v0
+
+  directory_structure:
+    diffs: audit/diffs/
+    rationale: audit/rationale/
+    tombstones: audit/tombstones/
+    templates: audit/templates/
+
+compliance_attestation:
+  pr3_iteration_artifacts_enabled: true
+  diff_rationale_tombstone_infrastructure: true
+  fail_closed_policy: true
+  cloud_bypass_prevented: true
+  no_contract_changes: true
+  artifact_templates_provided: true
+
+spec_source:
+  - docs/2026-03-04/v0-L5/index.md
+  - docs/2026-03-04/v0-L5/"三哈希口径"落成validate.py 的硬校验（v0）.md
+  - docs/2026-03-04/v0-L5/Gap Analysis v0 模板（可喂给 AI 修复 & 可被审计复核）.md
+
+validation_rules_enforced:
+  - rule: L3 迭代判定
+    source: "三哈希口径" rule 9
+    description: When hashes change, must have diff/rationale/tombstone
+    enforced_by: validate_iteration_artifacts.py
+
+  - rule: Permit 签发前置条件
+    source: "三哈希口径" rule 10
+    description: If iteration, diff+rationale+tombstone must be complete before Permit
+    enforced_by: validate_iteration_artifacts.py
+
+auditor: Antigravity-2
+timestamp_utc: "2026-03-04T08:50:00Z"
+
+# PR3 Execution Completion
+pr3_execution_done: true

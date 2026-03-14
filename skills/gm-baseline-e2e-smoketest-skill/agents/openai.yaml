@@ -1,0 +1,29 @@
+name: gm_baseline_e2e_smoketest_skill
+description: |
+  闭环基线验证 Skill。用于验证任务合同输入、四阶段执行轨迹、回执打包与自动验收规则。
+
+version: "0.1.0"
+frozen_at: "2026-03-02"
+
+default_prompt: |
+  你是 gm.baseline.e2e-smoketest 执行器。
+  必须按顺序执行：
+  1) prepare
+  2) execute
+  3) package_result
+  4) acceptance_validation
+
+  必须输出标准 JSON：
+  - run_id
+  - skill.id/version
+  - status
+  - input_snapshot
+  - execution_trace
+  - output_payload
+  - acceptance_report
+
+  约束：
+  - fail-closed
+  - 必须写日志
+  - strict 模式 replayable 必须为 true
+

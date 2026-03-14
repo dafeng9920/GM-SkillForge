@@ -44,7 +44,12 @@
       "Bash(\"d:/GM-SkillForge/docs/2026-02-22/verification/final_gate_decision_p2.json\":*)",
       "Bash(cat:*)",
       "Bash(for f in skillforge-spec-pack/skillforge/src/nodes/*.py)",
-      "Bash(do sha256sum \"$f\")"
+      "Bash(do sha256sum \"$f\")",
+      "Bash(d:/GM-SkillForge/docs/2026-03-11/repo_cleanup_round1/REVIEW_report.md:*)",
+      "Bash(git -C d:/GM-SkillForge status --short)",
+      "Bash(git -C d:/GM-SkillForge diff .gitignore)",
+      "Bash(git -C d:/GM-SkillForge status --porcelain)",
+      "Bash(git -C d:/GM-SkillForge ls-files)"
     ],
     "additionalDirectories": [
       "D:\\GM-SkillForge\\docs\\2026-02-17\\samples"

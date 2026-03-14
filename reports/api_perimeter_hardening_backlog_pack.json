@@ -1,0 +1,758 @@
+{
+  "meta": {
+    "title": "API Perimeter Hardening Backlog Pack",
+    "version": "1.0.0",
+    "created_at": "2026-03-06T00:00:00Z",
+    "created_by": "vs--cc3",
+    "task_ref": "T1-D"
+  },
+  "summary": {
+    "total_items": 24,
+    "immediate_fix": 8,
+    "subsequent_governance": 16,
+    "critical_risk": 5,
+    "high_risk": 10,
+    "medium_risk": 9
+  },
+  "backlog_items": [
+    {
+      "id": "APH-001",
+      "title": "统一 CORS 配置 - 消除 allow_origins=['*']",
+      "category": "CORS",
+      "priority": "CRITICAL",
+      "tier": "immediate_fix",
+      "risk_level": "critical",
+      "status": "pending",
+      "description": "l4_api.py 使用 allow_origins=['*'] 存在严重安全风险。需要统一所有 API 的 CORS 配置。",
+      "evidence": {
+        "affected_files": [
+          "skillforge/src/api/l4_api.py:134"
+        ],
+        "current_issue": "allow_origins=[\"*\"] 允许任何来源访问",
+        "reference_files": [
+          "skillforge/src/api/l4_api_fixed.py",
+          "simple_api.py"
+        ]
+      },
+      "acceptance_criteria": [
+        "所有 API 文件使用统一的 CORS 配置",
+        "根据 SKILLFORGE_ENV 环境变量动态设置允许来源",
+        "未知环境默认为空列表（fail-closed）",
+        "添加配置验证和启动时警告"
+      ],
+      "owner": "backend-team",
+      "estimated_effort": "2 hours",
+      "migration_path": "1. 创建 src/api/middleware/cors_config.py\n2. 定义环境感知的 origin 策略\n3. 更新所有 API 文件引用\n4. 添加单元测试",
+      "blocking_issues": [],
+      "related_items": ["APH-002", "APH-003"]
+    },
+    {
+      "id": "APH-002",
+      "title": "添加统一 API 认证中间件",
+      "category": "Authentication",
+      "priority": "CRITICAL",
+      "tier": "immediate_fix",
+      "risk_level": "critical",
+      "status": "pending",
+      "description": "当前大部分 API endpoint 没有认证机制。需要实现统一的 API Key 或 JWT 认证。",
+      "evidence": {
+        "current_state": "只有 permit token 验证，没有通用 API 认证",
+        "affected_endpoints": [
+          "/api/v1/cognition/generate",
+          "/api/v1/work/adopt",
+          "/api/v1/health"
+        ]
+      },
+      "acceptance_criteria": [
+        "实现 API Key 认证中间件",
+        "支持 JWT Token 认证（可选）",
+        "配置公共 endpoint 白名单",
+        "添加认证失败审计日志"
+      ],
+      "owner": "backend-team",
+      "estimated_effort": "6 hours",
+      "migration_path": "1. 设计认证中间件接口\n2. 实现 API Key 验证逻辑\n3. 集成到 FastAPI app\n4. 更新 endpoint 配置",
+      "blocking_issues": [],
+      "related_items": ["APH-004", "APH-005"]
+    },
+    {
+      "id": "APH-003",
+      "title": "实现速率限制和防护",
+      "category": "Rate Limiting",
+      "priority": "HIGH",
+      "tier": "immediate_fix",
+      "risk_level": "high",
+      "status": "pending",
+      "description": "API 缺少速率限制，容易受到 DDoS 攻击和滥用。",
+      "evidence": {
+        "current_state": "无任何速率限制实现",
+        "risk": "可能导致服务不可用或资源耗尽"
+      },
+      "acceptance_criteria": [
+        "实现基于 IP 的速率限制",
+        "实现基于 API Key 的速率限制",
+        "支持不同 endpoint 的差异化限制",
+        "添加速率限制响应头"
+      ],
+      "owner": "backend-team",
+      "estimated_effort": "8 hours",
+      "migration_path": "1. 选择速率限制库（slowapi 或类似）\n2. 配置 Redis 后端存储\n3. 定义速率限制策略\n4. 集成到 API",
+      "blocking_issues": [],
+      "related_items": ["APH-011"]
+    },
+    {
+      "id": "APH-004",
+      "title": "API 输入验证和清洗",
+      "category": "Input Validation",
+      "priority": "HIGH",
+      "tier": "immediate_fix",
+      "risk_level": "high",
+      "status": "pending",
+      "description": "增强 API 输入验证，防止注入攻击和无效数据。",
+      "evidence": {
+        "current_state": "仅使用 Pydantic 基础验证",
+        "gaps": [
+          "缺少字符串长度限制",
+          "缺少 SQL 注入防护",
+          "缺少 XSS 防护"
+        ]
+      },
+      "acceptance_criteria": [
+        "为所有 Pydantic 模型添加长度限制",
+        "实现敏感词过滤",
+        "添加 SQL 注入检测",
+        "实现 XSS 防护"
+      ],
+      "owner": "backend-team",
+      "estimated_effort": "6 hours",
+      "migration_path": "1. 创建验证工具模块\n2. 定义验证规则\n3. 更新所有请求模型\n4. 添加安全测试",
+      "blocking_issues": [],
+      "related_items": ["APH-009"]
+    },
+    {
+      "id": "APH-005",
+      "title": "API 密钥管理基础设施",
+      "category": "Secrets Management",
+      "priority": "HIGH",
+      "tier": "immediate_fix",
+      "risk_level": "high",
+      "status": "pending",
+      "description": "建立 API Key 生成、存储、轮换和撤销机制。",
+      "evidence": {
+        "current_state": "无 API Key 管理",
+        "risk": "无法安全地管理 API 访问凭证"
+      },
+      "acceptance_criteria": [
+        "实现 API Key 生成接口",
+        "安全存储 API Key（加密）",
+        "支持 API Key 轮换",
+        "支持 API Key 撤销",
+        "添加 API Key 审计日志"
+      ],
+      "owner": "backend-team",
+      "estimated_effort": "12 hours",
+      "migration_path": "1. 设计 API Key 数据模型\n2. 实现加密存储\n3. 创建管理 API\n4. 集成到认证中间件",
+      "blocking_issues": ["APH-002"],
+      "related_items": ["APH-018"]
+    },
+    {
+      "id": "APH-006",
+      "title": "根目录脚本清理和分类",
+      "category": "Code Organization",
+      "priority": "MEDIUM",
+      "tier": "immediate_fix",
+      "risk_level": "medium",
+      "status": "pending",
+      "description": "根目录存在大量一次性脚本，需要整理分类或移除。",
+      "evidence": {
+        "root_scripts": [
+          "chat_to_md.py",
+          "simple_api.py",
+          "extract_template.py",
+          "heal_template.py",
+          "create_valid_dummy_packs.py",
+          "bulk_patch_imports.py",
+          "patch_test.py",
+          "rewrite_registry.py",
+          "run_api.py",
+          "start_full_api.py",
+          "start_backend.py"
+        ]
+      },
+      "acceptance_criteria": [
+        "分类：保留到 tools/ 或 scripts/",
+        "删除：确认不再使用的",
+        "重构：应该集成到主要功能的",
+        "添加 README 说明每个脚本的用途"
+      ],
+      "owner": "devops-team",
+      "estimated_effort": "4 hours",
+      "migration_path": "1. 审计每个脚本\n2. 分类和标记\n3. 移动到正确位置\n4. 更新相关引用\n5. 删除过期脚本",
+      "blocking_issues": [],
+      "related_items": ["APH-015"]
+    },
+    {
+      "id": "APH-007",
+      "title": "统一 API 响应格式",
+      "category": "API Standards",
+      "priority": "MEDIUM",
+      "tier": "immediate_fix",
+      "risk_level": "medium",
+      "status": "pending",
+      "description": "不同 API 文件使用不同的响应格式，需要统一。",
+      "evidence": {
+        "inconsistent_formats": [
+          "l4_api.py 使用 SuccessEnvelope/ErrorEnvelope",
+          "l4_api_fixed.py 使用相同格式但有 mock 逻辑",
+          "simple_api.py 直接返回 dict"
+        ]
+      },
+      "acceptance_criteria": [
+        "定义统一的响应格式规范",
+        "所有 API 使用相同的响应模型",
+        "添加响应版本标识",
+        "创建共享的响应模型模块"
+      ],
+      "owner": "backend-team",
+      "estimated_effort": "4 hours",
+      "migration_path": "1. 创建 shared/models/api_responses.py\n2. 定义标准响应模型\n3. 更新所有 endpoint\n4. 添加兼容性测试",
+      "blocking_issues": [],
+      "related_items": ["APH-014"]
+    },
+    {
+      "id": "APH-008",
+      "title": "API 版本控制策略",
+      "category": "API Standards",
+      "priority": "MEDIUM",
+      "tier": "subsequent_governance",
+      "risk_level": "medium",
+      "status": "pending",
+      "description": "实现 API 版本控制，支持平滑升级和向后兼容。",
+      "evidence": {
+        "current_state": "URL 中有 /v1/ 但没有版本管理逻辑",
+        "risk": "未来升级可能破坏现有客户端"
+      },
+      "acceptance_criteria": [
+        "定义 API 版本策略",
+        "实现版本弃用警告",
+        "支持多版本同时运行",
+        "添加版本迁移指南"
+      ],
+      "owner": "backend-team",
+      "estimated_effort": "8 hours",
+      "migration_path": "1. 设计版本控制方案\n2. 实现版本路由\n3. 添加版本中间件\n4. 编写迁移文档",
+      "blocking_issues": ["APH-007"],
+      "related_items": []
+    },
+    {
+      "id": "APH-009",
+      "title": "安全头配置",
+      "category": "Security Headers",
+      "priority": "HIGH",
+      "tier": "immediate_fix",
+      "risk_level": "high",
+      "status": "pending",
+      "description": "添加标准安全响应头，增强 API 安全性。",
+      "evidence": {
+        "missing_headers": [
+          "Content-Security-Policy",
+          "X-Content-Type-Options",
+          "X-Frame-Options",
+          "Strict-Transport-Security",
+          "X-XSS-Protection"
+        ]
+      },
+      "acceptance_criteria": [
+        "实现安全头中间件",
+        "配置 CSP 策略",
+        "启用 HSTS（生产环境）",
+        "添加安全头测试"
+      ],
+      "owner": "backend-team",
+      "estimated_effort": "3 hours",
+      "migration_path": "1. 创建安全头中间件\n2. 定义环境相关策略\n3. 集成到 FastAPI\n4. 验证响应头",
+      "blocking_issues": [],
+      "related_items": ["APH-004"]
+    },
+    {
+      "id": "APH-010",
+      "title": "API 审计日志",
+      "category": "Observability",
+      "priority": "HIGH",
+      "tier": "subsequent_governance",
+      "risk_level": "high",
+      "status": "pending",
+      "description": "实现全面的 API 审计日志，记录所有请求和响应。",
+      "evidence": {
+        "current_state": "缺少统一的审计日志",
+        "risk": "无法追踪安全事件和异常行为"
+      },
+      "acceptance_criteria": [
+        "记录所有 API 请求",
+        "记录认证失败",
+        "记录权限拒绝",
+        "记录敏感操作",
+        "日志符合合规要求"
+      ],
+      "owner": "backend-team",
+      "estimated_effort": "8 hours",
+      "migration_path": "1. 设计日志 schema\n2. 实现审计中间件\n3. 集成日志收集\n4. 添加日志分析",
+      "blocking_issues": [],
+      "related_items": ["APH-002", "APH-019"]
+    },
+    {
+      "id": "APH-011",
+      "title": "Redis 后端配置",
+      "category": "Infrastructure",
+      "priority": "HIGH",
+      "tier": "immediate_fix",
+      "risk_level": "high",
+      "status": "pending",
+      "description": "配置 Redis 用于速率限制、会话管理和缓存。",
+      "evidence": {
+        "current_state": "settings.py 有 BEIDOU_STORE 配置但未完全使用",
+        "dependency": "APH-003 需要存储速率限制数据"
+      },
+      "acceptance_criteria": [
+        "部署 Redis 实例",
+        "配置 Redis 连接池",
+        "实现 Redis 健康检查",
+        "添加 Redis 故障转移"
+      ],
+      "owner": "devops-team",
+      "estimated_effort": "6 hours",
+      "migration_path": "1. 设置 Redis 基础设施\n2. 配置连接字符串\n3. 实现连接池\n4. 添加监控",
+      "blocking_issues": [],
+      "related_items": ["APH-003", "APH-012"]
+    },
+    {
+      "id": "APH-012",
+      "title": "会话管理",
+      "category": "Session Management",
+      "priority": "MEDIUM",
+      "tier": "subsequent_governance",
+      "risk_level": "medium",
+      "status": "pending",
+      "description": "实现安全的会话管理，支持会话创建、验证和销毁。",
+      "evidence": {
+        "current_state": "无会话管理",
+        "use_case": "用户认证后需要维持会话状态"
+      },
+      "acceptance_criteria": [
+        "实现会话创建接口",
+        "使用 Redis 存储会话",
+        "实现会话过期逻辑",
+        "支持会话撤销"
+      ],
+      "owner": "backend-team",
+      "estimated_effort": "8 hours",
+      "migration_path": "1. 设计会话数据模型\n2. 实现会话 CRUD\n3. 集成 Redis\n4. 添加会话中间件",
+      "blocking_issues": ["APH-011"],
+      "related_items": ["APH-002"]
+    },
+    {
+      "id": "APH-013",
+      "title": "API 文档生成",
+      "category": "Documentation",
+      "priority": "MEDIUM",
+      "tier": "subsequent_governance",
+      "risk_level": "low",
+      "status": "pending",
+      "description": "生成和维护 API 文档，包括 OpenAPI/Swagger 规范。",
+      "evidence": {
+        "current_state": "FastAPI 有基础 Swagger UI",
+        "gaps": [
+          "缺少详细的 endpoint 描述",
+          "缺少示例请求和响应",
+          "缺少认证说明"
+        ]
+      },
+      "acceptance_criteria": [
+        "完善 FastAPI 文档字符串",
+        "添加请求/响应示例",
+        "添加认证流程说明",
+        "生成静态文档"
+      ],
+      "owner": "backend-team",
+      "estimated_effort": "6 hours",
+      "migration_path": "1. 审查现有 endpoint\n2. 添加详细文档\n3. 配置 Swagger UI\n4. 生成静态文档",
+      "blocking_issues": [],
+      "related_items": ["APH-007"]
+    },
+    {
+      "id": "APH-014",
+      "title": "API 错误码标准化",
+      "category": "API Standards",
+      "priority": "MEDIUM",
+      "tier": "subsequent_governance",
+      "risk_level": "medium",
+      "status": "pending",
+      "description": "统一错误码格式和错误响应结构。",
+      "evidence": {
+        "inconsistent_codes": [
+          "l4_api.py 使用 E001-E007",
+          "n8n_orchestration.py 使用不同格式",
+          "缺少全局错误码注册表"
+        ]
+      },
+      "acceptance_criteria": [
+        "创建全局错误码注册表",
+        "定义标准错误响应格式",
+        "实现错误码生成工具",
+        "添加多语言错误消息支持"
+      ],
+      "owner": "backend-team",
+      "estimated_effort": "6 hours",
+      "migration_path": "1. 设计错误码体系\n2. 创建错误码模块\n3. 更新所有 endpoint\n4. 添加错误文档",
+      "blocking_issues": ["APH-007"],
+      "related_items": []
+    },
+    {
+      "id": "APH-015",
+      "title": "根目录依赖文件整理",
+      "category": "Dependency Management",
+      "priority": "MEDIUM",
+      "tier": "immediate_fix",
+      "risk_level": "medium",
+      "status": "pending",
+      "description": "根目录 requirements.txt 过于简单，需要完善依赖管理。",
+      "evidence": {
+        "current_requirements": "只有 8 个基础依赖",
+        "missing": [
+          "fastapi 相关依赖",
+          "安全相关依赖",
+          "数据库驱动"
+        ]
+      },
+      "acceptance_criteria": [
+        "添加所有必需依赖",
+        "分离开发/生产依赖",
+        "添加依赖版本锁定",
+        "创建 requirements/ 目录结构"
+      ],
+      "owner": "backend-team",
+      "estimated_effort": "2 hours",
+      "migration_path": "1. 审计所有导入\n2. 分类依赖\n3. 创建分层 requirements\n4. 添加依赖扫描",
+      "blocking_issues": [],
+      "related_items": ["APH-006"]
+    },
+    {
+      "id": "APH-016",
+      "title": "API 健康检查增强",
+      "category": "Observability",
+      "priority": "MEDIUM",
+      "tier": "subsequent_governance",
+      "risk_level": "low",
+      "status": "pending",
+      "description": "增强健康检查 endpoint，包含系统状态和依赖检查。",
+      "evidence": {
+        "current_health": "/api/v1/health 只返回简单状态",
+        "missing_checks": [
+          "数据库连接",
+          "Redis 连接",
+          "外部服务状态"
+        ]
+      },
+      "acceptance_criteria": [
+        "添加数据库健康检查",
+        "添加 Redis 健康检查",
+        "添加内存使用检查",
+        "支持详细模式（/health?detailed=1）"
+      ],
+      "owner": "backend-team",
+      "estimated_effort": "4 hours",
+      "migration_path": "1. 设计健康检查框架\n2. 实现各组件检查\n3. 聚合健康状态\n4. 添加健康指标",
+      "blocking_issues": ["APH-011"],
+      "related_items": ["APH-020"]
+    },
+    {
+      "id": "APH-017",
+      "title": "API 监控和告警",
+      "category": "Observability",
+      "priority": "HIGH",
+      "tier": "subsequent_governance",
+      "risk_level": "high",
+      "status": "pending",
+      "description": "实现 API 监控和告警，及时发现异常行为。",
+      "evidence": {
+        "current_state": "无监控和告警",
+        "risk": "无法及时发现安全问题和性能问题"
+      },
+      "acceptance_criteria": [
+        "收集 API 指标（请求量、延迟、错误率）",
+        "实现异常检测",
+        "配置告警规则",
+        "集成告警通道"
+      ],
+      "owner": "devops-team",
+      "estimated_effort": "12 hours",
+      "migration_path": "1. 选择监控方案\n2. 实现指标收集\n3. 配置告警规则\n4. 测试告警流程",
+      "blocking_issues": ["APH-010"],
+      "related_items": ["APH-019"]
+    },
+    {
+      "id": "APH-018",
+      "title": "密钥轮换策略",
+      "category": "Security Operations",
+      "priority": "MEDIUM",
+      "tier": "subsequent_governance",
+      "risk_level": "medium",
+      "status": "pending",
+      "description": "实现定期密钥轮换机制，减少密钥泄露风险。",
+      "evidence": {
+        "current_state": "无密钥轮换机制",
+        "risk": "长期使用相同密钥增加泄露风险"
+      },
+      "acceptance_criteria": [
+        "实现密钥过期机制",
+        "支持密钥轮换",
+        "添加轮换提醒",
+        "维护密钥历史"
+      ],
+      "owner": "security-team",
+      "estimated_effort": "8 hours",
+      "migration_path": "1. 设计轮换策略\n2. 实现过期检查\n3. 创建轮换工具\n4. 添加操作文档",
+      "blocking_issues": ["APH-005"],
+      "related_items": []
+    },
+    {
+      "id": "APH-019",
+      "title": "安全合规检查",
+      "category": "Compliance",
+      "priority": "HIGH",
+      "tier": "subsequent_governance",
+      "risk_level": "high",
+      "status": "pending",
+      "description": "实现安全合规检查，确保 API 符合安全标准。",
+      "evidence": {
+        "current_state": "无安全合规检查",
+        "standards": ["OWASP API Security Top 10"]
+      },
+      "acceptance_criteria": [
+        "实现 OWASP 检查",
+        "生成合规报告",
+        "集成到 CI/CD",
+        "定期安全审计"
+      ],
+      "owner": "security-team",
+      "estimated_effort": "16 hours",
+      "migration_path": "1. 选择安全扫描工具\n2. 配置扫描规则\n3. 集成到 pipeline\n4. 设置报告生成",
+      "blocking_issues": [],
+      "related_items": ["APH-010", "APH-017"]
+    },
+    {
+      "id": "APH-020",
+      "title": "API 性能优化",
+      "category": "Performance",
+      "priority": "MEDIUM",
+      "tier": "subsequent_governance",
+      "risk_level": "medium",
+      "status": "pending",
+      "description": "优化 API 性能，减少响应时间和资源消耗。",
+      "evidence": {
+        "current_state": "未进行性能优化",
+        "potential_issues": [
+          "缺少响应缓存",
+          "N+1 查询问题",
+          "未使用连接池"
+        ]
+      },
+      "acceptance_criteria": [
+        "实现响应缓存",
+        "优化数据库查询",
+        "使用连接池",
+        "添加性能监控"
+      ],
+      "owner": "backend-team",
+      "estimated_effort": "12 hours",
+      "migration_path": "1. 性能基准测试\n2. 识别瓶颈\n3. 实施优化\n4. 验证效果",
+      "blocking_issues": ["APH-011"],
+      "related_items": ["APH-016", "APH-017"]
+    },
+    {
+      "id": "APH-021",
+      "title": "API 网关集成",
+      "category": "Infrastructure",
+      "priority": "MEDIUM",
+      "tier": "subsequent_governance",
+      "risk_level": "medium",
+      "status": "pending",
+      "description": "集成 API 网关，统一入口和流量管理。",
+      "evidence": {
+        "current_state": "直接暴露 FastAPI 服务",
+        "benefits": [
+          "统一认证",
+          "流量控制",
+          "负载均衡",
+          "API 版本管理"
+        ]
+      },
+      "acceptance_criteria": [
+        "选择 API 网关方案",
+        "配置路由规则",
+        "集成认证",
+        "配置流量控制"
+      ],
+      "owner": "devops-team",
+      "estimated_effort": "16 hours",
+      "migration_path": "1. 技术选型\n2. 部署网关\n3. 配置路由\n4. 迁移流量",
+      "blocking_issues": ["APH-002"],
+      "related_items": ["APH-003"]
+    },
+    {
+      "id": "APH-022",
+      "title": "GraphQL API 支持",
+      "category": "API Evolution",
+      "priority": "LOW",
+      "tier": "subsequent_governance",
+      "risk_level": "low",
+      "status": "pending",
+      "description": "评估和实现 GraphQL API 支持，提供更灵活的数据查询。",
+      "evidence": {
+        "current_state": "仅支持 REST API",
+        "use_case": "前端需要更灵活的数据查询"
+      },
+      "acceptance_criteria": [
+        "完成 GraphQL 技术调研",
+        "实现 GraphQL schema",
+        "集成认证和授权",
+        "性能优化"
+      ],
+      "owner": "backend-team",
+      "estimated_effort": "24 hours",
+      "migration_path": "1. 技术调研\n2. 概念验证\n3. 生产实现\n4. 文档和培训",
+      "blocking_issues": ["APH-002", "APH-007"],
+      "related_items": []
+    },
+    {
+      "id": "APH-023",
+      "title": "API 测试覆盖率",
+      "category": "Testing",
+      "priority": "MEDIUM",
+      "tier": "subsequent_governance",
+      "risk_level": "medium",
+      "status": "pending",
+      "description": "提高 API 测试覆盖率，确保代码质量。",
+      "evidence": {
+        "current_state": "部分测试存在，但覆盖率不足",
+        "target": "80% 代码覆盖率"
+      },
+      "acceptance_criteria": [
+        "编写单元测试",
+        "编写集成测试",
+        "编写安全测试",
+        "配置 CI 测试"
+      ],
+      "owner": "qa-team",
+      "estimated_effort": "20 hours",
+      "migration_path": "1. 审计现有测试\n2. 识别测试缺口\n3. 编写测试用例\n4. 配置自动化",
+      "blocking_issues": [],
+      "related_items": ["APH-019"]
+    },
+    {
+      "id": "APH-024",
+      "title": "API 变更管理流程",
+      "category": "Governance",
+      "priority": "MEDIUM",
+      "tier": "subsequent_governance",
+      "risk_level": "medium",
+      "status": "pending",
+      "description": "建立 API 变更管理流程，确保 API 变更可控和可追溯。",
+      "evidence": {
+        "current_state": "无正式变更管理流程",
+        "risk": "API 变更可能破坏现有客户端"
+      },
+      "acceptance_criteria": [
+        "定义变更生命周期",
+        "实现变更审批流程",
+        "维护变更日志",
+        "通知机制"
+      ],
+      "owner": "backend-team",
+      "estimated_effort": "8 hours",
+      "migration_path": "1. 设计流程\n2. 实现工具\n3. 集成到 workflow\n4. 培训和文档",
+      "blocking_issues": ["APH-008"],
+      "related_items": ["APH-013"]
+    }
+  ],
+  "immediate_fix_summary": {
+    "description": "以下项目需要在本迭代内完成，以解决关键安全风险",
+    "items": [
+      "APH-001: CORS 统一配置",
+      "APH-002: API 认证中间件",
+      "APH-003: 速率限制",
+      "APH-004: 输入验证",
+      "APH-005: API 密钥管理",
+      "APH-006: 根目录脚本清理",
+      "APH-007: 响应格式统一",
+      "APH-009: 安全头配置"
+    ],
+    "total_effort_hours": 39,
+    "recommended_sprint": "current"
+  },
+  "subsequent_governance_summary": {
+    "description": "以下项目可以在后续迭代中逐步实施",
+    "items": [
+      "APH-008: API 版本控制",
+      "APH-010: 审计日志",
+      "APH-011: Redis 配置",
+      "APH-012: 会话管理",
+      "APH-013: API 文档",
+      "APH-014: 错误码标准化",
+      "APH-015: 依赖整理",
+      "APH-016: 健康检查增强",
+      "APH-017: 监控告警",
+      "APH-018: 密钥轮换",
+      "APH-019: 合规检查",
+      "APH-020: 性能优化",
+      "APH-021: API 网关",
+      "APH-022: GraphQL 支持",
+      "APH-023: 测试覆盖率",
+      "APH-024: 变更管理"
+    ],
+    "total_effort_hours": 150,
+    "recommended_roadmap": {
+      "sprint_2": ["APH-010", "APH-011", "APH-015", "APH-016"],
+      "sprint_3": ["APH-008", "APH-012", "APH-013", "APH-014"],
+      "sprint_4": ["APH-017", "APH-019", "APH-020"],
+      "sprint_5": ["APH-018", "APH-021", "APH-023"],
+      "sprint_6": ["APH-022", "APH-024"]
+    }
+  },
+  "migration_path": {
+    "phase_1_critical_security": {
+      "description": "立即修复关键安全漏洞",
+      "duration": "1-2 weeks",
+      "items": ["APH-001", "APH-002", "APH-004", "APH-009"],
+      "success_criteria": [
+        "所有 API 使用统一 CORS 配置",
+        "所有受保护 endpoint 需要认证",
+        "输入验证覆盖所有用户输入",
+        "安全头正确配置"
+      ]
+    },
+    "phase_2_infrastructure": {
+      "description": "建立安全和可观测性基础设施",
+      "duration": "2-3 weeks",
+      "items": ["APH-003", "APH-005", "APH-010", "APH-011", "APH-017"],
+      "success_criteria": [
+        "速率限制上线",
+        "API Key 管理系统可用",
+        "审计日志收集完成",
+        "监控和告警配置完成"
+      ]
+    },
+    "phase_3_governance": {
+      "description": "建立长期治理机制",
+      "duration": "3-4 weeks",
+      "items": ["APH-008", "APH-013", "APH-014", "APH-018", "APH-019", "APH-024"],
+      "success_criteria": [
+        "API 版本控制实施",
+        "文档完善",
+        "错误码标准化",
+        "合规检查自动化",
+        "变更流程建立"
+      ]
+    }
+  }
+}

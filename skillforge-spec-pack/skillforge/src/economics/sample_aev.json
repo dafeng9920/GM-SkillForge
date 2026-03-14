@@ -1,0 +1,81 @@
+{
+  "aev_id": "AEV-L4-001-A1B2C3D4",
+  "skill_id": "skillforge-example-skill",
+  "skill_name": "Example SEO Analysis Skill",
+  "diagnosis_id": "DX-L4-001-A1B2C3D4",
+  "aev_total": 50000.0,
+  "confidence_interval": {
+    "lower": 45100.0,
+    "upper": 54900.0,
+    "confidence_level": 0.95
+  },
+  "currency": "USD",
+  "period": "year",
+  "components": {
+    "v_token": {
+      "value": 20000.0,
+      "description": "Token staking rewards from protocol",
+      "evidence_ref": "EV-AEV-001-A1B2C3D5",
+      "source_description": "Protocol staking APR (8%) * staked amount ($250,000)",
+      "calculation_method": "V_token = 0.08 * 250000 = $20,000/year"
+    },
+    "v_compute": {
+      "value": 15000.0,
+      "description": "Compute cost savings from optimized execution",
+      "evidence_ref": "EV-AEV-002-A1B2C3D6",
+      "source_description": "Execution metrics: 50,000 runs/year * $0.30/compute unit",
+      "calculation_method": "V_compute = 50000 * 0.30 = $15,000/year"
+    },
+    "v_risk": {
+      "value": 8000.0,
+      "description": "Risk mitigation from automated validation",
+      "evidence_ref": "EV-AEV-003-A1B2C3D7",
+      "source_description": "Risk exposure ($100,000) * incident probability (10%) * mitigation factor (80%)",
+      "calculation_method": "V_risk = 100000 * 0.10 * 0.80 = $8,000/year"
+    },
+    "v_trust": {
+      "value": 7000.0,
+      "description": "Trust score premium from high reliability",
+      "evidence_ref": "EV-AEV-004-A1B2C3D8",
+      "source_description": "Trust score (85/100) * user base (1000) * premium rate ($0.082/user)",
+      "calculation_method": "V_trust = 0.85 * 1000 * 0.082 = $7,000/year"
+    }
+  },
+  "formula": "AEV = V_token + V_compute + V_risk + V_trust",
+  "evidence_refs": [
+    {
+      "ref_id": "EV-AEV-001-A1B2C3D5",
+      "type": "metric",
+      "source_locator": "aev.v_token",
+      "content_hash": "a1b2c3d4e5f6",
+      "timestamp": "2026-02-26T10:00:00Z"
+    },
+    {
+      "ref_id": "EV-AEV-002-A1B2C3D6",
+      "type": "metric",
+      "source_locator": "aev.v_compute",
+      "content_hash": "b2c3d4e5f6a7",
+      "timestamp": "2026-02-26T10:00:00Z"
+    },
+    {
+      "ref_id": "EV-AEV-003-A1B2C3D7",
+      "type": "metric",
+      "source_locator": "aev.v_risk",
+      "content_hash": "c3d4e5f6a7b8",
+      "timestamp": "2026-02-26T10:00:00Z"
+    },
+    {
+      "ref_id": "EV-AEV-004-A1B2C3D8",
+      "type": "metric",
+      "source_locator": "aev.v_trust",
+      "content_hash": "d4e5f6a7b8c9",
+      "timestamp": "2026-02-26T10:00:00Z"
+    }
+  ],
+  "generated_at": "2026-02-26T10:00:00Z",
+  "metadata": {
+    "model": "gpt-5.1-mini",
+    "task_id": "L4-04",
+    "executor": "Kior-B"
+  }
+}

@@ -1,0 +1,76 @@
+hash_spec_version: v0
+
+global:
+  exclude_field_names:
+    - timestamp
+    - created_at
+    - updated_at
+    - duration
+    - latency
+    - run_id
+    - random
+
+demand:
+  required_paths:
+    - mode
+    - trigger
+    - sources
+    - transforms
+    - destinations
+    - constraints
+    - acceptance.success_criteria
+  exclude_field_names:
+    - summary
+    - clarifications_needed
+  list_sort_rules:
+    "sources": ["kind", "locator"]
+    "destinations": ["kind", "locator", "write_mode"]
+    "acceptance.success_criteria": []
+
+contract:
+  required_paths:
+    - schema_version
+    - intent_id
+    - goals.primary
+    - io.inputs
+    - io.outputs
+    - controls
+    - quality
+    - risk
+    - gate_plan
+  exclude_field_names:
+    - at_time
+  fixed_list_order_paths:
+    - gate_plan
+  list_sort_rules:
+    "goals.non_goals": []
+    "controls.allowed_domains": []
+    "controls.human_approval_points": []
+    "quality.must_have": []
+    "risk.deny_list": []
+    "risk.allowed_actions": []
+
+decision:
+  required_paths:
+    - gate_decisions
+  fixed_gate_order:
+    - intake_repo
+    - license_gate
+    - repo_scan_fit_score
+    - draft_skill_spec
+    - constitution_risk_gate
+    - scaffold_skill_impl
+    - sandbox_test_and_trace
+    - pack_audit_and_publish
+  include_fields_per_decision:
+    - gate_name
+    - status
+    - level
+    - error_code
+    - issue_keys
+    - required_changes
+    - evidence_refs
+  list_sort_rules:
+    "issue_keys": []
+    "required_changes": []
+    "evidence_refs": []

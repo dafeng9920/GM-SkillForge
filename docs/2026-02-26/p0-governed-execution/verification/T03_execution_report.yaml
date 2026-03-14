@@ -1,0 +1,198 @@
+task_id: "T03"
+executor: "vs--cc3"
+status: "完成"
+job_id: "P0-L6-AUTH-20260226-001"
+wave: "Wave 1"
+issue_ref: "ISSUE-02"
+
+# 交付物清单
+deliverables:
+  - path: "skillforge-spec-pack/skillforge/src/utils/evidence_envelope.py"
+    action: "新建"
+    lines_changed: 418
+    description: "Evidence Envelope + Body 结构实现模块"
+
+  - path: "skillforge-spec-pack/skillforge/tests/test_evidence_envelope.py"
+    action: "新建"
+    lines_changed: 445
+    description: "Evidence Envelope 测试套件 (31 个用例)"
+
+  - path: "skillforge-spec-pack/skillforge/src/utils/__init__.py"
+    action: "修改"
+    lines_changed: 22
+    description: "更新导出 evidence_envelope 模块"
+
+  - path: "docs/2026-02-26/p0-governed-execution/verification/T03_envelope_body_report.md"
+    action: "新建"
+    lines_changed: 120
+    description: "T03 实现报告"
+
+# Gate 自检结果
+gate_self_check:
+  - command: "test -f skillforge-spec-pack/skillforge/src/utils/evidence_envelope.py"
+    result: "PASS - 核心模块存在"
+
+  - command: "test -f skillforge-spec-pack/skillforge/tests/test_evidence_envelope.py"
+    result: "PASS - 测试文件存在"
+
+  - command: "cd skillforge-spec-pack && python -c 'from skillforge.src.utils.evidence_envelope import EvidenceEnvelope, EvidenceEnvelopeBuilder'"
+    result: "PASS - 导入成功"
+
+  - command: "cd skillforge-spec-pack && python -m pytest skillforge/tests/test_evidence_envelope.py -v"
+    result: "PASS - 31 passed in 0.08s"
+
+  - command: "cd skillforge-spec-pack && python -c \"from skillforge.src.utils.evidence_envelope import validate_envelope_schema; print(len(validate_envelope_schema({'header':{'envelope_id':'x','schema_version':'1.0.0','created_at':'t','node_id':'n','body_hash':'h'},'signature':{'algorithm':'Ed25519','signed_fields':[]},'cert':{'algorithm':'Ed25519'}})))\""
+    result: "PASS - Schema 验证返回 0 错误"
+
+# ISSUE-02 验收标准对齐
+acceptance_criteria:
+  - criteria: "按 v1 结构拆分 header/keywrap/ciphertext/signature/cert"
+    status: "PASS"
+    evidence: "EvidenceEnvelope 包含全部 5 个组件，每个组件独立 dataclass"
+
+  - criteria: "可生成完整 envelope"
+    status: "PASS"
+    evidence: "EvidenceEnvelopeBuilder 可构建完整 envelope，to_json() 生成有效 JSON"
+
+  - criteria: "字段齐全且通过 schema 校验"
+    status: "PASS"
+    evidence: "validate_envelope_schema() 验证通过，31 个测试用例全部通过"
+
+# 证据引用
+evidence_refs:
+  - id: "EV-T03-CODE-001"
+    kind: "FILE"
+    locator: "skillforge-spec-pack/skillforge/src/utils/evidence_envelope.py:1-418"
+    description: "Envelope + Body 核心实现"
+
+  - id: "EV-T03-TEST-001"
+    kind: "FILE"
+    locator: "skillforge-spec-pack/skillforge/tests/test_evidence_envelope.py:1-445"
+    description: "31 个测试用例"
+
+  - id: "EV-T03-TEST-RUN-001"
+    kind: "OUTPUT"
+    locator: "pytest execution"
+    description: "测试运行结果: 31 passed in 0.08s"
+
+  - id: "EV-T03-REPORT-001"
+    kind: "FILE"
+    locator: "docs/2026-02-26/p0-governed-execution/verification/T03_envelope_body_report.md"
+    description: "实现报告"
+
+# 三权记录路径
+governance_records:
+  review: "docs/2026-02-26/p0-governed-execution/verification/T03_gate_decision.json"
+  compliance: "docs/2026-02-26/p0-governed-execution/verification/T03_compliance_attestation.json"
+  execution: "docs/2026-02-26/p0-governed-execution/verification/T03_execution_report.yaml"
+
+# 后续任务依赖
+downstream_unblock:
+  - "T04 (混合加密)"
+  - "T05 (Ed25519 签名)"
+  - "T06 (Nonce Challenge)"
+  - "T08 (回执哈希)"
+
+# 测试覆盖
+test_coverage:
+  total_tests: 31
+  passed: 31
+  failed: 0
+  test_classes:
+    - name: "TestEnvelopeHeader"
+      tests: 3
+      status: "all passed"
+    - name: "TestKeyWrap"
+      tests: 2
+      status: "all passed"
+    - name: "TestCiphertext"
+      tests: 2
+      status: "all passed"
+    - name: "TestSignature"
+      tests: 2
+      status: "all passed"
+    - name: "TestCertificate"
+      tests: 2
+      status: "all passed"
+    - name: "TestEvidenceEnvelope"
+      tests: 4
+      status: "all passed"
+    - name: "TestEvidenceEnvelopeBuilder"
+      tests: 6
+      status: "all passed"
+    - name: "TestValidateEnvelopeSchema"
+      tests: 4
+      status: "all passed"
+    - name: "TestConvenienceFunctions"
+      tests: 2
+      status: "all passed"
+    - name: "TestSchemaVersion"
+      tests: 2
+      status: "all passed"
+    - name: "TestIntegration"
+      tests: 2
+      status: "all passed"
+
+# Envelope 结构说明
+envelope_structure:
+  header:
+    required_fields:
+      - "envelope_id"
+      - "schema_version"
+      - "created_at"
+      - "node_id"
+      - "body_hash"
+    optional_fields:
+      - "body_encoding"
+      - "compression"
+      - "expires_at"
+      - "nonce"
+      - "trace_id"
+
+  keywrap:
+    algorithm: "RSA-OAEP-256"
+    required_fields:
+      - "encrypted_dek"
+      - "key_id"
+
+  ciphertext:
+    algorithm: "AES-256-GCM"
+    required_fields:
+      - "iv"
+      - "data"
+      - "tag"
+
+  signature:
+    algorithm: "Ed25519"
+    required_fields:
+      - "value"
+      - "signed_fields"
+
+  cert:
+    algorithm: "Ed25519"
+    required_fields:
+      - "node_id"
+      - "public_key"
+
+# 备注
+notes: |
+  T03 完成了 Evidence Envelope + Body 结构的实现和测试。
+
+  关键成果：
+  1. 实现了 EnvelopeHeader/KeyWrap/Ciphertext/Signature/Certificate 五个组件
+  2. 实现了 EvidenceEnvelopeBuilder 构建器模式
+  3. 实现了 validate_envelope_schema() schema 校验函数
+  4. 实现了 create_signed_envelope() 和 create_encrypted_envelope() 便捷函数
+  5. 编写了 31 个测试用例，全部通过
+
+  验收标准对齐：
+  - ✅ v1 结构：header/keywrap/ciphertext/signature/cert 全部实现
+  - ✅ 可生成完整 envelope：EvidenceEnvelopeBuilder 支持构建
+  - ✅ schema 校验通过：validate_envelope_schema() 验证
+
+  无副作用操作，无需 permit。
+
+# 执行时间
+started_at: "2026-02-26T18:00:00Z"
+completed_at: "2026-02-26T18:45:00Z"
+duration_minutes: 45

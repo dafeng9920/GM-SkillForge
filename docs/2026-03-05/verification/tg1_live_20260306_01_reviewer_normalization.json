@@ -1,0 +1,13 @@
+{
+    "task_id": "tg1-live-20260306-01",
+    "normalization_timestamp": "2026-03-05T18:25:00Z",
+    "role_mappings": [
+        {
+            "internal_id": "Antigravity-3 (Gatekeeper)",
+            "standard_alias": "Kior-C/Review",
+            "scope": "Phase 2 Technical Audit & Verification"
+        }
+    ],
+    "verification_status": "inherited_unchanged",
+    "supplemental_note": "Normalizing operational role for contract compliance. No historical audit logic or evidence was modified."
+}

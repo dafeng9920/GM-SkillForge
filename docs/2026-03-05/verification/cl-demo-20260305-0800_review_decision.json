@@ -1,0 +1,22 @@
+{
+  "review_meta": {
+    "reviewer": "Kior-C",
+    "reviewed_at_utc": "2026-03-05T07:53:06Z",
+    "execution_environment": "LOCAL-ANTIGRAVITY",
+    "task_id": "cl-demo-20260305-0800",
+    "baseline_id": "AG2-FIXED-CALIBER-TG1-20260304"
+  },
+  "review_decision": {
+    "status": "ALLOW",
+    "fail_closed_policy": true,
+    "blocking_evidence": [],
+    "required_changes": []
+  },
+  "evidence_refs": {
+    "task_contract": ".tmp/openclaw-dispatch/cl-demo-20260305-0800/task_contract.json",
+    "execution_receipt": ".tmp/openclaw-dispatch/cl-demo-20260305-0800/execution_receipt.json",
+    "stdout_log": ".tmp/openclaw-dispatch/cl-demo-20260305-0800/stdout.log",
+    "stderr_log": ".tmp/openclaw-dispatch/cl-demo-20260305-0800/stderr.log",
+    "audit_event": ".tmp/openclaw-dispatch/cl-demo-20260305-0800/audit_event.json"
+  }
+}

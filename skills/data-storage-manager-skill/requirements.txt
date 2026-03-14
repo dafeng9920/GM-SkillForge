@@ -1,0 +1,6 @@
+# Data Storage Manager Dependencies
+
+asyncpg>=0.28.0
+sqlalchemy>=2.0.0
+minio>=7.1.0
+pandas>=2.0.0
