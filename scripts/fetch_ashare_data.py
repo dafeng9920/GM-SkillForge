@@ -38,6 +38,7 @@ def fetch_market_snapshot():
                         "name": [c for c in cols if "名称" in c],
                         "fund": [c for c in cols if "封单" in c and "金" in c],
                         "turnover": [c for c in cols if "换手率" in c],
+                        "amount": [c for c in cols if "成交额" in c],
                         "limit_up": [c for c in cols if "连板" in c]
                     }
                     
@@ -48,6 +49,7 @@ def fetch_market_snapshot():
                             "代码": row[mapping["code"][0]] if mapping["code"] else "N/A",
                             "名称": row[mapping["name"][0]] if mapping["name"] else "N/A",
                             "封单资金": row[mapping["fund"][0]] if mapping["fund"] else 0,
+                            "成交额": row[mapping["amount"][0]] if mapping["amount"] else 0,
                             "换手率": row[mapping["turnover"][0]] if mapping["turnover"] else 0,
                             "连板数": row[mapping["limit_up"][0]] if mapping["limit_up"] else 1
                         }
