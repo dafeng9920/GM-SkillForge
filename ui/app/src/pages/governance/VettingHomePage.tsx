@@ -5,6 +5,7 @@ import type { ContextCanvasHistoryItem } from '../../components/governance/Conte
 import { useGovernanceCanvasSlot } from '../../components/governance/GovernanceCanvasSlot';
 import type { ComposerAction } from '../../components/governance/GovernComposer';
 import { INTENT_ROUTE_MAP, useGovernanceInteraction } from '../../features/governanceInteraction/interaction';
+import { useGovernancePromptQuerySync } from '../../features/governanceInteraction/useGovernancePromptQuerySync';
 import styles from './VettingPage.module.css';
 
 const VettingHomePage: React.FC = () => {
@@ -21,6 +22,7 @@ const VettingHomePage: React.FC = () => {
     submitDraft,
     isTyping,
   } = useGovernanceInteraction();
+  useGovernancePromptQuerySync({ intentHint: 'vetting' });
   const copy =
     language === 'zh'
       ? {

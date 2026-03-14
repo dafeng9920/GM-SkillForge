@@ -5,6 +5,7 @@ import type { ContextCanvasHistoryItem } from '../../components/governance/Conte
 import { useGovernanceCanvasSlot } from '../../components/governance/GovernanceCanvasSlot';
 import type { ComposerAction } from '../../components/governance/GovernComposer';
 import { INTENT_ROUTE_MAP, useGovernanceInteraction } from '../../features/governanceInteraction/interaction';
+import { useGovernancePromptQuerySync } from '../../features/governanceInteraction/useGovernancePromptQuerySync';
 import styles from './PermitPage.module.css';
 
 type PermitStatus = 'Active' | 'Pending' | 'Revoked' | 'Expired' | 'Superseded';
@@ -135,6 +136,7 @@ const PermitPage: React.FC = () => {
     submitDraft,
     isTyping,
   } = useGovernanceInteraction();
+  useGovernancePromptQuerySync({ intentHint: 'permit' });
   const copy =
     language === 'zh'
       ? {

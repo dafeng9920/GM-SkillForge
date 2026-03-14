@@ -28,6 +28,7 @@ import type { ContextCanvasHistoryItem } from '../../components/governance/Conte
 import { useGovernanceCanvasSlot } from '../../components/governance/GovernanceCanvasSlot';
 import type { ComposerAction } from '../../components/governance/GovernComposer';
 import { INTENT_ROUTE_MAP, useGovernanceInteraction } from '../../features/governanceInteraction/interaction';
+import { useGovernancePromptQuerySync } from '../../features/governanceInteraction/useGovernancePromptQuerySync';
 import styles from './AuditDetailPage.module.css';
 
 // ============================================
@@ -1315,6 +1316,7 @@ const AuditDetailPage: React.FC = () => {
     submitDraft,
     isTyping,
   } = useGovernanceInteraction();
+  useGovernancePromptQuerySync({ intentHint: 'audit' });
 
   // TODO: Replace with actual API call
   // const data = await fetchAuditDetail(auditId);

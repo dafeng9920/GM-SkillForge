@@ -27,6 +27,8 @@ export interface ContextCanvasModel {
   primaryDescription: string;
   primaryActionLabel: string;
   secondaryActionLabel?: string;
+  capabilityLabel?: string;
+  capabilitySegments?: string[];
   alternativesLabel: string;
   alternatives: Array<{
     key: CanvasIntentKey;
@@ -182,11 +184,11 @@ export const buildContextCanvasModel = (
       emptyTitle: copy.emptyTitle,
       emptyDescription: copy.emptyDescription,
       reasonLabel: copy.reasonLabel,
-      reasonText: INTENT_REASONS[language].unknown,
+      reasonText: decision.reason ?? INTENT_REASONS[language].unknown,
       primaryLabel: copy.primaryLabel,
       primaryTitle: copy.clarifyTitle,
       primaryDescription: copy.clarifyDescription,
-      primaryActionLabel: copy.clarifyAction,
+      primaryActionLabel: decision.nextActions?.[0]?.label ?? copy.clarifyAction,
       alternativesLabel: copy.alternativesLabel,
       alternatives,
     };
@@ -202,12 +204,14 @@ export const buildContextCanvasModel = (
     emptyTitle: copy.emptyTitle,
     emptyDescription: copy.emptyDescription,
     reasonLabel: copy.reasonLabel,
-    reasonText: INTENT_REASONS[language][decision.intent],
+    reasonText: decision.reason ?? INTENT_REASONS[language][decision.intent],
     primaryLabel: copy.primaryLabel,
     primaryTitle: descriptor.title,
     primaryDescription: descriptor.summary,
-    primaryActionLabel: descriptor.primaryAction,
-    secondaryActionLabel: descriptor.secondaryAction,
+    primaryActionLabel: decision.nextActions?.[0]?.label ?? descriptor.primaryAction,
+    secondaryActionLabel: decision.nextActions?.[1]?.label ?? descriptor.secondaryAction,
+    capabilityLabel: language === 'zh' ? '后端能力段' : 'Capability segments',
+    capabilitySegments: decision.capabilitySegments ?? [],
     alternativesLabel: copy.alternativesLabel,
     alternatives,
   };

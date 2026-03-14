@@ -3,12 +3,23 @@ export type IntentState = IntentKey | 'unknown';
 export type CanvasState = 'home' | 'clarify' | 'vetting' | 'audit' | 'permit' | 'overview';
 export type DecisionConfidence = 'high' | 'low';
 
+export interface DecisionNextAction {
+  id: string;
+  label: string;
+  intent?: IntentKey;
+  route_target?: string;
+}
+
 export interface InteractionDecision {
   intent: IntentState;
   canvas: CanvasState;
   confidence: DecisionConfidence;
   requiresClarification: boolean;
   routeTarget: string | null;
+  reason?: string;
+  nextActions?: DecisionNextAction[];
+  profile?: string | null;
+  capabilitySegments?: string[];
 }
 
 export const INTENT_ROUTE_MAP: Record<IntentKey, string> = {
@@ -92,5 +103,52 @@ export const resolveInteractionDecision = (
     confidence: requiresClarification ? 'low' : 'high',
     requiresClarification,
     routeTarget: requiresClarification ? null : INTENT_ROUTE_MAP[intent],
+    reason: requiresClarification
+      ? 'Input recorded, but more context is required before the governed flow can be selected safely.'
+      : intent === 'vetting'
+        ? 'Detected external asset / pre-install governance language. Route into governed vetting intake.'
+        : intent === 'audit'
+          ? 'Detected revision / evidence / gap review language. Route into audit detail.'
+          : 'Detected release / permit language. Route into formal permit handling.',
+    nextActions: requiresClarification
+      ? [
+          { id: 'clarify-vetting', label: 'Clarify as external skill intake', intent: 'vetting' },
+          { id: 'clarify-audit', label: 'Clarify as revision audit', intent: 'audit' },
+          { id: 'clarify-permit', label: 'Clarify as permit request', intent: 'permit' },
+        ]
+      : [
+          {
+            id: `open-${intent}`,
+            label:
+              intent === 'vetting'
+                ? 'Open vetting intake'
+                : intent === 'audit'
+                  ? 'Open audit detail'
+                  : 'Open permit page',
+            route_target: INTENT_ROUTE_MAP[intent],
+          },
+        ],
+    profile:
+      intent === 'vetting'
+        ? 'external_skill_vetting'
+        : intent === 'audit'
+          ? 'revision_audit'
+          : intent === 'permit'
+            ? 'permit_release'
+            : null,
+    capabilitySegments:
+      intent === 'vetting'
+        ? [
+            'source_trust_scan',
+            'code_redline_scan',
+            'permission_capability_fit_review',
+            'risk_adjudication',
+            'install_gate',
+          ]
+        : intent === 'audit'
+          ? ['evidence_review', 'gap_adjudication', 'decision_explanation']
+          : intent === 'permit'
+            ? ['permit_binding', 'scope_conditions', 'release_gate']
+            : [],
   };
 };

@@ -4,6 +4,7 @@ import { useLanguage } from '../../app/i18n';
 import { ContextCanvasHost, type ContextCanvasHistoryItem } from '../../components/governance/ContextCanvasHost';
 import type { ComposerAction } from '../../components/governance/GovernComposer';
 import { useGovernanceInteraction } from '../../features/governanceInteraction/interaction';
+import { useGovernancePromptQuerySync } from '../../features/governanceInteraction/useGovernancePromptQuerySync';
 import type { IntentState } from '../../features/governanceInteraction/orchestrator';
 import {
   buildContextCanvasModel,
@@ -349,6 +350,7 @@ const DashboardPage: React.FC = () => {
     latestTurns,
     isTyping,
   } = useGovernanceInteraction();
+  useGovernancePromptQuerySync();
   const copy = PAGE_COPY[language];
   const routeDescriptors = getCanvasRouteDescriptors(language);
   const currentTurn = isTyping ? draft.trim() : latestTurn?.userInput || '';

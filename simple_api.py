@@ -33,6 +33,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+GOVERNANCE_ROUTE_MAP = {
+    "vetting": "/intake/vetting",
+    "audit": "/audit/detail",
+    "permit": "/permit",
+}
+
+VETTING_PROFILE_SEGMENTS = [
+    "source_trust_scan",
+    "code_redline_scan",
+    "permission_capability_fit_review",
+    "risk_adjudication",
+    "install_gate",
+]
+
 # ============================================================================
 # Helper Functions
 # ============================================================================
@@ -46,6 +60,94 @@ def generate_run_id() -> str:
 def now_iso() -> str:
     """Return ISO-8601 UTC timestamp."""
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+def infer_governance_intent(raw_input: str, intent_hint: str = "unknown") -> str:
+    if intent_hint and intent_hint != "unknown":
+        return intent_hint
+
+    normalized = raw_input.lower().strip()
+    if not normalized:
+        return "unknown"
+
+    if not any(ch.isalpha() for ch in normalized) and not any("\u4e00" <= ch <= "\u9fff" for ch in normalized):
+        return "unknown"
+
+    vetting_keywords = [
+        "外部", "import", "repo", "package", "skill", "install", "安装", "vet", "intake",
+        "source", "zip", "上传", "引入",
+    ]
+    permit_keywords = [
+        "permit", "release", "publish", "sign", "放行", "许可", "签发", "发布",
+    ]
+    audit_keywords = [
+        "revision", "audit", "evidence", "gap", "审计", "修订", "证据", "缺口", "裁决", "review",
+    ]
+
+    if any(keyword in normalized for keyword in vetting_keywords):
+        return "vetting"
+    if any(keyword in normalized for keyword in permit_keywords):
+        return "permit"
+    if any(keyword in normalized for keyword in audit_keywords):
+        return "audit"
+    return "unknown"
+
+def build_governance_decision(raw_input: str, intent_hint: str = "unknown") -> dict:
+    intent = infer_governance_intent(raw_input, intent_hint)
+    canvas = {
+        "vetting": "vetting",
+        "audit": "audit",
+        "permit": "permit",
+    }.get(intent, "clarify")
+    requires_clarification = intent == "unknown"
+    route_target = None if requires_clarification else GOVERNANCE_ROUTE_MAP[intent]
+
+    if requires_clarification:
+        reason = "Input recorded, but more context is required before the governed flow can be selected safely."
+        next_actions = [
+            {"id": "clarify-vetting", "label": "Clarify as external skill intake", "intent": "vetting"},
+            {"id": "clarify-audit", "label": "Clarify as revision audit", "intent": "audit"},
+            {"id": "clarify-permit", "label": "Clarify as permit request", "intent": "permit"},
+        ]
+        profile = None
+        capability_segments = []
+    elif intent == "vetting":
+        reason = "Detected external asset / pre-install governance language. Route into governed vetting intake."
+        next_actions = [
+            {"id": "open-vetting", "label": "Open vetting intake", "route_target": route_target},
+            {"id": "view-sample-report", "label": "View sample report", "route_target": "/intake/vetting/report"},
+        ]
+        profile = "external_skill_vetting"
+        capability_segments = VETTING_PROFILE_SEGMENTS
+    elif intent == "audit":
+        reason = "Detected revision / evidence / gap review language. Route into audit detail."
+        next_actions = [
+            {"id": "open-audit", "label": "Open audit detail", "route_target": route_target},
+            {"id": "review-blockers", "label": "Review blocked assets", "route_target": "/dashboard"},
+        ]
+        profile = "revision_audit"
+        capability_segments = ["evidence_review", "gap_adjudication", "decision_explanation"]
+    else:
+        reason = "Detected release / permit language. Route into formal permit handling."
+        next_actions = [
+            {"id": "open-permit", "label": "Open permit page", "route_target": route_target},
+            {"id": "open-linked-audit", "label": "Open linked audit", "route_target": "/audit/detail"},
+        ]
+        profile = "permit_release"
+        capability_segments = ["permit_binding", "scope_conditions", "release_gate"]
+
+    return {
+        "decision": {
+            "intent": intent,
+            "canvas": canvas,
+            "confidence": "low" if requires_clarification else "high",
+            "requiresClarification": requires_clarification,
+            "routeTarget": route_target,
+            "reason": reason,
+            "nextActions": next_actions,
+            "profile": profile,
+            "capabilitySegments": capability_segments,
+        }
+    }
 
 def generate_10d_analysis(user_input: str, context: dict = None) -> dict:
     """
@@ -142,6 +244,12 @@ class WorkExecuteRequest(BaseModel):
     permit_token: Optional[str] = None
     execution_context: ExecutionContext
 
+class GovernanceOrchestrateRequest(BaseModel):
+    raw_input: str
+    intent_hint: str = "unknown"
+    locale: str = "zh"
+    current_canvas: Optional[str] = None
+
 # ============================================================================
 # API Routes
 # ============================================================================
@@ -228,6 +336,22 @@ async def cognition_generate(request: CognitionGenerateRequest):
         "evidence_ref": evidence_ref,
         "run_id": run_id,
     }
+
+@app.post("/api/v1/governance/orchestrate")
+async def governance_orchestrate(request: GovernanceOrchestrateRequest):
+    run_id = generate_run_id()
+    payload = build_governance_decision(
+        raw_input=request.raw_input,
+        intent_hint=request.intent_hint,
+    )
+    payload["trace"] = {
+        "run_id": run_id,
+        "locale": request.locale,
+        "current_canvas": request.current_canvas,
+        "input_length": len(request.raw_input.strip()),
+    }
+    payload["orchestration_source"] = "api"
+    return payload
 
 @app.post("/api/v1/work/adopt")
 async def work_adopt(request: WorkAdoptRequest):

@@ -48,6 +48,18 @@ export const ContextCanvas: React.FC<ContextCanvasProps> = ({
       <div className={styles.reasonBox}>
         <span className={styles.badge}>{model.reasonLabel}</span>
         <p>{model.reasonText}</p>
+        {model.capabilitySegments && model.capabilitySegments.length > 0 ? (
+          <div className={styles.capabilityGroup}>
+            <span className={styles.capabilityLabel}>{model.capabilityLabel}</span>
+            <div className={styles.capabilityList}>
+              {model.capabilitySegments.map((item) => (
+                <span key={item} className={styles.capabilityPill}>
+                  {item}
+                </span>
+              ))}
+            </div>
+          </div>
+        ) : null}
       </div>
 
       <div className={styles.layout}>

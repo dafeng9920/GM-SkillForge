@@ -33,6 +33,7 @@ interface GovernanceInteractionContextValue {
   draftIntentHint: IntentState;
   setDraftIntentHint: (intent: IntentState) => void;
   submitDraft: (options?: SubmitOptions) => Promise<InteractionTurn | null>;
+  ingestExternalPrompt: (input: string, options?: SubmitOptions) => Promise<InteractionTurn | null>;
   turns: InteractionTurn[];
   latestTurn: InteractionTurn | null;
   latestTurns: InteractionTurn[];
@@ -135,6 +136,45 @@ export const GovernanceInteractionProvider: React.FC<React.PropsWithChildren> = 
     clearDraft();
     return turn;
   };
+
+  const ingestExternalPrompt = async (input: string, options?: SubmitOptions): Promise<InteractionTurn | null> => {
+    const nextValue = input.trim();
+    if (!nextValue) {
+      return null;
+    }
+
+    const hint = options?.intentHint ?? draftIntentHint;
+    if (
+      latestTurn &&
+      latestTurn.userInput === nextValue &&
+      latestTurn.intent === hint
+    ) {
+      return latestTurn;
+    }
+
+    const decision = (
+      await executeGovernanceOrchestration({
+        input: nextValue,
+        intentHint: hint,
+        currentCanvas: latestTurn?.canvas ?? null,
+      })
+    ).decision;
+
+    const turn: InteractionTurn = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      userInput: nextValue,
+      intent: decision.intent,
+      canvas: decision.canvas,
+      confidence: decision.confidence,
+      requiresClarification: decision.requiresClarification,
+      routeTarget: decision.routeTarget,
+      confirmedAt: new Date().toISOString(),
+    };
+
+    setTurns((current) => [...current, turn]);
+    setDraftIntentHint('unknown');
+    return turn;
+  };
   const draftDecision = draft.trim()
     ? previewGovernanceOrchestration({
         input: draft.trim(),
@@ -164,6 +204,7 @@ export const GovernanceInteractionProvider: React.FC<React.PropsWithChildren> = 
       draftIntentHint,
       setDraftIntentHint,
       submitDraft,
+      ingestExternalPrompt,
       turns,
       latestTurn,
       latestTurns,
