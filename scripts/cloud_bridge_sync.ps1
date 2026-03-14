@@ -56,3 +56,8 @@ if ($OpenDashboard) {
 Write-Host "`n==========================================" -ForegroundColor Cyan
 Write-Host "   ✅ V3 同步完成，行情已跨海，大桥运行中！" -ForegroundColor Green
 Write-Host "==========================================" -ForegroundColor Cyan
+
+Write-Host "`n[💡 重要提醒] 别忘了让云端“收货”：" -ForegroundColor Magenta
+Write-Host "请在 Discord 频道（或云端终端）发送：" -ForegroundColor Gray
+Write-Host ">>> !shell git pull" -ForegroundColor Cyan
+Write-Host "然后小龙虾就能读取到最新的行情快照了！" -ForegroundColor Gray

@@ -148,6 +148,52 @@ def derive_audit_detail_items(raw_input: str, locale: str) -> list[dict]:
         {"label": "裁决状态" if zh else "Adjudication", "value": adjudication},
     ]
 
+def derive_permit_detail_items(raw_input: str, locale: str) -> list[dict]:
+    normalized = raw_input.lower()
+    zh = locale.startswith("zh")
+
+    revision = "R-014"
+    import re
+    revision_match = re.search(r"r[-_ ]?(\d{2,4})", normalized, re.IGNORECASE)
+    if revision_match:
+        revision = f"R-{revision_match.group(1)}"
+
+    if any(token in normalized for token in ["invalidate", "invalid", "失效", "作废"]):
+        permit_status = "待失效" if zh else "Pending invalidation"
+    elif any(token in normalized for token in ["revoke", "revoked", "撤销", "吊销"]):
+        permit_status = "待撤销" if zh else "Pending revocation"
+    elif any(token in normalized for token in ["issue", "grant", "签发", "批准", "放行"]):
+        permit_status = "待签发" if zh else "Pending issuance"
+    else:
+        permit_status = "待审查" if zh else "Pending review"
+
+    if any(token in normalized for token in ["production", "prod", "生产"]):
+        release_scope = "生产" if zh else "Production"
+    elif any(token in normalized for token in ["staging", "预发", "stage"]):
+        release_scope = "预发" if zh else "Staging"
+    else:
+        release_scope = "生产 / 内部" if zh else "Production / Internal"
+
+    if any(token in normalized for token in ["admin", "elevated", "高权限", "管理"]):
+        residual_risk = "高权限操作需持续监控" if zh else "Elevated operations require ongoing monitoring"
+    elif any(token in normalized for token in ["partner", "external", "外部", "合作方"]):
+        residual_risk = "外部边界需要额外复核" if zh else "External boundary requires extra review"
+    else:
+        residual_risk = "持续监控" if zh else "Ongoing monitoring"
+
+    if any(token in normalized for token in ["condition", "conditional", "条件"]):
+        scope_condition = "条件放行" if zh else "Conditional release"
+    else:
+        scope_condition = "标准放行条件" if zh else "Standard release conditions"
+
+    return [
+        {"label": "Permit 状态" if zh else "Permit status", "value": permit_status},
+        {"label": "绑定修订" if zh else "Bound revision", "value": revision},
+        {"label": "放行范围" if zh else "Release scope", "value": release_scope},
+        {"label": "放行条件" if zh else "Release condition", "value": scope_condition},
+        {"label": "残余风险" if zh else "Residual risk", "value": residual_risk},
+    ]
+
 # ============================================================================
 # Helper Functions
 # ============================================================================
@@ -262,12 +308,7 @@ def build_canvas_payload(intent: str, locale: str, requires_clarification: bool,
         "alternativesLabel": "其它可选路径" if zh else "Other possible paths",
         "capabilityLabel": "后端能力段" if zh else "Capability segments",
         "capabilitySegments": capability_segments,
-        "detailItems": [
-            {"label": "Permit 状态" if zh else "Permit status", "value": "待签发" if zh else "Pending"},
-            {"label": "绑定修订" if zh else "Bound revision", "value": "R-014"},
-            {"label": "放行范围" if zh else "Release scope", "value": "生产 / 内部" if zh else "Production / Internal"},
-            {"label": "残余风险" if zh else "Residual risk", "value": "持续监控" if zh else "Ongoing monitoring"},
-        ],
+        "detailItems": derive_permit_detail_items(raw_input, locale),
     }
 
 def build_governance_decision(raw_input: str, intent_hint: str = "unknown", locale: str = "zh") -> dict:

@@ -21,7 +21,10 @@
 - `!market adjudicate`: 根据当前行情对某个待执行任务进行风险评分。
 
 ## 数据来源 (Data Feed)
-本 Skill 本身不具备联网能力，完全依赖 **Architecture A (Local Sourcing)**：本地运行 `fetch_ashare_data.py` 后经由 `cloud_bridge_sync.ps1` 将数据推送到本容器的 `workspace/trading_data/` 目录。
+本 Skill 本身不具备联网能力，完全依赖 **Architecture A (Local Sourcing)**：本地运行 `fetch_ashare_data.py` 后经由 `cloud_bridge_sync.ps1` 将数据推送到本容器的以下路径：
+- **行情文件**：`openclaw-box/workspace/trading_data/snapshot.json`
+
+当用户询问行情时，请务必先使用工具读取该 JSON 文件，然后根据该文件内容进行回答。
 
 ## 历史兼容
 本 Skill 已适配 OpenClaw v2026.3.8，并在 Docker 容器环境下运行。
