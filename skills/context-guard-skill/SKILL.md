@@ -3,39 +3,28 @@
 # 🎯 目标：当检测到上下文溢出时，自动压缩历史并保持对话连贯。
 # --------------------------------------------------------
 
-## 核心机制 (Intercept & Reconstruct)
-
-当系统捕获到 `model_context_window_exceeded` 异常时，触发此 Skill：
+## 核心机制 (Reconstruct & Clear)
 
 ### 1. 拦截逻辑 (The Interceptor)
-```python
-def handle_overflow(session_id, error):
-    # 🚨 检查是否为上下文溢出错误
-    if "context_window_exceeded" not in str(error):
-        return None # 不干预其他错误
+当检测到溢出错误时，用户可以手动发送指令，或者由系统捕获后执行：
 
-    print(f"检测到会话 {session_id} 记忆过载，启动自愈程序...")
-    
-    # 📋 获取当前会话的完整历史
-    full_history = openclaw.get_history(session_id)
-    
-    # 🔪 切割策略 (Surgical Pruning)
-    # 保留最后 3-5 条关键对话作为“短期记忆” (Critical Context)
-    critical_context = full_history[-5:]
-    
-    # 将前面的历史标记为“长期记忆”并进行摘要压缩
-    earlier_history = full_history[:-5]
-    memory_summary = openclaw.summarize(earlier_history) 
-    
-    # 💉 重新注入 (Context Injection)
-    # 将摘要作为 System Prompt 的一部分或特殊的 Context Message 注入
-    new_context = [
-        {"role": "system", "content": f"【历史记忆综述】：{memory_summary}"},
-        *critical_context
-    ]
-    
-    openclaw.update_session_context(session_id, new_context)
-    return "✅ 记忆过载已缓解，已自动整理历史要点。请继续！"
+```bash
+# 💡 这是一个内置指令，如果 Skill 加载成功，它可以直接清理当前会话：
+!system session-clear-history
+```
+
+### 2. 手动清理技能 (Internal Skill)
+```python
+def on_error(error):
+    if "context_window_exceeded" in str(error):
+        # 释放紧急信号
+        return "⚠️ 记忆溢出！请发送 `!system session-clear-history` 来重启本轮对话。"
+
+def handle_command(cmd):
+    if cmd == "clear-session-memory":
+        # 调用内核清理
+        openclaw.clear_history()
+        return "🧹 记忆已清空，我们可以重新开始这段对话了。"
 ```
 
 ## 配置加固 (Strategy)
