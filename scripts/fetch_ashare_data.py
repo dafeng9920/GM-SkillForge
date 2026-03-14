@@ -18,34 +18,50 @@ def fetch_market_snapshot():
     max_retries = 3
     for attempt in range(max_retries):
         try:
-            # 1. 获取主要指数数据 (上证, 深证, 创业板)
+            # 1. 获取主要指数数据
             df_indices = ak.stock_zh_index_spot_em()
-            target_indices = {
-                "sh000001": "上证指数",
-                "sz399001": "深证成指",
-                "sz399006": "创业板指"
-            }
-            
+            target_indices = {"sh000001": "上证指数", "sz399001": "深证成指", "sz399006": "创业板指"}
             for code, name in target_indices.items():
-                row = df_indices[df_indices["代码"] == code[2:]] # 匹配代码
+                row = df_indices[df_indices["代码"] == code[2:]]
                 if not row.empty:
-                    snapshot["indices"][name] = {
-                        "price": float(row.iloc[0]["最新价"]),
-                        "change_pct": float(row.iloc[0]["涨跌幅"])
-                    }
+                    snapshot["indices"][name] = {"price": float(row.iloc[0]["最新价"]), "change_pct": float(row.iloc[0]["涨跌幅"])}
 
-            # 2. 获取今日领涨行业板块 (Top 5)
+            # 2. 核心补强：获取昨日及今日涨停池数据
+            print("🚀 正在探测涨停池深度数据...")
+            try:
+                df_zt = ak.stock_zt_pool_em(date=datetime.now().strftime("%Y%m%d"))
+                if not df_zt.empty:
+                    # 自动寻找包含所需信息的列名
+                    cols = df_zt.columns.tolist()
+                    mapping = {
+                        "code": [c for c in cols if "代码" in c],
+                        "name": [c for c in cols if "名称" in c],
+                        "fund": [c for c in cols if "封单" in c and "金" in c],
+                        "turnover": [c for c in cols if "换手率" in c],
+                        "limit_up": [c for c in cols if "连板" in c]
+                    }
+                    
+                    # 动态构建字典
+                    zt_list = []
+                    for _, row in df_zt.iterrows():
+                        item = {
+                            "代码": row[mapping["code"][0]] if mapping["code"] else "N/A",
+                            "名称": row[mapping["name"][0]] if mapping["name"] else "N/A",
+                            "封单资金": row[mapping["fund"][0]] if mapping["fund"] else 0,
+                            "换手率": row[mapping["turnover"][0]] if mapping["turnover"] else 0,
+                            "连板数": row[mapping["limit_up"][0]] if mapping["limit_up"] else 1
+                        }
+                        zt_list.append(item)
+                    snapshot["limit_up_pool"] = zt_list
+            except Exception as e_zt:
+                print(f"⚠️ 涨停数据捕获提醒 (可能是非交易时段): {e_zt}")
+
+            # 3. 获取今日领涨行业板块
             df_sectors = ak.stock_board_industry_name_em()
             df_sectors_sorted = df_sectors.sort_values(by="涨跌幅", ascending=False).head(5)
-            
             for _, row in df_sectors_sorted.iterrows():
-                snapshot["top_gainers"].append({
-                    "sector": row["板块名称"],
-                    "change_pct": float(row["涨跌幅"]),
-                    "lead_stock": row["领涨股"]
-                })
+                snapshot["top_gainers"].append({"sector": row["板块名称"], "change_pct": float(row["涨跌幅"]), "lead_stock": row["领涨股"]})
             
-            # 如果成功，跳出循环
             if snapshot["indices"]:
                 snapshot.pop("error", None)
                 break

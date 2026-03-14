@@ -7,10 +7,6 @@ import type { ComposerAction } from '../../components/governance/GovernComposer'
 import { useGovernanceInteraction } from '../../features/governanceInteraction/interaction';
 import { useGovernancePromptQuerySync } from '../../features/governanceInteraction/useGovernancePromptQuerySync';
 import type { IntentState } from '../../features/governanceInteraction/orchestrator';
-import {
-  buildContextCanvasModel,
-  getCanvasRouteDescriptors,
-} from '../../features/governanceInteraction/canvasRegistry';
 import styles from './DashboardPage.module.css';
 
 type KpiTone = 'neutral' | 'danger' | 'warning' | 'success' | 'active';
@@ -298,6 +294,19 @@ const PAGE_COPY = {
 
 type IntentKey = Exclude<IntentState, 'unknown'>;
 
+const FALLBACK_INTENT_TITLE: Record<'zh' | 'en', Record<IntentKey, string>> = {
+  zh: {
+    vetting: '外部 Skill 审查',
+    audit: 'Revision 审核',
+    permit: 'Permit 放行',
+  },
+  en: {
+    vetting: 'External Skill Vetting',
+    audit: 'Revision Audit',
+    permit: 'Permit Decision',
+  },
+};
+
 const getKpiToneClass = (tone: KpiTone): string => {
   switch (tone) {
     case 'danger':
@@ -353,9 +362,7 @@ const DashboardPage: React.FC = () => {
   } = useGovernanceInteraction();
   useGovernancePromptQuerySync();
   const copy = PAGE_COPY[language];
-  const routeDescriptors = getCanvasRouteDescriptors(language);
   const currentTurn = isTyping ? draft.trim() : latestTurn?.userInput || '';
-  const currentCanvasModel = buildContextCanvasModel(language, activeDecision);
   const historyItems = useMemo<ContextCanvasHistoryItem[]>(
     () =>
       latestTurns.map((turn) => ({
@@ -364,9 +371,10 @@ const DashboardPage: React.FC = () => {
         state:
           turn.intent === 'unknown'
             ? copy.needsConfirmation
-            : routeDescriptors[turn.intent as IntentKey].title,
+            : turn.decision.canvasPayload?.primaryTitle ??
+              FALLBACK_INTENT_TITLE[language][turn.intent as IntentKey],
       })),
-    [copy.needsConfirmation, latestTurns, routeDescriptors],
+    [copy.needsConfirmation, language, latestTurns],
   );
   const quickActions = useMemo<ComposerAction[]>(
     () => [
@@ -397,7 +405,9 @@ const DashboardPage: React.FC = () => {
       canvasHeader: {
         eyebrow: copy.bridgeEyebrow,
         title: copy.bridgeTitle,
-        status: currentCanvasModel.status,
+        status:
+          activeDecision.canvasPayload?.status ??
+          (activeDecision.intent === 'unknown' ? copy.needsConfirmation : undefined),
       },
       composer: {
         value: draft,
@@ -458,7 +468,6 @@ const DashboardPage: React.FC = () => {
       copy.promptHelp,
       copy.promptPlaceholder,
       copy.submit,
-      currentCanvasModel.status,
       currentTurn,
       draft,
       draftIntentHint,

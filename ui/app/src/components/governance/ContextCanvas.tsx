@@ -76,6 +76,37 @@ export const ContextCanvas: React.FC<ContextCanvasProps> = ({
             ))}
           </div>
         ) : null}
+        {model.artifactItems && model.artifactItems.length > 0 ? (
+          <div className={styles.sectionGroup}>
+            {model.artifactLabel ? <span className={styles.capabilityLabel}>{model.artifactLabel}</span> : null}
+            <div className={styles.artifactGrid}>
+              {model.artifactItems.map((item) => (
+                <div
+                  key={`${item.label}-${item.value}`}
+                  className={`${styles.artifactCard} ${
+                    item.emphasis ? styles[`artifact-${item.emphasis}`] : ''
+                  }`}
+                >
+                  <span className={styles.detailLabel}>{item.label}</span>
+                  <strong className={styles.detailValue}>{item.value}</strong>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
+        {model.actionItems && model.actionItems.length > 0 ? (
+          <div className={styles.sectionGroup}>
+            {model.actionLabel ? <span className={styles.capabilityLabel}>{model.actionLabel}</span> : null}
+            <div className={styles.actionList}>
+              {model.actionItems.map((item) => (
+                <div key={`${item.label}-${item.value}`} className={styles.actionRow}>
+                  <span className={styles.actionKey}>{item.label}</span>
+                  <span className={styles.actionValue}>{item.value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
       </div>
 
       <div className={styles.layout}>

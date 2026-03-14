@@ -32,6 +32,10 @@ export interface ContextCanvasModel {
   capabilityLabel?: string;
   capabilitySegments?: string[];
   detailItems?: Array<{ label: string; value: string }>;
+  artifactLabel?: string;
+  artifactItems?: Array<{ label: string; value: string; emphasis?: 'normal' | 'warning' | 'positive' }>;
+  actionLabel?: string;
+  actionItems?: Array<{ label: string; value: string }>;
   alternativesLabel: string;
   alternatives: Array<{
     key: CanvasIntentKey;
@@ -171,6 +175,7 @@ export const buildContextCanvasModel = (
   decision: InteractionDecision,
 ): ContextCanvasModel => {
   const copy = CONTEXT_COPY[language];
+  const payload = decision.canvasPayload;
   const alternatives = getOrderedAlternatives(decision.intent).map((key) => ({
     key,
     title: ROUTE_DESCRIPTORS[language][key].title,
@@ -181,24 +186,74 @@ export const buildContextCanvasModel = (
   if (decision.intent === 'unknown') {
     return {
       canvas: 'clarify',
-      profileLabel: decision.canvasPayload?.profileLabel,
-      profileValue: decision.canvasPayload?.profileValue,
-      summary: decision.canvasPayload?.summary ?? copy.summary,
-      status: decision.canvasPayload?.status ?? copy.clarifyStatus,
+      profileLabel: payload?.profileLabel,
+      profileValue: payload?.profileValue,
+      summary: payload?.summary ?? copy.summary,
+      status: payload?.status ?? copy.clarifyStatus,
       confirmedLabel: copy.confirmedLabel,
       emptyTitle: copy.emptyTitle,
       emptyDescription: copy.emptyDescription,
-      reasonLabel: decision.canvasPayload?.reasonLabel ?? copy.reasonLabel,
-      reasonText: decision.canvasPayload?.reasonText ?? decision.reason ?? INTENT_REASONS[language].unknown,
-      primaryLabel: decision.canvasPayload?.primaryLabel ?? copy.primaryLabel,
-      primaryTitle: decision.canvasPayload?.primaryTitle ?? copy.clarifyTitle,
-      primaryDescription: decision.canvasPayload?.primaryDescription ?? copy.clarifyDescription,
+      reasonLabel: payload?.reasonLabel ?? copy.reasonLabel,
+      reasonText: payload?.reasonText ?? decision.reason ?? INTENT_REASONS[language].unknown,
+      primaryLabel: payload?.primaryLabel ?? copy.primaryLabel,
+      primaryTitle: payload?.primaryTitle ?? copy.clarifyTitle,
+      primaryDescription: payload?.primaryDescription ?? copy.clarifyDescription,
       primaryActionLabel:
-        decision.canvasPayload?.primaryActionLabel ?? decision.nextActions?.[0]?.label ?? copy.clarifyAction,
-      alternativesLabel: decision.canvasPayload?.alternativesLabel ?? copy.alternativesLabel,
-      capabilityLabel: decision.canvasPayload?.capabilityLabel,
-      capabilitySegments: decision.canvasPayload?.capabilitySegments ?? [],
-      detailItems: decision.canvasPayload?.detailItems ?? [],
+        payload?.primaryActionLabel ?? decision.nextActions?.[0]?.label ?? copy.clarifyAction,
+      alternativesLabel: payload?.alternativesLabel ?? copy.alternativesLabel,
+      capabilityLabel: payload?.capabilityLabel,
+      capabilitySegments: payload?.capabilitySegments ?? [],
+      detailItems: payload?.detailItems ?? [],
+      artifactLabel: payload?.artifactLabel,
+      artifactItems: payload?.artifactItems ?? [],
+      actionLabel: payload?.actionLabel,
+      actionItems: payload?.actionItems ?? [],
+      alternatives,
+    };
+  }
+
+  if (payload) {
+    const fallbackDescriptor = ROUTE_DESCRIPTORS[language][decision.intent];
+
+    return {
+      canvas: decision.canvas as Extract<CanvasState, 'clarify' | 'vetting' | 'audit' | 'permit'>,
+      profileLabel: payload.profileLabel,
+      profileValue: payload.profileValue ?? decision.profile ?? undefined,
+      summary: payload.summary ?? copy.summary,
+      status: payload.status ?? fallbackDescriptor.status,
+      confirmedLabel: copy.confirmedLabel,
+      emptyTitle: copy.emptyTitle,
+      emptyDescription: copy.emptyDescription,
+      reasonLabel: payload.reasonLabel ?? copy.reasonLabel,
+      reasonText:
+        payload.reasonText ??
+        decision.reason ??
+        INTENT_REASONS[language][decision.intent],
+      primaryLabel: payload.primaryLabel ?? copy.primaryLabel,
+      primaryTitle: payload.primaryTitle ?? fallbackDescriptor.title,
+      primaryDescription:
+        payload.primaryDescription ?? fallbackDescriptor.summary,
+      primaryActionLabel:
+        payload.primaryActionLabel ??
+        decision.nextActions?.[0]?.label ??
+        fallbackDescriptor.primaryAction,
+      secondaryActionLabel:
+        payload.secondaryActionLabel ??
+        decision.nextActions?.[1]?.label ??
+        fallbackDescriptor.secondaryAction,
+      capabilityLabel:
+        payload.capabilityLabel ??
+        (language === 'zh' ? '后端能力段' : 'Capability segments'),
+      capabilitySegments:
+        payload.capabilitySegments ??
+        decision.capabilitySegments ??
+        [],
+      detailItems: payload.detailItems ?? [],
+      artifactLabel: payload.artifactLabel,
+      artifactItems: payload.artifactItems ?? [],
+      actionLabel: payload.actionLabel,
+      actionItems: payload.actionItems ?? [],
+      alternativesLabel: payload.alternativesLabel ?? copy.alternativesLabel,
       alternatives,
     };
   }
@@ -226,6 +281,10 @@ export const buildContextCanvasModel = (
     capabilityLabel: decision.canvasPayload?.capabilityLabel ?? (language === 'zh' ? '后端能力段' : 'Capability segments'),
     capabilitySegments: decision.canvasPayload?.capabilitySegments ?? decision.capabilitySegments ?? [],
     detailItems: decision.canvasPayload?.detailItems ?? [],
+    artifactLabel: decision.canvasPayload?.artifactLabel,
+    artifactItems: decision.canvasPayload?.artifactItems ?? [],
+    actionLabel: decision.canvasPayload?.actionLabel,
+    actionItems: decision.canvasPayload?.actionItems ?? [],
     alternativesLabel: decision.canvasPayload?.alternativesLabel ?? copy.alternativesLabel,
     alternatives,
   };

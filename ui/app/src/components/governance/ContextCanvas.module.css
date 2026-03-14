@@ -157,6 +157,68 @@
   line-height: 1.45;
 }
 
+.sectionGroup {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.artifactGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+}
+
+.artifactCard {
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.artifact-warning {
+  border-color: rgba(234, 88, 12, 0.28);
+  background: rgba(234, 88, 12, 0.08);
+}
+
+.artifact-positive {
+  border-color: rgba(34, 197, 94, 0.24);
+  background: rgba(34, 197, 94, 0.08);
+}
+
+.actionList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.actionRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+  padding: 12px 14px;
+}
+
+.actionKey {
+  color: #a8a29e;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.actionValue {
+  color: #f5f5f4;
+  font-size: 13px;
+  line-height: 1.45;
+  text-align: right;
+}
+
 .emptyState strong {
   color: #f5f5f4;
   font-size: 14px;

@@ -33,6 +33,10 @@ export interface DecisionCanvasPayload {
   capabilityLabel?: string;
   capabilitySegments?: string[];
   detailItems?: Array<{ label: string; value: string }>;
+  artifactLabel?: string;
+  artifactItems?: Array<{ label: string; value: string; emphasis?: 'normal' | 'warning' | 'positive' }>;
+  actionLabel?: string;
+  actionItems?: Array<{ label: string; value: string }>;
 }
 
 export interface InteractionDecision {

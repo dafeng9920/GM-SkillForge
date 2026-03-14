@@ -233,6 +233,52 @@ def derive_audit_detail_items(raw_input: str, locale: str) -> list[dict]:
         {"label": "裁决状态" if zh else "Adjudication", "value": adjudication},
     ]
 
+def derive_permit_detail_items(raw_input: str, locale: str) -> list[dict]:
+    normalized = raw_input.lower()
+    zh = locale.startswith("zh")
+
+    revision = "R-014"
+    import re
+    revision_match = re.search(r"r[-_ ]?(\d{2,4})", normalized, re.IGNORECASE)
+    if revision_match:
+        revision = f"R-{revision_match.group(1)}"
+
+    if any(token in normalized for token in ["invalidate", "invalid", "失效", "作废"]):
+        permit_status = "待失效" if zh else "Pending invalidation"
+    elif any(token in normalized for token in ["revoke", "revoked", "撤销", "吊销"]):
+        permit_status = "待撤销" if zh else "Pending revocation"
+    elif any(token in normalized for token in ["issue", "grant", "签发", "批准", "放行"]):
+        permit_status = "待签发" if zh else "Pending issuance"
+    else:
+        permit_status = "待审查" if zh else "Pending review"
+
+    if any(token in normalized for token in ["production", "prod", "生产"]):
+        release_scope = "生产" if zh else "Production"
+    elif any(token in normalized for token in ["staging", "预发", "stage"]):
+        release_scope = "预发" if zh else "Staging"
+    else:
+        release_scope = "生产 / 内部" if zh else "Production / Internal"
+
+    if any(token in normalized for token in ["admin", "elevated", "高权限", "管理"]):
+        residual_risk = "高权限操作需持续监控" if zh else "Elevated operations require ongoing monitoring"
+    elif any(token in normalized for token in ["partner", "external", "外部", "合作方"]):
+        residual_risk = "外部边界需要额外复核" if zh else "External boundary requires extra review"
+    else:
+        residual_risk = "持续监控" if zh else "Ongoing monitoring"
+
+    if any(token in normalized for token in ["condition", "conditional", "条件"]):
+        scope_condition = "条件放行" if zh else "Conditional release"
+    else:
+        scope_condition = "标准放行条件" if zh else "Standard release conditions"
+
+    return [
+        {"label": "Permit 状态" if zh else "Permit status", "value": permit_status},
+        {"label": "绑定修订" if zh else "Bound revision", "value": revision},
+        {"label": "放行范围" if zh else "Release scope", "value": release_scope},
+        {"label": "放行条件" if zh else "Release condition", "value": scope_condition},
+        {"label": "残余风险" if zh else "Residual risk", "value": residual_risk},
+    ]
+
 # LLM-specific error codes
 LLM_ERROR_CODES = {
     "L4_LLM_CONFIG_MISSING": "LLM configuration is missing or incomplete",
@@ -374,8 +420,102 @@ def infer_governance_intent(raw_input: str, intent_hint: str = "unknown") -> str
         return "audit"
     return "unknown"
 
+def extract_revision(raw_input: str) -> str:
+    import re
+    match = re.search(r"r[-_ ]?(\d{2,4})", raw_input, re.IGNORECASE)
+    return f"R-{match.group(1)}" if match else "R-014"
 
-def build_canvas_payload(intent: str, locale: str, requires_clarification: bool, capability_segments: list[str], raw_input: str) -> dict:
+def infer_source_type(raw_input: str, locale: str) -> str:
+    normalized = raw_input.lower()
+    zh = locale.startswith("zh")
+    if "github.com" in normalized or "git@" in normalized or "repo" in normalized:
+        return "Git 仓库" if zh else "Git repository"
+    if "http://" in normalized or "https://" in normalized or "url" in normalized or "链接" in normalized:
+        return "外部链接" if zh else "External URL"
+    if "zip" in normalized or "folder" in normalized or "文件夹" in normalized or "压缩" in normalized:
+        return "压缩包 / 文件夹" if zh else "ZIP / Folder"
+    if "npm" in normalized or "pip" in normalized or "package" in normalized or "包" in normalized:
+        return "包分发源" if zh else "Package distribution"
+    return "未声明来源" if zh else "Undeclared source"
+
+def extract_asset_name(raw_input: str, locale: str, intent: str) -> str:
+    import re
+    raw = raw_input.strip()
+    zh = locale.startswith("zh")
+    repo_match = re.search(r"(?:github\.com/|git@[^:]+:)([A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+)", raw, re.IGNORECASE)
+    if repo_match:
+        return repo_match.group(1)
+    revision = extract_revision(raw_input)
+    words = re.findall(r"[A-Za-z][A-Za-z0-9_.-]{2,}", raw)
+    for word in words:
+        lowered = word.lower()
+        if lowered not in {"import", "install", "permit", "revision", "audit", "review", "skill", "external", "package"}:
+            return word
+    if intent == "audit":
+        return revision
+    if intent == "permit":
+        return ("Permit Draft " if not zh else "Permit 草案 ") + revision
+    return "External Skill Package" if not zh else "外部 Skill 包"
+
+def derive_fingerprint(raw_input: str) -> str:
+    import hashlib
+    normalized = raw_input.strip().encode("utf-8")
+    return f"pkg-{hashlib.sha1(normalized).hexdigest()[:8]}"
+
+def build_canvas_artifacts(intent: str, raw_input: str, locale: str, detail_items: list[dict]) -> list[dict]:
+    zh = locale.startswith("zh")
+    normalized = raw_input.lower()
+    detail_map = {item["label"]: item["value"] for item in detail_items}
+    asset_name = extract_asset_name(raw_input, locale, intent)
+    revision = extract_revision(raw_input)
+    source_type = infer_source_type(raw_input, locale)
+    fingerprint = derive_fingerprint(raw_input)
+
+    if intent == "vetting":
+        return [
+            {"label": "入口画像" if zh else "Intake profile", "value": "external_skill_vetting", "emphasis": "normal"},
+            {"label": "候选资产" if zh else "Candidate asset", "value": asset_name, "emphasis": "normal"},
+            {"label": "来源类型" if zh else "Source type", "value": source_type, "emphasis": "normal"},
+            {"label": "审查包" if zh else "Review pack", "value": f"VET-{fingerprint}", "emphasis": "normal"},
+            {"label": "安装闸门" if zh else "Install gate", "value": detail_map.get("安装闸门" if zh else "Install gate", "Conditional"), "emphasis": "warning"},
+        ]
+    if intent == "audit":
+        return [
+            {"label": "裁决画像" if zh else "Adjudication profile", "value": "revision_audit", "emphasis": "normal"},
+            {"label": "目标资产" if zh else "Target asset", "value": asset_name, "emphasis": "normal"},
+            {"label": "目标修订" if zh else "Target revision", "value": detail_map.get("当前修订" if zh else "Current revision", revision), "emphasis": "normal"},
+            {"label": "审计包" if zh else "Audit pack", "value": f"AUD-{revision}", "emphasis": "normal"},
+            {"label": "裁决状态" if zh else "Adjudication", "value": detail_map.get("裁决状态" if zh else "Adjudication", "Needs review"), "emphasis": "warning"},
+        ]
+    return [
+        {"label": "放行画像" if zh else "Release profile", "value": "permit_release", "emphasis": "normal"},
+        {"label": "目标资产" if zh else "Target asset", "value": asset_name, "emphasis": "normal"},
+        {"label": "Permit 草案" if zh else "Permit draft", "value": f"PMT-{fingerprint[-4:]}-{revision.replace('-', '')}", "emphasis": "warning"},
+        {"label": "绑定修订" if zh else "Bound revision", "value": detail_map.get("绑定修订" if zh else "Bound revision", revision), "emphasis": "normal"},
+        {"label": "放行范围" if zh else "Release scope", "value": detail_map.get("放行范围" if zh else "Release scope", "Production / Internal"), "emphasis": "normal"},
+    ]
+
+def build_canvas_actions(intent: str, locale: str, route_target: str | None) -> list[dict]:
+    zh = locale.startswith("zh")
+    if intent == "vetting":
+        return [
+            {"label": "当前动作" if zh else "Current action", "value": "进入入口审查" if zh else "Enter governed intake"},
+            {"label": "下一调用" if zh else "Next call", "value": "source_trust_scan → code_redline_scan → install_gate"},
+            {"label": "目标页面" if zh else "Target route", "value": route_target or "/intake/vetting"},
+        ]
+    if intent == "audit":
+        return [
+            {"label": "当前动作" if zh else "Current action", "value": "进入裁决审计" if zh else "Enter adjudication review"},
+            {"label": "下一调用" if zh else "Next call", "value": "evidence_review → gap_adjudication → decision_explanation"},
+            {"label": "目标页面" if zh else "Target route", "value": route_target or "/audit/detail"},
+        ]
+    return [
+        {"label": "当前动作" if zh else "Current action", "value": "进入 Permit 审查" if zh else "Enter permit review"},
+        {"label": "下一调用" if zh else "Next call", "value": "permit_binding → scope_conditions → release_gate"},
+        {"label": "目标页面" if zh else "Target route", "value": route_target or "/permit"},
+    ]
+
+def build_canvas_payload(intent: str, locale: str, requires_clarification: bool, capability_segments: list[str], raw_input: str, route_target: str | None = None) -> dict:
     zh = locale.startswith("zh")
     if requires_clarification:
         return {
@@ -392,9 +532,20 @@ def build_canvas_payload(intent: str, locale: str, requires_clarification: bool,
             "alternativesLabel": "可能的治理路径" if zh else "Possible governed paths",
             "capabilityLabel": "后端能力段" if zh else "Capability segments",
             "capabilitySegments": [],
+            "artifactLabel": "当前产物" if zh else "Current artifacts",
+            "artifactItems": [
+                {"label": "输入记录" if zh else "Recorded input", "value": "已保留" if zh else "Preserved", "emphasis": "normal"},
+                {"label": "下一状态" if zh else "Next state", "value": "等待澄清" if zh else "Awaiting clarification", "emphasis": "warning"},
+            ],
+            "actionLabel": "待执行动作" if zh else "Pending actions",
+            "actionItems": [
+                {"label": "当前动作" if zh else "Current action", "value": "继续补充上下文" if zh else "Add more context"},
+                {"label": "目标页面" if zh else "Target route", "value": "留在当前画布" if zh else "Stay on current canvas"},
+            ],
         }
 
     if intent == "vetting":
+        detail_items = derive_vetting_detail_items(raw_input, locale)
         return {
             "profileLabel": "审查 Profile" if zh else "Active profile",
             "profileValue": "external_skill_vetting",
@@ -410,9 +561,14 @@ def build_canvas_payload(intent: str, locale: str, requires_clarification: bool,
             "alternativesLabel": "其它可选路径" if zh else "Other possible paths",
             "capabilityLabel": "后端能力段" if zh else "Capability segments",
             "capabilitySegments": capability_segments,
-            "detailItems": derive_vetting_detail_items(raw_input, locale),
+            "detailItems": detail_items,
+            "artifactLabel": "当前产物" if zh else "Current artifacts",
+            "artifactItems": build_canvas_artifacts(intent, raw_input, locale, detail_items),
+            "actionLabel": "待执行动作" if zh else "Pending actions",
+            "actionItems": build_canvas_actions(intent, locale, route_target),
         }
     if intent == "audit":
+        detail_items = derive_audit_detail_items(raw_input, locale)
         return {
             "profileLabel": "审查 Profile" if zh else "Active profile",
             "profileValue": "revision_audit",
@@ -428,8 +584,13 @@ def build_canvas_payload(intent: str, locale: str, requires_clarification: bool,
             "alternativesLabel": "其它可选路径" if zh else "Other possible paths",
             "capabilityLabel": "后端能力段" if zh else "Capability segments",
             "capabilitySegments": capability_segments,
-            "detailItems": derive_audit_detail_items(raw_input, locale),
+            "detailItems": detail_items,
+            "artifactLabel": "当前产物" if zh else "Current artifacts",
+            "artifactItems": build_canvas_artifacts(intent, raw_input, locale, detail_items),
+            "actionLabel": "待执行动作" if zh else "Pending actions",
+            "actionItems": build_canvas_actions(intent, locale, route_target),
         }
+    detail_items = derive_permit_detail_items(raw_input, locale)
     return {
         "profileLabel": "审查 Profile" if zh else "Active profile",
         "profileValue": "permit_release",
@@ -445,12 +606,11 @@ def build_canvas_payload(intent: str, locale: str, requires_clarification: bool,
         "alternativesLabel": "其它可选路径" if zh else "Other possible paths",
         "capabilityLabel": "后端能力段" if zh else "Capability segments",
         "capabilitySegments": capability_segments,
-        "detailItems": [
-            {"label": "Permit 状态" if zh else "Permit status", "value": "待签发" if zh else "Pending"},
-            {"label": "绑定修订" if zh else "Bound revision", "value": "R-014"},
-            {"label": "放行范围" if zh else "Release scope", "value": "生产 / 内部" if zh else "Production / Internal"},
-            {"label": "残余风险" if zh else "Residual risk", "value": "持续监控" if zh else "Ongoing monitoring"},
-        ],
+        "detailItems": detail_items,
+        "artifactLabel": "当前产物" if zh else "Current artifacts",
+        "artifactItems": build_canvas_artifacts(intent, raw_input, locale, detail_items),
+        "actionLabel": "待执行动作" if zh else "Pending actions",
+        "actionItems": build_canvas_actions(intent, locale, route_target),
     }
 
 def build_governance_decision(raw_input: str, intent_hint: str = "unknown", locale: str = "zh") -> dict:
@@ -509,7 +669,7 @@ def build_governance_decision(raw_input: str, intent_hint: str = "unknown", loca
             "nextActions": next_actions,
             "profile": profile,
             "capabilitySegments": capability_segments,
-            "canvasPayload": build_canvas_payload(intent, locale, requires_clarification, capability_segments, raw_input),
+            "canvasPayload": build_canvas_payload(intent, locale, requires_clarification, capability_segments, raw_input, route_target),
         }
     }
 

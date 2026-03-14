@@ -1,8 +1,12 @@
 import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../app/i18n';
-import { ContextCanvasHost, type ContextCanvasHistoryItem } from '../../components/governance/ContextCanvasHost';
 import type { ComposerAction } from '../../components/governance/GovernComposer';
+import {
+  GovernanceCanvasSlotRenderer,
+  useGovernanceCanvasSlot,
+} from '../../components/governance/GovernanceCanvasSlot';
+import type { ContextCanvasHistoryItem } from '../../components/governance/ContextCanvasHost';
 import { INTENT_ROUTE_MAP, useGovernanceInteraction } from '../../features/governanceInteraction/interaction';
 import styles from './HomePage.module.css';
 
@@ -95,6 +99,85 @@ const HomePage: React.FC = () => {
     [copy.clarificationTitle, latestTurns],
   );
 
+  const slotConfig = useMemo(
+    () => ({
+      variant: 'home' as const,
+      decision:
+        latestDecision ?? {
+          intent: 'unknown' as const,
+          canvas: 'home' as const,
+          confidence: 'low' as const,
+          requiresClarification: false,
+          routeTarget: null,
+        },
+      confirmedValue: confirmedPrompt,
+      showCanvas: Boolean(confirmedPrompt && !isTyping && latestDecision),
+      showHistory: Boolean(!isTyping && historyItems.length > 1),
+      history: {
+        title: copy.historyTitle,
+        items: historyItems,
+      },
+      composer: {
+        value: draft,
+        onChange: setDraft,
+        onSubmit: () => {
+          submitDraft();
+        },
+        placeholder: copy.placeholder,
+        submitLabel: copy.start,
+        addAttachmentLabel: copy.addAttachment,
+        imageActionLabel: copy.imageAction,
+        fileActionLabel: copy.fileAction,
+        enterKeyLabel: copy.enterKey,
+        enterLabel: copy.enterHint.split('·')[0].replace(copy.enterKey, '').trim(),
+        shiftEnterKeyLabel: copy.shiftEnterKey,
+        newlineLabel: copy.enterHint.split('·')[1].replace(copy.shiftEnterKey, '').trim(),
+        separatorLabel: copy.separator,
+        imageAttachedLabel: copy.imageAttached,
+        fileAttachedLabel: copy.fileAttached,
+        quickActions,
+        onQuickActionSelect: (action: ComposerAction) => {
+          setDraft(action.prompt);
+          setDraftIntentHint(action.intentHint ?? 'unknown');
+        },
+      },
+      onPrimaryAction: (decision: NonNullable<typeof latestDecision>) => {
+        if (!decision.routeTarget || !confirmedPrompt) return;
+        navigate(`${decision.routeTarget}?prompt=${encodeURIComponent(confirmedPrompt)}`);
+      },
+      onAlternativeSelect: (intent: 'vetting' | 'audit' | 'permit') => {
+        if (!confirmedPrompt) return;
+        navigate(`${INTENT_ROUTE_MAP[intent]}?prompt=${encodeURIComponent(confirmedPrompt)}`);
+      },
+    }),
+    [
+      confirmedPrompt,
+      copy.addAttachment,
+      copy.enterHint,
+      copy.enterKey,
+      copy.fileAction,
+      copy.fileAttached,
+      copy.historyTitle,
+      copy.imageAction,
+      copy.imageAttached,
+      copy.placeholder,
+      copy.separator,
+      copy.shiftEnterKey,
+      copy.start,
+      draft,
+      historyItems,
+      isTyping,
+      latestDecision,
+      navigate,
+      quickActions,
+      setDraft,
+      setDraftIntentHint,
+      submitDraft,
+    ],
+  );
+
+  useGovernanceCanvasSlot(slotConfig);
+
   return (
     <main className={styles.page}>
       <section className={styles.stage}>
@@ -107,56 +190,7 @@ const HomePage: React.FC = () => {
 
         <div className={styles.bottomDock}>
           <div className={styles.commandRow}>
-            <ContextCanvasHost
-              variant="home"
-              language={language}
-              decision={latestDecision ?? {
-                intent: 'unknown',
-                canvas: 'home',
-                confidence: 'low',
-                requiresClarification: false,
-                routeTarget: null,
-              }}
-              confirmedValue={confirmedPrompt}
-              showCanvas={Boolean(confirmedPrompt && !isTyping && latestDecision)}
-              showHistory={Boolean(!isTyping && historyItems.length > 1)}
-              history={{
-                title: copy.historyTitle,
-                items: historyItems,
-              }}
-              composer={{
-                value: draft,
-                onChange: setDraft,
-                onSubmit: () => {
-                  submitDraft();
-                },
-                placeholder: copy.placeholder,
-                submitLabel: copy.start,
-                addAttachmentLabel: copy.addAttachment,
-                imageActionLabel: copy.imageAction,
-                fileActionLabel: copy.fileAction,
-                enterKeyLabel: copy.enterKey,
-                enterLabel: copy.enterHint.split('·')[0].replace(copy.enterKey, '').trim(),
-                shiftEnterKeyLabel: copy.shiftEnterKey,
-                newlineLabel: copy.enterHint.split('·')[1].replace(copy.shiftEnterKey, '').trim(),
-                separatorLabel: copy.separator,
-                imageAttachedLabel: copy.imageAttached,
-                fileAttachedLabel: copy.fileAttached,
-                quickActions,
-                onQuickActionSelect: (action) => {
-                  setDraft(action.prompt);
-                  setDraftIntentHint(action.intentHint ?? 'unknown');
-                },
-              }}
-              onPrimaryAction={(decision) => {
-                if (!decision.routeTarget || !confirmedPrompt) return;
-                navigate(`${decision.routeTarget}?prompt=${encodeURIComponent(confirmedPrompt)}`);
-              }}
-              onAlternativeSelect={(intent) => {
-                if (!confirmedPrompt) return;
-                navigate(`${INTENT_ROUTE_MAP[intent]}?prompt=${encodeURIComponent(confirmedPrompt)}`);
-              }}
-            />
+            <GovernanceCanvasSlotRenderer />
           </div>
         </div>
       </section>
