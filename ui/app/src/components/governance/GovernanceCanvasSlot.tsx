@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from '
 import { useLanguage } from '../../app/i18n';
 import { ContextCanvasHost, type ContextCanvasHistoryItem } from './ContextCanvasHost';
 import type { GovernComposerProps } from './GovernComposer';
-import type { InteractionDecision } from '../../features/governanceInteraction/orchestrator';
+import type { InteractionDecision } from '../../features/governanceInteraction/interactionDecision';
 
 export interface GovernanceCanvasSlotConfig {
   variant?: 'home' | 'workspace' | 'context';

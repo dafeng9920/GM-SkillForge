@@ -1,0 +1,22 @@
+{
+  "payload_type": "PrePackagingGateInputPayload",
+  "source_object": "PrePackagingReviewIntake",
+  "delivery_id": "delivery-generate-skill-v1",
+  "candidate_id": "cand-generate-skill-v1",
+  "validation_report_id": "bvr-generate-skill-v1",
+  "delivery_name": "generate_skill_delivery",
+  "package_input_root": "artifacts/verified/generate_skill_candidate",
+  "handoff_target": "skill_creator",
+  "package_manifest": {
+    "root_dir": "artifacts/verified/generate_skill_candidate"
+  },
+  "integrity_checks": [
+    { "name": "manifest_match", "status": "PASS" }
+  ],
+  "handoff_payload": {
+    "skill_md_path": "artifacts/verified/generate_skill_candidate/SKILL.md"
+  },
+  "delivery_status": "prepared",
+  "boundary_note": "Pre-packaging Gate input is a pre-review structure only, not a release permit or publish decision."
+}
+

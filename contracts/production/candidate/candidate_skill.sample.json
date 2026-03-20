@@ -1,0 +1,37 @@
+{
+  "candidate_id": "cand-generate-skill-v1",
+  "intent_id": "generate_skill_from_requirement",
+  "contract_id": "contract-generate-skill-v1",
+  "candidate_name": "generate_skill_candidate",
+  "skill_root": "artifacts/candidates/generate_skill_candidate",
+  "directory_layout": {
+    "skill_md": "artifacts/candidates/generate_skill_candidate/SKILL.md",
+    "scripts_dir": "artifacts/candidates/generate_skill_candidate/scripts/",
+    "references_dir": "artifacts/candidates/generate_skill_candidate/references/",
+    "assets_dir": "artifacts/candidates/generate_skill_candidate/assets/"
+  },
+  "generated_files": [
+    {
+      "path": "artifacts/candidates/generate_skill_candidate/SKILL.md",
+      "kind": "skill_md",
+      "required": true
+    },
+    {
+      "path": "artifacts/candidates/generate_skill_candidate/scripts/main.py",
+      "kind": "script",
+      "required": true
+    }
+  ],
+  "entrypoints": [
+    {
+      "name": "main",
+      "path": "scripts/main.py",
+      "kind": "script"
+    }
+  ],
+  "dependencies": {
+    "python": ["pydantic"]
+  },
+  "required_changes": [],
+  "status": "compiled"
+}

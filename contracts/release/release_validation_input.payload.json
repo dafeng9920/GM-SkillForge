@@ -1,0 +1,28 @@
+{
+  "payload_type": "ReleaseValidationInputPayload",
+  "source_object": "ReviewValidationInput",
+  "report_id": "bvr-generate-skill-v1",
+  "candidate_id": "cand-generate-skill-v1",
+  "checks": [
+    { "name": "schema_link_check", "status": "PASS", "severity": "INFO", "summary": "schema links valid" }
+  ],
+  "summary": {
+    "total_checks": 6,
+    "passed": 6,
+    "failed": 0,
+    "warned": 0,
+    "skipped": 0
+  },
+  "missing_artifacts": [],
+  "broken_references": [],
+  "smoke_test_result": {
+    "ran": true,
+    "status": "PASS"
+  },
+  "trace_result": {
+    "trace_generated": true
+  },
+  "handoff_ready": true,
+  "build_validation_status": "verified_candidate",
+  "boundary_note": "Release validation input is a pre-audit release structure only, not a release decision, publish approval, or audit execution result."
+}

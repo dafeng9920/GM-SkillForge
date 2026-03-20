@@ -1,0 +1,91 @@
+{
+  "skill_name": "test_skill",
+  "skill_dir": "C:\\Users\\Aorus\\AppData\\Local\\Temp\\tmprrxl4o1t\\test_skill",
+  "analyzed_at": "2026-03-15T15:35:15Z",
+  "pattern_set_version": "1.0.0-t5",
+  "analysis_statistics": {
+    "files_analyzed": 1,
+    "functions_analyzed": 4,
+    "total_matches": 3,
+    "by_pattern": {
+      "E501_EXTERNAL_WITHOUT_STOP_RULE": 2,
+      "E503_HIGH_PRIV_WITHOUT_BOUNDARY": 1
+    },
+    "by_category": {
+      "governance_gap": 3
+    }
+  },
+  "pattern_matches": {
+    "critical": [
+      {
+        "pattern_code": "E501_EXTERNAL_WITHOUT_STOP_RULE",
+        "pattern_name": "External Action Without Stop Rule",
+        "file_path": "__init__.py",
+        "line_number": 12,
+        "function_name": "dangerous_subprocess",
+        "category": "governance_gap",
+        "severity": "CRITICAL",
+        "message": "External action (HTTP request, file write, subprocess) executed without preceding governance stop rule (permission check, authorization, permit validation)",
+        "snippet": "def dangerous_subprocess():",
+        "context_lines": [
+          "    # E421: eval usage - 应该被 T4 检测到",
+          "    return eval(user_input)",
+          "",
+          "def dangerous_subprocess():",
+          "    # E405: subprocess with shell=True - 应该被 T4 检测到",
+          "    subprocess.run(\"ls\", shell=True)",
+          ""
+        ],
+        "suggested_fix": "Add stop rule before external action: @require_permission decorator or explicit permission check",
+        "evidence_source": "run/T5_evidence/pattern_samples/e501_external_without_stop_rule/skill.py"
+      },
+      {
+        "pattern_code": "E503_HIGH_PRIV_WITHOUT_BOUNDARY",
+        "pattern_name": "High-Privilege Call Without Boundary",
+        "file_path": "__init__.py",
+        "line_number": 12,
+        "function_name": "dangerous_subprocess",
+        "category": "governance_gap",
+        "severity": "CRITICAL",
+        "message": "High-privilege operation (file delete, database write, system command) executed without boundary limits (rate limit, resource cap, scope restriction)",
+        "snippet": "def dangerous_subprocess():",
+        "context_lines": [
+          "    # E421: eval usage - 应该被 T4 检测到",
+          "    return eval(user_input)",
+          "",
+          "def dangerous_subprocess():",
+          "    # E405: subprocess with shell=True - 应该被 T4 检测到",
+          "    subprocess.run(\"ls\", shell=True)",
+          ""
+        ],
+        "suggested_fix": "Add boundary limits: rate limiter, resource cap, or scope restriction",
+        "evidence_source": "run/T5_evidence/pattern_samples/e503_high_priv_without_boundary/skill.py"
+      },
+      {
+        "pattern_code": "E501_EXTERNAL_WITHOUT_STOP_RULE",
+        "pattern_name": "External Action Without Stop Rule",
+        "file_path": "__init__.py",
+        "line_number": 16,
+        "function_name": "external_without_stop_rule",
+        "category": "governance_gap",
+        "severity": "CRITICAL",
+        "message": "External action (HTTP request, file write, subprocess) executed without preceding governance stop rule (permission check, authorization, permit validation)",
+        "snippet": "def external_without_stop_rule():",
+        "context_lines": [
+          "    # E405: subprocess with shell=True - 应该被 T4 检测到",
+          "    subprocess.run(\"ls\", shell=True)",
+          "",
+          "def external_without_stop_rule():",
+          "    # E501: External action without stop rule",
+          "    import requests",
+          "    return requests.get(\"https://api.example.com\")"
+        ],
+        "suggested_fix": "Add stop rule before external action: @require_permission decorator or explicit permission check",
+        "evidence_source": "run/T5_evidence/pattern_samples/e501_external_without_stop_rule/skill.py"
+      }
+    ],
+    "high": [],
+    "medium": []
+  },
+  "governance_gaps": []
+}

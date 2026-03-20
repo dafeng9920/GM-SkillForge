@@ -1,0 +1,41 @@
+{
+  "skill_name": "test_skill",
+  "version": "1.0.0",
+  "description": "A test skill for T2 validation",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "query": {
+        "type": "string"
+      },
+      "limit": {
+        "type": "integer",
+        "default": 10
+      }
+    },
+    "required": [
+      "query"
+    ]
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      "status": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object"
+      }
+    },
+    "required": [
+      "status"
+    ]
+  },
+  "capabilities": [
+    "llm",
+    "network"
+  ],
+  "constraints": [
+    "max_limit: 100"
+  ]
+}

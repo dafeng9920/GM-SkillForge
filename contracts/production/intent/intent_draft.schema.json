@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IntentDraft",
+  "type": "object",
+  "required": [
+    "intent_id",
+    "summary",
+    "goal",
+    "in_scope",
+    "out_of_scope",
+    "inputs",
+    "outputs",
+    "constraints",
+    "required_gates",
+    "status"
+  ],
+  "properties": {
+    "intent_id": { "type": "string" },
+    "intent_name": { "type": "string" },
+    "summary": { "type": "string" },
+    "goal": { "type": "string" },
+    "problem_statement": { "type": "string" },
+    "in_scope": { "type": "array", "items": { "type": "string" } },
+    "out_of_scope": { "type": "array", "items": { "type": "string" } },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "type", "required"],
+        "properties": {
+          "name": { "type": "string" },
+          "type": { "type": "string" },
+          "required": { "type": "boolean" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "outputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "type", "required"],
+        "properties": {
+          "name": { "type": "string" },
+          "type": { "type": "string" },
+          "required": { "type": "boolean" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["key", "value"],
+        "properties": {
+          "key": { "type": "string" },
+          "value": {},
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "required_gates": { "type": "array", "items": { "type": "string" } },
+    "status": { "type": "string", "enum": ["draft", "reviewed", "locked", "rejected"] },
+    "created_at": { "type": "string" },
+    "updated_at": { "type": "string" },
+    "revision": { "type": "string" }
+  },
+  "additionalProperties": true
+}

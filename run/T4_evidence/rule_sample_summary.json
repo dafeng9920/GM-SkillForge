@@ -1,0 +1,90 @@
+{
+  "rule_set_version": "E401_SERIES",
+  "total_samples": 6,
+  "samples": [
+    {
+      "sample_id": "eval_usage",
+      "name": "eval_usage",
+      "expected_hits": [
+        {
+          "code": "E421_EVAL_OR_EXEC_USED",
+          "severity": "CRITICAL",
+          "line": 9
+        }
+      ],
+      "actual_hits": 1,
+      "critical_hits": 1,
+      "high_hits": 0,
+      "report_path": "rule_samples/eval_usage/rule_scan_report.json"
+    },
+    {
+      "sample_id": "subprocess_shell",
+      "name": "subprocess_shell",
+      "expected_hits": [
+        {
+          "code": "E405_SYSTEM_COMMAND_without_SANITIZATION",
+          "severity": "CRITICAL",
+          "line": 10
+        }
+      ],
+      "actual_hits": 1,
+      "critical_hits": 1,
+      "high_hits": 0,
+      "report_path": "rule_samples/subprocess_shell/rule_scan_report.json"
+    },
+    {
+      "sample_id": "sql_injection",
+      "name": "sql_injection",
+      "expected_hits": [
+        {
+          "code": "E413_DATABASE_QUERY_without_PARAMETERIZATION",
+          "severity": "CRITICAL",
+          "line": 8
+        }
+      ],
+      "actual_hits": 1,
+      "critical_hits": 1,
+      "high_hits": 0,
+      "report_path": "rule_samples/sql_injection/rule_scan_report.json"
+    },
+    {
+      "sample_id": "unsafe_pickle",
+      "name": "unsafe_pickle",
+      "expected_hits": [
+        {
+          "code": "E422_UNSAFE_DESERIALIZATION",
+          "severity": "HIGH",
+          "line": 10
+        }
+      ],
+      "actual_hits": 1,
+      "critical_hits": 0,
+      "high_hits": 1,
+      "report_path": "rule_samples/unsafe_pickle/rule_scan_report.json"
+    },
+    {
+      "sample_id": "http_no_timeout",
+      "name": "http_no_timeout",
+      "expected_hits": [
+        {
+          "code": "E412_HTTP_REQUEST_without_ERROR_HANDLING",
+          "severity": "LOW",
+          "line": 10
+        }
+      ],
+      "actual_hits": 6,
+      "critical_hits": 0,
+      "high_hits": 4,
+      "report_path": "rule_samples/http_no_timeout/rule_scan_report.json"
+    },
+    {
+      "sample_id": "clean_skill",
+      "name": "clean_skill",
+      "expected_hits": [],
+      "actual_hits": 0,
+      "critical_hits": 0,
+      "high_hits": 0,
+      "report_path": "rule_samples/clean_skill/rule_scan_report.json"
+    }
+  ]
+}

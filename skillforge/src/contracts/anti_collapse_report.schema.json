@@ -1,0 +1,774 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/genesismind-bot/GM-SkillForge/skillforge/src/contracts/anti_collapse_report.schema.json",
+  "title": "AntiCollapseReport",
+  "description": "T13 Deliverable: Anti-collapse report that enforces boundary declarations, uncovered assertions, degradation classification, and residual risk registration. Hard constraints: (1) Uncovered scenarios MUST be declared, NOT claimed as completed. (2) Degraded cases MUST be explicitly classified, NOT marked as fully successful. (3) Residual risks MUST be registered even for PASS cases. (4) No default assumptions of coverage or success.",
+  "type": "object",
+  "required": [
+    "report_id",
+    "report_type",
+    "created_at",
+    "created_by",
+    "case_ledger_ref",
+    "boundary_assertions",
+    "coverage_integrity",
+    "degradation_classification",
+    "residual_risk_register",
+    "anti_collapse_score"
+  ],
+  "properties": {
+    "report_id": {
+      "type": "string",
+      "description": "Unique report identifier (format: ACR-{YYYYMMDD}-{short_hash})",
+      "pattern": "^ACR-[0-9]{8}-[a-f0-9]{8}$"
+    },
+    "report_type": {
+      "type": "string",
+      "enum": ["initial", "incremental", "final", "post_release"],
+      "description": "Type of anti-collapse report"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp when report was created"
+    },
+    "created_by": {
+      "type": "string",
+      "description": "Entity that created this report (e.g., 'T13-Kior-B', 'automation')"
+    },
+    "case_ledger_ref": {
+      "type": "string",
+      "description": "Reference to the case ledger this report analyzes",
+      "pattern": "^LEDGER-[0-9]{8}-[a-f0-9]{8}$"
+    },
+    "parent_report_ref": {
+      "type": ["string", "null"],
+      "description": "Reference to parent report if this is an incremental update",
+      "pattern": "^ACR-[0-9]{8}-[a-f0-9]{8}$"
+    },
+    "reporting_period": {
+      "type": ["object", "null"],
+      "description": "Period covered by this report",
+      "properties": {
+        "start": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "end": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        }
+      }
+    },
+    "boundary_assertions": {
+      "type": "object",
+      "description": "T13 Hard Constraint: Explicit boundary assertions - what IS and IS NOT covered",
+      "required": ["declared_boundaries", "boundary_violations", "uncovered_declared"],
+      "properties": {
+        "declared_boundaries": {
+          "type": "array",
+          "description": "All explicitly declared boundaries from the case ledger",
+          "minItems": 0,
+          "items": {
+            "type": "object",
+            "required": ["boundary_id", "type", "assertion"],
+            "properties": {
+              "boundary_id": {
+                "type": "string",
+                "description": "Unique boundary identifier"
+              },
+              "type": {
+                "type": "string",
+                "enum": ["in_scope", "out_of_scope", "assumption", "constraint"],
+                "description": "Type of boundary"
+              },
+              "assertion": {
+                "type": "string",
+                "description": "The boundary assertion"
+              },
+              "verification_status": {
+                "type": ["string", "null"],
+                "enum": ["verified", "violated", "unknown"],
+                "description": "Verification status of the boundary"
+              },
+              "related_cases": {
+                "type": ["array", "null"],
+                "description": "Cases that verify this boundary",
+                "items": {
+                  "type": "string",
+                  "pattern": "^CASE-[A-Z0-9_]+-[0-9]+$"
+                }
+              }
+            }
+          }
+        },
+        "boundary_violations": {
+          "type": "array",
+          "description": "T13 Hard Constraint: Any detected boundary violations (e.g., claiming uncovered as complete)",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/boundary_violation"
+          }
+        },
+        "uncovered_declared": {
+          "type": "object",
+          "description": "T13 Hard Constraint: Verification that uncovered items are properly declared",
+          "required": ["total_declared_uncovered", "verified_declared", "implicit_uncovered_detected"],
+          "properties": {
+            "total_declared_uncovered": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Total uncovered items explicitly declared"
+            },
+            "verified_declared": {
+              "type": "array",
+              "description": "Uncovered items verified as properly declared",
+              "items": {
+                "type": "string",
+                "description": "Description of declared uncovered item"
+              }
+            },
+            "implicit_uncovered_detected": {
+              "type": "array",
+              "description": "T13 Hard Constraint: Items that are uncovered but NOT declared (violation)",
+              "items": {
+                "type": "object",
+                "required": ["item", "why_uncovered"],
+                "properties": {
+                  "item": {
+                    "type": "string",
+                    "description": "Item that is uncovered but not declared"
+                  },
+                  "why_uncovered": {
+                    "type": "string",
+                    "description": "Why this item is considered uncovered"
+                  },
+                  "severity": {
+                    "type": ["string", "null"],
+                    "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"],
+                    "description": "Severity of this declaration gap"
+                  },
+                  "recommendation": {
+                    "type": ["string", "null"],
+                    "description": "Recommended action"
+                  }
+                }
+              }
+            },
+            "declaration_integrity_score": {
+              "type": "number",
+              "minimum": 0.0,
+              "maximum": 1.0,
+              "description": "Score: 1.0 = all uncovered properly declared, <1.0 = gaps detected"
+            }
+          }
+        },
+        "assumption_violations": {
+          "type": ["array", "null"],
+          "description": "Detected violations of stated assumptions",
+          "items": {
+            "type": "object",
+            "required": ["assumption", "violation"],
+            "properties": {
+              "assumption": {
+                "type": "string",
+                "description": "The assumption that was violated"
+              },
+              "violation": {
+                "type": "string",
+                "description": "How the assumption was violated"
+              },
+              "impact": {
+                "type": ["string", "null"],
+                "description": "Impact of the violation"
+              }
+            }
+          }
+        }
+      }
+    },
+    "coverage_integrity": {
+      "type": "object",
+      "description": "T13 Hard Constraint: Coverage integrity analysis - preventing false claims of completeness",
+      "required": ["claimed_coverage", "verified_coverage", "coverage_gaps"],
+      "properties": {
+        "claimed_coverage": {
+          "type": "object",
+          "description": "Coverage claimed by the case ledger",
+          "required": ["in_scope_count", "covered_count", "claimed_percent"],
+          "properties": {
+            "in_scope_count": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Total items claimed in scope"
+            },
+            "covered_count": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Items claimed as covered"
+            },
+            "claimed_percent": {
+              "type": "number",
+              "minimum": 0.0,
+              "maximum": 100.0,
+              "description": "Claimed coverage percentage"
+            }
+          }
+        },
+        "verified_coverage": {
+          "type": "object",
+          "description": "Independently verified coverage",
+          "required": ["verified_covered", "verified_percent"],
+          "properties": {
+            "verified_covered": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Independently verified covered items"
+            },
+            "verified_percent": {
+              "type": "number",
+              "minimum": 0.0,
+              "maximum": 100.0,
+              "description": "Verified coverage percentage"
+            },
+            "verification_method": {
+              "type": ["string", "null"],
+              "enum": ["manual_review", "static_analysis", "traceability", "evidence_verification"],
+              "description": "How verification was performed"
+            }
+          }
+        },
+        "coverage_gaps": {
+          "type": "array",
+          "description": "T13 Hard Constraint: Gaps between claimed and verified coverage",
+          "items": {
+            "type": "object",
+            "required": ["gap_type", "description"],
+            "properties": {
+              "gap_type": {
+                "type": "string",
+                "enum": ["false_claim", "weak_evidence", "missing_trace", "unverified_case", "stale_coverage"],
+                "description": "Type of coverage gap"
+              },
+              "description": {
+                "type": "string",
+                "description": "Description of the gap"
+              },
+              "affected_scope": {
+                "type": ["string", "null"],
+                "description": "Scope affected by the gap"
+              },
+              "severity": {
+                "type": ["string", "null"],
+                "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"]
+              },
+              "remediation": {
+                "type": ["string", "null"],
+                "description": "Recommended remediation"
+              }
+            }
+          }
+        },
+        "integrity_check_passed": {
+          "type": "boolean",
+          "description": "Whether coverage integrity check passed (verified >= claimed)"
+        }
+      }
+    },
+    "degradation_classification": {
+      "type": "object",
+      "description": "T13 Hard Constraint: Explicit degradation classification - preventing false success claims",
+      "required": ["cases_by_status", "degraded_cases", "misclassification_detected"],
+      "properties": {
+        "cases_by_status": {
+          "type": "object",
+          "description": "All cases classified by adjudication status",
+          "properties": {
+            "fully_successful": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Cases with NO deviations and PASS decision"
+            },
+            "degraded_pass": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "T13 Hard Constraint: Cases with deviations but still marked PASS (potential misclassification)"
+            },
+            "degraded_explicit": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Cases explicitly classified as DEGRADED"
+            },
+            "failed": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Cases with FAIL decision"
+            },
+            "waived": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Cases with WAIVE decision"
+            },
+            "pending": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Cases pending execution or adjudication"
+            }
+          }
+        },
+        "degraded_cases": {
+          "type": "array",
+          "description": "All cases with degradation, explicitly classified",
+          "items": {
+            "$ref": "#/definitions/degraded_case"
+          }
+        },
+        "degradation_levels": {
+          "type": "object",
+          "description": "Summary of degradation levels",
+          "properties": {
+            "minor": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Minor degradation cases"
+            },
+            "partial_functionality": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Partial functionality cases"
+            },
+            "major": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Major degradation cases"
+            }
+          }
+        },
+        "misclassification_detected": {
+          "type": "array",
+          "description": "T13 Hard Constraint: Cases that should be DEGRADED but are marked as PASS or fully successful",
+          "items": {
+            "type": "object",
+            "required": ["case_id", "actual_state", "why_degraded"],
+            "properties": {
+              "case_id": {
+                "type": "string",
+                "pattern": "^CASE-[A-Z0-9_]+-[0-9]+$"
+              },
+              "actual_state": {
+                "type": "string",
+                "description": "The actual state of the case (has deviations, incomplete, etc.)"
+              },
+              "marked_as": {
+                "type": ["string", "null"],
+                "description": "How the case is incorrectly marked"
+              },
+              "why_degraded": {
+                "type": "string",
+                "description": "Why this case should be classified as degraded"
+              },
+              "recommended_classification": {
+                "type": ["string", "null"],
+                "enum": ["DEGRADED-minor", "DEGRADED-partial_functionality", "DEGRADED-major", "FAIL"],
+                "description": "Recommended classification"
+              },
+              "severity": {
+                "type": ["string", "null"],
+                "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"]
+              }
+            }
+          }
+        },
+        "classification_integrity_score": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Score: 1.0 = all cases correctly classified, <1.0 = misclassifications detected"
+        }
+      }
+    },
+    "residual_risk_register": {
+      "type": "object",
+      "description": "T13 Hard Constraint: Residual risk register - even for PASS cases",
+      "required": ["total_risks", "by_category", "by_severity", "critical_risks"],
+      "properties": {
+        "total_risks": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total residual risks registered"
+        },
+        "by_category": {
+          "type": "object",
+          "description": "Risks by category",
+          "properties": {
+            "test_gap": {"type": "integer", "minimum": 0},
+            "data_limitation": {"type": "integer", "minimum": 0},
+            "environment_constraint": {"type": "integer", "minimum": 0},
+            "assumption_violation": {"type": "integer", "minimum": 0},
+            "degradation_risk": {"type": "integer", "minimum": 0},
+            "coverage_hole": {"type": "integer", "minimum": 0},
+            "dependency_risk": {"type": "integer", "minimum": 0}
+          }
+        },
+        "by_severity": {
+          "type": "object",
+          "description": "Risks by severity",
+          "properties": {
+            "CRITICAL": {"type": "integer", "minimum": 0},
+            "HIGH": {"type": "integer", "minimum": 0},
+            "MEDIUM": {"type": "integer", "minimum": 0},
+            "LOW": {"type": "integer", "minimum": 0}
+          }
+        },
+        "by_case_status": {
+          "type": ["object", "null"],
+          "description": "Risks associated with cases by their adjudication status",
+          "properties": {
+            "in_pass_cases": {"type": "integer", "minimum": 0, "description": "Risks in cases marked PASS"},
+            "in_degraded_cases": {"type": "integer", "minimum": 0, "description": "Risks in degraded cases"},
+            "in_fail_cases": {"type": "integer", "minimum": 0, "description": "Risks in failed cases"},
+            "in_unexecuted_cases": {"type": "integer", "minimum": 0, "description": "Risks in unexecuted cases"}
+          }
+        },
+        "critical_risks": {
+          "type": "array",
+          "description": "T13 Hard Constraint: Critical and HIGH severity risks requiring immediate attention",
+          "items": {
+            "$ref": "#/definitions/registered_risk"
+          }
+        },
+        "all_risks": {
+          "type": "array",
+          "description": "All registered risks (optional for brevity, can reference separate file)",
+          "items": {
+            "$ref": "#/definitions/registered_risk"
+          }
+        },
+        "risk_register_complete": {
+          "type": "boolean",
+          "description": "T13 Hard Constraint: Whether all cases have been assessed for residual risks"
+        },
+        "gaps_detected": {
+          "type": ["array", "null"],
+          "description": "Cases where residual risk assessment is missing",
+          "items": {
+            "type": "object",
+            "required": ["case_id", "gap_type"],
+            "properties": {
+              "case_id": {
+                "type": "string",
+                "pattern": "^CASE-[A-Z0-9_]+-[0-9]+$"
+              },
+              "gap_type": {
+                "type": "string",
+                "enum": ["no_risk_assessment", "incomplete_assessment", "missing_mitigation"]
+              },
+              "recommendation": {
+                "type": ["string", "null"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "anti_collapse_metrics": {
+      "type": "object",
+      "description": "Metrics measuring anti-collapse posture",
+      "properties": {
+        "boundary_transparency": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "How well boundaries are declared (1.0 = all uncovered explicitly declared)"
+        },
+        "coverage_honesty": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Coverage claim accuracy (1.0 = verified >= claimed)"
+        },
+        "degradation_honesty": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Degradation classification accuracy (1.0 = no misclassified PASS)"
+        },
+        "risk_awareness": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Risk registration completeness (1.0 = all risks registered)"
+        },
+        "evidence_depth": {
+          "type": ["number", "null"],
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Evidence quality and depth (if measured)"
+        }
+      }
+    },
+    "anti_collapse_score": {
+      "type": "object",
+      "description": "Overall anti-collapse score and assessment",
+      "required": ["score", "posture", "determinants"],
+      "properties": {
+        "score": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Overall anti-collapse score (0.0 = high collapse risk, 1.0 = strong posture)"
+        },
+        "posture": {
+          "type": "string",
+          "enum": ["STRONG", "MODERATE", "WEAK", "CRITICAL"],
+          "description": "Overall anti-collapse posture classification"
+        },
+        "determinants": {
+          "type": "array",
+          "description": "Key determinants of the score",
+          "items": {
+            "type": "object",
+            "required": ["factor", "impact"],
+            "properties": {
+              "factor": {
+                "type": "string",
+                "enum": ["boundary_transparency", "coverage_integrity", "degradation_classification", "risk_register_completeness", "critical_issue_count"]
+              },
+              "impact": {
+                "type": "string",
+                "description": "How this factor impacted the score"
+              },
+              "value": {
+                "type": ["number", "null"],
+                "description": "Numerical value if applicable"
+              }
+            }
+          }
+        },
+        "release_recommendation": {
+          "type": ["string", "null"],
+          "enum": ["clear", "caution", "blocked"],
+          "description": "Release recommendation based on anti-collapse posture"
+        },
+        "recommendation_rationale": {
+          "type": ["string", "null"],
+          "description": "Rationale for the release recommendation"
+        },
+        "blocking_issues": {
+          "type": ["array", "null"],
+          "description": "Issues blocking release (if any)",
+          "items": {
+            "type": "object",
+            "required": ["issue", "why_blocking"],
+            "properties": {
+              "issue": {"type": "string"},
+              "why_blocking": {"type": "string"},
+              "ref": {"type": ["string", "null"], "description": "Reference to issue or risk"}
+            }
+          }
+        }
+      }
+    },
+    "immediate_actions": {
+      "type": ["array", "null"],
+      "description": "Immediate actions required to address anti-collapse concerns",
+      "items": {
+        "type": "object",
+        "required": ["action", "priority"],
+        "properties": {
+          "action": {"type": "string"},
+          "priority": {
+            "type": "string",
+            "enum": ["P0", "P1", "P2", "P3"]
+          },
+          "owner": {"type": ["string", "null"]},
+          "target_date": {"type": ["string", "null"], "format": "date-time"},
+          "related_ref": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata",
+      "properties": {
+        "schema_version": {
+          "type": "string",
+          "description": "Version of the anti-collapse report schema",
+          "pattern": "^\\d+\\.\\d+\\.\\d+.*"
+        },
+        "run_id": {
+          "type": ["string", "null"],
+          "description": "Associated run ID"
+        },
+        "gate_decision_refs": {
+          "type": ["array", "null"],
+          "description": "Gate decision references",
+          "items": {
+            "type": "string"
+          }
+        },
+        "notes": {
+          "type": ["string", "null"],
+          "description": "Additional notes"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "boundary_violation": {
+      "type": "object",
+      "description": "A detected boundary violation",
+      "required": ["violation_type", "description"],
+      "properties": {
+        "violation_type": {
+          "type": "string",
+          "enum": ["uncovered_claimed_complete", "out_of_scope_tested", "assumption_unstated", "constraint_ignored", "implicit_boundary"],
+          "description": "Type of boundary violation"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the violation"
+        },
+        "affected_scope": {
+          "type": ["string", "null"],
+          "description": "Scope affected by the violation"
+        },
+        "severity": {
+          "type": ["string", "null"],
+          "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"]
+        },
+        "evidence": {
+          "type": ["string", "null"],
+          "description": "Evidence of the violation"
+        },
+        "remediation": {
+          "type": ["string", "null"],
+          "description": "Recommended remediation"
+        },
+        "related_case_refs": {
+          "type": ["array", "null"],
+          "description": "Related case references",
+          "items": {
+            "type": "string",
+            "pattern": "^CASE-[A-Z0-9_]+-[0-9]+$"
+          }
+        }
+      }
+    },
+    "degraded_case": {
+      "type": "object",
+      "description": "A case with explicit degradation classification",
+      "required": ["case_id", "degradation_level", "deviations"],
+      "properties": {
+        "case_id": {
+          "type": "string",
+          "pattern": "^CASE-[A-Z0-9_]+-[0-9]+$"
+        },
+        "title": {
+          "type": ["string", "null"],
+          "description": "Case title"
+        },
+        "adjudication_decision": {
+          "type": "string",
+          "enum": ["DEGRADED", "PASS", "FAIL"],
+          "description": "Adjudication decision"
+        },
+        "degradation_level": {
+          "type": "string",
+          "enum": ["minor", "partial_functionality", "major"],
+          "description": "Explicit degradation level"
+        },
+        "deviations": {
+          "type": "array",
+          "description": "List of deviations from expected behavior",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["type", "description"],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": ["outcome_mismatch", "missing_outcome", "unexpected_outcome", "performance_degradation", "error_variance", "data_difference"]
+              },
+              "description": {"type": "string"},
+              "severity": {"type": ["string", "null"], "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"]}
+            }
+          }
+        },
+        "impact": {
+          "type": ["string", "null"],
+          "description": "Impact of the degradation"
+        },
+        "residual_risks": {
+          "type": ["array", "null"],
+          "description": "Residual risks from this degradation",
+          "items": {"type": "string"}
+        },
+        "release_allowed": {
+          "type": ["boolean", "null"],
+          "description": "Whether release is allowed despite this degradation"
+        },
+        "release_conditions": {
+          "type": ["array", "null"],
+          "description": "Conditions for release",
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "registered_risk": {
+      "type": "object",
+      "description": "A registered residual risk",
+      "required": ["risk_id", "category", "description", "severity"],
+      "properties": {
+        "risk_id": {
+          "type": "string",
+          "description": "Risk identifier",
+          "pattern": "^R-[0-9]{8}_[0-9]{6}-[0-9]+$"
+        },
+        "source_case_id": {
+          "type": ["string", "null"],
+          "description": "Case that generated this risk",
+          "pattern": "^CASE-[A-Z0-9_]+-[0-9]+$"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["test_gap", "data_limitation", "environment_constraint", "assumption_violation", "degradation_risk", "coverage_hole", "dependency_risk"],
+          "description": "Risk category"
+        },
+        "description": {
+          "type": "string",
+          "description": "Risk description"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"],
+          "description": "Risk severity"
+        },
+        "likelihood": {
+          "type": ["string", "null"],
+          "enum": ["VERY_LIKELY", "LIKELY", "POSSIBLE", "UNLIKELY", "RARE"],
+          "description": "Risk likelihood"
+        },
+        "impact": {
+          "type": ["string", "null"],
+          "enum": ["SEVERE", "HIGH", "MEDIUM", "LOW", "MINIMAL"],
+          "description": "Risk impact"
+        },
+        "mitigation": {
+          "type": ["string", "null"],
+          "description": "Mitigation strategy or action"
+        },
+        "status": {
+          "type": ["string", "null"],
+          "enum": ["open", "mitigating", "monitoring", "accepted", "closed"],
+          "description": "Risk status"
+        },
+        "ticket_ref": {
+          "type": ["string", "null"],
+          "description": "Tracking ticket reference"
+        }
+      }
+    }
+  }
+}

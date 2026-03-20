@@ -1,0 +1,115 @@
+{
+  "skill_name": "clean_sample",
+  "skill_dir": "D:\\GM-SkillForge\\run\\T5_evidence\\clean_sample",
+  "analyzed_at": "2026-03-15T14:30:20Z",
+  "pattern_set_version": "1.0.0-t5",
+  "analysis_statistics": {
+    "files_analyzed": 1,
+    "functions_analyzed": 9,
+    "total_matches": 4,
+    "by_pattern": {
+      "E501_EXTERNAL_WITHOUT_STOP_RULE": 2,
+      "E504_MISSING_AUDITABLE_EXIT": 1,
+      "E503_HIGH_PRIV_WITHOUT_BOUNDARY": 1
+    },
+    "by_category": {
+      "governance_gap": 4
+    }
+  },
+  "pattern_matches": {
+    "critical": [
+      {
+        "pattern_code": "E501_EXTERNAL_WITHOUT_STOP_RULE",
+        "pattern_name": "External Action Without Stop Rule",
+        "file_path": "clean_skill.py",
+        "line_number": 37,
+        "function_name": "process_transfer_with_idempotency",
+        "category": "governance_gap",
+        "severity": "CRITICAL",
+        "message": "External action (HTTP request, file write, subprocess) executed without preceding governance stop rule (permission check, authorization, permit validation)",
+        "snippet": "def process_transfer_with_idempotency(amount: float, to_account: str, idempotency_key: str) -> dict:",
+        "context_lines": [
+          "# E502 Compliance: Retry WITH Idempotency Protection",
+          "# ============================================================================",
+          "",
+          "def process_transfer_with_idempotency(amount: float, to_account: str, idempotency_key: str) -> dict:",
+          "    \"\"\"",
+          "    Execute financial transfer with idempotency protection.",
+          ""
+        ],
+        "suggested_fix": "Add stop rule before external action: @require_permission decorator or explicit permission check",
+        "evidence_source": "run/T5_evidence/pattern_samples/e501_external_without_stop_rule/skill.py"
+      },
+      {
+        "pattern_code": "E501_EXTERNAL_WITHOUT_STOP_RULE",
+        "pattern_name": "External Action Without Stop Rule",
+        "file_path": "clean_skill.py",
+        "line_number": 72,
+        "function_name": "remove_files_with_limit",
+        "category": "governance_gap",
+        "severity": "CRITICAL",
+        "message": "External action (HTTP request, file write, subprocess) executed without preceding governance stop rule (permission check, authorization, permit validation)",
+        "snippet": "def remove_files_with_limit(file_paths: list[str], max_count: int = 1000) -> int:",
+        "context_lines": [
+          "# E503 Compliance: High-Privilege WITH Boundary",
+          "# ============================================================================",
+          "",
+          "def remove_files_with_limit(file_paths: list[str], max_count: int = 1000) -> int:",
+          "    \"\"\"",
+          "    Delete files with boundary limit.",
+          ""
+        ],
+        "suggested_fix": "Add stop rule before external action: @require_permission decorator or explicit permission check",
+        "evidence_source": "run/T5_evidence/pattern_samples/e501_external_without_stop_rule/skill.py"
+      },
+      {
+        "pattern_code": "E503_HIGH_PRIV_WITHOUT_BOUNDARY",
+        "pattern_name": "High-Privilege Call Without Boundary",
+        "file_path": "clean_skill.py",
+        "line_number": 72,
+        "function_name": "remove_files_with_limit",
+        "category": "governance_gap",
+        "severity": "CRITICAL",
+        "message": "High-privilege operation (file delete, database write, system command) executed without boundary limits (rate limit, resource cap, scope restriction)",
+        "snippet": "def remove_files_with_limit(file_paths: list[str], max_count: int = 1000) -> int:",
+        "context_lines": [
+          "# E503 Compliance: High-Privilege WITH Boundary",
+          "# ============================================================================",
+          "",
+          "def remove_files_with_limit(file_paths: list[str], max_count: int = 1000) -> int:",
+          "    \"\"\"",
+          "    Delete files with boundary limit.",
+          ""
+        ],
+        "suggested_fix": "Add boundary limits: rate limiter, resource cap, or scope restriction",
+        "evidence_source": "run/T5_evidence/pattern_samples/e503_high_priv_without_boundary/skill.py"
+      }
+    ],
+    "high": [
+      {
+        "pattern_code": "E504_MISSING_AUDITABLE_EXIT",
+        "pattern_name": "Missing Auditable Exit",
+        "file_path": "clean_skill.py",
+        "line_number": 37,
+        "function_name": "process_transfer_with_idempotency",
+        "category": "governance_gap",
+        "severity": "HIGH",
+        "message": "Function performing sensitive action without writing auditable exit record (audit log, evidence file, gate decision record)",
+        "snippet": "def process_transfer_with_idempotency(amount: float, to_account: str, idempotency_key: str) -> dict:",
+        "context_lines": [
+          "# E502 Compliance: Retry WITH Idempotency Protection",
+          "# ============================================================================",
+          "",
+          "def process_transfer_with_idempotency(amount: float, to_account: str, idempotency_key: str) -> dict:",
+          "    \"\"\"",
+          "    Execute financial transfer with idempotency protection.",
+          ""
+        ],
+        "suggested_fix": "Add audit event writing before returning from sensitive operation",
+        "evidence_source": "run/T5_evidence/pattern_samples/e504_missing_auditable_exit/skill.py"
+      }
+    ],
+    "medium": []
+  },
+  "governance_gaps": []
+}

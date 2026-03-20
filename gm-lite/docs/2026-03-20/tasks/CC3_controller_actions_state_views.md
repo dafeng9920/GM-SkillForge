@@ -1,0 +1,103 @@
+# 任务 CC3
+
+## 唯一事实源
+- `gm-lite/docs/2026-03-20/GM_LITE_CONTROLLER_CONSOLE_PREPARATION_V1_SCOPE.md`
+- `gm-lite/docs/2026-03-20/GM_LITE_CONTROLLER_CONSOLE_PREPARATION_V1_BOUNDARY_RULES.md`
+- `gm-lite/docs/2026-03-20/GM_SHARED_TASK_BUS_FROZEN_JUDGMENT_V1_REPORT.md`
+
+## 角色
+- Execution: Kior-B
+- Review: vs--cc3
+- Compliance: Kior-C
+
+## Task Envelope
+```yaml
+task_envelope:
+  task_id: "CC3"
+  module: "gm_lite_controller_console_preparation"
+  role: "execution"
+  assignee: "Kior-B"
+  depends_on:
+    - "CC1"
+    - "CC2"
+  parallel_group: "PG-02"
+  source_of_truth:
+    - "gm-lite/docs/2026-03-20/GM_LITE_CONTROLLER_CONSOLE_PREPARATION_V1_SCOPE.md"
+    - "gm-lite/docs/2026-03-20/GM_LITE_CONTROLLER_CONSOLE_PREPARATION_V1_BOUNDARY_RULES.md"
+    - "gm-lite/docs/2026-03-20/GM_SHARED_TASK_BUS_FROZEN_JUDGMENT_V1_REPORT.md"
+  writeback:
+    execution_report: "gm-lite/docs/2026-03-20/verification/gm_lite_controller_console_preparation/CC3_execution_report.md"
+    review_report: "gm-lite/docs/2026-03-20/verification/gm_lite_controller_console_preparation/CC3_review_report.md"
+    compliance_attestation: "gm-lite/docs/2026-03-20/verification/gm_lite_controller_console_preparation/CC3_compliance_attestation.md"
+    final_gate: "gm-lite/docs/2026-03-20/verification/gm_lite_controller_console_preparation/CC3_final_gate.md"
+  acceptance_criteria:
+    - "主控动作清晰"
+    - "状态视图清晰"
+    - "告警与 gate ready 视图清晰"
+  hard_constraints:
+    - "no ui"
+    - "no watcher"
+    - "no runtime"
+  escalation_trigger:
+    - "scope_violation"
+    - "blocking_dependency"
+    - "ambiguous_spec"
+  next_hop: "review"
+```
+
+## 目标
+- 定义主控动作、状态视图、告警视图。
+
+## 标准写回路径
+- execution: `gm-lite/docs/2026-03-20/verification/gm_lite_controller_console_preparation/CC3_execution_report.md`
+- review: `gm-lite/docs/2026-03-20/verification/gm_lite_controller_console_preparation/CC3_review_report.md`
+- compliance: `gm-lite/docs/2026-03-20/verification/gm_lite_controller_console_preparation/CC3_compliance_attestation.md`
+
+## 发给 Execution 的提示词
+```text
+你是任务 CC3 的执行者 Kior-B。
+你不是审查者，也不是合规官。
+
+唯一目标：
+- 定义主控动作、状态视图、告警视图、gate-ready 视图
+
+必须写入：
+- `gm-lite/docs/2026-03-20/verification/gm_lite_controller_console_preparation/CC3_execution_report.md`
+
+写回后默认下一跳：
+- `review`
+- 接棒者：`vs--cc3`
+- review 写回目标：
+  - `gm-lite/docs/2026-03-20/verification/gm_lite_controller_console_preparation/CC3_review_report.md`
+```
+
+## 发给 Review 的提示词
+```text
+你是任务 CC3 的审查者 vs--cc3。
+你只做 review，不做 execution，不做 compliance。
+
+必须写入：
+- `gm-lite/docs/2026-03-20/verification/gm_lite_controller_console_preparation/CC3_review_report.md`
+
+必须包含：
+1. task_id: CC3
+2. reviewer / executor
+3. PASS / REQUIRES_CHANGES / FAIL
+4. 主控动作 / 状态视图审查重点
+5. 最少 EvidenceRef
+
+若 review_report 写回成功，默认下一跳：
+- `compliance`
+- 接棒者：`Kior-C`
+- compliance 写回目标：
+  - `gm-lite/docs/2026-03-20/verification/gm_lite_controller_console_preparation/CC3_compliance_attestation.md`
+```
+
+## 发给 Compliance 的提示词
+```text
+你是任务 CC3 的合规官 Kior-C。
+你只做 B Guard 式硬审。
+
+必须写入：
+- `gm-lite/docs/2026-03-20/verification/gm_lite_controller_console_preparation/CC3_compliance_attestation.md`
+```

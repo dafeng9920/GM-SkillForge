@@ -1,0 +1,178 @@
+{
+  "meta": {
+    "skill_id": "sample-skill-1.0.0-abc12345",
+    "skill_name": "sample_skill",
+    "generated_at": "2026-03-16T12:00:00Z",
+    "t8_version": "1.0.0-t8",
+    "run_id": "20260316_120000",
+    "adjudicator_config": {
+      "evidence_threshold": 0.6,
+      "confidence_threshold": 0.7,
+      "severity_weights": {
+        "CRITICAL": 5.0,
+        "HIGH": 4.0,
+        "MEDIUM": 3.0,
+        "LOW": 2.0,
+        "INFO": 1.0
+      }
+    }
+  },
+  "input_sources": {
+    "findings_report": "run/T6_evidence/findings.json",
+    "validation_report": "run/T3_evidence/validation_report.json",
+    "rule_scan_report": "run/T4_evidence/rule_scan_report.json",
+    "pattern_detection_report": "run/T5_evidence/pattern_detection_report.json"
+  },
+  "rule_decisions": [
+    {
+      "finding_id": "F-validation-E302-a1b2c3d4",
+      "decision": "PASS",
+      "truth_assessment": "CONFIRMED",
+      "impact_level": "HIGH",
+      "evidence_strength": "CONCLUSIVE",
+      "primary_basis": "SCHEMA_VALIDATION",
+      "largest_uncertainty": "NONE",
+      "recommended_action": "MUST_FIX",
+      "adjudicated_at": "2026-03-16T12:00:00Z",
+      "confidence": 0.96,
+      "evidence_summary": {
+        "evidence_count": 2,
+        "evidence_kinds": ["FILE", "CODE_LOCATION"],
+        "has_strong_evidence": true
+      },
+      "severity_adjustment": "UNCHANGED"
+    },
+    {
+      "finding_id": "F-rule_scan-E420-1a2b3c4d",
+      "decision": "PASS",
+      "truth_assessment": "CONFIRMED",
+      "impact_level": "CRITICAL",
+      "evidence_strength": "STRONG",
+      "primary_basis": "SECURITY_RULE",
+      "largest_uncertainty": "NONE",
+      "recommended_action": "MUST_FIX",
+      "adjudicated_at": "2026-03-16T12:00:00Z",
+      "confidence": 0.92,
+      "evidence_summary": {
+        "evidence_count": 2,
+        "evidence_kinds": ["FILE", "CODE_LOCATION"],
+        "has_strong_evidence": true
+      },
+      "severity_adjustment": "UNCHANGED"
+    },
+    {
+      "finding_id": "F-pattern_match-E500-2b3c4d5e",
+      "decision": "DEFER",
+      "truth_assessment": "UNCERTAIN",
+      "impact_level": "MEDIUM",
+      "evidence_strength": "MODERATE",
+      "primary_basis": "PATTERN_MATCH",
+      "largest_uncertainty": "CONTEXT_DEPENDENT",
+      "recommended_action": "DEFER_TO_OWNER",
+      "adjudicated_at": "2026-03-16T12:00:00Z",
+      "confidence": 0.65,
+      "evidence_summary": {
+        "evidence_count": 1,
+        "evidence_kinds": ["FILE"],
+        "has_strong_evidence": true
+      },
+      "defer_reason": "CONTEXT_INCOMPLETE",
+      "severity_adjustment": "UNCHANGED"
+    },
+    {
+      "finding_id": "F-validation-E301-3c4d5e6f",
+      "decision": "WAIVE",
+      "truth_assessment": "FALSE_POSITIVE",
+      "impact_level": "LOW",
+      "evidence_strength": "STRONG",
+      "primary_basis": "SCHEMA_VALIDATION",
+      "largest_uncertainty": "FALSE_POSITIVE_RISK",
+      "recommended_action": "IGNORE_FALSE_POSITIVE",
+      "adjudicated_at": "2026-03-16T12:00:00Z",
+      "confidence": 0.85,
+      "evidence_summary": {
+        "evidence_count": 2,
+        "evidence_kinds": ["FILE", "CODE_LOCATION"],
+        "has_strong_evidence": true
+      },
+      "waiver_reason": "FALSE_POSITIVE_CONFIRMED",
+      "severity_adjustment": "UNCHANGED"
+    },
+    {
+      "finding_id": "F-rule_scan-E410-4d5e6f7a",
+      "decision": "FAIL",
+      "truth_assessment": "UNCERTAIN",
+      "impact_level": "HIGH",
+      "evidence_strength": "INSUFFICIENT",
+      "primary_basis": "CODE_ANALYSIS",
+      "largest_uncertainty": "EVIDENCE_INCOMPLETE",
+      "recommended_action": "ESCALATE_FOR_REVIEW",
+      "adjudicated_at": "2026-03-16T12:00:00Z",
+      "confidence": 0.35,
+      "evidence_summary": {
+        "evidence_count": 0,
+        "evidence_kinds": [],
+        "has_strong_evidence": false
+      },
+      "severity_adjustment": "UNCHANGED"
+    },
+    {
+      "finding_id": "F-pattern_match-E510-5e6f7a8b",
+      "decision": "PASS",
+      "truth_assessment": "LIKELY_TRUE",
+      "impact_level": "MEDIUM",
+      "evidence_strength": "MODERATE",
+      "primary_basis": "GOVERNANCE_GAP",
+      "largest_uncertainty": "SCOPE_AMBIGUITY",
+      "recommended_action": "SHOULD_FIX",
+      "adjudicated_at": "2026-03-16T12:00:00Z",
+      "confidence": 0.78,
+      "evidence_summary": {
+        "evidence_count": 1,
+        "evidence_kinds": ["FILE"],
+        "has_strong_evidence": true
+      },
+      "severity_adjustment": "UNCHANGED"
+    }
+  ],
+  "summary": {
+    "total_decisions": 6,
+    "by_decision": {
+      "PASS": 3,
+      "FAIL": 1,
+      "WAIVE": 1,
+      "DEFER": 1
+    },
+    "by_truth_assessment": {
+      "CONFIRMED": 2,
+      "LIKELY_TRUE": 1,
+      "UNCERTAIN": 2,
+      "LIKELY_FALSE": 0,
+      "FALSE_POSITIVE": 1
+    },
+    "by_impact_level": {
+      "CRITICAL": 1,
+      "HIGH": 2,
+      "MEDIUM": 2,
+      "LOW": 1,
+      "NEGLIGIBLE": 0
+    },
+    "by_evidence_strength": {
+      "CONCLUSIVE": 1,
+      "STRONG": 2,
+      "MODERATE": 2,
+      "WEAK": 0,
+      "INSUFFICIENT": 1
+    },
+    "findings_requiring_attention": [
+      "F-validation-E302-a1b2c3d4",
+      "F-rule_scan-E420-1a2b3c4d",
+      "F-rule_scan-E410-4d5e6f7a"
+    ],
+    "evidence_coverage": {
+      "findings_with_evidence": 5,
+      "findings_without_evidence": 1,
+      "coverage_percentage": 83.33
+    }
+  }
+}

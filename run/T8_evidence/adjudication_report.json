@@ -1,0 +1,134 @@
+{
+  "meta": {
+    "skill_id": "sample-1.0.0-00000000",
+    "skill_name": "sample",
+    "generated_at": "2026-03-16T12:03:58.565856+00:00",
+    "t8_version": "1.0.0-t8",
+    "run_id": "20260316_120358",
+    "adjudicator_config": {
+      "evidence_threshold": 0.6,
+      "confidence_threshold": 0.7,
+      "severity_weights": {
+        "CRITICAL": 5.0,
+        "HIGH": 4.0,
+        "MEDIUM": 3.0,
+        "LOW": 2.0,
+        "INFO": 1.0
+      }
+    }
+  },
+  "input_sources": {
+    "findings_report": null,
+    "validation_report": "D:\\GM-SkillForge\\run\\T3_evidence\\positive_examples\\validation_report.json",
+    "rule_scan_report": "D:\\GM-SkillForge\\run\\T4_evidence\\rule_samples\\eval_usage\\rule_scan_report.json",
+    "pattern_detection_report": "D:\\GM-SkillForge\\run\\T5_evidence\\pattern_samples\\e501_external_without_stop_rule\\pattern_detection_report.json"
+  },
+  "rule_decisions": [
+    {
+      "finding_id": "F-rule_scan-E421-ddc2a75b",
+      "decision": "PASS",
+      "truth_assessment": "CONFIRMED",
+      "impact_level": "CRITICAL",
+      "evidence_strength": "CONCLUSIVE",
+      "primary_basis": "SECURITY_RULE",
+      "largest_uncertainty": "NONE",
+      "recommended_action": "MUST_FIX",
+      "adjudicated_at": "2026-03-16T12:03:58.565856+00:00",
+      "confidence": 0.984,
+      "evidence_summary": {
+        "evidence_count": 2,
+        "evidence_kinds": [
+          "FILE",
+          "CODE_LOCATION"
+        ],
+        "has_strong_evidence": true
+      },
+      "severity_adjustment": "UNCHANGED",
+      "adjudicator_notes": "T8 Adjudication: source=rule_scan, category=dangerous_pattern, severity=CRITICAL, confidence=1.00, evidence_count=2, evidence_strength=CONCLUSIVE"
+    },
+    {
+      "finding_id": "F-pattern_match-E501-a8702d33",
+      "decision": "PASS",
+      "truth_assessment": "LIKELY_TRUE",
+      "impact_level": "CRITICAL",
+      "evidence_strength": "CONCLUSIVE",
+      "primary_basis": "GOVERNANCE_GAP",
+      "largest_uncertainty": "SCOPE_AMBIGUITY",
+      "recommended_action": "MUST_FIX",
+      "adjudicated_at": "2026-03-16T12:03:58.565856+00:00",
+      "confidence": 0.8820000000000001,
+      "evidence_summary": {
+        "evidence_count": 3,
+        "evidence_kinds": [
+          "FILE",
+          "CODE_LOCATION"
+        ],
+        "has_strong_evidence": true
+      },
+      "severity_adjustment": "UNCHANGED",
+      "adjudicator_notes": "T8 Adjudication: source=pattern_match, category=governance_gap, severity=CRITICAL, confidence=0.85, evidence_count=3, evidence_strength=CONCLUSIVE"
+    },
+    {
+      "finding_id": "F-pattern_match-E501-5560c2ae",
+      "decision": "PASS",
+      "truth_assessment": "LIKELY_TRUE",
+      "impact_level": "CRITICAL",
+      "evidence_strength": "CONCLUSIVE",
+      "primary_basis": "GOVERNANCE_GAP",
+      "largest_uncertainty": "SCOPE_AMBIGUITY",
+      "recommended_action": "MUST_FIX",
+      "adjudicated_at": "2026-03-16T12:03:58.565856+00:00",
+      "confidence": 0.8820000000000001,
+      "evidence_summary": {
+        "evidence_count": 3,
+        "evidence_kinds": [
+          "FILE",
+          "CODE_LOCATION"
+        ],
+        "has_strong_evidence": true
+      },
+      "severity_adjustment": "UNCHANGED",
+      "adjudicator_notes": "T8 Adjudication: source=pattern_match, category=governance_gap, severity=CRITICAL, confidence=0.85, evidence_count=3, evidence_strength=CONCLUSIVE"
+    }
+  ],
+  "summary": {
+    "total_decisions": 3,
+    "by_decision": {
+      "PASS": 3,
+      "FAIL": 0,
+      "WAIVE": 0,
+      "DEFER": 0
+    },
+    "by_truth_assessment": {
+      "CONFIRMED": 1,
+      "LIKELY_TRUE": 2,
+      "UNCERTAIN": 0,
+      "LIKELY_FALSE": 0,
+      "FALSE_POSITIVE": 0
+    },
+    "by_impact_level": {
+      "CRITICAL": 3,
+      "HIGH": 0,
+      "MEDIUM": 0,
+      "LOW": 0,
+      "NEGLIGIBLE": 0
+    },
+    "by_evidence_strength": {
+      "CONCLUSIVE": 3,
+      "STRONG": 0,
+      "MODERATE": 0,
+      "WEAK": 0,
+      "INSUFFICIENT": 0
+    },
+    "findings_requiring_attention": [
+      "F-rule_scan-E421-ddc2a75b",
+      "F-pattern_match-E501-a8702d33",
+      "F-pattern_match-E501-5560c2ae"
+    ],
+    "evidence_coverage": {
+      "findings_with_evidence": 3,
+      "findings_without_evidence": 0,
+      "coverage_percentage": 100.0
+    }
+  }
+}

@@ -1,0 +1,312 @@
+{
+  "skill_name": "quant",
+  "skill_dir": "D:\\GM-SkillForge\\skillforge\\src\\skills\\quant",
+  "analyzed_at": "2026-03-15T15:16:00Z",
+  "pattern_set_version": "1.0.0-t5",
+  "analysis_statistics": {
+    "files_analyzed": 7,
+    "functions_analyzed": 44,
+    "total_matches": 13,
+    "by_pattern": {
+      "E503_HIGH_PRIV_WITHOUT_BOUNDARY": 9,
+      "E504_MISSING_AUDITABLE_EXIT": 4
+    },
+    "by_category": {
+      "governance_gap": 13
+    }
+  },
+  "pattern_matches": {
+    "critical": [
+      {
+        "pattern_code": "E503_HIGH_PRIV_WITHOUT_BOUNDARY",
+        "pattern_name": "High-Privilege Call Without Boundary",
+        "file_path": "drawdown_limiter.py",
+        "line_number": 77,
+        "function_name": "execute",
+        "category": "governance_gap",
+        "severity": "CRITICAL",
+        "message": "High-privilege operation (file delete, database write, system command) executed without boundary limits (rate limit, resource cap, scope restriction)",
+        "snippet": "def execute(self, input_data: Dict[str, Any], context: Optional[Dict] = None) -> GateDecision:",
+        "context_lines": [
+          "",
+          "        return self._state",
+          "",
+          "    def execute(self, input_data: Dict[str, Any], context: Optional[Dict] = None) -> GateDecision:",
+          "        \"\"\"执行回撤检查\"\"\"",
+          "        context = context or {}",
+          ""
+        ],
+        "suggested_fix": "Add boundary limits: rate limiter, resource cap, or scope restriction",
+        "evidence_source": "run/T5_evidence/pattern_samples/e503_high_priv_without_boundary/skill.py"
+      },
+      {
+        "pattern_code": "E503_HIGH_PRIV_WITHOUT_BOUNDARY",
+        "pattern_name": "High-Privilege Call Without Boundary",
+        "file_path": "execute.py",
+        "line_number": 184,
+        "function_name": "execute",
+        "category": "governance_gap",
+        "severity": "CRITICAL",
+        "message": "High-privilege operation (file delete, database write, system command) executed without boundary limits (rate limit, resource cap, scope restriction)",
+        "snippet": "def execute(",
+        "context_lines": [
+          "        )",
+          "",
+          "",
+          "def execute(",
+          "    action: str,",
+          "    symbol: str,",
+          "    quantity: int,"
+        ],
+        "suggested_fix": "Add boundary limits: rate limiter, resource cap, or scope restriction",
+        "evidence_source": "run/T5_evidence/pattern_samples/e503_high_priv_without_boundary/skill.py"
+      },
+      {
+        "pattern_code": "E503_HIGH_PRIV_WITHOUT_BOUNDARY",
+        "pattern_name": "High-Privilege Call Without Boundary",
+        "file_path": "order_router.py",
+        "line_number": 100,
+        "function_name": "route",
+        "category": "governance_gap",
+        "severity": "CRITICAL",
+        "message": "High-privilege operation (file delete, database write, system command) executed without boundary limits (rate limit, resource cap, scope restriction)",
+        "snippet": "def route(self, input_data: Dict[str, Any], context: Optional[Dict] = None) -> Order:",
+        "context_lines": [
+          "",
+          "        return errors",
+          "",
+          "    def route(self, input_data: Dict[str, Any], context: Optional[Dict] = None) -> Order:",
+          "        \"\"\"路由订单\"\"\"",
+          "        context = context or {}",
+          ""
+        ],
+        "suggested_fix": "Add boundary limits: rate limiter, resource cap, or scope restriction",
+        "evidence_source": "run/T5_evidence/pattern_samples/e503_high_priv_without_boundary/skill.py"
+      },
+      {
+        "pattern_code": "E503_HIGH_PRIV_WITHOUT_BOUNDARY",
+        "pattern_name": "High-Privilege Call Without Boundary",
+        "file_path": "risk_guard.py",
+        "line_number": 238,
+        "function_name": "risk_guard",
+        "category": "governance_gap",
+        "severity": "CRITICAL",
+        "message": "High-privilege operation (file delete, database write, system command) executed without boundary limits (rate limit, resource cap, scope restriction)",
+        "snippet": "def risk_guard(",
+        "context_lines": [
+          "        self._daily_stats[\"daily_pnl\"] += pnl",
+          "",
+          "",
+          "def risk_guard(",
+          "    action: str,",
+          "    symbol: str,",
+          "    quantity: int,"
+        ],
+        "suggested_fix": "Add boundary limits: rate limiter, resource cap, or scope restriction",
+        "evidence_source": "run/T5_evidence/pattern_samples/e503_high_priv_without_boundary/skill.py"
+      },
+      {
+        "pattern_code": "E503_HIGH_PRIV_WITHOUT_BOUNDARY",
+        "pattern_name": "High-Privilege Call Without Boundary",
+        "file_path": "test_adapter_integration.py",
+        "line_number": 81,
+        "function_name": "test_adapter_to_core_integration",
+        "category": "governance_gap",
+        "severity": "CRITICAL",
+        "message": "High-privilege operation (file delete, database write, system command) executed without boundary limits (rate limit, resource cap, scope restriction)",
+        "snippet": "def test_adapter_to_core_integration():",
+        "context_lines": [
+          "    print()",
+          "",
+          "",
+          "def test_adapter_to_core_integration():",
+          "    \"\"\"测试 Adapter → Core 完整流水线\"\"\"",
+          "    print(\"=== 测试 2: Adapter → Core 集成 ===\")",
+          ""
+        ],
+        "suggested_fix": "Add boundary limits: rate limiter, resource cap, or scope restriction",
+        "evidence_source": "run/T5_evidence/pattern_samples/e503_high_priv_without_boundary/skill.py"
+      },
+      {
+        "pattern_code": "E503_HIGH_PRIV_WITHOUT_BOUNDARY",
+        "pattern_name": "High-Privilege Call Without Boundary",
+        "file_path": "test_adapter_integration.py",
+        "line_number": 150,
+        "function_name": "test_adapter_direct_function",
+        "category": "governance_gap",
+        "severity": "CRITICAL",
+        "message": "High-privilege operation (file delete, database write, system command) executed without boundary limits (rate limit, resource cap, scope restriction)",
+        "snippet": "def test_adapter_direct_function():",
+        "context_lines": [
+          "    print()",
+          "",
+          "",
+          "def test_adapter_direct_function():",
+          "    \"\"\"测试 SignalGeneratorAdapter 完整流程\"\"\"",
+          "    print(\"=== 测试 3: SignalGeneratorAdapter 完整流程 ===\")",
+          ""
+        ],
+        "suggested_fix": "Add boundary limits: rate limiter, resource cap, or scope restriction",
+        "evidence_source": "run/T5_evidence/pattern_samples/e503_high_priv_without_boundary/skill.py"
+      },
+      {
+        "pattern_code": "E503_HIGH_PRIV_WITHOUT_BOUNDARY",
+        "pattern_name": "High-Privilege Call Without Boundary",
+        "file_path": "test_e2e.py",
+        "line_number": 28,
+        "function_name": "test_normal_buy",
+        "category": "governance_gap",
+        "severity": "CRITICAL",
+        "message": "High-privilege operation (file delete, database write, system command) executed without boundary limits (rate limit, resource cap, scope restriction)",
+        "snippet": "def test_normal_buy():",
+        "context_lines": [
+          ")",
+          "",
+          "",
+          "def test_normal_buy():",
+          "    \"\"\"测试正常买入\"\"\"",
+          "    print(\"\\n=== 测试 1: 正常买入 ===\")",
+          ""
+        ],
+        "suggested_fix": "Add boundary limits: rate limiter, resource cap, or scope restriction",
+        "evidence_source": "run/T5_evidence/pattern_samples/e503_high_priv_without_boundary/skill.py"
+      },
+      {
+        "pattern_code": "E503_HIGH_PRIV_WITHOUT_BOUNDARY",
+        "pattern_name": "High-Privilege Call Without Boundary",
+        "file_path": "test_e2e.py",
+        "line_number": 50,
+        "function_name": "test_position_limit_exceeded",
+        "category": "governance_gap",
+        "severity": "CRITICAL",
+        "message": "High-privilege operation (file delete, database write, system command) executed without boundary limits (rate limit, resource cap, scope restriction)",
+        "snippet": "def test_position_limit_exceeded():",
+        "context_lines": [
+          "    print(\"✅ 通过\")",
+          "",
+          "",
+          "def test_position_limit_exceeded():",
+          "    \"\"\"测试仓位超限\"\"\"",
+          "    print(\"\\n=== 测试 2: 仓位超限拒绝 ===\")",
+          ""
+        ],
+        "suggested_fix": "Add boundary limits: rate limiter, resource cap, or scope restriction",
+        "evidence_source": "run/T5_evidence/pattern_samples/e503_high_priv_without_boundary/skill.py"
+      },
+      {
+        "pattern_code": "E503_HIGH_PRIV_WITHOUT_BOUNDARY",
+        "pattern_name": "High-Privilege Call Without Boundary",
+        "file_path": "test_e2e.py",
+        "line_number": 72,
+        "function_name": "test_hold_signal",
+        "category": "governance_gap",
+        "severity": "CRITICAL",
+        "message": "High-privilege operation (file delete, database write, system command) executed without boundary limits (rate limit, resource cap, scope restriction)",
+        "snippet": "def test_hold_signal():",
+        "context_lines": [
+          "    print(\"✅ 通过\")",
+          "",
+          "",
+          "def test_hold_signal():",
+          "    \"\"\"测试 HOLD 信号\"\"\"",
+          "    print(\"\\n=== 测试 3: HOLD 信号放行 ===\")",
+          ""
+        ],
+        "suggested_fix": "Add boundary limits: rate limiter, resource cap, or scope restriction",
+        "evidence_source": "run/T5_evidence/pattern_samples/e503_high_priv_without_boundary/skill.py"
+      }
+    ],
+    "high": [
+      {
+        "pattern_code": "E504_MISSING_AUDITABLE_EXIT",
+        "pattern_name": "Missing Auditable Exit",
+        "file_path": "drawdown_limiter.py",
+        "line_number": 77,
+        "function_name": "execute",
+        "category": "governance_gap",
+        "severity": "HIGH",
+        "message": "Function performing sensitive action without writing auditable exit record (audit log, evidence file, gate decision record)",
+        "snippet": "def execute(self, input_data: Dict[str, Any], context: Optional[Dict] = None) -> GateDecision:",
+        "context_lines": [
+          "",
+          "        return self._state",
+          "",
+          "    def execute(self, input_data: Dict[str, Any], context: Optional[Dict] = None) -> GateDecision:",
+          "        \"\"\"执行回撤检查\"\"\"",
+          "        context = context or {}",
+          ""
+        ],
+        "suggested_fix": "Add audit event writing before returning from sensitive operation",
+        "evidence_source": "run/T5_evidence/pattern_samples/e504_missing_auditable_exit/skill.py"
+      },
+      {
+        "pattern_code": "E504_MISSING_AUDITABLE_EXIT",
+        "pattern_name": "Missing Auditable Exit",
+        "file_path": "execute.py",
+        "line_number": 75,
+        "function_name": "execute",
+        "category": "governance_gap",
+        "severity": "HIGH",
+        "message": "Function performing sensitive action without writing auditable exit record (audit log, evidence file, gate decision record)",
+        "snippet": "def execute(",
+        "context_lines": [
+          "        self.drawdown_limiter = DrawdownLimiter()",
+          "        self.order_router = OrderRouter(mode=mode)",
+          "",
+          "    def execute(",
+          "        self,",
+          "        intent: Dict[str, Any],",
+          "        context: Optional[Dict] = None"
+        ],
+        "suggested_fix": "Add audit event writing before returning from sensitive operation",
+        "evidence_source": "run/T5_evidence/pattern_samples/e504_missing_auditable_exit/skill.py"
+      },
+      {
+        "pattern_code": "E504_MISSING_AUDITABLE_EXIT",
+        "pattern_name": "Missing Auditable Exit",
+        "file_path": "execute.py",
+        "line_number": 184,
+        "function_name": "execute",
+        "category": "governance_gap",
+        "severity": "HIGH",
+        "message": "Function performing sensitive action without writing auditable exit record (audit log, evidence file, gate decision record)",
+        "snippet": "def execute(",
+        "context_lines": [
+          "        )",
+          "",
+          "",
+          "def execute(",
+          "    action: str,",
+          "    symbol: str,",
+          "    quantity: int,"
+        ],
+        "suggested_fix": "Add audit event writing before returning from sensitive operation",
+        "evidence_source": "run/T5_evidence/pattern_samples/e504_missing_auditable_exit/skill.py"
+      },
+      {
+        "pattern_code": "E504_MISSING_AUDITABLE_EXIT",
+        "pattern_name": "Missing Auditable Exit",
+        "file_path": "risk_guard.py",
+        "line_number": 137,
+        "function_name": "execute",
+        "category": "governance_gap",
+        "severity": "HIGH",
+        "message": "Function performing sensitive action without writing auditable exit record (audit log, evidence file, gate decision record)",
+        "snippet": "def execute(self, input_data: Dict[str, Any], context: Optional[Dict] = None) -> GateDecision:",
+        "context_lines": [
+          "            )",
+          "        return None",
+          "",
+          "    def execute(self, input_data: Dict[str, Any], context: Optional[Dict] = None) -> GateDecision:",
+          "        \"\"\"执行风控检查\"\"\"",
+          "        context = context or {}",
+          "        total_capital = context.get(\"total_capital\", 1000000)"
+        ],
+        "suggested_fix": "Add audit event writing before returning from sensitive operation",
+        "evidence_source": "run/T5_evidence/pattern_samples/e504_missing_auditable_exit/skill.py"
+      }
+    ],
+    "medium": []
+  },
+  "governance_gaps": []
+}

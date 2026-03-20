@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ReleaseValidationInputPayloadDraft",
+  "type": "object",
+  "required": [
+    "payload_type",
+    "source_object",
+    "report_id",
+    "candidate_id",
+    "checks",
+    "summary",
+    "handoff_ready",
+    "build_validation_status"
+  ],
+  "properties": {
+    "payload_type": { "const": "ReleaseValidationInputPayload" },
+    "source_object": { "const": "ReviewValidationInput" },
+    "report_id": { "type": "string" },
+    "candidate_id": { "type": "string" },
+    "checks": { "type": "array", "items": { "type": "object" } },
+    "summary": { "type": "object" },
+    "missing_artifacts": { "type": "array", "items": { "type": "string" } },
+    "broken_references": { "type": "array", "items": { "type": "string" } },
+    "smoke_test_result": { "type": "object" },
+    "trace_result": { "type": "object" },
+    "handoff_ready": { "type": "boolean" },
+    "build_validation_status": { "type": "string" },
+    "boundary_note": { "type": "string" }
+  },
+  "additionalProperties": false
+}

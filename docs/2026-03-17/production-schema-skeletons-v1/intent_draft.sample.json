@@ -1,0 +1,49 @@
+{
+  "intent_id": "generate_skill_from_requirement",
+  "intent_name": "Generate Skill From Requirement",
+  "summary": "把自然语言需求转成可验证的候选 skill 主链输入",
+  "goal": "形成 IntentDraft 供后续 ContractBundle 使用",
+  "problem_statement": "用户给出需求，希望系统产出 candidate skill",
+  "in_scope": [
+    "Intent 结构化",
+    "输入输出草案",
+    "required_gates 绑定"
+  ],
+  "out_of_scope": [
+    "最终发布裁决",
+    "治理审计通过"
+  ],
+  "inputs": [
+    {
+      "name": "requirement_text",
+      "type": "string",
+      "required": true,
+      "description": "用户自然语言需求"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "intent_draft",
+      "type": "object",
+      "required": true,
+      "description": "结构化意图草案"
+    }
+  ],
+  "constraints": [
+    {
+      "key": "minimum_level",
+      "value": "L3",
+      "description": "正式出品至少达到 L3 基线"
+    }
+  ],
+  "required_gates": [
+    "intake_repo",
+    "draft_skill_spec",
+    "constitution_risk_gate",
+    "pack_audit_and_publish"
+  ],
+  "status": "locked",
+  "created_at": "2026-03-17T00:00:00Z",
+  "updated_at": "2026-03-17T00:00:00Z",
+  "revision": "v1"
+}

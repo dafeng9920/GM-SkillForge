@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ContractBundle",
+  "type": "object",
+  "required": [
+    "contract_id",
+    "intent_id",
+    "input_schema",
+    "output_schema",
+    "state_schema",
+    "error_schema",
+    "trigger_spec",
+    "evidence_spec",
+    "required_gates",
+    "status"
+  ],
+  "properties": {
+    "contract_id": { "type": "string" },
+    "intent_id": { "type": "string" },
+    "summary": { "type": "string" },
+    "version": { "type": "string" },
+    "input_schema": { "type": "object" },
+    "output_schema": { "type": "object" },
+    "state_schema": { "type": "object" },
+    "error_schema": { "type": "object" },
+    "trigger_spec": { "type": "object" },
+    "evidence_spec": { "type": "object" },
+    "required_gates": { "type": "array", "items": { "type": "string" } },
+    "status": { "type": "string", "enum": ["draft", "validated", "rejected", "frozen"] }
+  },
+  "additionalProperties": true
+}

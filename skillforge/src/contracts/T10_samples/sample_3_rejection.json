@@ -1,0 +1,195 @@
+{
+  "_comment": "Sample 3: Rejection - Critical finding with no evidence, cannot be overridden",
+  "meta": {
+    "run_id": "20260316_140000",
+    "created_at": "2026-03-16T14:00:00Z",
+    "t10_version": "1.0.0-t10",
+    "sample_scenario": "REJECTION_CRITICAL_NO_EVIDENCE"
+  },
+  "judgment_overrides": {
+    "meta": {
+      "run_id": "20260316_140000",
+      "created_at": "2026-03-16T14:00:00Z",
+      "t10_version": "1.0.0-t10",
+      "decision_context": "exit_gate"
+    },
+    "overrides": [],
+    "summary": {
+      "total_overrides": 0,
+      "by_severity": {
+        "CRITICAL": 0,
+        "HIGH": 0,
+        "MEDIUM": 0,
+        "LOW": 0
+      },
+      "by_justification": {}
+    }
+  },
+  "residual_risks": {
+    "meta": {
+      "run_id": "20260316_140000",
+      "created_at": "2026-03-16T14:00:00Z",
+      "t10_version": "1.0.0-t10",
+      "assessment_methodology": "qualitative"
+    },
+    "risks": [],
+    "summary": {
+      "total_risks": 0,
+      "by_level": {
+        "CRITICAL": 0,
+        "HIGH": 0,
+        "MEDIUM": 0,
+        "LOW": 0
+      },
+      "by_status": {
+        "open": 0,
+        "mitigating": 0,
+        "monitoring": 0,
+        "accepted": 0,
+        "closed": 0
+      },
+      "mitigation_coverage": {
+        "with_mitigation": 0,
+        "with_monitoring": 0,
+        "accepted_without_mitigation": 0
+      }
+    }
+  },
+  "release_decision": {
+    "meta": {
+      "run_id": "20260316_140000",
+      "skill_id": "direct_executor-1.0.0-bad1bad2",
+      "skill_name": "direct_executor",
+      "decision_timestamp": "2026-03-16T14:05:00Z",
+      "t10_version": "1.0.0-t10",
+      "decision_context": "exit_gate",
+      "gate_type": "release"
+    },
+    "decision": {
+      "outcome": "REJECT",
+      "rationale_code": "CRITICAL_FINDINGS_UNRESOLVED",
+      "rationale_detail": {
+        "blocking_findings_count": 1,
+        "overrides_count": 0,
+        "residual_risks_count": 0
+      },
+      "is_final": true
+    },
+    "findings_summary": {
+      "total_findings": 5,
+      "by_severity": {
+        "CRITICAL": 1,
+        "HIGH": 2,
+        "MEDIUM": 1,
+        "LOW": 1,
+        "INFO": 0
+      },
+      "by_source": {
+        "validation": 2,
+        "rule_scan": 3,
+        "pattern_match": 0
+      },
+      "blocking_findings": [
+        "F-rule_scan-E42-critical-9f8e7d6c"
+      ],
+      "overridden_findings": []
+    },
+    "overrides_applied": [],
+    "residual_risks": {
+      "total_risks": 0,
+      "risk_ids": [],
+      "by_level": {
+        "CRITICAL": 0,
+        "HIGH": 0,
+        "MEDIUM": 0,
+        "LOW": 0
+      },
+      "unacceptable_count": 0
+    },
+    "escalation_gate": null,
+    "decision_chain": [
+      {
+        "timestamp": "2026-03-16T13:55:00Z",
+        "stage": "validation",
+        "outcome": "FAILED",
+        "decision_maker": "T3_SkillContractValidator"
+      },
+      {
+        "timestamp": "2026-03-16T13:57:00Z",
+        "stage": "rule_scan",
+        "outcome": "CRITICAL_VIOLATION",
+        "decision_maker": "T4_RuleScanner"
+      },
+      {
+        "timestamp": "2026-03-16T14:00:00Z",
+        "stage": "findings",
+        "outcome": "CRITICAL_NO_EVIDENCE",
+        "decision_maker": "T6_FindingBuilder"
+      },
+      {
+        "timestamp": "2026-03-16T14:05:00Z",
+        "stage": "final",
+        "outcome": "REJECT",
+        "decision_maker": "T10_ReleaseGate"
+      }
+    ],
+    "evidence_refs": [
+      {
+        "kind": "FILE",
+        "locator": "run/20260316_140000/validation_report.json",
+        "note": "T3 validation report - contract validation failed"
+      },
+      {
+        "kind": "FILE",
+        "locator": "run/20260316_140000/rule_scan_report.json",
+        "note": "T4 rule scan report - eval() usage detected"
+      },
+      {
+        "kind": "FILE",
+        "locator": "run/20260316_140000/findings.json",
+        "note": "T6 findings report"
+      }
+    ],
+    "rejection_detail": {
+      "primary_blocker": {
+        "finding_id": "F-rule_scan-E42-critical-9f8e7d6c",
+        "reason": "Use of eval() on user input - HIGH RISK OF CODE INJECTION",
+        "file_path": "direct_executor/main.py",
+        "line_number": 23,
+        "snippet": "result = eval(user_input)",
+        "severity": "CRITICAL",
+        "cannot_be_overridden_reason": "CRITICAL severity findings without compensating controls cannot be overridden per T10 hard constraints"
+      },
+      "additional_blockers": [
+        {
+          "finding_id": "F-validation-E301-1a2b3c4d",
+          "reason": "Contract validation failed - output_contract missing required fields"
+        },
+        {
+          "finding_id": "F-validation-E302-2b3c4d5e",
+          "reason": "Required field 'skill_name' is missing"
+        }
+      ],
+      "required_remediations": [
+        {
+          "priority": "P0",
+          "action": "Remove eval() usage and replace with ast.literal_eval or proper parsing",
+          "owner": "skill_author",
+          "evidence_required": "Updated code with security review"
+        },
+        {
+          "priority": "P0",
+          "action": "Fix output_contract schema to include all required fields",
+          "owner": "skill_author",
+          "evidence_required": "Updated normalized_skill_spec.json"
+        },
+        {
+          "priority": "P0",
+          "action": "Add skill_name to skill spec",
+          "owner": "skill_author",
+          "evidence_required": "Updated normalized_skill_spec.json"
+        }
+      ]
+    }
+  }
+}

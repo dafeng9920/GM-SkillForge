@@ -462,6 +462,27 @@ def derive_fingerprint(raw_input: str) -> str:
     normalized = raw_input.strip().encode("utf-8")
     return f"pkg-{hashlib.sha1(normalized).hexdigest()[:8]}"
 
+def build_artifact_refs(intent: str, raw_input: str) -> dict:
+    fingerprint = derive_fingerprint(raw_input)
+    revision = extract_revision(raw_input)
+    asset_id = f"AST-{fingerprint[-6:].upper()}"
+    refs = {
+        "assetId": asset_id,
+        "fingerprint": fingerprint,
+    }
+    if intent == "vetting":
+        refs["reportId"] = f"VET-{fingerprint[-6:].upper()}"
+        refs["packId"] = f"VPK-{fingerprint[-6:].upper()}"
+    elif intent == "audit":
+        revision_token = revision.replace("-", "")
+        refs["reportId"] = f"AUD-{revision_token}"
+        refs["packId"] = f"APK-{revision_token}"
+    elif intent == "permit":
+        revision_token = revision.replace("-", "")
+        refs["permitId"] = f"PMT-{fingerprint[-4:].upper()}-{revision_token}"
+        refs["packId"] = f"PPK-{revision_token}"
+    return refs
+
 def build_canvas_artifacts(intent: str, raw_input: str, locale: str, detail_items: list[dict]) -> list[dict]:
     zh = locale.startswith("zh")
     normalized = raw_input.lower()
@@ -470,27 +491,34 @@ def build_canvas_artifacts(intent: str, raw_input: str, locale: str, detail_item
     revision = extract_revision(raw_input)
     source_type = infer_source_type(raw_input, locale)
     fingerprint = derive_fingerprint(raw_input)
+    artifact_refs = build_artifact_refs(intent, raw_input)
 
     if intent == "vetting":
         return [
             {"label": "入口画像" if zh else "Intake profile", "value": "external_skill_vetting", "emphasis": "normal"},
             {"label": "候选资产" if zh else "Candidate asset", "value": asset_name, "emphasis": "normal"},
+            {"label": "资产 ID" if zh else "Asset ID", "value": artifact_refs["assetId"], "emphasis": "normal"},
             {"label": "来源类型" if zh else "Source type", "value": source_type, "emphasis": "normal"},
-            {"label": "审查包" if zh else "Review pack", "value": f"VET-{fingerprint}", "emphasis": "normal"},
+            {"label": "报告 ID" if zh else "Report ID", "value": artifact_refs["reportId"], "emphasis": "normal"},
+            {"label": "审查包" if zh else "Review pack", "value": artifact_refs["packId"], "emphasis": "normal"},
             {"label": "安装闸门" if zh else "Install gate", "value": detail_map.get("安装闸门" if zh else "Install gate", "Conditional"), "emphasis": "warning"},
         ]
     if intent == "audit":
         return [
             {"label": "裁决画像" if zh else "Adjudication profile", "value": "revision_audit", "emphasis": "normal"},
             {"label": "目标资产" if zh else "Target asset", "value": asset_name, "emphasis": "normal"},
+            {"label": "资产 ID" if zh else "Asset ID", "value": artifact_refs["assetId"], "emphasis": "normal"},
             {"label": "目标修订" if zh else "Target revision", "value": detail_map.get("当前修订" if zh else "Current revision", revision), "emphasis": "normal"},
-            {"label": "审计包" if zh else "Audit pack", "value": f"AUD-{revision}", "emphasis": "normal"},
+            {"label": "报告 ID" if zh else "Report ID", "value": artifact_refs["reportId"], "emphasis": "normal"},
+            {"label": "审计包" if zh else "Audit pack", "value": artifact_refs["packId"], "emphasis": "normal"},
             {"label": "裁决状态" if zh else "Adjudication", "value": detail_map.get("裁决状态" if zh else "Adjudication", "Needs review"), "emphasis": "warning"},
         ]
     return [
         {"label": "放行画像" if zh else "Release profile", "value": "permit_release", "emphasis": "normal"},
         {"label": "目标资产" if zh else "Target asset", "value": asset_name, "emphasis": "normal"},
-        {"label": "Permit 草案" if zh else "Permit draft", "value": f"PMT-{fingerprint[-4:]}-{revision.replace('-', '')}", "emphasis": "warning"},
+        {"label": "资产 ID" if zh else "Asset ID", "value": artifact_refs["assetId"], "emphasis": "normal"},
+        {"label": "Permit ID" if zh else "Permit ID", "value": artifact_refs["permitId"], "emphasis": "warning"},
+        {"label": "Permit 草案包" if zh else "Permit pack", "value": artifact_refs["packId"], "emphasis": "normal"},
         {"label": "绑定修订" if zh else "Bound revision", "value": detail_map.get("绑定修订" if zh else "Bound revision", revision), "emphasis": "normal"},
         {"label": "放行范围" if zh else "Release scope", "value": detail_map.get("放行范围" if zh else "Release scope", "Production / Internal"), "emphasis": "normal"},
     ]
@@ -623,6 +651,9 @@ def build_governance_decision(raw_input: str, intent_hint: str = "unknown", loca
     }.get(intent, "clarify")
     requires_clarification = intent == "unknown"
     route_target = None if requires_clarification else GOVERNANCE_ROUTE_MAP[intent]
+    artifact_refs = build_artifact_refs(intent, raw_input) if not requires_clarification else {
+        "fingerprint": derive_fingerprint(raw_input),
+    }
 
     if requires_clarification:
         reason = "Input recorded, but more context is required before the governed flow can be selected safely."
@@ -669,6 +700,7 @@ def build_governance_decision(raw_input: str, intent_hint: str = "unknown", loca
             "nextActions": next_actions,
             "profile": profile,
             "capabilitySegments": capability_segments,
+            "artifactRefs": artifact_refs,
             "canvasPayload": build_canvas_payload(intent, locale, requires_clarification, capability_segments, raw_input, route_target),
         }
     }
@@ -984,6 +1016,7 @@ async def work_execute(request: WorkExecuteRequest):
 async def governance_orchestrate(request: GovernanceOrchestrateRequest):
     """Resolve governed interaction state for unified input -> state machine -> canvas flow."""
     run_id = generate_run_id()
+    trace_id = f"TRC-{uuid.uuid4().hex[:10].upper()}"
 
     payload = build_governance_decision(
         raw_input=request.raw_input,
@@ -992,10 +1025,13 @@ async def governance_orchestrate(request: GovernanceOrchestrateRequest):
     )
     payload["trace"] = {
         "run_id": run_id,
+        "trace_id": trace_id,
         "locale": request.locale,
         "current_canvas": request.current_canvas,
         "input_length": len(request.raw_input.strip()),
     }
+    payload["artifact_refs"] = payload["decision"].get("artifactRefs", {})
+    payload["run_id"] = run_id
     payload["orchestration_source"] = "api"
     return payload
 

@@ -1,0 +1,102 @@
+{
+  "skill_name": "http_no_timeout",
+  "skill_dir": "D:\\GM-SkillForge\\run\\T4_evidence\\rule_samples\\http_no_timeout",
+  "scanned_at": "2026-03-15T13:07:22Z",
+  "rule_set_version": "1.0.0-t4",
+  "scan_statistics": {
+    "files_scanned": 1,
+    "total_lines_scanned": 11,
+    "total_hits": 6,
+    "by_category": {
+      "sensitive_permission": 4,
+      "external_action": 1,
+      "boundary_gap": 1
+    },
+    "by_severity": {
+      "HIGH": 4,
+      "LOW": 1,
+      "MEDIUM": 1
+    }
+  },
+  "findings": {
+    "critical": [],
+    "high": [
+      {
+        "rule_code": "E404_NETWORK_ACCESS_without_CHECK",
+        "rule_name": "Network Access Without Authorization Check",
+        "file_path": "http_no_timeout.py",
+        "line_number": 1,
+        "column_number": 15,
+        "snippet": "\"\"\"Skill with HTTP request without timeout - MEDIUM violation.\"\"\"",
+        "category": "sensitive_permission",
+        "severity": "HIGH",
+        "message": "Network access detected without explicit authorization check",
+        "suggested_fix": "Add explicit authorization check before network access"
+      },
+      {
+        "rule_code": "E404_NETWORK_ACCESS_without_CHECK",
+        "rule_name": "Network Access Without Authorization Check",
+        "file_path": "http_no_timeout.py",
+        "line_number": 3,
+        "column_number": 15,
+        "snippet": "SKILL_NAME = \"http_no_timeout\"",
+        "category": "sensitive_permission",
+        "severity": "HIGH",
+        "message": "Network access detected without explicit authorization check",
+        "suggested_fix": "Add explicit authorization check before network access"
+      },
+      {
+        "rule_code": "E404_NETWORK_ACCESS_without_CHECK",
+        "rule_name": "Network Access Without Authorization Check",
+        "file_path": "http_no_timeout.py",
+        "line_number": 9,
+        "column_number": 14,
+        "snippet": "\"\"\"E412: HTTP request without error handling - LOW\"\"\"",
+        "category": "sensitive_permission",
+        "severity": "HIGH",
+        "message": "Network access detected without explicit authorization check",
+        "suggested_fix": "Add explicit authorization check before network access"
+      },
+      {
+        "rule_code": "E404_NETWORK_ACCESS_without_CHECK",
+        "rule_name": "Network Access Without Authorization Check",
+        "file_path": "http_no_timeout.py",
+        "line_number": 10,
+        "column_number": 16,
+        "snippet": "response = requests.get(url)",
+        "category": "sensitive_permission",
+        "severity": "HIGH",
+        "message": "Network access detected without explicit authorization check",
+        "suggested_fix": "Add explicit authorization check before network access"
+      }
+    ],
+    "medium": [
+      {
+        "rule_code": "E433_MISSING_RATE_LIMITING",
+        "rule_name": "Missing Rate Limiting",
+        "file_path": "http_no_timeout.py",
+        "line_number": 10,
+        "column_number": 16,
+        "snippet": "response = requests.get(url)",
+        "category": "boundary_gap",
+        "severity": "MEDIUM",
+        "message": "External API call without rate limiting",
+        "suggested_fix": "Implement rate limiting for external API calls"
+      }
+    ],
+    "low": [
+      {
+        "rule_code": "E412_HTTP_REQUEST_without_ERROR_HANDLING",
+        "rule_name": "HTTP Request Without Error Handling",
+        "file_path": "http_no_timeout.py",
+        "line_number": 10,
+        "column_number": 16,
+        "snippet": "response = requests.get(url)",
+        "category": "external_action",
+        "severity": "LOW",
+        "message": "HTTP request without proper error handling",
+        "suggested_fix": "Wrap HTTP requests in try-except blocks"
+      }
+    ]
+  }
+}

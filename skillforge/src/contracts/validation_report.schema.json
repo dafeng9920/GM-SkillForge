@@ -1,0 +1,114 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://gm-os.dev/contracts/validation_report.schema.json",
+  "title": "ValidationReport",
+  "description": "Validation report for skill contract and structure (T3 deliverable). Provides structured failure and warning information with field paths and fix suggestions.",
+  "type": "object",
+  "required": [
+    "is_valid",
+    "failures",
+    "warnings",
+    "validated_at",
+    "validator_version",
+    "failure_count",
+    "warning_count"
+  ],
+  "properties": {
+    "is_valid": {
+      "type": "boolean",
+      "description": "Whether the validation passed (true) or failed (false)"
+    },
+    "failures": {
+      "type": "array",
+      "description": "List of validation failures (errors)",
+      "items": {
+        "type": "object",
+        "required": ["code", "message", "field_path", "severity"],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Error code from ValidationErrorCode (E3xx series)",
+            "pattern": "^E3[0-9]{2}_[A-Z_]+$"
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable error message"
+          },
+          "field_path": {
+            "type": "string",
+            "description": "JSON path to the invalid field (e.g., 'input_contract.properties.user_id')"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["ERROR", "WARNING"],
+            "description": "Severity level"
+          },
+          "suggested_fix": {
+            "type": ["string", "null"],
+            "description": "Suggested fix for the issue"
+          },
+          "actual_value": {
+            "type": ["string", "null"],
+            "description": "Actual value found (for debugging)"
+          },
+          "expected_value": {
+            "type": ["string", "null"],
+            "description": "Expected value (for debugging)"
+          }
+        }
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "description": "List of validation warnings",
+      "items": {
+        "type": "object",
+        "required": ["code", "message", "field_path", "severity"],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Warning code"
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable warning message"
+          },
+          "field_path": {
+            "type": "string",
+            "description": "JSON path to the field"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["WARNING"],
+            "description": "Severity level (always WARNING for warnings)"
+          },
+          "suggested_fix": {
+            "type": ["string", "null"],
+            "description": "Suggested fix for the warning"
+          }
+        }
+      }
+    },
+    "validated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp when validation was performed"
+    },
+    "validator_version": {
+      "type": "string",
+      "description": "Version of the validator that produced this report",
+      "pattern": "^\\d+\\.\\d+\\.\\d+.*"
+    },
+    "failure_count": {
+      "type": "integer",
+      "description": "Number of validation failures",
+      "minimum": 0
+    },
+    "warning_count": {
+      "type": "integer",
+      "description": "Number of validation warnings",
+      "minimum": 0
+    }
+  },
+  "additionalProperties": false
+}

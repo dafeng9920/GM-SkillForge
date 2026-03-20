@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CandidateSkill",
+  "type": "object",
+  "required": [
+    "candidate_id",
+    "intent_id",
+    "contract_id",
+    "skill_root",
+    "directory_layout",
+    "generated_files",
+    "status"
+  ],
+  "properties": {
+    "candidate_id": { "type": "string" },
+    "intent_id": { "type": "string" },
+    "contract_id": { "type": "string" },
+    "candidate_name": { "type": "string" },
+    "skill_root": { "type": "string" },
+    "directory_layout": { "type": "object" },
+    "generated_files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "kind", "required"],
+        "properties": {
+          "path": { "type": "string" },
+          "kind": { "type": "string" },
+          "required": { "type": "boolean" }
+        }
+      }
+    },
+    "entrypoints": { "type": "array", "items": { "type": "object" } },
+    "dependencies": { "type": "object" },
+    "required_changes": { "type": "array", "items": { "type": "object" } },
+    "status": {
+      "type": "string",
+      "enum": ["draft_candidate", "compiled", "compile_failed", "handed_to_validation"]
+    }
+  },
+  "additionalProperties": true
+}

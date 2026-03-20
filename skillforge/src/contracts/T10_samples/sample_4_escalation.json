@@ -1,0 +1,315 @@
+{
+  "_comment": "Sample 4: Escalation - Novel risk pattern exceeds delegated authority",
+  "meta": {
+    "run_id": "20260316_150000",
+    "created_at": "2026-03-16T15:00:00Z",
+    "t10_version": "1.0.0-t10",
+    "sample_scenario": "ESCALATION_NOVEL_RISK"
+  },
+  "judgment_overrides": {
+    "meta": {
+      "run_id": "20260316_150000",
+      "created_at": "2026-03-16T15:00:00Z",
+      "t10_version": "1.0.0-t10",
+      "decision_context": "exit_gate"
+    },
+    "overrides": [
+      {
+        "override_id": "O-20260316_150000-1",
+        "finding_id": "F-pattern_match-E52-3c4d5e6f",
+        "finding_summary": "Novel LLM prompt injection pattern detected in dynamic prompt construction",
+        "original_decision": "ESCALATE",
+        "override_decision": "ESCALATE",
+        "justification_code": "RISK_ACCEPTED_PENDING_FIX",
+        "justification_detail": {
+          "category": "mitigation_provided",
+          "related_ticket": "AI-SEC-789"
+        },
+        "severity": "HIGH",
+        "source_type": "pattern_match",
+        "approver": {
+          "approver_id": "tl_john_smith",
+          "approver_role": "TECHNICAL_LEAD",
+          "approval_scope": "single_finding",
+          "delegation_chain": null
+        },
+        "approved_at": "2026-03-16T15:05:00Z",
+        "conditions": [
+          {
+            "type": "approval_required",
+            "description": "Security Council review required for novel attack vector",
+            "evidence_path": "pending/security_council_review"
+          }
+        ],
+        "residual_risk_created": "R-20260316_150000-1",
+        "evidence_refs": [
+          {
+            "kind": "FILE",
+            "locator": "run/20260316_150000/pattern_detection_report.json",
+            "note": "Original pattern finding"
+          },
+          {
+            "kind": "TICKET",
+            "locator": "AI-SEC-789",
+            "note": "Security review ticket"
+          }
+        ]
+      }
+    ],
+    "summary": {
+      "total_overrides": 1,
+      "by_severity": {
+        "CRITICAL": 0,
+        "HIGH": 1,
+        "MEDIUM": 0,
+        "LOW": 0
+      },
+      "by_justification": {
+        "RISK_ACCEPTED_PENDING_FIX": 1
+      }
+    }
+  },
+  "residual_risks": {
+    "meta": {
+      "run_id": "20260316_150000",
+      "created_at": "2026-03-16T15:00:00Z",
+      "t10_version": "1.0.0-t10",
+      "assessment_methodology": "qualitative"
+    },
+    "risks": [
+      {
+        "risk_id": "R-20260316_150000-1",
+        "source_finding_id": "F-pattern_match-E52-3c4d5e6f",
+        "source_override_id": "O-20260316_150000-1",
+        "title": "Novel LLM prompt injection vector",
+        "description": "Dynamic prompt construction pattern detected that may allow prompt injection. This is a novel attack vector not covered by existing patterns. Security Council assessment required.",
+        "risk_level": "HIGH",
+        "original_severity": "HIGH",
+        "risk_category": "security",
+        "likelihood": "POSSIBLE",
+        "impact": "SEVERE",
+        "calculated_score": null,
+        "status": "open",
+        "mitigation_strategy": "escalate",
+        "mitigation_plan": {
+          "actions": [
+            {
+              "action": "Security Council review of novel attack vector",
+              "owner": "security_council",
+              "target_date": "2026-03-23T00:00:00Z",
+              "status": "pending"
+            }
+          ],
+          "estimated_completion": "2026-03-23T00:00:00Z"
+        },
+        "related_ticket": "AI-SEC-789",
+        "evidence_refs": [
+          {
+            "kind": "FILE",
+            "locator": "llm_integration/prompt_builder.py",
+            "note": "Source code with novel pattern"
+          },
+          {
+            "kind": "DOCUMENTATION",
+            "locator": "docs/prompt_injection_research.md",
+            "note": "Research on this attack vector"
+          }
+        ],
+        "created_at": "2026-03-16T15:05:00Z",
+        "updated_at": "2026-03-16T15:05:00Z",
+        "closed_at": null
+      }
+    ],
+    "summary": {
+      "total_risks": 1,
+      "by_level": {
+        "CRITICAL": 0,
+        "HIGH": 1,
+        "MEDIUM": 0,
+        "LOW": 0
+      },
+      "by_status": {
+        "open": 1,
+        "mitigating": 0,
+        "monitoring": 0,
+        "accepted": 0,
+        "closed": 0
+      },
+      "mitigation_coverage": {
+        "with_mitigation": 0,
+        "with_monitoring": 0,
+        "accepted_without_mitigation": 1
+      }
+    }
+  },
+  "release_decision": {
+    "meta": {
+      "run_id": "20260316_150000",
+      "skill_id": "llm_integration-1.0.0-novel1",
+      "skill_name": "llm_integration",
+      "decision_timestamp": "2026-03-16T15:10:00Z",
+      "t10_version": "1.0.0-t10",
+      "decision_context": "exit_gate",
+      "gate_type": "release"
+    },
+    "decision": {
+      "outcome": "ESCALATE",
+      "rationale_code": "ESCALATION_REQUIRED",
+      "rationale_detail": {
+        "blocking_findings_count": 1,
+        "overrides_count": 1,
+        "residual_risks_count": 1,
+        "escalation_reason": "NOVEL_RISK"
+      },
+      "is_final": false
+    },
+    "findings_summary": {
+      "total_findings": 4,
+      "by_severity": {
+        "CRITICAL": 0,
+        "HIGH": 1,
+        "MEDIUM": 2,
+        "LOW": 1,
+        "INFO": 0
+      },
+      "by_source": {
+        "validation": 0,
+        "rule_scan": 1,
+        "pattern_match": 3
+      },
+      "blocking_findings": [
+        "F-pattern_match-E52-3c4d5e6f"
+      ],
+      "overridden_findings": []
+    },
+    "overrides_applied": [
+      {
+        "override_id": "O-20260316_150000-1",
+        "finding_id": "F-pattern_match-E52-3c4d5e6f",
+        "justification_code": "RISK_ACCEPTED_PENDING_FIX",
+        "approver": "tl_john_smith"
+      }
+    ],
+    "residual_risks": {
+      "total_risks": 1,
+      "risk_ids": [
+        "R-20260316_150000-1"
+      ],
+      "by_level": {
+        "CRITICAL": 0,
+        "HIGH": 1,
+        "MEDIUM": 0,
+        "LOW": 0
+      },
+      "unacceptable_count": 1
+    },
+    "escalation_gate": {
+      "escalated_to": "SECURITY_COUNCIL",
+      "escalation_reason_code": "NOVEL_ATTACK_VECTOR",
+      "escalated_at": "2026-03-16T15:10:00Z",
+      "response_deadline": "2026-03-23T15:10:00Z"
+    },
+    "decision_chain": [
+      {
+        "timestamp": "2026-03-16T14:55:00Z",
+        "stage": "validation",
+        "outcome": "PASSED",
+        "decision_maker": "T3_SkillContractValidator"
+      },
+      {
+        "timestamp": "2026-03-16T14:57:00Z",
+        "stage": "rule_scan",
+        "outcome": "PASSED",
+        "decision_maker": "T4_RuleScanner"
+      },
+      {
+        "timestamp": "2026-03-16T14:59:00Z",
+        "stage": "pattern_match",
+        "outcome": "NOVEL_PATTERN_DETECTED",
+        "decision_maker": "T5_PatternMatcher"
+      },
+      {
+        "timestamp": "2026-03-16T15:00:00Z",
+        "stage": "findings",
+        "outcome": "HIGH_NOVEL_RISK",
+        "decision_maker": "T6_FindingBuilder"
+      },
+      {
+        "timestamp": "2026-03-16T15:05:00Z",
+        "stage": "override",
+        "outcome": "ESCALATION_RECOMMENDED",
+        "decision_maker": "TECHNICAL_LEAD"
+      },
+      {
+        "timestamp": "2026-03-16T15:10:00Z",
+        "stage": "final",
+        "outcome": "ESCALATE",
+        "decision_maker": "T10_ReleaseGate"
+      }
+    ],
+    "evidence_refs": [
+      {
+        "kind": "FILE",
+        "locator": "run/20260316_150000/validation_report.json",
+        "note": "T3 validation report"
+      },
+      {
+        "kind": "FILE",
+        "locator": "run/20260316_150000/rule_scan_report.json",
+        "note": "T4 rule scan report"
+      },
+      {
+        "kind": "FILE",
+        "locator": "run/20260316_150000/pattern_detection_report.json",
+        "note": "T5 pattern detection report - novel pattern"
+      },
+      {
+        "kind": "FILE",
+        "locator": "run/20260316_150000/findings.json",
+        "note": "T6 findings report"
+      },
+      {
+        "kind": "TICKET",
+        "locator": "AI-SEC-789",
+        "note": "Security Council review ticket"
+      },
+      {
+        "kind": "DOCUMENTATION",
+        "locator": "docs/prompt_injection_research.md",
+        "note": "Research documentation"
+      }
+    ],
+    "escalation_detail": {
+      "escalation_request": {
+        "request_id": "ESC-20260316-001",
+        "requested_by": "tl_john_smith",
+        "requested_at": "2026-03-16T15:10:00Z",
+        "urgency": "HIGH",
+        "business_impact": "Blocks release of LLM integration feature scheduled for Q2"
+      },
+      "novel_risk_description": {
+        "pattern_name": "Dynamic Prompt Construction with User Input",
+        "finding_summary": "The skill constructs LLM prompts by concatenating unvalidated user input with system prompts. This pattern is not covered by existing E5xx rules as it represents a novel attack vector specific to LLM integrations.",
+        "why_novel": "Existing patterns focus on traditional injection (SQL, command, etc.). This pattern represents a new class of prompt injection attacks specific to LLM systems.",
+        "potential_impact": "If exploited, could allow users to manipulate LLM behavior, potentially accessing unauthorized data or performing unauthorized actions.",
+        "mitigation_unknowns": [
+          "Effectiveness of existing input sanitization against LLM prompt injection",
+          "Whether LLM provider's built-in safety measures are sufficient",
+          "Industry best practices for this specific pattern"
+        ]
+      },
+      "requested_authority": {
+        "needed_from": "SECURITY_COUNCIL",
+        "reason": "Novel attack vector requires specialized expertise in LLM security",
+        "minimum_quorum": 3,
+        "required_expertise": ["LLM_SECURITY", "PROMPT_ENGINEERING", "ADVERSARIAL_AI"]
+      },
+      "expected_outcomes": [
+        "Security Council assessment of risk severity",
+        "Recommendation for mitigation or acceptance",
+        "Decision on whether existing controls are sufficient",
+        "Guidance on LLM-specific security patterns"
+      ]
+    }
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "meta": {
+    "pack_id": "PACK-20260316_130000-b2c3d4e5f6a7",
+    "run_id": "20260316_130000",
+    "created_at": "2026-03-16T13:10:00Z",
+    "t14_version": "1.0.0-t14",
+    "skill_id": "api_client-2.0.0-x9y8z7w6",
+    "skill_name": "api_client",
+    "pack_context": "exit_gate"
+  },
+  "pack_type": "STANDARD",
+  "artifacts": {
+    "discovery": {
+      "intake_request": "run/20260316_130000/intake_request.json",
+      "normalized_skill_spec": "run/20260316_130000/normalized_skill_spec.json",
+      "validation_report": "run/20260316_130000/validation_report.json",
+      "rule_scan_report": "run/20260316_130000/rule_scan_report.json",
+      "pattern_detection_report": "run/20260316_130000/pattern_detection_report.json",
+      "findings_report": "run/20260316_130000/findings.json"
+    },
+    "adjudication": {
+      "adjudication_report": "run/20260316_130000/adjudication_report.json",
+      "coverage_statement": "run/20260316_130000/coverage_statement.json"
+    },
+    "delivery": {
+      "judgment_overrides": "run/20260316_130000/judgment_overrides.json",
+      "residual_risks": "run/20260316_130000/residual_risks.json",
+      "release_decision": "run/20260316_130000/release_decision.json",
+      "owner_review": "run/20260316_130000/owner_review.json",
+      "issue_records": "run/20260316_130000/issue_records.json",
+      "fix_recommendations": "run/20260316_130000/fix_recommendations.json"
+    }
+  },
+  "evidence_manifest": {
+    "total_evidence_refs": 24,
+    "by_kind": {
+      "FILE": 10,
+      "CODE_LOCATION": 6,
+      "LOG": 3,
+      "TICKET": 2,
+      "DOCUMENTATION": 2,
+      "GATE_DECISION": 1
+    },
+    "evidence_digest": "c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4",
+    "findings_with_evidence": 8,
+    "findings_without_evidence": 0
+  },
+  "summary": {
+    "total_findings": 8,
+    "findings_by_severity": {
+      "CRITICAL": 0,
+      "HIGH": 2,
+      "MEDIUM": 3,
+      "LOW": 2,
+      "INFO": 1
+    },
+    "total_decisions": 8,
+    "decisions_by_outcome": {
+      "PASS": 3,
+      "FAIL": 1,
+      "WAIVE": 2,
+      "DEFER": 2
+    },
+    "release_outcome": "CONDITIONAL_RELEASE",
+    "has_overrides": true,
+    "override_count": 2,
+    "has_residual_risks": true,
+    "residual_risk_count": 2,
+    "blocking_findings_count": 0,
+    "issues_created": 3,
+    "fix_recommendations": 3,
+    "coverage_percentage": 75.0
+  },
+  "compliance": {
+    "antigravity_compliant": true,
+    "closed_loop_complete": true,
+    "evidence_ref_complete": true,
+    "governance_gaps_identified": 2,
+    "security_findings_count": 3
+  },
+  "chain_of_custody": [
+    {
+      "timestamp": "2026-03-16T13:10:00Z",
+      "event": "PACK_CREATED",
+      "actor": "T14-AuditPackBuilder"
+    },
+    {
+      "timestamp": "2026-03-16T13:15:00Z",
+      "event": "VALIDATED",
+      "actor": "vs--cc3",
+      "note": "All T14 hard constraints satisfied"
+    }
+  ]
+}

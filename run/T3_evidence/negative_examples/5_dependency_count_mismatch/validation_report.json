@@ -1,0 +1,19 @@
+{
+  "is_valid": false,
+  "failures": [
+    {
+      "code": "E327_DEPENDENCY_COUNT_MISMATCH",
+      "message": "dependency_count does not match actual number of direct_dependencies",
+      "field_path": "dependencies.dependency_count",
+      "severity": "ERROR",
+      "suggested_fix": "Update dependency_count to 2",
+      "actual_value": "999",
+      "expected_value": "2"
+    }
+  ],
+  "warnings": [],
+  "validated_at": "2026-03-15T13:00:40.010876+00:00",
+  "validator_version": "1.0.0-t3",
+  "failure_count": 1,
+  "warning_count": 0
+}

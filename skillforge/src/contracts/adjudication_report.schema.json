@@ -1,0 +1,356 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/genesismind-bot/GM-SkillForge/skillforge/src/contracts/adjudication_report.schema.json",
+  "title": "AdjudicationReport",
+  "description": "T8 Deliverable: Report containing RuleDecisions for each Finding. Converts findings from 'discovered objects' to 'adjudicatable objects'. All decisions must be deterministic and evidence-based.",
+  "type": "object",
+  "required": [
+    "meta",
+    "input_sources",
+    "rule_decisions",
+    "summary"
+  ],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "description": "Metadata about the adjudication report",
+      "required": ["skill_id", "skill_name", "generated_at", "t8_version", "run_id"],
+      "properties": {
+        "skill_id": {
+          "type": "string",
+          "description": "Skill identifier (e.g., quant-1.0.0-abc12345)"
+        },
+        "skill_name": {
+          "type": "string",
+          "description": "Skill name (e.g., quant)"
+        },
+        "generated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 timestamp when adjudication report was generated"
+        },
+        "t8_version": {
+          "type": "string",
+          "description": "Version of the T8 adjudicator (e.g., 1.0.0-t8)",
+          "pattern": "^\\d+\\.\\d+\\.\\d+.*"
+        },
+        "run_id": {
+          "type": "string",
+          "description": "Run identifier for traceability (e.g., 20260316_120000)"
+        },
+        "adjudicator_config": {
+          "type": "object",
+          "description": "Configuration used for adjudication (for reproducibility)",
+          "properties": {
+            "evidence_threshold": {
+              "type": "number",
+              "description": "Minimum evidence strength required for PASS decision",
+              "minimum": 0.0,
+              "maximum": 1.0
+            },
+            "confidence_threshold": {
+              "type": "number",
+              "description": "Minimum finding confidence for adjudication",
+              "minimum": 0.0,
+              "maximum": 1.0
+            },
+            "severity_weights": {
+              "type": "object",
+              "description": "Weights for severity impact calculation",
+              "properties": {
+                "CRITICAL": {"type": "number", "minimum": 0},
+                "HIGH": {"type": "number", "minimum": 0},
+                "MEDIUM": {"type": "number", "minimum": 0},
+                "LOW": {"type": "number", "minimum": 0},
+                "INFO": {"type": "number", "minimum": 0}
+              }
+            }
+          }
+        }
+      }
+    },
+    "input_sources": {
+      "type": "object",
+      "description": "References to input reports for traceability",
+      "required": ["findings_report"],
+      "properties": {
+        "findings_report": {
+          "type": "string",
+          "description": "Path to T6 findings_report.json"
+        },
+        "validation_report": {
+          "type": ["string", "null"],
+          "description": "Path to T3 validation_report.json (if available)"
+        },
+        "rule_scan_report": {
+          "type": ["string", "null"],
+          "description": "Path to T4 rule_scan_report.json (if available)"
+        },
+        "pattern_detection_report": {
+          "type": ["string", "null"],
+          "description": "Path to T5 pattern_detection_report.json (if available)"
+        }
+      }
+    },
+    "rule_decisions": {
+      "type": "array",
+      "description": "Rule decisions for each finding",
+      "items": {
+        "$ref": "#/definitions/rule_decision"
+      }
+    },
+    "summary": {
+      "type": "object",
+      "description": "Summary statistics of adjudication results",
+      "required": [
+        "total_decisions",
+        "by_decision",
+        "by_truth_assessment",
+        "by_impact_level",
+        "by_evidence_strength",
+        "findings_requiring_attention",
+        "evidence_coverage"
+      ],
+      "properties": {
+        "total_decisions": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of rule decisions"
+        },
+        "by_decision": {
+          "type": "object",
+          "description": "Count of decisions by type",
+          "properties": {
+            "PASS": {"type": "integer", "minimum": 0},
+            "FAIL": {"type": "integer", "minimum": 0},
+            "WAIVE": {"type": "integer", "minimum": 0},
+            "DEFER": {"type": "integer", "minimum": 0}
+          }
+        },
+        "by_truth_assessment": {
+          "type": "object",
+          "description": "Count of decisions by truth assessment",
+          "properties": {
+            "CONFIRMED": {"type": "integer", "minimum": 0},
+            "LIKELY_TRUE": {"type": "integer", "minimum": 0},
+            "UNCERTAIN": {"type": "integer", "minimum": 0},
+            "LIKELY_FALSE": {"type": "integer", "minimum": 0},
+            "FALSE_POSITIVE": {"type": "integer", "minimum": 0}
+          }
+        },
+        "by_impact_level": {
+          "type": "object",
+          "description": "Count of decisions by impact level",
+          "properties": {
+            "CRITICAL": {"type": "integer", "minimum": 0},
+            "HIGH": {"type": "integer", "minimum": 0},
+            "MEDIUM": {"type": "integer", "minimum": 0},
+            "LOW": {"type": "integer", "minimum": 0},
+            "NEGLIGIBLE": {"type": "integer", "minimum": 0}
+          }
+        },
+        "by_evidence_strength": {
+          "type": "object",
+          "description": "Count of decisions by evidence strength",
+          "properties": {
+            "CONCLUSIVE": {"type": "integer", "minimum": 0},
+            "STRONG": {"type": "integer", "minimum": 0},
+            "MODERATE": {"type": "integer", "minimum": 0},
+            "WEAK": {"type": "integer", "minimum": 0},
+            "INSUFFICIENT": {"type": "integer", "minimum": 0}
+          }
+        },
+        "findings_requiring_attention": {
+          "type": "array",
+          "description": "Finding IDs that require immediate attention (FAIL decision or CRITICAL impact)",
+          "items": {"type": "string"}
+        },
+        "evidence_coverage": {
+          "type": "object",
+          "description": "Evidence coverage statistics",
+          "properties": {
+            "findings_with_evidence": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of findings with at least one evidence ref"
+            },
+            "findings_without_evidence": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of findings without evidence refs (must be FAIL/DEFER)"
+            },
+            "coverage_percentage": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Percentage of findings with evidence"
+            }
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "rule_decision": {
+      "type": "object",
+      "description": "Adjudication decision for a single finding. T8 converts 'discovered findings' into 'adjudicatable objects' with structured assessments.",
+      "required": [
+        "finding_id",
+        "decision",
+        "truth_assessment",
+        "impact_level",
+        "evidence_strength",
+        "primary_basis",
+        "largest_uncertainty",
+        "recommended_action",
+        "adjudicated_at"
+      ],
+      "properties": {
+        "finding_id": {
+          "type": "string",
+          "description": "Reference to the original finding ID",
+          "pattern": "^F-[a-z_]+-[A-Z0-9]+-[a-f0-9]{8}$"
+        },
+        "decision": {
+          "type": "string",
+          "enum": ["PASS", "FAIL", "WAIVE", "DEFER"],
+          "description": "Final adjudication decision. T8 Hard Constraint: PASS requires at least one EvidenceRef with STRONG or CONCLUSIVE strength.",
+          "enumDescriptions": {
+            "PASS": "Finding is confirmed and requires action",
+            "FAIL": "Finding cannot be verified or lacks evidence",
+            "WAIVE": "Finding is waived (e.g., false positive, out of scope, acceptable risk)",
+            "DEFER": "Finding requires manual review (insufficient information for automated decision)"
+          }
+        },
+        "truth_assessment": {
+          "type": "string",
+          "enum": ["CONFIRMED", "LIKELY_TRUE", "UNCERTAIN", "LIKELY_FALSE", "FALSE_POSITIVE"],
+          "description": "Assessment of whether the finding represents a true issue"
+        },
+        "impact_level": {
+          "type": "string",
+          "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "NEGLIGIBLE"],
+          "description": "Assessed impact level if the finding is true. Derived from original severity and evidence context."
+        },
+        "evidence_strength": {
+          "type": "string",
+          "enum": ["CONCLUSIVE", "STRONG", "MODERATE", "WEAK", "INSUFFICIENT"],
+          "description": "Strength of evidence supporting this finding. Determined by evidence availability and type.",
+          "enumDescriptions": {
+            "CONCLUSIVE": "Multiple strong evidence sources with direct confirmation",
+            "STRONG": "Multiple evidence sources or single definitive source",
+            "MODERATE": "Single evidence source with some ambiguity",
+            "WEAK": "Indirect or circumstantial evidence",
+            "INSUFFICIENT": "No evidence or evidence is unreliable"
+          }
+        },
+        "primary_basis": {
+          "type": "string",
+          "enum": [
+            "SCHEMA_VALIDATION",
+            "CODE_ANALYSIS",
+            "PATTERN_MATCH",
+            "SECURITY_RULE",
+            "GOVERNANCE_GAP",
+            "MANUAL_REVIEW",
+            "HEURISTIC"
+          ],
+          "description": "Primary basis for the adjudication decision"
+        },
+        "largest_uncertainty": {
+          "type": "string",
+          "enum": [
+            "NONE",
+            "CONTEXT_DEPENDENT",
+            "SCOPE_AMBIGUITY",
+            "FALSE_POSITIVE_RISK",
+            "EVIDENCE_INCOMPLETE",
+            "IMPACT_ASSESSMENT"
+          ],
+          "description": "The largest source of uncertainty in this decision"
+        },
+        "recommended_action": {
+          "type": "string",
+          "enum": [
+            "MUST_FIX",
+            "SHOULD_FIX",
+            "CONSIDER_FIX",
+            "DOCUMENT_ACCEPTANCE",
+            "ESCALATE_FOR_REVIEW",
+            "IGNORE_FALSE_POSITIVE",
+            "DEFER_TO_OWNER",
+            "NO_ACTION"
+          ],
+          "description": "Recommended action based on the adjudication"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Confidence in this adjudication decision (0.0 to 1.0)"
+        },
+        "evidence_summary": {
+          "type": "object",
+          "description": "Summary of evidence considered for this decision",
+          "properties": {
+            "evidence_count": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of evidence refs from the original finding"
+            },
+            "evidence_kinds": {
+              "type": "array",
+              "description": "Types of evidence available",
+              "items": {
+                "type": "string",
+                "enum": ["FILE", "LOG", "DIFF", "SNIPPET", "URL", "CODE_LOCATION"]
+              }
+            },
+            "has_strong_evidence": {
+              "type": "boolean",
+              "description": "Whether strong evidence (FILE with content, CODE_LOCATION, etc.) is present"
+            }
+          }
+        },
+        "waiver_reason": {
+          "type": ["string", "null"],
+          "description": "Required if decision is WAIVE. Reason why the finding is waived.",
+          "enum": [
+            "FALSE_POSITIVE_CONFIRMED",
+            "OUT_OF_SCOPE",
+            "ACCEPTABLE_RISK",
+            "COMPENSATING_CONTROL",
+            "LEGACY_CODE",
+            "THIRD_PARTY_DEPENDENCY"
+          ]
+        },
+        "defer_reason": {
+          "type": ["string", "null"],
+          "description": "Required if decision is DEFER. Reason why the finding is deferred.",
+          "enum": [
+            "INSUFFICIENT_EVIDENCE",
+            "CONTEXT_INCOMPLETE",
+            "REQUIRES_DOMAIN_EXPERTISE",
+            "REQUIRES_RUNTIME_VERIFICATION",
+            "REQUIRES_SECURITY_REVIEW"
+          ]
+        },
+        "severity_adjustment": {
+          "type": ["string", "null"],
+          "description": "Adjustment to original severity, if any",
+          "enum": ["UPGRADED", "DOWNGRADED", "UNCHANGED", "UNCHANGED_VIA_EVIDENCE"]
+        },
+        "adjudicated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 timestamp when this decision was made"
+        },
+        "adjudicator_notes": {
+          "type": ["string", "null"],
+          "description": "Structured notes for traceability (not free text - must be specific format)"
+        }
+      }
+    }
+  }
+}

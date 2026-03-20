@@ -1,0 +1,36 @@
+{
+  "skill_name": "subprocess_shell",
+  "skill_dir": "D:\\GM-SkillForge\\run\\T4_evidence\\rule_samples\\subprocess_shell",
+  "scanned_at": "2026-03-15T13:07:22Z",
+  "rule_set_version": "1.0.0-t4",
+  "scan_statistics": {
+    "files_scanned": 1,
+    "total_lines_scanned": 10,
+    "total_hits": 1,
+    "by_category": {
+      "sensitive_permission": 1
+    },
+    "by_severity": {
+      "CRITICAL": 1
+    }
+  },
+  "findings": {
+    "critical": [
+      {
+        "rule_code": "E405_SYSTEM_COMMAND_without_SANITIZATION",
+        "rule_name": "System Command Without Sanitization",
+        "file_path": "subprocess_shell.py",
+        "line_number": 10,
+        "column_number": 12,
+        "snippet": "return subprocess.run(cmd, shell=True)",
+        "category": "sensitive_permission",
+        "severity": "CRITICAL",
+        "message": "System command execution detected without input sanitization",
+        "suggested_fix": "Use subprocess.run with shell=False and sanitize all inputs"
+      }
+    ],
+    "high": [],
+    "medium": [],
+    "low": []
+  }
+}

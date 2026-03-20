@@ -1,0 +1,32 @@
+{
+  "report_id": "bvr-generate-skill-v1",
+  "candidate_id": "cand-generate-skill-v1",
+  "checks": [
+    { "name": "schema_link_check", "status": "PASS", "severity": "INFO", "summary": "schema links valid" },
+    { "name": "required_file_check", "status": "PASS", "severity": "INFO", "summary": "required files present" },
+    { "name": "reference_check", "status": "PASS", "severity": "INFO", "summary": "references valid" },
+    { "name": "static_check", "status": "PASS", "severity": "INFO", "summary": "static checks passed" },
+    { "name": "smoke_test", "status": "PASS", "severity": "INFO", "summary": "smoke test passed" },
+    { "name": "trace_check", "status": "PASS", "severity": "INFO", "summary": "trace generated" }
+  ],
+  "summary": {
+    "total_checks": 6,
+    "passed": 6,
+    "failed": 0,
+    "warned": 0,
+    "skipped": 0
+  },
+  "missing_artifacts": [],
+  "broken_references": [],
+  "smoke_test_result": {
+    "ran": true,
+    "status": "PASS",
+    "log_path": "traces/smoke_test.log"
+  },
+  "trace_result": {
+    "trace_generated": true,
+    "trace_path": "traces/build_trace.json"
+  },
+  "handoff_ready": true,
+  "status": "verified_candidate"
+}

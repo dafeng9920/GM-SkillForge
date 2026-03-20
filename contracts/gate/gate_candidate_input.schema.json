@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GateCandidateInputPayloadDraft",
+  "type": "object",
+  "required": [
+    "payload_type",
+    "source_object",
+    "candidate_id",
+    "intent_id",
+    "contract_id",
+    "skill_root",
+    "generated_files",
+    "production_status"
+  ],
+  "properties": {
+    "payload_type": { "const": "GateCandidateInputPayload" },
+    "source_object": { "const": "GovernanceCandidateIntake" },
+    "candidate_id": { "type": "string" },
+    "intent_id": { "type": "string" },
+    "contract_id": { "type": "string" },
+    "candidate_name": { "type": "string" },
+    "skill_root": { "type": "string" },
+    "generated_files": { "type": "array", "items": { "type": "object" } },
+    "entrypoints": { "type": "array", "items": { "type": "object" } },
+    "dependencies": { "type": "object" },
+    "required_changes": { "type": "array", "items": { "type": "object" } },
+    "production_status": { "type": "string" },
+    "boundary_note": { "type": "string" }
+  },
+  "additionalProperties": false
+}
+

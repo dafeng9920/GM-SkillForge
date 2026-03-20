@@ -1,9 +1,9 @@
-# Compliance Review 2026-03-11
+# Compliance Review 2026-03-19
 
-- Generated at: `2026-03-11T16:53:57Z`
+- Generated at: `2026-03-19T08:23:52Z`
 - Overall: **PASS**
-- Total checks: `19`
-- Passed: `19`
+- Total checks: `24`
+- Passed: `24`
 - Failed: `0`
 - Critical/High failed: `0`
 
@@ -50,6 +50,11 @@
 | CR-015 | HIGH | PASS | T3-A P2 report aligns authoritative governor skill and deprecated alias semantics |
 | CR-016 | HIGH | PASS | T3-A P3 baseline reflects Wave 1 promoted items and Wave 2 deferred items |
 | CR-017 | MEDIUM | PASS | T3-A checkpoint state aligns with manual host absorb and corrected Wave 2 defer split |
+| CR-018 | HIGH | PASS | Five-layer frozen chain documents are present |
+| CR-019 | HIGH | PASS | Five-layer mainline has formal tri-separation records |
+| CR-020 | CRITICAL | PASS | Five-layer mainline has fail-closed permit entry conditions |
+| CR-021 | HIGH | PASS | Five-layer mainline has AuditPack/EvidenceRef bridge |
+| CR-022 | HIGH | PASS | Compliance review inventories existing governance/evidence/execution-preparation components |
 | CR-007 | MEDIUM | PASS | Compliance review cadence is within target window |
 | CR-T-test_n8n_run_intent_internal_permit.py | HIGH | PASS | Regression test: skillforge/tests/test_n8n_run_intent_internal_permit.py |
 | CR-T-test_n8n_orchestration.py | HIGH | PASS | Regression test: skillforge/tests/test_n8n_orchestration.py |

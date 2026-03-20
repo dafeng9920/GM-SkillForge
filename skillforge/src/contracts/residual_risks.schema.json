@@ -1,0 +1,316 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/genesismind-bot/GM-SkillForge/skillforge/src/contracts/residual_risks.schema.json",
+  "title": "ResidualRisks",
+  "description": "T10 Deliverable: Schema for residual risk records. Documents risks that remain after mitigation or override, with tracking and remediation requirements.",
+  "type": "object",
+  "required": [
+    "meta",
+    "risks",
+    "summary"
+  ],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "description": "Metadata about the residual risks record",
+      "required": ["run_id", "created_at", "t10_version"],
+      "properties": {
+        "run_id": {
+          "type": "string",
+          "description": "Run identifier linking to T6 findings and judgment overrides"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 timestamp when risks were recorded"
+        },
+        "t10_version": {
+          "type": "string",
+          "description": "Version of the T10 schema",
+          "pattern": "^\\d+\\.\\d+\\.\\d+.*"
+        },
+        "assessment_methodology": {
+          "type": "string",
+          "enum": ["qualitative", "semi_quantitative", "quantitative"],
+          "description": "Methodology used for risk assessment"
+        }
+      }
+    },
+    "risks": {
+      "type": "array",
+      "description": "List of residual risk records",
+      "items": {
+        "$ref": "#/definitions/risk_record"
+      }
+    },
+    "summary": {
+      "type": "object",
+      "description": "Summary statistics",
+      "required": ["total_risks", "by_level", "by_status", "mitigation_coverage"],
+      "properties": {
+        "total_risks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "by_level": {
+          "type": "object",
+          "properties": {
+            "CRITICAL": {"type": "integer", "minimum": 0},
+            "HIGH": {"type": "integer", "minimum": 0},
+            "MEDIUM": {"type": "integer", "minimum": 0},
+            "LOW": {"type": "integer", "minimum": 0}
+          }
+        },
+        "by_status": {
+          "type": "object",
+          "properties": {
+            "open": {"type": "integer", "minimum": 0},
+            "mitigating": {"type": "integer", "minimum": 0},
+            "monitoring": {"type": "integer", "minimum": 0},
+            "accepted": {"type": "integer", "minimum": 0},
+            "closed": {"type": "integer", "minimum": 0}
+          }
+        },
+        "mitigation_coverage": {
+          "type": "object",
+          "description": "Coverage of mitigations vs open risks",
+          "properties": {
+            "with_mitigation": {"type": "integer", "minimum": 0},
+            "with_monitoring": {"type": "integer", "minimum": 0},
+            "accepted_without_mitigation": {"type": "integer", "minimum": 0}
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "risk_record": {
+      "type": "object",
+      "description": "A single residual risk record",
+      "required": [
+        "risk_id",
+        "source_finding_id",
+        "source_override_id",
+        "risk_level",
+        "risk_category",
+        "likelihood",
+        "impact",
+        "status",
+        "created_at"
+      ],
+      "properties": {
+        "risk_id": {
+          "type": "string",
+          "description": "Unique risk identifier (format: R-{run_id}-{seq})",
+          "pattern": "^R-[0-9]{8}_[0-9]{6}-[0-9]+$"
+        },
+        "source_finding_id": {
+          "type": "string",
+          "description": "Reference to the original finding (from T6)",
+          "pattern": "^F-[a-z_]+-[A-Z0-9]+-[a-f0-9]{8}$"
+        },
+        "source_override_id": {
+          "type": "string",
+          "description": "Reference to the judgment override that created this risk",
+          "pattern": "^O-[0-9]{8}_[0-9]{6}-[0-9]+$"
+        },
+        "title": {
+          "type": "string",
+          "description": "Short title of the residual risk"
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description of the residual risk"
+        },
+        "risk_level": {
+          "type": "string",
+          "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"],
+          "description": "Residual risk level after mitigation/override"
+        },
+        "original_severity": {
+          "type": "string",
+          "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"],
+          "description": "Original severity from the finding"
+        },
+        "risk_category": {
+          "type": "string",
+          "enum": [
+            "security",
+            "correctness",
+            "performance",
+            "reliability",
+            "compliance",
+            "data_quality",
+            "access_control",
+            "supply_chain"
+          ],
+          "description": "Category of the residual risk"
+        },
+        "likelihood": {
+          "type": "string",
+          "enum": ["VERY_LIKELY", "LIKELY", "POSSIBLE", "UNLIKELY", "RARE"],
+          "description": "Likelihood of the risk materializing"
+        },
+        "impact": {
+          "type": "string",
+          "enum": ["SEVERE", "HIGH", "MEDIUM", "LOW", "MINIMAL"],
+          "description": "Impact if the risk materializes"
+        },
+        "calculated_score": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 25,
+          "description": "Calculated risk score (likelihood x impact, if applicable)"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["open", "mitigating", "monitoring", "accepted", "closed"],
+          "description": "Current status of the risk"
+        },
+        "mitigation_strategy": {
+          "type": ["string", "null"],
+          "enum": [
+            "avoid",
+            "transfer",
+            "mitigate",
+            "accept",
+            "monitor"
+          ],
+          "description": "Strategy for dealing with this risk"
+        },
+        "mitigation_plan": {
+          "type": ["object", "null"],
+          "description": "Mitigation plan details",
+          "properties": {
+            "actions": {
+              "type": "array",
+              "description": "List of mitigation actions",
+              "items": {
+                "type": "object",
+                "required": ["action", "owner"],
+                "properties": {
+                  "action": {
+                    "type": "string",
+                    "description": "Mitigation action description"
+                  },
+                  "owner": {
+                    "type": "string",
+                    "description": "Owner of the action"
+                  },
+                  "target_date": {
+                    "type": ["string", "null"],
+                    "format": "date-time",
+                    "description": "Target completion date"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": ["pending", "in_progress", "completed", "blocked"],
+                    "description": "Action status"
+                  }
+                }
+              }
+            },
+            "estimated_completion": {
+              "type": ["string", "null"],
+              "format": "date-time",
+              "description": "Estimated completion of all mitigations"
+            }
+          }
+        },
+        "monitoring_plan": {
+          "type": ["object", "null"],
+          "description": "Monitoring plan for accepted risks",
+          "properties": {
+            "metrics": {
+              "type": "array",
+              "description": "Metrics to monitor",
+              "items": {
+                "type": "string"
+              }
+            },
+            "review_frequency": {
+              "type": "string",
+              "enum": ["daily", "weekly", "biweekly", "monthly", "quarterly"],
+              "description": "How often to review the risk"
+            },
+            "escalation_threshold": {
+              "type": ["string", "null"],
+              "description": "Conditions for escalation"
+            }
+          }
+        },
+        "acceptance_details": {
+          "type": ["object", "null"],
+          "description": "Details for accepted risks",
+          "properties": {
+            "accepted_by": {
+              "type": "string",
+              "description": "Who accepted the risk"
+            },
+            "accepted_at": {
+              "type": "string",
+              "format": "date-time",
+              "description": "When the risk was accepted"
+            },
+            "review_date": {
+              "type": ["string", "null"],
+              "format": "date-time",
+              "description": "Date for risk review"
+            },
+            "justification": {
+              "type": "string",
+              "description": "Business justification for acceptance"
+            }
+          }
+        },
+        "related_ticket": {
+          "type": ["string", "null"],
+          "description": "Ticket tracking remediation",
+          "pattern": "^[A-Z]+-[0-9]+$"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "description": "Evidence supporting risk assessment",
+          "items": {
+            "$ref": "#/definitions/evidence_ref"
+          }
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 timestamp when risk was recorded"
+        },
+        "updated_at": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "ISO-8601 timestamp when risk was last updated"
+        },
+        "closed_at": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "ISO-8601 timestamp when risk was closed"
+        }
+      }
+    },
+    "evidence_ref": {
+      "type": "object",
+      "description": "Evidence reference for risk assessment",
+      "required": ["kind", "locator"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["FILE", "LOG", "ANALYSIS", "TICKET", "DOCUMENTATION", "METRIC"]
+        },
+        "locator": {
+          "type": "string",
+          "description": "Path or URL to evidence"
+        },
+        "note": {
+          "type": ["string", "null"],
+          "description": "Additional context"
+        }
+      }
+    }
+  }
+}

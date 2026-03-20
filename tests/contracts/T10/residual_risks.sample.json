@@ -1,0 +1,150 @@
+{
+  "meta": {
+    "run_id": "20260316_120000",
+    "created_at": "2026-03-16T12:00:00Z",
+    "t10_version": "1.0.0-t10",
+    "assessment_methodology": "semi_quantitative"
+  },
+  "risks": [
+    {
+      "risk_id": "R-20260316_120000-1",
+      "source_finding_id": "F-rule_scan-E420-abc12345",
+      "source_override_id": "O-20260316_120000-1",
+      "title": "SQL injection risk temporarily accepted",
+      "description": "SQL injection pattern was detected but accepted with compensating controls. Parameterized queries are being added as mitigation.",
+      "risk_level": "HIGH",
+      "original_severity": "HIGH",
+      "risk_category": "security",
+      "likelihood": "POSSIBLE",
+      "impact": "HIGH",
+      "calculated_score": 12,
+      "status": "mitigating",
+      "mitigation_strategy": "mitigate",
+      "mitigation_plan": {
+        "actions": [
+          {
+            "action": "Migrate all SQL queries to parameterized queries",
+            "owner": "engineering",
+            "target_date": "2026-04-15T00:00:00Z",
+            "status": "in_progress"
+          },
+          {
+            "action": "Add input validation middleware",
+            "owner": "security",
+            "target_date": "2026-04-01T00:00:00Z",
+            "status": "pending"
+          }
+        ],
+        "estimated_completion": "2026-04-15T00:00:00Z"
+      },
+      "monitoring_plan": {
+        "metrics": ["sql_query_count", "parameterized_query_percentage"],
+        "review_frequency": "weekly",
+        "escalation_threshold": "If new SQL injection findings appear, escalate immediately"
+      },
+      "related_ticket": "JIRA-12345",
+      "evidence_refs": [
+        {
+          "kind": "TICKET",
+          "locator": "JIRA-12345"
+        },
+        {
+          "kind": "ANALYSIS",
+          "locator": "security/code_review_sql.md"
+        }
+      ],
+      "created_at": "2026-03-16T12:00:00Z",
+      "updated_at": "2026-03-16T12:00:00Z"
+    },
+    {
+      "risk_id": "R-20260316_120000-2",
+      "source_finding_id": "F-pattern_match-E501-def45678",
+      "source_override_id": "O-20260316_120000-2",
+      "title": "External API call without governance stop rule",
+      "description": "HTTP request to external market data API executed without explicit permission check. Accepted as business-justified dependency with scope limitations.",
+      "risk_level": "MEDIUM",
+      "original_severity": "MEDIUM",
+      "risk_category": "compliance",
+      "likelihood": "UNLIKELY",
+      "impact": "MEDIUM",
+      "calculated_score": 4,
+      "status": "monitoring",
+      "mitigation_strategy": "monitor",
+      "monitoring_plan": {
+        "metrics": ["external_api_call_count", "api_response_time", "api_error_rate"],
+        "review_frequency": "monthly",
+        "escalation_threshold": "If API error rate exceeds 5%, escalate to architecture review"
+      },
+      "acceptance_details": {
+        "accepted_by": "product_owner",
+        "accepted_at": "2026-03-16T12:00:00Z",
+        "review_date": "2026-04-16T00:00:00Z",
+        "justification": "Market data API is trusted third-party with SLA. Stop rule to be added in Q2."
+      },
+      "related_ticket": "JIRA-12346",
+      "evidence_refs": [
+        {
+          "kind": "DOCUMENTATION",
+          "locator": "docs/api_allowlist.md"
+        },
+        {
+          "kind": "FILE",
+          "locator": "skillforge/src/external/market_data_api.py"
+        }
+      ],
+      "created_at": "2026-03-16T12:00:00Z",
+      "updated_at": "2026-03-16T12:00:00Z"
+    },
+    {
+      "risk_id": "R-20260316_120000-3",
+      "source_finding_id": "F-validation-E301-ghi90112",
+      "source_override_id": null,
+      "title": "Schema validation timeout in edge case",
+      "description": "Schema validation fails intermittently for very large payloads (>10MB). Mitigation accepted: payload size limit added.",
+      "risk_level": "LOW",
+      "original_severity": "MEDIUM",
+      "risk_category": "reliability",
+      "likelihood": "RARE",
+      "impact": "LOW",
+      "calculated_score": 1,
+      "status": "accepted",
+      "mitigation_strategy": "accept",
+      "acceptance_details": {
+        "accepted_by": "tech_lead",
+        "accepted_at": "2026-03-16T12:00:00Z",
+        "review_date": "2026-06-16T00:00:00Z",
+        "justification": "Payload size limit is acceptable mitigation. Edge case affects <1% of requests."
+      },
+      "related_ticket": null,
+      "evidence_refs": [
+        {
+          "kind": "LOG",
+          "locator": "run/validation/performance_analysis.log"
+        }
+      ],
+      "created_at": "2026-03-16T12:00:00Z",
+      "updated_at": "2026-03-16T12:00:00Z"
+    }
+  ],
+  "summary": {
+    "total_risks": 3,
+    "by_level": {
+      "CRITICAL": 0,
+      "HIGH": 1,
+      "MEDIUM": 1,
+      "LOW": 1
+    },
+    "by_status": {
+      "open": 0,
+      "mitigating": 1,
+      "monitoring": 1,
+      "accepted": 1,
+      "closed": 0
+    },
+    "mitigation_coverage": {
+      "with_mitigation": 1,
+      "with_monitoring": 2,
+      "accepted_without_mitigation": 1
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "intent_id": "AUDIT_REPO_SKILL",
+  "repo_url": "https://github.com/genesismind-bot/GM-SkillForge",
+  "commit_sha": "abc123def456",
+  "at_time": "2026-03-15T15:29:41Z",
+  "issue_key": "REQ-20260315152941",
+  "options": {}
+}

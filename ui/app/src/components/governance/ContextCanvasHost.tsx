@@ -1,7 +1,7 @@
 import React from 'react';
 import { ContextCanvas } from './ContextCanvas';
 import { GovernComposer, type GovernComposerProps } from './GovernComposer';
-import type { InteractionDecision } from '../../features/governanceInteraction/orchestrator';
+import type { InteractionDecision } from '../../features/governanceInteraction/interactionDecision';
 import styles from './ContextCanvasHost.module.css';
 
 export interface ContextCanvasHistoryItem {

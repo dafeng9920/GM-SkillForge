@@ -1,0 +1,108 @@
+{
+  "skill_id": "sample_skill-1.5.0-d7aaa7da",
+  "skill_name": "sample_skill",
+  "version": "1.5.0",
+  "description": "Sample skill for T2 validation.  SKILL_NAME = \"sample_skill\"",
+  "entry_point": "sample_skill.py",
+  "skill_dir": "D:\\GM-SkillForge\\run\\T2_final\\sample_skill_with_manifest",
+  "file_list": [
+    "sample_skill.py"
+  ],
+  "dependencies": {
+    "direct_dependencies": [],
+    "transitive_dependencies": [],
+    "dependency_count": 0
+  },
+  "input_contract": {
+    "schema_type": "object",
+    "properties": {
+      "query": {
+        "type": "string",
+        "description": "Search query"
+      },
+      "limit": {
+        "type": "integer",
+        "default": 10
+      }
+    },
+    "required": [
+      "query"
+    ],
+    "description": "input contract"
+  },
+  "output_contract": {
+    "schema_type": "object",
+    "properties": {
+      "status": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object"
+      }
+    },
+    "required": [
+      "status"
+    ],
+    "description": "output contract"
+  },
+  "manifest_snapshot": {
+    "exists": true,
+    "content_hash": "d76857124501a5805eb3d41e1a1f4d49fc51a03119689abc8ba7f62198a16121",
+    "raw_data": {
+      "skill_name": "sample_skill",
+      "version": "1.5.0",
+      "description": "A sample skill demonstrating T2 capabilities",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search query"
+          },
+          "limit": {
+            "type": "integer",
+            "default": 10
+          }
+        },
+        "required": [
+          "query"
+        ]
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "capabilities": [
+        "llm",
+        "network",
+        "file_write"
+      ],
+      "constraints": [
+        "max_limit: 100",
+        "timeout: 30s"
+      ]
+    }
+  },
+  "capabilities": [
+    "llm",
+    "network",
+    "file_write"
+  ],
+  "constraints": [
+    "max_limit: 100",
+    "timeout: 30s"
+  ],
+  "parsed_at": "2026-03-15T12:31:42Z",
+  "parser_version": "1.0.0-t2",
+  "spec_hash": "c92e6ef98eb165457b87f608cb07f44e82566aa8496cc16ae2965929b5cc1d89"
+}

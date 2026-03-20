@@ -1,0 +1,312 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/genesismind-bot/GM-SkillForge/skillforge/src/contracts/fix_recommendation.schema.json",
+  "title": "FixRecommendation",
+  "description": "T12 Deliverable: Fix recommendations for issues. Provides actionable remediation guidance with multiple option levels. T12 Hard Constraint: Every FixRecommendation MUST reference a valid issue_id.",
+  "type": "object",
+  "required": [
+    "recommendation_id",
+    "issue_id",
+    "recommendation_type",
+    "priority",
+    "options",
+    "created_at",
+    "created_by"
+  ],
+  "properties": {
+    "recommendation_id": {
+      "type": "string",
+      "description": "Unique recommendation identifier (format: REC-{issue_short_hash}-{option_count})",
+      "pattern": "^REC-[a-f0-9]{8}-[0-9]+$"
+    },
+    "issue_id": {
+      "type": "string",
+      "description": "Reference to the IssueRecord this recommendation applies to. T12 Hard Constraint: Must be a valid issue_id.",
+      "pattern": "^ISS-[A-Z0-9]+-[a-f0-9]{8}$"
+    },
+    "recommendation_type": {
+      "type": "string",
+      "enum": [
+        "CODE_FIX",
+        "CONFIGURATION_CHANGE",
+        "SCHEMA_UPDATE",
+        "DEPENDENCY_UPDATE",
+        "PERMISSION_REDUCTION",
+        "GOVERNANCE_CONTROL",
+        "DOCUMENTATION_UPDATE",
+        "ARCHITECTURAL_CHANGE",
+        "REFACTORING",
+        "MULTI_STEP"
+      ],
+      "description": "Type of fix recommended"
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "OPTIONAL"],
+      "description": "Priority level for implementing this fix"
+    },
+    "summary": {
+      "type": "string",
+      "description": "Brief summary of the recommended fix"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of the fix and why it addresses the issue"
+    },
+    "options": {
+      "type": "array",
+      "description": "Multiple fix options with different trade-offs",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/fix_option"
+      }
+    },
+    "estimated_effort": {
+      "type": "object",
+      "description": "Estimated effort to implement the fix",
+      "properties": {
+        "primary_option": {
+          "type": "object",
+          "description": "Effort estimate for primary option",
+          "properties": {
+            "hours": {
+              "type": ["integer", "null"],
+              "minimum": 1,
+              "description": "Estimated hours"
+            },
+            "complexity": {
+              "type": ["string", "null"],
+              "enum": ["TRIVIAL", "LOW", "MEDIUM", "HIGH", "VERY_HIGH"],
+              "description": "Complexity level"
+            },
+            "risk": {
+              "type": ["string", "null"],
+              "enum": ["NONE", "LOW", "MEDIUM", "HIGH"],
+              "description": "Risk level of introducing new issues"
+            }
+          }
+        }
+      }
+    },
+    "prerequisites": {
+      "type": "array",
+      "description": "Prerequisites for implementing this fix",
+      "items": {
+        "type": "object",
+        "required": ["type", "description"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["TEST_UPDATE", "DEPENDENCY", "CODE_REVIEW", "DOCUMENTATION", "OTHER"],
+            "description": "Type of prerequisite"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the prerequisite"
+          }
+        }
+      }
+    },
+    "side_effects": {
+      "type": "array",
+      "description": "Potential side effects or risks of implementing this fix",
+      "items": {
+        "type": "object",
+        "required": ["description"],
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "Description of the side effect"
+          },
+          "mitigation": {
+            "type": ["string", "null"],
+            "description": "How to mitigate this side effect"
+          }
+        }
+      }
+    },
+    "testing_recommendations": {
+      "type": "array",
+      "description": "Testing recommendations for the fix",
+      "items": {
+        "type": "string"
+      }
+    },
+    "verification_criteria": {
+      "type": "array",
+      "description": "Criteria to verify the fix was successful",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["criterion", "verification_method"],
+        "properties": {
+          "criterion": {
+            "type": "string",
+            "description": "The verification criterion"
+          },
+          "verification_method": {
+            "type": "string",
+            "enum": ["AUTOMATED_TEST", "MANUAL_TEST", "CODE_REVIEW", "SCAN_RE-RUN", "GATE_CHECK"],
+            "description": "How to verify this criterion"
+          }
+        }
+      }
+    },
+    "related_recommendations": {
+      "type": "array",
+      "description": "References to related recommendation IDs",
+      "items": {
+        "type": "string",
+        "pattern": "^REC-[a-f0-9]{8}-[0-9]+$"
+      }
+    },
+    "references": {
+      "type": "array",
+      "description": "External references for this fix (CWE, OWASP, documentation, etc.)",
+      "items": {
+        "type": "object",
+        "required": ["type", "url"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["CWE", "OWASP", "DOCUMENTATION", "STACK_OVERFLOW", "GITHUB_ISSUE", "OTHER"],
+            "description": "Type of reference"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to the reference"
+          },
+          "title": {
+            "type": ["string", "null"],
+            "description": "Title of the reference"
+          }
+        }
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp when recommendation was created"
+    },
+    "created_by": {
+      "type": "string",
+      "description": "Entity that created this recommendation (e.g., 'T12-Antigravity-2', 'automation')"
+    },
+    "updated_at": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "ISO-8601 timestamp when recommendation was last updated"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata about the recommendation",
+      "properties": {
+        "auto_generated": {
+          "type": "boolean",
+          "description": "Whether this recommendation was auto-generated"
+        },
+        "confidence": {
+          "type": ["number", "null"],
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Confidence in this recommendation (if auto-generated)"
+        },
+        "requires_domain_expertise": {
+          "type": ["boolean", "null"],
+          "description": "Whether implementing this fix requires domain expertise"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "fix_option": {
+      "type": "object",
+      "description": "A fix option with specific implementation details",
+      "required": ["option_id", "name", "tier", "description"],
+      "properties": {
+        "option_id": {
+          "type": "string",
+          "description": "Option identifier (e.g., 'OPT-1', 'OPT-2')"
+        },
+        "name": {
+          "type": "string",
+          "description": "Short name for this option"
+        },
+        "tier": {
+          "type": "string",
+          "enum": ["RECOMMENDED", "ALTERNATIVE", "LAST_RESORT"],
+          "description": "Tier of this option"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of this option"
+        },
+        "implementation": {
+          "type": "object",
+          "description": "Implementation guidance for this option",
+          "properties": {
+            "code_changes": {
+              "type": ["array", "null"],
+              "description": "Specific code changes needed",
+              "items": {
+                "type": "object",
+                "required": ["file_path", "change_type"],
+                "properties": {
+                  "file_path": {
+                    "type": "string",
+                    "description": "Path to file to modify"
+                  },
+                  "change_type": {
+                    "type": "string",
+                    "enum": ["ADD", "MODIFY", "DELETE", "REPLACE"],
+                    "description": "Type of change"
+                  },
+                  "line_number": {
+                    "type": ["integer", "null"],
+                    "minimum": 1,
+                    "description": "Line number for the change"
+                  },
+                  "old_code": {
+                    "type": ["string", "null"],
+                    "description": "Code to replace (if MODIFY/REPLACE)"
+                  },
+                  "new_code": {
+                    "type": ["string", "null"],
+                    "description": "New code (if ADD/MODIFY/REPLACE)"
+                  }
+                }
+              }
+            },
+            "steps": {
+              "type": ["array", "null"],
+              "description": "Step-by-step implementation guide",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "pros": {
+          "type": ["array", "null"],
+          "description": "Advantages of this option",
+          "items": {
+            "type": "string"
+          }
+        },
+        "cons": {
+          "type": ["array", "null"],
+          "description": "Disadvantages of this option",
+          "items": {
+            "type": "string"
+          }
+        },
+        "trade_offs": {
+          "type": ["string", "null"],
+          "description": "Summary of trade-offs for this option"
+        }
+      }
+    }
+  }
+}

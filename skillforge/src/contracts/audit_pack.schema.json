@@ -1,0 +1,369 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/genesismind-bot/GM-SkillForge/skillforge/src/contracts/audit_pack.schema.json",
+  "title": "AuditPack",
+  "description": "T14 Deliverable: Final audit pack consolidating all discovery, adjudication, and delivery artifacts. Provides complete traceability from findings to release decision with evidence binding.",
+  "type": "object",
+  "required": [
+    "meta",
+    "pack_type",
+    "artifacts",
+    "evidence_manifest",
+    "summary"
+  ],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "description": "Metadata about the audit pack",
+      "required": ["pack_id", "run_id", "created_at", "t14_version"],
+      "properties": {
+        "pack_id": {
+          "type": "string",
+          "description": "Unique pack identifier (format: PACK-{run_id})",
+          "pattern": "^PACK-[0-9]{8}_[0-9]{6}-[a-f0-9]{12}$"
+        },
+        "run_id": {
+          "type": "string",
+          "description": "Run identifier linking to all artifacts"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 timestamp when pack was created"
+        },
+        "t14_version": {
+          "type": "string",
+          "description": "Version of the T14 schema (e.g., 1.0.0-t14)",
+          "pattern": "^\\d+\\.\\d+\\.\\d+.*"
+        },
+        "skill_id": {
+          "type": "string",
+          "description": "Skill identifier being audited"
+        },
+        "skill_name": {
+          "type": "string",
+          "description": "Skill name"
+        },
+        "pack_context": {
+          "type": "string",
+          "enum": ["entry_gate", "exit_gate", "manual_audit", "regulatory_review"],
+          "description": "Context for this audit pack"
+        }
+      }
+    },
+    "pack_type": {
+      "type": "string",
+      "enum": ["MINIMAL", "STANDARD", "COMPREHENSIVE"],
+      "description": "Type of audit pack based on artifact inclusion"
+    },
+    "artifacts": {
+      "type": "object",
+      "description": "All artifacts included in this pack",
+      "required": [
+        "discovery",
+        "adjudication",
+        "delivery"
+      ],
+      "properties": {
+        "discovery": {
+          "type": "object",
+          "description": "Discovery artifacts (T1-T6)",
+          "required": ["findings_report"],
+          "properties": {
+            "intake_request": {
+              "type": ["string", "null"],
+              "description": "Path to T1 intake_request.json"
+            },
+            "normalized_skill_spec": {
+              "type": ["string", "null"],
+              "description": "Path to T2 normalized_skill_spec.json"
+            },
+            "validation_report": {
+              "type": ["string", "null"],
+              "description": "Path to T3 validation_report.json"
+            },
+            "rule_scan_report": {
+              "type": ["string", "null"],
+              "description": "Path to T4 rule_scan_report.json"
+            },
+            "pattern_detection_report": {
+              "type": ["string", "null"],
+              "description": "Path to T5 pattern_detection_report.json"
+            },
+            "findings_report": {
+              "type": "string",
+              "description": "Path to T6 findings_report.json (REQUIRED)"
+            }
+          }
+        },
+        "adjudication": {
+          "type": "object",
+          "description": "Adjudication artifacts (T8)",
+          "required": ["adjudication_report"],
+          "properties": {
+            "adjudication_report": {
+              "type": "string",
+              "description": "Path to T8 adjudication_report.json (REQUIRED)"
+            },
+            "coverage_statement": {
+              "type": ["string", "null"],
+              "description": "Path to T9 coverage_statement.json"
+            },
+            "evidence_level_definition": {
+              "type": ["string", "null"],
+              "description": "Path to T9 evidence_level.json"
+            }
+          }
+        },
+        "delivery": {
+          "type": "object",
+          "description": "Delivery artifacts (T10-T12)",
+          "required": ["release_decision"],
+          "properties": {
+            "judgment_overrides": {
+              "type": ["string", "null"],
+              "description": "Path to T10 judgment_overrides.json"
+            },
+            "residual_risks": {
+              "type": ["string", "null"],
+              "description": "Path to T10 residual_risks.json"
+            },
+            "release_decision": {
+              "type": "string",
+              "description": "Path to T10 release_decision.json (REQUIRED)"
+            },
+            "owner_review": {
+              "type": ["string", "null"],
+              "description": "Path to T11 owner_review.json"
+            },
+            "issue_records": {
+              "type": ["string", "null"],
+              "description": "Path to T12 issue_records.json"
+            },
+            "fix_recommendations": {
+              "type": ["string", "null"],
+              "description": "Path to T12 fix_recommendations.json"
+            }
+          }
+        }
+      }
+    },
+    "evidence_manifest": {
+      "type": "object",
+      "description": "Manifest of all evidence references across all artifacts",
+      "required": ["total_evidence_refs", "by_kind", "evidence_digest"],
+      "properties": {
+        "total_evidence_refs": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of evidence references"
+        },
+        "by_kind": {
+          "type": "object",
+          "description": "Count of evidence references by kind",
+          "properties": {
+            "FILE": {"type": "integer", "minimum": 0},
+            "LOG": {"type": "integer", "minimum": 0},
+            "DIFF": {"type": "integer", "minimum": 0},
+            "SNIPPET": {"type": "integer", "minimum": 0},
+            "URL": {"type": "integer", "minimum": 0},
+            "CODE_LOCATION": {"type": "integer", "minimum": 0},
+            "REPORT": {"type": "integer", "minimum": 0},
+            "REVIEW": {"type": "integer", "minimum": 0},
+            "TICKET": {"type": "integer", "minimum": 0},
+            "DOCUMENTATION": {"type": "integer", "minimum": 0},
+            "TEST_FILE": {"type": "integer", "minimum": 0},
+            "GATE_DECISION": {"type": "integer", "minimum": 0},
+            "RUN_ID": {"type": "integer", "minimum": 0}
+          }
+        },
+        "evidence_digest": {
+          "type": "string",
+          "description": "SHA-256 digest of all evidence locator strings (for tamper detection)",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "findings_with_evidence": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of findings with at least one evidence ref"
+        },
+        "findings_without_evidence": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of findings without evidence (T14 hard constraint: must be 0 for valid pack)"
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "description": "Summary statistics across all artifacts",
+      "required": [
+        "total_findings",
+        "total_decisions",
+        "release_outcome",
+        "has_overrides",
+        "has_residual_risks"
+      ],
+      "properties": {
+        "total_findings": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total findings from T6"
+        },
+        "findings_by_severity": {
+          "type": "object",
+          "description": "Findings count by severity",
+          "properties": {
+            "CRITICAL": {"type": "integer", "minimum": 0},
+            "HIGH": {"type": "integer", "minimum": 0},
+            "MEDIUM": {"type": "integer", "minimum": 0},
+            "LOW": {"type": "integer", "minimum": 0},
+            "INFO": {"type": "integer", "minimum": 0}
+          }
+        },
+        "total_decisions": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total adjudication decisions from T8"
+        },
+        "decisions_by_outcome": {
+          "type": "object",
+          "description": "Decisions count by outcome",
+          "properties": {
+            "PASS": {"type": "integer", "minimum": 0},
+            "FAIL": {"type": "integer", "minimum": 0},
+            "WAIVE": {"type": "integer", "minimum": 0},
+            "DEFER": {"type": "integer", "minimum": 0}
+          }
+        },
+        "release_outcome": {
+          "type": "string",
+          "enum": ["RELEASE", "CONDITIONAL_RELEASE", "LIMITED_RELEASE", "ESCALATE", "REJECT"],
+          "description": "Final release outcome from T10"
+        },
+        "has_overrides": {
+          "type": "boolean",
+          "description": "Whether judgment overrides were applied"
+        },
+        "override_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of overrides applied"
+        },
+        "has_residual_risks": {
+          "type": "boolean",
+          "description": "Whether residual risks exist"
+        },
+        "residual_risk_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of residual risks"
+        },
+        "blocking_findings_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of findings that block release"
+        },
+        "issues_created": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of issue records created (T12)"
+        },
+        "fix_recommendations": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of fix recommendations generated (T12)"
+        },
+        "coverage_percentage": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 100.0,
+          "description": "Test coverage percentage (if T9 was run)"
+        }
+      }
+    },
+    "compliance": {
+      "type": "object",
+      "description": "Compliance and governance information",
+      "properties": {
+        "antigravity_compliant": {
+          "type": "boolean",
+          "description": "Whether this pack complies with Antigravity-1 standards"
+        },
+        "closed_loop_complete": {
+          "type": "boolean",
+          "description": "Whether closed-loop contract standards are met"
+        },
+        "evidence_ref_complete": {
+          "type": "boolean",
+          "description": "Whether all findings have evidence refs (T14 hard constraint)"
+        },
+        "governance_gaps_identified": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of governance gaps identified"
+        },
+        "security_findings_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of security-related findings"
+        }
+      }
+    },
+    "chain_of_custody": {
+      "type": "array",
+      "description": "Chain of custody for this audit pack",
+      "items": {
+        "type": "object",
+        "required": ["timestamp", "event", "actor"],
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "event": {
+            "type": "string",
+            "enum": [
+              "PACK_CREATED",
+              "ARTIFACT_ADDED",
+              "ARTIFACT_REMOVED",
+              "VALIDATED",
+              "SIGNED",
+              "DELIVERED"
+            ]
+          },
+          "actor": {
+            "type": "string",
+            "description": "Who performed this action"
+          },
+          "note": {
+            "type": ["string", "null"],
+            "description": "Additional context"
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "evidence_ref": {
+      "type": "object",
+      "description": "Evidence reference",
+      "required": ["kind", "locator"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["FILE", "LOG", "DIFF", "SNIPPET", "URL", "CODE_LOCATION", "REPORT", "REVIEW", "TICKET", "DOCUMENTATION", "TEST_FILE", "GATE_DECISION", "RUN_ID"]
+        },
+        "locator": {
+          "type": "string",
+          "description": "Path or URL to evidence"
+        },
+        "note": {
+          "type": ["string", "null"],
+          "description": "Additional context"
+        }
+      }
+    }
+  }
+}

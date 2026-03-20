@@ -49,7 +49,25 @@
       "Bash(git -C d:/GM-SkillForge status --short)",
       "Bash(git -C d:/GM-SkillForge diff .gitignore)",
       "Bash(git -C d:/GM-SkillForge status --porcelain)",
-      "Bash(git -C d:/GM-SkillForge ls-files)"
+      "Bash(git -C d:/GM-SkillForge ls-files)",
+      "Bash(for dir:*)",
+      "Bash(do echo:*)",
+      "Read(//d/GM-SkillForge/**)",
+      "Bash(PYTHONPATH=\"d:/GM-SkillForge\" python tests/patterns/generate_t5_samples.py)",
+      "Bash(PYTHONPATH=\"d:/GM-SkillForge\" python -m pytest tests/patterns/test_t5_pattern_detection.py -v)",
+      "Bash(PYTHONPATH=\"d:/GM-SkillForge\" python -m pytest tests/patterns/test_t5_pattern_detection.py::TestE501ExternalWithoutStopRule::test_requests_with_permission_check_passes -v)",
+      "Bash(PYTHONPATH=\"d:/GM-SkillForge\" python -m pytest tests/patterns/test_t5_pattern_detection.py::TestE503HighPrivWithoutBoundary::test_db_write_without_limit -v)",
+      "Bash(PYTHONPATH=\"d:/GM-SkillForge\" python -c \":*)",
+      "Bash(PYTHONPATH=\"d:/GM-SkillForge\" python -m pytest tests/patterns/test_t5_pattern_detection.py -v --tb=short)",
+      "Bash(PYTHONPATH=\"d:/GM-SkillForge\" python -m pytest tests/patterns/test_t5_pattern_detection.py::TestE501ExternalWithoutStopRule::test_requests_without_permission_check -v)",
+      "Bash(PYTHONPATH=\"d:/GM-SkillForge\" python -m pytest tests/patterns/test_t5_pattern_detection.py::TestCommentInsulation -v)",
+      "Bash(PYTHONPATH=\"d:/GM-SkillForge\")",
+      "Bash(tee run/t7_regression_test_log.txt)",
+      "Bash(tee run/t7_discovery_chain_log.txt)",
+      "Bash(tee run/t7_intake_scan_test_log.txt)",
+      "Bash(grep:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)"
     ],
     "additionalDirectories": [
       "D:\\GM-SkillForge\\docs\\2026-02-17\\samples"

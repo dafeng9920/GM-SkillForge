@@ -1,0 +1,97 @@
+{
+  "meta": {
+    "run_id": "20260316_120000",
+    "skill_id": "quant-skill-1.0.0-abc123",
+    "skill_name": "quant",
+    "generated_at": "2026-03-16T12:00:00Z",
+    "t11_version": "1.0.0-t11",
+    "reviewer": "Tech Lead"
+  },
+  "input_sources": {
+    "findings_report": "findings.json",
+    "adjudication_report": "adjudication_report.json",
+    "release_decision": "release_decision.json",
+    "coverage_statement": "coverage_statement.json"
+  },
+  "decision_summary": {
+    "outcome": "CONDITIONAL",
+    "can_release": true,
+    "blocking_issues": 2,
+    "risk_assessment": "HIGH_RISK",
+    "recommendation": "APPROVE_WITH_MONITORING",
+    "summary_text": "This skill has 2 issues that need attention before it can be released safely."
+  },
+  "owner_cards": [
+    {
+      "card_id": "C-00000001",
+      "finding_id": "F-rule_scan_E405_abc12345",
+      "title": "System command security issue",
+      "business_impact": "BLOCKS_RELEASE",
+      "what_it_means": "Using shell commands without proper validation can lead to command injection attacks.",
+      "severity": "CRITICAL",
+      "action_required": true,
+      "why_this_matters": "Attackers could execute arbitrary commands on the system.",
+      "next_steps": "MUST_FIX_BEFORE_RELEASE",
+      "technical_note": "E405_SUBPROCESS_SHELL",
+      "location": "skillforge/src/skills/quant/execute.py:42"
+    },
+    {
+      "card_id": "C-00000002",
+      "finding_id": "F-pattern_match_E501_def67890",
+      "title": "External call without safety limits",
+      "business_impact": "REQUIRES_FIX",
+      "what_it_means": "External HTTP calls are made without timeout or retry limits.",
+      "severity": "HIGH",
+      "action_required": true,
+      "why_this_matters": "External calls could hang indefinitely or fail unexpectedly.",
+      "next_steps": "FIX_BEFORE_PRODUCTION",
+      "technical_note": "E501_EXTERNAL_WITHOUT_STOP_RULE",
+      "location": "skillforge/src/skills/quant/api_client.py:15"
+    },
+    {
+      "card_id": "C-00000003",
+      "finding_id": "F-pattern_match_E504_ghi12345",
+      "title": "Missing audit logging",
+      "business_impact": "SHOULD_FIX",
+      "what_it_means": "Critical trading actions are not logged for security audit.",
+      "severity": "MEDIUM",
+      "action_required": false,
+      "why_this_matters": "Without audit logs, security incidents cannot be investigated.",
+      "next_steps": "SCHEDULE_FIX",
+      "technical_note": "E504_MISSING_AUDITABLE_EXIT",
+      "location": "skillforge/src/skills/quant/trading.py:88"
+    }
+  ],
+  "coverage_note": {
+    "covered_areas": [
+      "Security rules and dangerous patterns",
+      "Governance and safety patterns"
+    ],
+    "not_covered": [
+      "Skill structure and contracts",
+      "Runtime behavior analysis",
+      "Performance under load",
+      "Integration testing with other systems"
+    ],
+    "confidence_level": "MEDIUM"
+  },
+  "action_items": [
+    {
+      "item_id": "A-00000001",
+      "description": "Fix the shell command security issue in execute.py",
+      "priority": "P0_BLOCKING",
+      "assignee_type": "DEVELOPER",
+      "linked_cards": ["C-00000001"],
+      "deadline": "2026-03-30T00:00:00Z"
+    },
+    {
+      "item_id": "A-00000002",
+      "description": "Add timeout and retry limits to external calls",
+      "priority": "P1_HIGH",
+      "assignee_type": "DEVELOPER",
+      "linked_cards": ["C-00000002"],
+      "deadline": "2026-04-15T00:00:00Z"
+    }
+  ],
+  "overrides_summary": null
+}

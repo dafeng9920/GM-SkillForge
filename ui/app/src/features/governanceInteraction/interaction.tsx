@@ -4,7 +4,7 @@ import {
   type DecisionConfidence,
   type IntentState,
   type InteractionDecision,
-} from './orchestrator';
+} from './interactionDecision';
 import {
   executeGovernanceOrchestration,
   previewGovernanceOrchestration,
@@ -21,6 +21,8 @@ export interface InteractionTurn {
   requiresClarification: boolean;
   routeTarget: string | null;
   decision: InteractionDecision;
+  runId?: string;
+  traceId?: string;
   confirmedAt: string;
 }
 
@@ -68,6 +70,8 @@ const normalizeTurn = (turn: Partial<InteractionTurn>): InteractionTurn | null =
     requiresClarification: decision.requiresClarification,
     routeTarget: decision.routeTarget,
     decision,
+    runId: turn.runId ?? decision.runId,
+    traceId: turn.traceId ?? decision.traceId,
     confirmedAt: turn.confirmedAt,
   };
 };
@@ -133,6 +137,8 @@ export const GovernanceInteractionProvider: React.FC<React.PropsWithChildren> = 
       requiresClarification: decision.requiresClarification,
       routeTarget: decision.routeTarget,
       decision,
+      runId: decision.runId,
+      traceId: decision.traceId,
       confirmedAt: new Date().toISOString(),
     };
 
@@ -173,6 +179,8 @@ export const GovernanceInteractionProvider: React.FC<React.PropsWithChildren> = 
       requiresClarification: decision.requiresClarification,
       routeTarget: decision.routeTarget,
       decision,
+      runId: decision.runId,
+      traceId: decision.traceId,
       confirmedAt: new Date().toISOString(),
     };
 
@@ -237,4 +245,4 @@ export const useGovernanceInteraction = (): GovernanceInteractionContextValue =>
   return context;
 };
 
-export { INTENT_ROUTE_MAP } from './orchestrator';
+export { INTENT_ROUTE_MAP } from './interactionDecision';

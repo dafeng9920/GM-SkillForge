@@ -1,0 +1,53 @@
+2026-03-15 23:23:44,221 - skillforge.src.contracts.discovery_pipeline - INFO - 开始流水线运行: run_id=20260315_152344_c7de912cf63f
+2026-03-15 23:23:44,221 - skillforge.src.contracts.discovery_pipeline - INFO - 输出目录: run\20260315_152344_c7de912cf63f
+2026-03-15 23:23:44,221 - skillforge.src.contracts.discovery_pipeline - INFO - [T1] 开始 Intake: intent_id=AUDIT_REPO_SKILL, repo_url=https://github.com/genesismind-bot/GM-SkillForge
+2026-03-15 23:23:44,223 - skillforge.src.contracts.discovery_pipeline - INFO - [T1] 完成: run\20260315_152344_c7de912cf63f\intake_request.json
+2026-03-15 23:23:44,223 - skillforge.src.contracts.discovery_pipeline - INFO - [T2] 开始 Parse: skill_dir=skillforge/src/skills/quant
+2026-03-15 23:23:44,226 - skillforge.src.contracts.discovery_pipeline - INFO - [T2] 完成: run\20260315_152344_c7de912cf63f\normalized_skill_spec.json
+2026-03-15 23:23:44,226 - skillforge.src.contracts.discovery_pipeline - INFO - [T3] 开始 Validate
+2026-03-15 23:23:44,228 - skillforge.src.contracts.discovery_pipeline - INFO - [T3] 完成: run\20260315_152344_c7de912cf63f\validation_report.json
+2026-03-15 23:23:44,228 - skillforge.src.contracts.discovery_pipeline - INFO - [T4] 开始 Scan: skill_dir=skillforge/src/skills/quant
+2026-03-15 23:23:44,303 - skillforge.src.contracts.discovery_pipeline - INFO - [T4] 完成: run\20260315_152344_c7de912cf63f\rule_scan_report.json, hits=0
+2026-03-15 23:23:44,303 - skillforge.src.contracts.discovery_pipeline - INFO - [T5] 开始 Pattern: skill_dir=skillforge/src/skills/quant
+2026-03-15 23:23:44,318 - skillforge.src.contracts.discovery_pipeline - INFO - [T5] 完成: run\20260315_152344_c7de912cf63f\pattern_detection_report.json, matches=13
+2026-03-15 23:23:44,318 - skillforge.src.contracts.discovery_pipeline - INFO - [T6] 开始 Findings
+2026-03-15 23:23:44,320 - skillforge.src.contracts.discovery_pipeline - INFO - [T6] 完成: run\20260315_152344_c7de912cf63f\findings.json, findings=13
+============================================================
+SkillForge 发现链 (T1-T6)
+============================================================
+Intent ID: AUDIT_REPO_SKILL
+Repo URL: https://github.com/genesismind-bot/GM-SkillForge
+Commit SHA: abc123def456
+Skill Dir: skillforge/src/skills/quant
+Output Dir: run
+============================================================
+
+
+============================================================
+执行结果
+============================================================
+Run ID: 20260315_152344_c7de912cf63f
+状态: success
+输出目录: run\20260315_152344_c7de912cf63f
+总 Findings: 13
+
+步骤详情:
+  ✅ T1_Intake: completed
+     └─ 输出: 20260315_152344_c7de912cf63f\intake_request.json
+  ✅ T2_Parse: completed
+     └─ 输出: 20260315_152344_c7de912cf63f\normalized_skill_spec.json
+  ✅ T3_Validate: completed
+     └─ 输出: 20260315_152344_c7de912cf63f\validation_report.json
+  ✅ T4_Scan: completed
+     └─ 输出: 20260315_152344_c7de912cf63f\rule_scan_report.json
+  ✅ T5_Pattern: completed
+     └─ 输出: 20260315_152344_c7de912cf63f\pattern_detection_report.json
+  ✅ T6_Findings: completed
+     └─ 输出: 20260315_152344_c7de912cf63f\findings.json
+
+Findings 摘要:
+  总计: 13
+  CRITICAL: 9
+  HIGH: 4
+  MEDIUM: 0
+  LOW: 0

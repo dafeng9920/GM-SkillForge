@@ -1,0 +1,102 @@
+{
+  "skill_id": "test_skill-1.0.0-2c2b5d75",
+  "skill_name": "test_skill",
+  "version": "1.0.0",
+  "description": "Test skill for T2 validation.  SKILL_NAME = \"test_skill\"",
+  "entry_point": "test_skill.py",
+  "skill_dir": "D:\\GM-SkillForge\\run\\T2_evidence\\test_skill_with_manifest",
+  "file_list": [
+    "test_skill.py"
+  ],
+  "dependencies": {
+    "direct_dependencies": [],
+    "transitive_dependencies": [],
+    "dependency_count": 0
+  },
+  "input_contract": {
+    "schema_type": "object",
+    "properties": {
+      "query": {
+        "type": "string"
+      },
+      "limit": {
+        "type": "integer",
+        "default": 10
+      }
+    },
+    "required": [
+      "query"
+    ],
+    "description": "input contract"
+  },
+  "output_contract": {
+    "schema_type": "object",
+    "properties": {
+      "status": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object"
+      }
+    },
+    "required": [
+      "status"
+    ],
+    "description": "output contract"
+  },
+  "manifest_snapshot": {
+    "exists": true,
+    "content_hash": "03201ec72215fdba27f31e019f07b183004e91fb7166e59f22691f513f619e1c",
+    "raw_data": {
+      "skill_name": "test_skill",
+      "version": "1.0.0",
+      "description": "A test skill for T2 validation",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string"
+          },
+          "limit": {
+            "type": "integer",
+            "default": 10
+          }
+        },
+        "required": [
+          "query"
+        ]
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "capabilities": [
+        "llm",
+        "network"
+      ],
+      "constraints": [
+        "max_limit: 100"
+      ]
+    }
+  },
+  "capabilities": [
+    "llm",
+    "network"
+  ],
+  "constraints": [
+    "max_limit: 100"
+  ],
+  "parsed_at": "2026-03-15T12:41:33Z",
+  "parser_version": "1.0.0-t2",
+  "spec_hash": "b8f29800cd98b96e85af325b677911d1a28c0ec0abac31842d64e42c1698a733"
+}

@@ -1,0 +1,369 @@
+{
+  "$schema": "https://github.com/genesismind-bot/GM-SkillForge/skillforge/src/contracts/case_ledger.schema.json",
+  "ledger_id": "LEDGER-20260316-a1b2c3d4",
+  "ledger_version": "1.0.0-t13",
+  "created_at": "2026-03-16T12:00:00Z",
+  "created_by": "T13-Kior-B",
+  "parent_ledger_ref": null,
+  "boundary_declaration": {
+    "in_scope": [
+      {
+        "category": "happy_path",
+        "description": "Basic happy path scenarios for core functionality",
+        "coverage_target": "full"
+      },
+      {
+        "category": "edge_case",
+        "description": "Edge cases for boundary conditions",
+        "coverage_target": "partial"
+      },
+      {
+        "category": "error_case",
+        "description": "Error handling scenarios",
+        "coverage_target": "sampling"
+      }
+    ],
+    "out_of_scope": [
+      {
+        "category": "performance",
+        "reason": "deferred",
+        "ticket_ref": "TICKET-101"
+      },
+      {
+        "category": "security",
+        "reason": "out_of_project_scope"
+      }
+    ],
+    "assumptions": [
+      "Standard test environment with Python 3.11+",
+      "Test data fixtures available in tests/fixtures/",
+      "External dependencies (API, database) are mocked"
+    ],
+    "data_constraints": [
+      {
+        "constraint": "Limited real market data availability",
+        "impact": "limits_coverage"
+      },
+      {
+        "constraint": "Historical data snapshots delayed by 24h",
+        "impact": "minimal_impact"
+      }
+    ]
+  },
+  "cases": [
+    {
+      "case_id": "CASE_HAPPY_001",
+      "title": "Basic skill validation - happy path",
+      "description": "Validate that a correct skill specification passes validation",
+      "created_at": "2026-03-16T12:05:00Z",
+      "created_by": "T13-Kior-B",
+      "input_scenario": {
+        "scenario_type": "happy_path",
+        "inputs": {
+          "primary_input": {
+            "skill_name": "test_skill",
+            "skill_spec": {"version": "1.0.0", "description": "Test skill"}
+          },
+          "parameters": {
+            "validation_mode": "strict"
+          },
+          "preconditions": [
+            "Skill specification schema exists",
+            "Validator is initialized"
+          ],
+          "environment": {
+            "data_source": "fixture",
+            "dependencies": ["jsonschema", "pydantic"]
+          }
+        },
+        "data_refs": [
+          {
+            "kind": "FIXTURE",
+            "locator": "tests/fixtures/skill_specs/valid_skill.json"
+          }
+        ]
+      },
+      "expected_behavior": {
+        "outcomes": [
+          {
+            "type": "return_value",
+            "description": "Validation returns True with no errors",
+            "criteria": {
+              "is_valid": true,
+              "error_count": 0
+            }
+          },
+          {
+            "type": "state_change",
+            "description": "Skill record is stored in database"
+          }
+        ],
+        "assertions": [
+          {
+            "assertion": "validation_result.is_valid == True",
+            "evidence_required": true
+          },
+          {
+            "assertion": "validation_result.errors is empty",
+            "evidence_required": true
+          }
+        ]
+      },
+      "execution_record": {
+        "status": "executed",
+        "executed_at": "2026-03-16T12:10:00Z",
+        "actual_behavior": {
+          "outcomes": [
+            {
+              "type": "return_value",
+              "result": true,
+              "note": "Validation passed as expected"
+            }
+          ],
+          "deviations": [],
+          "evidence_refs": [
+            {
+              "kind": "LOG",
+              "locator": "run/20260316_121000/validation.log"
+            }
+          ]
+        },
+        "execution_metadata": {
+          "duration_ms": 150,
+          "environment": "test",
+          "executor": "pytest"
+        }
+      },
+      "adjudication": {
+        "decision": "PASS",
+        "adjudicated_at": "2026-03-16T12:15:00Z",
+        "adjudicated_by": "T13-Kior-B",
+        "degradation_level": null,
+        "rationale": "No deviations observed, all outcomes matched expected",
+        "deviation_accepted": null
+      },
+      "release_decision": {
+        "can_release": true,
+        "conditions": [],
+        "decided_at": "2026-03-16T12:15:00Z",
+        "decided_by": "T13-Kior-B"
+      },
+      "residual_risks": [
+        {
+          "risk_id": null,
+          "risk_category": "data_limitation",
+          "description": "Test used fixture data - real-world data variations not covered",
+          "mitigation": "Monitor production validation results",
+          "requires_monitoring": true
+        }
+      ],
+      "follow_up_actions": [],
+      "tags": ["happy_path", "validation", "smoke"],
+      "related_case_ids": [],
+      "issue_refs": []
+    },
+    {
+      "case_id": "CASE_EDGE_001",
+      "title": "Empty skill specification - edge case",
+      "description": "Validate handling of empty skill specification",
+      "created_at": "2026-03-16T12:05:00Z",
+      "created_by": "T13-Kior-B",
+      "input_scenario": {
+        "scenario_type": "edge_case",
+        "inputs": {
+          "primary_input": {
+            "skill_name": "",
+            "skill_spec": {}
+          },
+          "parameters": {
+            "validation_mode": "strict"
+          }
+        },
+        "data_refs": []
+      },
+      "expected_behavior": {
+        "outcomes": [
+          {
+            "type": "error",
+            "description": "Validation fails with descriptive error",
+            "criteria": {
+              "is_valid": false,
+              "error_message": "contains 'skill_name is required'"
+            }
+          }
+        ],
+        "assertions": [
+          {
+            "assertion": "validation_result.is_valid == False",
+            "evidence_required": true
+          },
+          {
+            "assertion": "error message is descriptive",
+            "evidence_required": true
+          }
+        ]
+      },
+      "execution_record": {
+        "status": "executed",
+        "executed_at": "2026-03-16T12:12:00Z",
+        "actual_behavior": {
+          "outcomes": [
+            {
+              "type": "return_value",
+              "result": false,
+              "note": "Validation failed as expected"
+            }
+          ],
+          "deviations": [
+            {
+              "type": "error_variance",
+              "description": "Error message slightly different from expected",
+              "severity": "LOW",
+              "expected": "skill_name is required",
+              "actual": "Field 'skill_name' is required",
+              "impact": "Low - error is still descriptive"
+            }
+          ],
+          "evidence_refs": [
+            {
+              "kind": "LOG",
+              "locator": "run/20260316_121200/validation.log"
+            }
+          ]
+        },
+        "execution_metadata": {
+          "duration_ms": 100,
+          "environment": "test"
+        }
+      },
+      "adjudication": {
+        "decision": "DEGRADED",
+        "adjudicated_at": "2026-03-16T12:17:00Z",
+        "adjudicated_by": "T13-Kior-B",
+        "degradation_level": "minor",
+        "rationale": "Error message wording differs from expected but functionality is correct",
+        "deviation_accepted": true
+      },
+      "release_decision": {
+        "can_release": true,
+        "conditions": [
+          "Update test expectations to match actual error message format"
+        ],
+        "decided_at": "2026-03-16T12:17:00Z",
+        "decided_by": "T13-Kior-B"
+      },
+      "residual_risks": [
+        {
+          "risk_id": null,
+          "risk_category": "degradation_risk",
+          "description": "Error message format may vary - documentation should reflect actual format",
+          "mitigation": "Review and update error message documentation",
+          "requires_monitoring": false
+        }
+      ],
+      "follow_up_actions": [
+        {
+          "action": "Update test assertion to match actual error format",
+          "status": "pending",
+          "owner": "T13-Kior-B",
+          "priority": "P3",
+          "ticket_ref": null,
+          "target_date": null
+        }
+      ],
+      "tags": ["edge_case", "validation"],
+      "related_case_ids": [],
+      "issue_refs": []
+    },
+    {
+      "case_id": "CASE_ERROR_001",
+      "title": "Invalid schema version - error case",
+      "description": "Validate handling of unsupported schema version",
+      "created_at": "2026-03-16T12:05:00Z",
+      "created_by": "T13-Kior-B",
+      "input_scenario": {
+        "scenario_type": "error_case",
+        "inputs": {
+          "primary_input": {
+            "skill_spec": {
+              "schema_version": "999.0.0",
+              "skill_name": "test"
+            }
+          }
+        },
+        "data_refs": []
+      },
+      "expected_behavior": {
+        "outcomes": [
+          {
+            "type": "error",
+            "description": "Validation fails with unsupported version error"
+          }
+        ]
+      },
+      "execution_record": {
+        "status": "pending",
+        "executed_at": null,
+        "actual_behavior": null,
+        "execution_metadata": null
+      },
+      "adjudication": null,
+      "release_decision": null,
+      "residual_risks": [
+        {
+          "risk_id": null,
+          "risk_category": "test_gap",
+          "description": "Error case not yet executed - validation behavior unknown",
+          "mitigation": "Execute case before release",
+          "requires_monitoring": true
+        }
+      ],
+      "follow_up_actions": [
+        {
+          "action": "Execute this test case",
+          "status": "pending",
+          "owner": "T13-Kior-B",
+          "priority": "P2",
+          "ticket_ref": null,
+          "target_date": null
+        }
+      ],
+      "tags": ["error_case", "validation", "pending"],
+      "related_case_ids": [],
+      "issue_refs": []
+    }
+  ],
+  "summary": {
+    "total_cases": 3,
+    "by_status": {
+      "passed": 1,
+      "failed": 0,
+      "degraded": 1,
+      "waived": 0,
+      "pending": 1
+    },
+    "by_degradation": {
+      "fully_successful": 1,
+      "minor_degradation": 1,
+      "partial_functionality": 0,
+      "major_degradation": 0,
+      "unclassified": 0
+    },
+    "coverage_completeness": {
+      "in_scope_covered": 2,
+      "in_scope_total": 3,
+      "out_of_scope_declared": 2,
+      "completion_percent": 66.67
+    }
+  },
+  "metadata": {
+    "run_id": "20260316_120000",
+    "gate_decision_refs": [
+      {
+        "gate_type": "entry",
+        "decision_ref": "run/20260316_120000/entry_gate_decision.json"
+      }
+    ],
+    "notes": "T13 sample case ledger demonstrating minimal test case tracking with proper boundary declarations. E1307 and E1303 fixes applied."
+  }
+}

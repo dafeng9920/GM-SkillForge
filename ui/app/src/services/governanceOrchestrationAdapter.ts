@@ -1,8 +1,9 @@
 import {
   resolveInteractionDecision,
+  type DecisionArtifactRefs,
   type InteractionDecision,
   type IntentState,
-} from '../features/governanceInteraction/orchestrator';
+} from '../features/governanceInteraction/interactionDecision';
 
 export interface GovernanceOrchestrationRequest {
   input: string;
@@ -31,6 +32,15 @@ export interface GovernanceOrchestrationApiRequest {
 
 export interface GovernanceOrchestrationApiResponse {
   decision: InteractionDecision;
+  trace?: {
+    run_id?: string;
+    trace_id?: string;
+    locale?: 'zh' | 'en';
+    current_canvas?: string | null;
+    input_length?: number;
+  };
+  artifact_refs?: DecisionArtifactRefs;
+  run_id?: string;
 }
 
 /**
@@ -87,9 +97,15 @@ export async function executeGovernanceOrchestration(
 
     if (response.ok) {
       const data = (await response.json()) as GovernanceOrchestrationApiResponse;
+      const decision: InteractionDecision = {
+        ...data.decision,
+        ...(data.trace?.run_id || data.run_id ? { runId: data.trace?.run_id ?? data.run_id } : {}),
+        ...(data.trace?.trace_id ? { traceId: data.trace.trace_id } : {}),
+        ...(data.artifact_refs ? { artifactRefs: data.artifact_refs } : {}),
+      };
 
       return {
-        decision: data.decision,
+        decision,
         orchestration_source: 'api',
         trace: {
           input_length: request.input.trim().length,

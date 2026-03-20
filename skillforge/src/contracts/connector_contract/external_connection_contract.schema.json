@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ExternalConnectionContract",
+  "description": "外部连接接口契约定义 - 只定义接口，不实现连接",
+  "type": "object",
+  "required": [
+    "contract_type",
+    "connection_id",
+    "connection_type",
+    "target",
+    "required_permits",
+    "frozen_dependencies",
+    "request_schema",
+    "response_schema",
+    "error_classes",
+    "boundary_note"
+  ],
+  "properties": {
+    "contract_type": {
+      "const": "ExternalConnectionContract",
+      "description": "契约类型标识"
+    },
+    "connection_id": {
+      "type": "string",
+      "description": "连接唯一标识符"
+    },
+    "connection_type": {
+      "type": "string",
+      "enum": ["git", "webhook", "api", "registry", "storage", "notification"],
+      "description": "连接类型分类"
+    },
+    "target": {
+      "type": "string",
+      "description": "连接目标标识（不包含敏感信息）"
+    },
+    "required_permits": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "需要的 permit 类型列表（声明，不生成）"
+    },
+    "frozen_dependencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["module", "object_type", "access_pattern"],
+        "properties": {
+          "module": {
+            "type": "string",
+            "description": "frozen 模块路径"
+          },
+          "object_type": {
+            "type": "string",
+            "description": "frozen 对象类型"
+          },
+          "access_pattern": {
+            "type": "string",
+            "enum": ["read", "reference", "query"],
+            "description": "访问模式（只读）"
+          },
+          "purpose": {
+            "type": "string",
+            "description": "使用目的"
+          }
+        }
+      },
+      "description": "frozen 主线依赖声明（只读）"
+    },
+    "request_schema": {
+      "type": "object",
+      "description": "请求数据结构规范"
+    },
+    "response_schema": {
+      "type": "object",
+      "description": "响应数据结构规范"
+    },
+    "error_classes": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "错误分类定义"
+    },
+    "boundary_note": {
+      "type": "string",
+      "const": "此契约只定义接口，不实现连接。真实连接由 Integration Gateway 执行。",
+      "description": "边界声明"
+    }
+  },
+  "additionalProperties": false
+}

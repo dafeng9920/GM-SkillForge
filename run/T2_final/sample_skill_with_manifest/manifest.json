@@ -1,0 +1,44 @@
+{
+  "skill_name": "sample_skill",
+  "version": "1.5.0",
+  "description": "A sample skill demonstrating T2 capabilities",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "query": {
+        "type": "string",
+        "description": "Search query"
+      },
+      "limit": {
+        "type": "integer",
+        "default": 10
+      }
+    },
+    "required": [
+      "query"
+    ]
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      "status": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object"
+      }
+    },
+    "required": [
+      "status"
+    ]
+  },
+  "capabilities": [
+    "llm",
+    "network",
+    "file_write"
+  ],
+  "constraints": [
+    "max_limit: 100",
+    "timeout: 30s"
+  ]
+}

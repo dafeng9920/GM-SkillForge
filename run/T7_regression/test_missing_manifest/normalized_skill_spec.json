@@ -1,0 +1,45 @@
+{
+  "skill_id": "test_skill-0.1.0-3dd621c7",
+  "skill_name": "test_skill",
+  "version": "0.1.0",
+  "description": "Test skill module.  SKILL_NAME = \"test_skill\"",
+  "entry_point": "__init__.py",
+  "skill_dir": "C:\\Users\\Aorus\\AppData\\Local\\Temp\\tmplxbncl9e\\test_skill",
+  "file_list": [
+    "__init__.py"
+  ],
+  "dependencies": {
+    "direct_dependencies": [],
+    "transitive_dependencies": [],
+    "dependency_count": 0
+  },
+  "input_contract": {
+    "schema_type": "object",
+    "properties": {},
+    "required": [],
+    "description": "No input contract defined"
+  },
+  "output_contract": {
+    "schema_type": "object",
+    "properties": {
+      "result": {
+        "type": "string",
+        "description": "Operation result"
+      }
+    },
+    "required": [
+      "result"
+    ],
+    "description": "Default output contract"
+  },
+  "manifest_snapshot": {
+    "exists": false,
+    "content_hash": null,
+    "raw_data": {}
+  },
+  "capabilities": [],
+  "constraints": [],
+  "parsed_at": "2026-03-15T15:35:15Z",
+  "parser_version": "1.0.0-t2",
+  "spec_hash": "1f41f83b76e93784c4d0c66801e59f2909ac7e88e0255890f4c936fbe310db99"
+}

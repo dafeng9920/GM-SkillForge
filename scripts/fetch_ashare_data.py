@@ -58,7 +58,26 @@ def fetch_market_snapshot():
             except Exception as e_zt:
                 print(f"⚠️ 涨停数据捕获提醒 (可能是非交易时段): {e_zt}")
 
-            # 3. 获取今日领涨行业板块
+            # 3. 核心补足：全市场广度扫描 (获取成交额前 100 的活跃品种，作为“可买入”备选池)
+            print("🚀 正在执行全市场活跃度扫描...")
+            df_spot = ak.stock_zh_a_spot_em()
+            if not df_spot.empty:
+                # 按照成交额排序，选取 Top 100，这些通常是流动性最好的
+                df_active = df_spot.sort_values(by="成交额", ascending=False).head(100)
+                active_list = []
+                for _, row in df_active.iterrows():
+                    active_list.append({
+                        "代码": row["代码"],
+                        "名称": row["名称"],
+                        "价格": float(row["最新价"]),
+                        "涨跌幅": float(row["涨跌幅"]),
+                        "成交额": float(row["成交额"]),
+                        "换手率": float(row["换手率"]),
+                        "连板数": 0 # 普通股默认为 0
+                    })
+                snapshot["active_pool"] = active_list
+
+            # 4. 获取今日领涨行业板块
             df_sectors = ak.stock_board_industry_name_em()
             df_sectors_sorted = df_sectors.sort_values(by="涨跌幅", ascending=False).head(5)
             for _, row in df_sectors_sorted.iterrows():

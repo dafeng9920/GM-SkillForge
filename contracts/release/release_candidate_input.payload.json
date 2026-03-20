@@ -1,0 +1,31 @@
+{
+  "payload_type": "ReleaseCandidateInputPayload",
+  "source_object": "ReviewCandidateInput",
+  "candidate_id": "cand-generate-skill-v1",
+  "intent_id": "generate_skill_from_requirement",
+  "contract_id": "contract-generate-skill-v1",
+  "candidate_name": "generate_skill_candidate",
+  "skill_root": "artifacts/candidates/generate_skill_candidate",
+  "generated_files": [
+    {
+      "path": "artifacts/candidates/generate_skill_candidate/SKILL.md",
+      "kind": "skill_md",
+      "required": true
+    }
+  ],
+  "entrypoints": [
+    {
+      "name": "main",
+      "path": "scripts/main.py",
+      "kind": "script"
+    }
+  ],
+  "dependencies": {
+    "python": [
+      "pydantic"
+    ]
+  },
+  "required_changes": [],
+  "production_status": "compiled",
+  "boundary_note": "Release candidate input is a pre-audit release structure only, not a release decision, publish approval, or audit ownership result."
+}

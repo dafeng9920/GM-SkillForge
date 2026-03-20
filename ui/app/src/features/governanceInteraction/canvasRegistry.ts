@@ -1,4 +1,4 @@
-import type { CanvasState, InteractionDecision, IntentState } from './orchestrator';
+import type { CanvasState, InteractionDecision, IntentState } from './interactionDecision';
 
 export interface CanvasRouteDescriptor {
   eyebrow: string;

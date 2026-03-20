@@ -1,0 +1,621 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/genesismind-bot/GM-SkillForge/skillforge/src/contracts/case_ledger.schema.json",
+  "title": "CaseLedger",
+  "description": "T13 Deliverable: Minimal case ledger for tracking test scenarios without building a large case library. Supports recording case_id, input_scenario, expected, actual, deviation, adjudication, release, residual_risks, and follow_up_actions. Hard constraint: No large case library, no marking uncovered as completed, no marking degradable as fully successful.",
+  "type": "object",
+  "required": [
+    "ledger_id",
+    "ledger_version",
+    "created_at",
+    "created_by",
+    "boundary_declaration",
+    "cases",
+    "summary"
+  ],
+  "properties": {
+    "ledger_id": {
+      "type": "string",
+      "description": "Unique ledger identifier (format: LEDGER-{YYYYMMDD}-{short_hash})",
+      "pattern": "^LEDGER-[0-9]{8}-[a-f0-9]{8}$"
+    },
+    "ledger_version": {
+      "type": "string",
+      "description": "Version of the case ledger schema",
+      "pattern": "^\\d+\\.\\d+\\.\\d+.*"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp when ledger was created"
+    },
+    "created_by": {
+      "type": "string",
+      "description": "Entity that created this ledger (e.g., 'T13-Kior-B', 'automation')"
+    },
+    "parent_ledger_ref": {
+      "type": ["string", "null"],
+      "description": "Reference to parent ledger if this is an incremental update",
+      "pattern": "^LEDGER-[0-9]{8}-[a-f0-9]{8}$"
+    },
+    "boundary_declaration": {
+      "type": "object",
+      "description": "T13 Hard Constraint: Explicit boundary declaration - what IS and IS NOT covered",
+      "required": ["in_scope", "out_of_scope", "assumptions"],
+      "properties": {
+        "in_scope": {
+          "type": "array",
+          "description": "Scenarios explicitly IN SCOPE for this ledger",
+          "minItems": 0,
+          "items": {
+            "type": "object",
+            "required": ["category", "description"],
+            "properties": {
+              "category": {
+                "type": "string",
+                "enum": ["happy_path", "edge_case", "error_case", "integration", "performance", "security", "governance"],
+                "description": "Category of in-scope scenario"
+              },
+              "description": {
+                "type": "string",
+                "description": "Human-readable description of the in-scope scenario"
+              },
+              "coverage_target": {
+                "type": ["string", "null"],
+                "enum": ["full", "partial", "sampling"],
+                "description": "Coverage target for this category"
+              }
+            }
+          }
+        },
+        "out_of_scope": {
+          "type": "array",
+          "description": "T13 Hard Constraint: Scenarios explicitly OUT OF SCOPE - must be declared, NOT assumed",
+          "minItems": 0,
+          "items": {
+            "type": "object",
+            "required": ["category", "reason"],
+            "properties": {
+              "category": {
+                "type": "string",
+                "description": "Category of out-of-scope scenario"
+              },
+              "reason": {
+                "type": "string",
+                "enum": ["not_implemented", "deferred", "out_of_project_scope", "requires_external_dependency", "deprecated_feature"],
+                "description": "Why this scenario is out of scope"
+              },
+              "ticket_ref": {
+                "type": ["string", "null"],
+                "description": "Reference to tracking ticket if deferred"
+              }
+            }
+          }
+        },
+        "assumptions": {
+          "type": "array",
+          "description": "Assumptions made about the test environment and data",
+          "minItems": 0,
+          "items": {
+            "type": "string"
+          }
+        },
+        "data_constraints": {
+          "type": ["array", "null"],
+          "description": "Constraints on test data availability",
+          "items": {
+            "type": "object",
+            "required": ["constraint", "impact"],
+            "properties": {
+              "constraint": {
+                "type": "string",
+                "description": "Description of the constraint"
+              },
+              "impact": {
+                "type": "string",
+                "enum": ["blocks_testing", "limits_coverage", "requires_workaround", "minimal_impact"],
+                "description": "Impact of the constraint"
+              }
+            }
+          }
+        }
+      }
+    },
+    "cases": {
+      "type": "array",
+      "description": "Test case records. T13 Hard Constraint: No large case library - minimal set only",
+      "items": {
+        "$ref": "#/definitions/case_record"
+      }
+    },
+    "summary": {
+      "type": "object",
+      "description": "Summary statistics of the case ledger",
+      "required": ["total_cases", "by_status", "by_degradation", "coverage_completeness"],
+      "properties": {
+        "total_cases": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of cases in the ledger"
+        },
+        "by_status": {
+          "type": "object",
+          "description": "Cases by adjudication status",
+          "properties": {
+            "passed": {"type": "integer", "minimum": 0},
+            "failed": {"type": "integer", "minimum": 0},
+            "degraded": {"type": "integer", "minimum": 0},
+            "waived": {"type": "integer", "minimum": 0},
+            "pending": {"type": "integer", "minimum": 0}
+          }
+        },
+        "by_degradation": {
+          "type": "object",
+          "description": "T13 Hard Constraint: Explicit degradation classification",
+          "properties": {
+            "fully_successful": {"type": "integer", "minimum": 0},
+            "minor_degradation": {"type": "integer", "minimum": 0},
+            "partial_functionality": {"type": "integer", "minimum": 0},
+            "major_degradation": {"type": "integer", "minimum": 0},
+            "unclassified": {"type": "integer", "minimum": 0}
+          }
+        },
+        "coverage_completeness": {
+          "type": "object",
+          "description": "T13 Hard Constraint: Completeness against boundary declaration",
+          "required": ["in_scope_covered", "in_scope_total", "out_of_scope_declared"],
+          "properties": {
+            "in_scope_covered": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of in-scope scenarios with test cases"
+            },
+            "in_scope_total": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Total number of in-scope scenarios declared"
+            },
+            "out_of_scope_declared": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of out-of-scope scenarios explicitly declared"
+            },
+            "completion_percent": {
+              "type": "number",
+              "minimum": 0.0,
+              "maximum": 100.0,
+              "description": "Completion percentage (in_scope_covered / in_scope_total * 100)"
+            }
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata about the ledger",
+      "properties": {
+        "run_id": {
+          "type": ["string", "null"],
+          "description": "Associated run ID for traceability"
+        },
+        "gate_decision_refs": {
+          "type": ["array", "null"],
+          "description": "References to gate decisions that validated this ledger",
+          "items": {
+            "type": "object",
+            "required": ["gate_type", "decision_ref"],
+            "properties": {
+              "gate_type": {
+                "type": "string",
+                "enum": ["entry", "exit"],
+                "description": "Type of gate"
+              },
+              "decision_ref": {
+                "type": "string",
+                "description": "Reference to gate decision file"
+              }
+            }
+          }
+        },
+        "notes": {
+          "type": ["string", "null"],
+          "description": "Additional notes about the ledger"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "case_record": {
+      "type": "object",
+      "description": "A single test case record in the ledger",
+      "required": [
+        "case_id",
+        "created_at",
+        "input_scenario",
+        "expected_behavior",
+        "execution_record"
+      ],
+      "properties": {
+        "case_id": {
+          "type": "string",
+          "description": "Unique case identifier (format: CASE-{category}-{seq})",
+          "pattern": "^CASE-[A-Z0-9_]+-[0-9]+$"
+        },
+        "title": {
+          "type": "string",
+          "description": "Human-readable case title"
+        },
+        "description": {
+          "type": ["string", "null"],
+          "description": "Detailed case description"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 timestamp when case was created"
+        },
+        "created_by": {
+          "type": ["string", "null"],
+          "description": "Entity that created this case"
+        },
+        "input_scenario": {
+          "type": "object",
+          "description": "Input scenario definition",
+          "required": ["scenario_type", "inputs"],
+          "properties": {
+            "scenario_type": {
+              "type": "string",
+              "enum": ["happy_path", "edge_case", "error_case", "integration", "performance", "security", "governance"],
+              "description": "Type of scenario"
+            },
+            "inputs": {
+              "type": "object",
+              "description": "Input parameters and values",
+              "properties": {
+                "primary_input": {
+                  "type": ["string", "object", "null"],
+                  "description": "Primary input to the system under test"
+                },
+                "parameters": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Additional parameters"
+                },
+                "preconditions": {
+                  "type": ["array", "null"],
+                  "description": "Required preconditions",
+                  "items": {"type": "string"}
+                },
+                "environment": {
+                  "type": ["object", "null"],
+                  "description": "Environment configuration",
+                  "properties": {
+                    "data_source": {"type": ["string", "null"]},
+                    "dependencies": {"type": ["array", "null"], "items": {"type": "string"}},
+                    "configuration": {"type": ["object", "null"], "additionalProperties": true}
+                  }
+                }
+              }
+            },
+            "data_refs": {
+              "type": ["array", "null"],
+              "description": "References to test data files",
+              "items": {
+                "type": "object",
+                "required": ["kind", "locator"],
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": ["FIXTURE", "SNAPSHOT", "GENERATED", "MANUAL"]
+                  },
+                  "locator": {"type": "string"},
+                  "note": {"type": ["string", "null"]}
+                }
+              }
+            }
+          }
+        },
+        "expected_behavior": {
+          "type": "object",
+          "description": "Expected behavior and outcomes",
+          "required": ["outcomes"],
+          "properties": {
+            "outcomes": {
+              "type": "array",
+              "description": "Expected outcomes",
+              "items": {
+                "type": "object",
+                "required": ["type", "description"],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": ["return_value", "state_change", "side_effect", "error", "performance", "gate_decision"],
+                    "description": "Type of outcome"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Expected outcome description"
+                  },
+                  "criteria": {
+                    "type": ["object", "null"],
+                    "additionalProperties": true,
+                    "description": "Specific acceptance criteria"
+                  }
+                }
+              }
+            },
+            "assertions": {
+              "type": ["array", "null"],
+              "description": "Specific assertions to verify",
+              "items": {
+                "type": "object",
+                "required": ["assertion"],
+                "properties": {
+                  "assertion": {"type": "string"},
+                  "evidence_required": {
+                    "type": ["boolean", "null"],
+                    "description": "Whether evidence must be provided"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "execution_record": {
+          "type": "object",
+          "description": "Execution record when case is run",
+          "required": ["status"],
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["pending", "executed", "skipped", "blocked"],
+              "description": "Execution status of the case"
+            },
+            "executed_at": {
+              "type": ["string", "null"],
+              "format": "date-time",
+              "description": "ISO-8601 timestamp when case was executed"
+            },
+            "actual_behavior": {
+              "type": ["object", "null"],
+              "description": "Actual behavior observed during execution",
+              "properties": {
+                "outcomes": {
+                  "type": ["array", "null"],
+                  "description": "Actual outcomes observed",
+                  "items": {
+                    "type": "object",
+                    "required": ["type", "result"],
+                    "properties": {
+                      "type": {"type": "string"},
+                      "result": {
+                        "type": ["string", "object", "boolean", "number", "null"],
+                        "description": "Actual result"
+                      },
+                      "note": {"type": ["string", "null"]}
+                    }
+                  }
+                },
+                "deviations": {
+                  "type": ["array", "null"],
+                  "description": "T13 Hard Constraint: Deviations from expected behavior MUST be recorded",
+                  "items": {
+                    "$ref": "#/definitions/deviation_record"
+                  }
+                },
+                "evidence_refs": {
+                  "type": ["array", "null"],
+                  "description": "References to evidence of actual behavior",
+                  "items": {
+                    "type": "object",
+                    "required": ["kind", "locator"],
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "enum": ["LOG", "SNIPPET", "SCREENSHOT", "METRIC", "GATE_DECISION", "ARTIFACT"]
+                      },
+                      "locator": {"type": "string"},
+                      "note": {"type": ["string", "null"]}
+                    }
+                  }
+                }
+              }
+            },
+            "execution_metadata": {
+              "type": ["object", "null"],
+              "description": "Metadata about the execution",
+              "properties": {
+                "duration_ms": {"type": ["integer", "null"], "minimum": 0},
+                "environment": {"type": ["string", "null"]},
+                "executor": {"type": ["string", "null"]}
+              }
+            }
+          }
+        },
+        "adjudication": {
+          "type": ["object", "null"],
+          "description": "Adjudication decision on the case execution",
+          "required": ["decision", "adjudicated_at", "adjudicated_by"],
+          "properties": {
+            "decision": {
+              "type": "string",
+              "enum": ["PASS", "FAIL", "DEGRADED", "WAIVE"],
+              "description": "Adjudication decision"
+            },
+            "adjudicated_at": {
+              "type": "string",
+              "format": "date-time",
+              "description": "ISO-8601 timestamp of adjudication"
+            },
+            "adjudicated_by": {
+              "type": "string",
+              "description": "Entity that performed adjudication"
+            },
+            "degradation_level": {
+              "type": ["string", "null"],
+              "description": "T13 Hard Constraint: Required when decision=DEGRADED. Explicitly classify degradation.",
+              "enum": ["minor", "partial_functionality", "major"]
+            },
+            "rationale": {
+              "type": ["string", "null"],
+              "description": "Rationale for the adjudication decision"
+            },
+            "deviation_accepted": {
+              "type": ["boolean", "null"],
+              "description": "Whether deviations were accepted"
+            }
+          }
+        },
+        "release_decision": {
+          "type": ["object", "null"],
+          "description": "Release decision based on this case",
+          "properties": {
+            "can_release": {
+              "type": ["boolean", "null"],
+              "description": "Whether the system can be released based on this case"
+            },
+            "conditions": {
+              "type": ["array", "null"],
+              "description": "Conditions for release",
+              "items": {"type": "string"}
+            },
+            "decided_at": {
+              "type": ["string", "null"],
+              "format": "date-time"
+            },
+            "decided_by": {
+              "type": ["string", "null"]
+            }
+          }
+        },
+        "residual_risks": {
+          "type": ["array", "null"],
+          "description": "T13 Hard Constraint: Residual risks associated with this case, even if adjudicated PASS",
+          "items": {
+            "$ref": "#/definitions/case_risk"
+          }
+        },
+        "follow_up_actions": {
+          "type": ["array", "null"],
+          "description": "Follow-up actions required from this case",
+          "items": {
+            "type": "object",
+            "required": ["action", "status"],
+            "properties": {
+              "action": {
+                "type": "string",
+                "description": "Action description"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["pending", "in_progress", "completed", "blocked"],
+                "description": "Action status"
+              },
+              "owner": {
+                "type": ["string", "null"],
+                "description": "Action owner"
+              },
+              "priority": {
+                "type": ["string", "null"],
+                "enum": ["P0", "P1", "P2", "P3", "P4"],
+                "description": "Action priority"
+              },
+              "ticket_ref": {
+                "type": ["string", "null"],
+                "description": "Reference to tracking ticket"
+              },
+              "target_date": {
+                "type": ["string", "null"],
+                "format": "date-time"
+              }
+            }
+          }
+        },
+        "tags": {
+          "type": ["array", "null"],
+          "description": "Tags for categorization",
+          "items": {"type": "string"}
+        },
+        "related_case_ids": {
+          "type": ["array", "null"],
+          "description": "References to related cases",
+          "items": {
+            "type": "string",
+            "pattern": "^CASE-[A-Z0-9_]+-[0-9]+$"
+          }
+        },
+        "issue_refs": {
+          "type": ["array", "null"],
+          "description": "References to issues found during this case",
+          "items": {
+            "type": "string",
+            "pattern": "^ISS-[A-Z0-9]+-[a-f0-9]{8}$"
+          }
+        }
+      }
+    },
+    "deviation_record": {
+      "type": "object",
+      "description": "A deviation from expected behavior",
+      "required": ["type", "description"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["outcome_mismatch", "missing_outcome", "unexpected_outcome", "performance_degradation", "error_variance", "data_difference"],
+          "description": "Type of deviation"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the deviation"
+        },
+        "severity": {
+          "type": ["string", "null"],
+          "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"],
+          "description": "Severity of the deviation"
+        },
+        "expected": {
+          "type": ["string", "null"],
+          "description": "What was expected"
+        },
+        "actual": {
+          "type": ["string", "null"],
+          "description": "What was actually observed"
+        },
+        "impact": {
+          "type": ["string", "null"],
+          "description": "Impact of the deviation"
+        }
+      }
+    },
+    "case_risk": {
+      "type": "object",
+      "description": "Residual risk associated with a case",
+      "required": ["risk_category", "description"],
+      "properties": {
+        "risk_id": {
+          "type": ["string", "null"],
+          "description": "Reference to residual risk record if applicable",
+          "pattern": "^R-[0-9]{8}_[0-9]{6}-[0-9]+$"
+        },
+        "risk_category": {
+          "type": "string",
+          "enum": ["test_gap", "data_limitation", "environment_constraint", "assumption_violation", "degradation_risk", "coverage_hole"],
+          "description": "Category of case-specific risk"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the risk"
+        },
+        "mitigation": {
+          "type": ["string", "null"],
+          "description": "Proposed or implemented mitigation"
+        },
+        "requires_monitoring": {
+          "type": ["boolean", "null"],
+          "description": "Whether this risk requires ongoing monitoring"
+        }
+      }
+    }
+  }
+}

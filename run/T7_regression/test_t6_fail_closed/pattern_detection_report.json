@@ -1,0 +1,19 @@
+{
+  "skill_name": "test_skill",
+  "skill_dir": "C:\\Users\\Aorus\\AppData\\Local\\Temp\\tmp1v0xyf3y\\test_skill",
+  "analyzed_at": "2026-03-15T15:35:16Z",
+  "pattern_set_version": "1.0.0-t5",
+  "analysis_statistics": {
+    "files_analyzed": 1,
+    "functions_analyzed": 0,
+    "total_matches": 0,
+    "by_pattern": {},
+    "by_category": {}
+  },
+  "pattern_matches": {
+    "critical": [],
+    "high": [],
+    "medium": []
+  },
+  "governance_gaps": []
+}

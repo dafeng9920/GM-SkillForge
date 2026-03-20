@@ -1,0 +1,178 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://gm-os.dev/contracts/rule_scan_report.schema.json",
+  "title": "RuleScanReport",
+  "description": "Security and governance rule scan report for skills (T4 deliverable). Provides structured findings from static code analysis.",
+  "type": "object",
+  "required": [
+    "skill_name",
+    "skill_dir",
+    "scanned_at",
+    "rule_set_version",
+    "scan_statistics",
+    "findings"
+  ],
+  "properties": {
+    "skill_name": {
+      "type": "string",
+      "description": "Name of the scanned skill"
+    },
+    "skill_dir": {
+      "type": "string",
+      "description": "Absolute path to the scanned skill directory"
+    },
+    "scanned_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp when the scan was performed"
+    },
+    "rule_set_version": {
+      "type": "string",
+      "description": "Version of the rule set used for scanning",
+      "pattern": "^\\d+\\.\\d+\\.\\d+.*"
+    },
+    "scan_statistics": {
+      "type": "object",
+      "description": "Statistics about the scan",
+      "required": ["files_scanned", "total_lines_scanned", "total_hits", "by_category", "by_severity"],
+      "properties": {
+        "files_scanned": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of files scanned"
+        },
+        "total_lines_scanned": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of lines scanned"
+        },
+        "total_hits": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of rule hits"
+        },
+        "by_category": {
+          "type": "object",
+          "description": "Hit counts by rule category",
+          "properties": {
+            "sensitive_permission": {"type": "integer", "minimum": 0},
+            "external_action": {"type": "integer", "minimum": 0},
+            "dangerous_pattern": {"type": "integer", "minimum": 0},
+            "boundary_gap": {"type": "integer", "minimum": 0}
+          }
+        },
+        "by_severity": {
+          "type": "object",
+          "description": "Hit counts by severity level",
+          "properties": {
+            "CRITICAL": {"type": "integer", "minimum": 0},
+            "HIGH": {"type": "integer", "minimum": 0},
+            "MEDIUM": {"type": "integer", "minimum": 0},
+            "LOW": {"type": "integer", "minimum": 0}
+          }
+        }
+      }
+    },
+    "findings": {
+      "type": "object",
+      "description": "Rule hits grouped by severity",
+      "required": ["critical", "high", "medium", "low"],
+      "properties": {
+        "critical": {
+          "type": "array",
+          "description": "CRITICAL severity rule hits",
+          "items": {
+            "$ref": "#/definitions/rule_hit"
+          }
+        },
+        "high": {
+          "type": "array",
+          "description": "HIGH severity rule hits",
+          "items": {
+            "$ref": "#/definitions/rule_hit"
+          }
+        },
+        "medium": {
+          "type": "array",
+          "description": "MEDIUM severity rule hits",
+          "items": {
+            "$ref": "#/definitions/rule_hit"
+          }
+        },
+        "low": {
+          "type": "array",
+          "description": "LOW severity rule hits",
+          "items": {
+            "$ref": "#/definitions/rule_hit"
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "rule_hit": {
+      "type": "object",
+      "description": "A single rule hit found during scanning",
+      "required": [
+        "rule_code",
+        "rule_name",
+        "file_path",
+        "line_number",
+        "column_number",
+        "snippet",
+        "category",
+        "severity",
+        "message",
+        "suggested_fix"
+      ],
+      "properties": {
+        "rule_code": {
+          "type": "string",
+          "description": "Rule code (E4xx series)",
+          "pattern": "^E4\\d{2}_[A-Z_]+"
+        },
+        "rule_name": {
+          "type": "string",
+          "description": "Human-readable rule name"
+        },
+        "file_path": {
+          "type": "string",
+          "description": "Relative path to the file from skill_dir"
+        },
+        "line_number": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Line number where the hit was found"
+        },
+        "column_number": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Column number where the hit was found"
+        },
+        "snippet": {
+          "type": "string",
+          "description": "The matching code line"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["sensitive_permission", "external_action", "dangerous_pattern", "boundary_gap"],
+          "description": "Rule category"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"],
+          "description": "Severity level"
+        },
+        "message": {
+          "type": "string",
+          "description": "Human-readable description of the issue"
+        },
+        "suggested_fix": {
+          "type": "string",
+          "description": "Suggested remediation"
+        }
+      }
+    }
+  }
+}

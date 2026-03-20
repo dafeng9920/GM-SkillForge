@@ -1,0 +1,27 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-9.0.2, pluggy-1.6.0 -- D:\GM-SkillForge\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: D:\GM-SkillForge
+configfile: pyproject.toml
+collecting ... collected 18 items
+
+tests/gates/test_intake_scan.py::TestIntakeGate::test_intake_with_valid_input PASSED [  5%]
+tests/gates/test_intake_scan.py::TestIntakeGate::test_missing_commit_sha_triggers_rejected PASSED [ 11%]
+tests/gates/test_intake_scan.py::TestIntakeGate::test_empty_commit_sha_triggers_rejected PASSED [ 16%]
+tests/gates/test_intake_scan.py::TestIntakeGate::test_missing_repo_url_triggers_rejected PASSED [ 22%]
+tests/gates/test_intake_scan.py::TestIntakeGate::test_intake_produces_evidence_ref PASSED [ 27%]
+tests/gates/test_intake_scan.py::TestIntakeGate::test_intake_class_interface PASSED [ 33%]
+tests/gates/test_intake_scan.py::TestScanGate::test_scan_missing_repo_path_triggers_rejected PASSED [ 38%]
+tests/gates/test_intake_scan.py::TestScanGate::test_scan_nonexistent_path_triggers_rejected PASSED [ 44%]
+tests/gates/test_intake_scan.py::TestScanGate::test_low_fit_score_triggers_rejected PASSED [ 50%]
+tests/gates/test_intake_scan.py::TestScanGate::test_valid_repo_produces_evidence_ref PASSED [ 55%]
+tests/gates/test_intake_scan.py::TestScanGate::test_high_fit_score_repo_passes PASSED [ 61%]
+tests/gates/test_intake_scan.py::TestScanGate::test_scan_class_interface PASSED [ 66%]
+tests/gates/test_intake_scan.py::TestEntranceGateIntegration::test_full_pipeline_pass PASSED [ 72%]
+tests/gates/test_intake_scan.py::TestEntranceGateIntegration::test_pipeline_halt_at_intake PASSED [ 77%]
+tests/gates/test_intake_scan.py::TestEntranceGateIntegration::test_pipeline_halt_at_scan PASSED [ 83%]
+tests/gates/test_intake_scan.py::TestGateResultSchema::test_intake_gate_result_schema PASSED [ 88%]
+tests/gates/test_intake_scan.py::TestGateResultSchema::test_scan_gate_result_schema PASSED [ 94%]
+tests/gates/test_intake_scan.py::TestGateResultSchema::test_evidence_ref_schema PASSED [100%]
+
+============================= 18 passed in 0.16s ==============================

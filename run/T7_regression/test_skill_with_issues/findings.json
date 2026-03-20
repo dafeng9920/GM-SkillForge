@@ -1,0 +1,235 @@
+{
+  "meta": {
+    "skill_id": "test_skill-0.1.0-3dd621c7",
+    "skill_name": "test_skill",
+    "generated_at": "2026-03-15T15:35:15.911309+00:00",
+    "t6_version": "1.0.0-t6",
+    "run_id": "20260315_153515"
+  },
+  "input_sources": {
+    "validation_report": "run\\T7_regression\\test_skill_with_issues\\validation_report.json",
+    "rule_scan_report": "run\\T7_regression\\test_skill_with_issues\\rule_scan_report.json",
+    "pattern_detection_report": "run\\T7_regression\\test_skill_with_issues\\pattern_detection_report.json"
+  },
+  "findings": [
+    {
+      "finding_id": "F-pattern_match-E501-291845e5",
+      "source": {
+        "type": "pattern_match",
+        "code": "E501_EXTERNAL_WITHOUT_STOP_RULE"
+      },
+      "what": {
+        "title": "External Action Without Stop Rule",
+        "description": "External action (HTTP request, file write, subprocess) executed without preceding governance stop rule (permission check, authorization, permit validation)",
+        "category": "governance_gap",
+        "severity": "CRITICAL",
+        "confidence": 0.85
+      },
+      "where": {
+        "file_path": "__init__.py",
+        "line_number": 12,
+        "column_number": null,
+        "function_name": "dangerous_subprocess"
+      },
+      "context": {
+        "snippet": "def dangerous_subprocess():",
+        "context_lines": [
+          "    # E421: eval usage - 应该被 T4 检测到",
+          "    return eval(user_input)",
+          "",
+          "def dangerous_subprocess():",
+          "    # E405: subprocess with shell=True - 应该被 T4 检测到",
+          "    subprocess.run(\"ls\", shell=True)",
+          ""
+        ],
+        "field_path": null,
+        "actual_value": null,
+        "expected_value": null
+      },
+      "fix": {
+        "suggested_fix": "Add stop rule before external action: @require_permission decorator or explicit permission check",
+        "remediation": "Add stop rule before external action: @require_permission decorator or explicit permission check"
+      },
+      "security": {
+        "cwe_id": null,
+        "owasp_id": null
+      },
+      "governance": {
+        "missing_control": null,
+        "recommended_control": null
+      },
+      "evidence_refs": [
+        {
+          "kind": "FILE",
+          "locator": "run\\T7_regression\\test_skill_with_issues\\pattern_detection_report.json",
+          "note": "T5 pattern detection report (pattern set v1.0.0-t5)"
+        },
+        {
+          "kind": "CODE_LOCATION",
+          "locator": "__init__.py:12",
+          "note": "Pattern detected in function: dangerous_subprocess"
+        },
+        {
+          "kind": "FILE",
+          "locator": "run/T5_evidence/pattern_samples/e501_external_without_stop_rule/skill.py",
+          "note": "Pattern definition source (sample code where pattern was identified)"
+        }
+      ],
+      "detected_at": "2026-03-15T15:35:15.911309+00:00"
+    },
+    {
+      "finding_id": "F-pattern_match-E503-d1b9dbc7",
+      "source": {
+        "type": "pattern_match",
+        "code": "E503_HIGH_PRIV_WITHOUT_BOUNDARY"
+      },
+      "what": {
+        "title": "High-Privilege Call Without Boundary",
+        "description": "High-privilege operation (file delete, database write, system command) executed without boundary limits (rate limit, resource cap, scope restriction)",
+        "category": "governance_gap",
+        "severity": "CRITICAL",
+        "confidence": 0.85
+      },
+      "where": {
+        "file_path": "__init__.py",
+        "line_number": 12,
+        "column_number": null,
+        "function_name": "dangerous_subprocess"
+      },
+      "context": {
+        "snippet": "def dangerous_subprocess():",
+        "context_lines": [
+          "    # E421: eval usage - 应该被 T4 检测到",
+          "    return eval(user_input)",
+          "",
+          "def dangerous_subprocess():",
+          "    # E405: subprocess with shell=True - 应该被 T4 检测到",
+          "    subprocess.run(\"ls\", shell=True)",
+          ""
+        ],
+        "field_path": null,
+        "actual_value": null,
+        "expected_value": null
+      },
+      "fix": {
+        "suggested_fix": "Add boundary limits: rate limiter, resource cap, or scope restriction",
+        "remediation": "Add boundary limits: rate limiter, resource cap, or scope restriction"
+      },
+      "security": {
+        "cwe_id": null,
+        "owasp_id": null
+      },
+      "governance": {
+        "missing_control": null,
+        "recommended_control": null
+      },
+      "evidence_refs": [
+        {
+          "kind": "FILE",
+          "locator": "run\\T7_regression\\test_skill_with_issues\\pattern_detection_report.json",
+          "note": "T5 pattern detection report (pattern set v1.0.0-t5)"
+        },
+        {
+          "kind": "CODE_LOCATION",
+          "locator": "__init__.py:12",
+          "note": "Pattern detected in function: dangerous_subprocess"
+        },
+        {
+          "kind": "FILE",
+          "locator": "run/T5_evidence/pattern_samples/e503_high_priv_without_boundary/skill.py",
+          "note": "Pattern definition source (sample code where pattern was identified)"
+        }
+      ],
+      "detected_at": "2026-03-15T15:35:15.911309+00:00"
+    },
+    {
+      "finding_id": "F-pattern_match-E501-c78668d6",
+      "source": {
+        "type": "pattern_match",
+        "code": "E501_EXTERNAL_WITHOUT_STOP_RULE"
+      },
+      "what": {
+        "title": "External Action Without Stop Rule",
+        "description": "External action (HTTP request, file write, subprocess) executed without preceding governance stop rule (permission check, authorization, permit validation)",
+        "category": "governance_gap",
+        "severity": "CRITICAL",
+        "confidence": 0.85
+      },
+      "where": {
+        "file_path": "__init__.py",
+        "line_number": 16,
+        "column_number": null,
+        "function_name": "external_without_stop_rule"
+      },
+      "context": {
+        "snippet": "def external_without_stop_rule():",
+        "context_lines": [
+          "    # E405: subprocess with shell=True - 应该被 T4 检测到",
+          "    subprocess.run(\"ls\", shell=True)",
+          "",
+          "def external_without_stop_rule():",
+          "    # E501: External action without stop rule",
+          "    import requests",
+          "    return requests.get(\"https://api.example.com\")"
+        ],
+        "field_path": null,
+        "actual_value": null,
+        "expected_value": null
+      },
+      "fix": {
+        "suggested_fix": "Add stop rule before external action: @require_permission decorator or explicit permission check",
+        "remediation": "Add stop rule before external action: @require_permission decorator or explicit permission check"
+      },
+      "security": {
+        "cwe_id": null,
+        "owasp_id": null
+      },
+      "governance": {
+        "missing_control": null,
+        "recommended_control": null
+      },
+      "evidence_refs": [
+        {
+          "kind": "FILE",
+          "locator": "run\\T7_regression\\test_skill_with_issues\\pattern_detection_report.json",
+          "note": "T5 pattern detection report (pattern set v1.0.0-t5)"
+        },
+        {
+          "kind": "CODE_LOCATION",
+          "locator": "__init__.py:16",
+          "note": "Pattern detected in function: external_without_stop_rule"
+        },
+        {
+          "kind": "FILE",
+          "locator": "run/T5_evidence/pattern_samples/e501_external_without_stop_rule/skill.py",
+          "note": "Pattern definition source (sample code where pattern was identified)"
+        }
+      ],
+      "detected_at": "2026-03-15T15:35:15.911309+00:00"
+    }
+  ],
+  "summary": {
+    "total_findings": 3,
+    "by_severity": {
+      "CRITICAL": 3,
+      "HIGH": 0,
+      "MEDIUM": 0,
+      "LOW": 0,
+      "INFO": 0
+    },
+    "by_category": {
+      "governance_gap": 3
+    },
+    "by_source": {
+      "validation": 0,
+      "rule_scan": 0,
+      "pattern_match": 3
+    },
+    "by_confidence": {
+      "very_high (0.95-1.0)": 0,
+      "high (0.85-0.95)": 3,
+      "medium (0.70-0.85)": 0,
+      "low (<0.70)": 0
+    }
+  }
+}

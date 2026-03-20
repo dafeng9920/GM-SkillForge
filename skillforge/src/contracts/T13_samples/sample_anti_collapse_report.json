@@ -1,0 +1,275 @@
+{
+  "$schema": "https://github.com/genesismind-bot/GM-SkillForge/skillforge/src/contracts/anti_collapse_report.schema.json",
+  "report_id": "ACR-20260316-a1b2c3d4",
+  "report_type": "initial",
+  "created_at": "2026-03-16T12:30:00Z",
+  "created_by": "T13-Kior-B",
+  "case_ledger_ref": "LEDGER-20260316-a1b2c3d4",
+  "parent_report_ref": null,
+  "reporting_period": {
+    "start": "2026-03-16T12:00:00Z",
+    "end": "2026-03-16T12:30:00Z"
+  },
+  "boundary_assertions": {
+    "declared_boundaries": [
+      {
+        "boundary_id": "B-001",
+        "type": "in_scope",
+        "assertion": "Basic happy path scenarios for core functionality",
+        "verification_status": "verified",
+        "related_cases": ["CASE_HAPPY_001"]
+      },
+      {
+        "boundary_id": "B-002",
+        "type": "in_scope",
+        "assertion": "Edge cases for boundary conditions",
+        "verification_status": "verified",
+        "related_cases": ["CASE_EDGE_001"]
+      },
+      {
+        "boundary_id": "B-003",
+        "type": "in_scope",
+        "assertion": "Error handling scenarios",
+        "verification_status": "verified",
+        "related_cases": ["CASE_ERROR_001"]
+      },
+      {
+        "boundary_id": "B-004",
+        "type": "out_of_scope",
+        "assertion": "Out of scope: performance (deferred)",
+        "verification_status": "verified"
+      },
+      {
+        "boundary_id": "B-005",
+        "type": "out_of_scope",
+        "assertion": "Out of scope: security (out_of_project_scope)",
+        "verification_status": "verified"
+      },
+      {
+        "boundary_id": "B-006",
+        "type": "assumption",
+        "assertion": "Standard test environment with Python 3.11+",
+        "verification_status": "unknown"
+      },
+      {
+        "boundary_id": "B-007",
+        "type": "assumption",
+        "assertion": "Test data fixtures available in tests/fixtures/",
+        "verification_status": "verified"
+      },
+      {
+        "boundary_id": "B-008",
+        "type": "assumption",
+        "assertion": "External dependencies (API, database) are mocked",
+        "verification_status": "verified"
+      }
+    ],
+    "boundary_violations": [],
+    "uncovered_declared": {
+      "total_declared_uncovered": 2,
+      "verified_declared": [
+        "performance (deferred, ticket: TICKET-101)",
+        "security (out_of_project_scope)"
+      ],
+      "implicit_uncovered_detected": [
+        {
+          "item": "Case CASE_ERROR_001",
+          "why_uncovered": "Not yet executed",
+          "severity": "LOW",
+          "recommendation": "Execute case before release"
+        }
+      ],
+      "declaration_integrity_score": 0.9
+    },
+    "assumption_violations": null
+  },
+  "coverage_integrity": {
+    "claimed_coverage": {
+      "in_scope_count": 3,
+      "covered_count": 2,
+      "claimed_percent": 66.67
+    },
+    "verified_coverage": {
+      "verified_covered": 2,
+      "verified_percent": 66.67,
+      "verification_method": "manual_review"
+    },
+    "coverage_gaps": [
+      {
+        "gap_type": "unverified_case",
+        "description": "Case CASE_ERROR_001 not executed",
+        "affected_scope": "CASE_ERROR_001",
+        "severity": "LOW",
+        "remediation": "Execute case or mark as out of scope"
+      }
+    ],
+    "integrity_check_passed": false
+  },
+  "degradation_classification": {
+    "cases_by_status": {
+      "fully_successful": 1,
+      "degraded_pass": 0,
+      "degraded_explicit": 1,
+      "failed": 0,
+      "waived": 0,
+      "pending": 1
+    },
+    "degraded_cases": [
+      {
+        "case_id": "CASE_EDGE_001",
+        "title": "Empty skill specification - edge case",
+        "adjudication_decision": "DEGRADED",
+        "degradation_level": "minor",
+        "deviations": [
+          {
+            "type": "error_variance",
+            "description": "Error message slightly different from expected",
+            "severity": "LOW",
+            "expected": "skill_name is required",
+            "actual": "Field 'skill_name' is required",
+            "impact": "Low - error is still descriptive"
+          }
+        ],
+        "impact": "Error message wording differs from expected but functionality is correct",
+        "residual_risks": [
+          "Error message format may vary - documentation should reflect actual format"
+        ],
+        "release_allowed": true,
+        "release_conditions": [
+          "Update test expectations to match actual error message format"
+        ]
+      }
+    ],
+    "degradation_levels": {
+      "minor": 1,
+      "partial_functionality": 0,
+      "major": 0
+    },
+    "misclassification_detected": [],
+    "classification_integrity_score": 1.0
+  },
+  "residual_risk_register": {
+    "total_risks": 3,
+    "by_category": {
+      "test_gap": 1,
+      "data_limitation": 1,
+      "environment_constraint": 0,
+      "assumption_violation": 0,
+      "degradation_risk": 1,
+      "coverage_hole": 0,
+      "dependency_risk": 0
+    },
+    "by_severity": {
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 3,
+      "LOW": 0
+    },
+    "by_case_status": {
+      "in_pass_cases": 1,
+      "in_degraded_cases": 1,
+      "in_fail_cases": 0,
+      "in_unexecuted_cases": 1
+    },
+    "critical_risks": [],
+    "all_risks": [
+      {
+        "risk_id": "R-20260316_120000-001",
+        "source_case_id": "CASE_HAPPY_001",
+        "category": "data_limitation",
+        "description": "Test used fixture data - real-world data variations not covered",
+        "severity": "MEDIUM",
+        "likelihood": null,
+        "impact": null,
+        "mitigation": "Monitor production validation results",
+        "status": "monitoring",
+        "ticket_ref": null
+      },
+      {
+        "risk_id": "R-20260316_120000-002",
+        "source_case_id": "CASE_EDGE_001",
+        "category": "degradation_risk",
+        "description": "Error message format may vary - documentation should reflect actual format",
+        "severity": "MEDIUM",
+        "likelihood": null,
+        "impact": null,
+        "mitigation": "Review and update error message documentation",
+        "status": "open",
+        "ticket_ref": null
+      },
+      {
+        "risk_id": "R-20260316_120000-003",
+        "source_case_id": "CASE_ERROR_001",
+        "category": "test_gap",
+        "description": "Error case not yet executed - validation behavior unknown",
+        "severity": "MEDIUM",
+        "likelihood": null,
+        "impact": null,
+        "mitigation": "Execute case before release",
+        "status": "open",
+        "ticket_ref": null
+      }
+    ],
+    "risk_register_complete": true,
+    "gaps_detected": null
+  },
+  "anti_collapse_metrics": {
+    "boundary_transparency": 0.9,
+    "coverage_honesty": 0.7,
+    "degradation_honesty": 1.0,
+    "risk_awareness": 1.0
+  },
+  "anti_collapse_score": {
+    "score": 0.90,
+    "posture": "STRONG",
+    "determinants": [
+      {
+        "factor": "boundary_transparency",
+        "impact": "High",
+        "value": 0.9
+      },
+      {
+        "factor": "coverage_integrity",
+        "impact": "Moderate",
+        "value": 0.7
+      },
+      {
+        "factor": "degradation_classification",
+        "impact": "High",
+        "value": 1.0
+      },
+      {
+        "factor": "risk_register_completeness",
+        "impact": "High",
+        "value": 1.0
+      }
+    ],
+    "release_recommendation": "clear",
+    "recommendation_rationale": "Anti-collapse posture is STRONG (score: 0.90). Coverage integrity at 70%. Degradation integrity at 100% with 0 misclassifications.",
+    "blocking_issues": null
+  },
+  "immediate_actions": [
+    {
+      "action": "Execute pending test case CASE_ERROR_001",
+      "priority": "P2",
+      "owner": null,
+      "target_date": null,
+      "related_ref": null
+    },
+    {
+      "action": "Address coverage gap - 1 unverified case",
+      "priority": "P2",
+      "owner": null,
+      "target_date": null,
+      "related_ref": "coverage_integrity.coverage_gaps"
+    }
+  ],
+  "metadata": {
+    "schema_version": "1.0.0-t13",
+    "run_id": "20260316_120000",
+    "gate_decision_refs": [
+      "run/20260316_120000/entry_gate_decision.json"
+    ],
+    "notes": "T13 sample anti-collapse report demonstrating boundary enforcement, degradation classification, and residual risk tracking. E1307 and E1303 fixes applied."
+  }
+}

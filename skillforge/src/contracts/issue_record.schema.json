@@ -1,0 +1,222 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/genesismind-bot/GM-SkillForge/skillforge/src/contracts/issue_record.schema.json",
+  "title": "IssueRecord",
+  "description": "T12 Deliverable: Issue records derived from adjudicated findings. Converts RuleDecision (PASS/FAIL) into tracked issues. T12 Hard Constraint: Only RuleDecisions with PASS or FAIL decisions become IssueRecords. WAIVE and DEFER decisions do NOT create issues.",
+  "type": "object",
+  "required": [
+    "issue_id",
+    "finding_id",
+    "rule_decision_ref",
+    "title",
+    "description",
+    "severity",
+    "impact_level",
+    "truth_assessment",
+    "evidence_strength",
+    "category",
+    "status",
+    "created_at",
+    "created_by"
+  ],
+  "properties": {
+    "issue_id": {
+      "type": "string",
+      "description": "Unique issue identifier (format: ISS-{task_id}-{short_hash})",
+      "pattern": "^ISS-[A-Z0-9]+-[a-f0-9]{8}$"
+    },
+    "finding_id": {
+      "type": "string",
+      "description": "Reference to the original finding ID from T6",
+      "pattern": "^F-[a-z_]+-[A-Z0-9]+-[a-f0-9]{8}$"
+    },
+    "rule_decision_ref": {
+      "type": "object",
+      "description": "Reference to the originating RuleDecision from T8",
+      "required": ["decision", "adjudicated_at"],
+      "properties": {
+        "decision": {
+          "type": "string",
+          "enum": ["PASS", "FAIL"],
+          "description": "The adjudication decision (only PASS/FAIL create issues)"
+        },
+        "adjudicated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the rule decision was made"
+        }
+      }
+    },
+    "title": {
+      "type": "string",
+      "description": "Concise issue title (derived from finding or refined)"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed issue description, including context and impact"
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"],
+      "description": "Issue severity (from adjudication or adjusted)"
+    },
+    "impact_level": {
+      "type": "string",
+      "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "NEGLIGIBLE"],
+      "description": "Assessed impact level from RuleDecision"
+    },
+    "truth_assessment": {
+      "type": "string",
+      "enum": ["CONFIRMED", "LIKELY_TRUE", "UNCERTAIN", "LIKELY_FALSE"],
+      "description": "Truth assessment from RuleDecision. Note: FALSE_POSITIVE should be WAIVE, not an issue."
+    },
+    "evidence_strength": {
+      "type": "string",
+      "enum": ["CONCLUSIVE", "STRONG", "MODERATE", "WEAK", "INSUFFICIENT"],
+      "description": "Evidence strength from RuleDecision"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "schema_validation",
+        "contract_validation",
+        "consistency_check",
+        "sensitive_permission",
+        "external_action",
+        "dangerous_pattern",
+        "boundary_gap",
+        "governance_gap",
+        "anti_pattern"
+      ],
+      "description": "Issue category (from original finding)"
+    },
+    "where": {
+      "type": "object",
+      "description": "Location information from the original finding",
+      "required": ["file_path"],
+      "properties": {
+        "file_path": {
+          "type": "string",
+          "description": "Relative path to the file with the issue"
+        },
+        "line_number": {
+          "type": ["integer", "null"],
+          "minimum": 1,
+          "description": "Line number"
+        },
+        "column_number": {
+          "type": ["integer", "null"],
+          "minimum": 1,
+          "description": "Column number"
+        },
+        "function_name": {
+          "type": ["string", "null"],
+          "description": "Function name"
+        }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["OPEN", "IN_PROGRESS", "FIXED", "VERIFIED", "CLOSED", "DEFERRED"],
+      "description": "Current status of the issue",
+      "default": "OPEN"
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["P0", "P1", "P2", "P3", "P4"],
+      "description": "Issue priority for triage (derived from severity and impact)",
+      "default": "P3"
+    },
+    "tags": {
+      "type": "array",
+      "description": "Tags for issue categorization and filtering",
+      "items": {
+        "type": "string"
+      }
+    },
+    "related_issues": {
+      "type": "array",
+      "description": "References to related issue IDs",
+      "items": {
+        "type": "string",
+        "pattern": "^ISS-[A-Z0-9]+-[a-f0-9]{8}$"
+      }
+    },
+    "security_reference": {
+      "type": "object",
+      "description": "Security reference if applicable (from T4 findings)",
+      "properties": {
+        "cwe_id": {
+          "type": ["string", "null"],
+          "description": "CWE identifier (e.g., CWE-78)"
+        },
+        "owasp_id": {
+          "type": ["string", "null"],
+          "description": "OWASP identifier (e.g., A03:2021)"
+        }
+      }
+    },
+    "evidence_refs": {
+      "type": "array",
+      "description": "Evidence references from the original finding",
+      "items": {
+        "type": "object",
+        "required": ["kind", "locator"],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": ["FILE", "LOG", "DIFF", "SNIPPET", "URL", "CODE_LOCATION"]
+          },
+          "locator": {
+            "type": "string"
+          },
+          "note": {
+            "type": ["string", "null"]
+          }
+        }
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp when issue was created"
+    },
+    "created_by": {
+      "type": "string",
+      "description": "Entity that created this issue (e.g., 'T12-Antigravity-2', 'automation')"
+    },
+    "updated_at": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "ISO-8601 timestamp when issue was last updated"
+    },
+    "updated_by": {
+      "type": ["string", "null"],
+      "description": "Entity that last updated this issue"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata about the issue",
+      "properties": {
+        "source_task": {
+          "type": "string",
+          "enum": ["T3", "T4", "T5"],
+          "description": "Which task originally detected this issue"
+        },
+        "original_source_code": {
+          "type": ["string", "null"],
+          "description": "Original error code (E3xx/E4xx/E5xx)"
+        },
+        "is_security_issue": {
+          "type": "boolean",
+          "description": "Whether this is a security issue"
+        },
+        "is_governance_issue": {
+          "type": "boolean",
+          "description": "Whether this is a governance issue"
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

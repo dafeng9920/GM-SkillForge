@@ -1,0 +1,36 @@
+{
+  "skill_name": "eval_usage",
+  "skill_dir": "D:\\GM-SkillForge\\run\\T4_evidence\\rule_samples\\eval_usage",
+  "scanned_at": "2026-03-15T13:07:22Z",
+  "rule_set_version": "1.0.0-t4",
+  "scan_statistics": {
+    "files_scanned": 1,
+    "total_lines_scanned": 8,
+    "total_hits": 1,
+    "by_category": {
+      "dangerous_pattern": 1
+    },
+    "by_severity": {
+      "CRITICAL": 1
+    }
+  },
+  "findings": {
+    "critical": [
+      {
+        "rule_code": "E421_EVAL_OR_EXEC_USED",
+        "rule_name": "eval or exec Function Used",
+        "file_path": "eval_usage.py",
+        "line_number": 8,
+        "column_number": 12,
+        "snippet": "return eval(user_input)",
+        "category": "dangerous_pattern",
+        "severity": "CRITICAL",
+        "message": "Use of eval() or exec() functions detected",
+        "suggested_fix": "Replace eval/exec with safer alternatives"
+      }
+    ],
+    "high": [],
+    "medium": [],
+    "low": []
+  }
+}

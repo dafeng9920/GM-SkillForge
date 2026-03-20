@@ -6,7 +6,7 @@ import { useGovernanceCanvasSlot } from '../../components/governance/GovernanceC
 import type { ComposerAction } from '../../components/governance/GovernComposer';
 import { useGovernanceInteraction } from '../../features/governanceInteraction/interaction';
 import { useGovernancePromptQuerySync } from '../../features/governanceInteraction/useGovernancePromptQuerySync';
-import type { IntentState } from '../../features/governanceInteraction/orchestrator';
+import type { IntentState } from '../../features/governanceInteraction/interactionDecision';
 import styles from './DashboardPage.module.css';
 
 type KpiTone = 'neutral' | 'danger' | 'warning' | 'success' | 'active';

@@ -1,0 +1,327 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/genesismind-bot/GM-SkillForge/skillforge/src/contracts/findings.schema.json",
+  "title": "FindingsReport",
+  "description": "Unified findings report consolidating T3 (validation), T4 (rule scan), and T5 (pattern match) results into a consistent Finding format. T6 deliverable with mandatory evidence refs binding.",
+  "type": "object",
+  "required": [
+    "meta",
+    "input_sources",
+    "findings",
+    "summary"
+  ],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "description": "Metadata about the findings report",
+      "required": ["skill_id", "skill_name", "generated_at", "t6_version", "run_id"],
+      "properties": {
+        "skill_id": {
+          "type": "string",
+          "description": "Skill identifier (e.g., quant-1.0.0-abc12345)"
+        },
+        "skill_name": {
+          "type": "string",
+          "description": "Skill name (e.g., quant)"
+        },
+        "generated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 timestamp when findings report was generated"
+        },
+        "t6_version": {
+          "type": "string",
+          "description": "Version of the T6 finding builder (e.g., 1.0.0-t6)",
+          "pattern": "^\\d+\\.\\d+\\.\\d+.*"
+        },
+        "run_id": {
+          "type": "string",
+          "description": "Run identifier for traceability (e.g., 20260315_120000)"
+        }
+      }
+    },
+    "input_sources": {
+      "type": "object",
+      "description": "References to input reports (T3/T4/T5) for traceability",
+      "required": ["validation_report", "rule_scan_report", "pattern_detection_report"],
+      "properties": {
+        "validation_report": {
+          "type": ["string", "null"],
+          "description": "Path to T3 validation_report.json (if T3 was run)"
+        },
+        "rule_scan_report": {
+          "type": ["string", "null"],
+          "description": "Path to T4 rule_scan_report.json (if T4 was run)"
+        },
+        "pattern_detection_report": {
+          "type": ["string", "null"],
+          "description": "Path to T5 pattern_detection_report.json (if T5 was run)"
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "description": "All findings from T3/T4/T5 in unified format",
+      "items": {
+        "$ref": "#/definitions/finding"
+      }
+    },
+    "summary": {
+      "type": "object",
+      "description": "Summary statistics of findings",
+      "required": ["total_findings", "by_severity", "by_category", "by_source", "by_confidence"],
+      "properties": {
+        "total_findings": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of findings"
+        },
+        "by_severity": {
+          "type": "object",
+          "description": "Count of findings by severity level",
+          "properties": {
+            "CRITICAL": {"type": "integer", "minimum": 0},
+            "HIGH": {"type": "integer", "minimum": 0},
+            "MEDIUM": {"type": "integer", "minimum": 0},
+            "LOW": {"type": "integer", "minimum": 0},
+            "INFO": {"type": "integer", "minimum": 0}
+          }
+        },
+        "by_category": {
+          "type": "object",
+          "description": "Count of findings by category",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "by_source": {
+          "type": "object",
+          "description": "Count of findings by source type",
+          "properties": {
+            "validation": {"type": "integer", "minimum": 0},
+            "rule_scan": {"type": "integer", "minimum": 0},
+            "pattern_match": {"type": "integer", "minimum": 0}
+          }
+        },
+        "by_confidence": {
+          "type": "object",
+          "description": "Count of findings by confidence ranges",
+          "properties": {
+            "very_high (0.95-1.0)": {"type": "integer", "minimum": 0},
+            "high (0.85-0.95)": {"type": "integer", "minimum": 0},
+            "medium (0.70-0.85)": {"type": "integer", "minimum": 0},
+            "low (<0.70)": {"type": "integer", "minimum": 0}
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "finding": {
+      "type": "object",
+      "description": "A unified finding from T3/T4/T5 with mandatory evidence refs",
+      "required": [
+        "finding_id",
+        "source",
+        "what",
+        "where",
+        "evidence_refs",
+        "detected_at"
+      ],
+      "properties": {
+        "finding_id": {
+          "type": "string",
+          "description": "Unique finding identifier (format: F-{source}-{code}-{hash})",
+          "pattern": "^F-[a-z_]+-[A-Z0-9]+-[a-f0-9]{8}$"
+        },
+        "source": {
+          "type": "object",
+          "description": "Source information (which task detected this finding)",
+          "required": ["type", "code"],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["validation", "rule_scan", "pattern_match"],
+              "description": "Source type: validation (T3), rule_scan (T4), pattern_match (T5)"
+            },
+            "code": {
+              "type": "string",
+              "description": "Original error/rule/pattern code (E3xx/E4xx/E5xx)",
+              "pattern": "^E[345][0-9]{2}_[A-Z_]+$"
+            }
+          }
+        },
+        "what": {
+          "type": "object",
+          "description": "What was found",
+          "required": ["title", "description", "category", "severity", "confidence"],
+          "properties": {
+            "title": {
+              "type": "string",
+              "description": "Short human-readable title"
+            },
+            "description": {
+              "type": "string",
+              "description": "Detailed description of the finding"
+            },
+            "category": {
+              "type": "string",
+              "enum": [
+                "schema_validation",
+                "contract_validation",
+                "consistency_check",
+                "sensitive_permission",
+                "external_action",
+                "dangerous_pattern",
+                "boundary_gap",
+                "governance_gap",
+                "anti_pattern"
+              ],
+              "description": "Finding category"
+            },
+            "severity": {
+              "type": "string",
+              "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"],
+              "description": "Severity level (initial assignment, no adjudication)"
+            },
+            "confidence": {
+              "type": "number",
+              "minimum": 0.0,
+              "maximum": 1.0,
+              "description": "Confidence score (0.0 to 1.0, initial assignment based on detection method)"
+            }
+          }
+        },
+        "where": {
+          "type": "object",
+          "description": "Where the finding was located",
+          "required": ["file_path"],
+          "properties": {
+            "file_path": {
+              "type": "string",
+              "description": "Relative path to the file from skill root (or '<schema>' for T3)"
+            },
+            "line_number": {
+              "type": ["integer", "null"],
+              "minimum": 1,
+              "description": "Line number where finding was detected"
+            },
+            "column_number": {
+              "type": ["integer", "null"],
+              "minimum": 1,
+              "description": "Column number (for T4 rule hits)"
+            },
+            "function_name": {
+              "type": ["string", "null"],
+              "description": "Function name (for T5 pattern matches)"
+            }
+          }
+        },
+        "context": {
+          "type": "object",
+          "description": "Additional context about the finding",
+          "properties": {
+            "snippet": {
+              "type": ["string", "null"],
+              "description": "Relevant code line"
+            },
+            "context_lines": {
+              "type": ["array", "null"],
+              "description": "Surrounding lines for context",
+              "items": {"type": "string"}
+            },
+            "field_path": {
+              "type": ["string", "null"],
+              "description": "JSON path to invalid field (for T3)"
+            },
+            "actual_value": {
+              "type": ["string", "null"],
+              "description": "Actual value found (for T3)"
+            },
+            "expected_value": {
+              "type": ["string", "null"],
+              "description": "Expected value (for T3)"
+            }
+          }
+        },
+        "fix": {
+          "type": "object",
+          "description": "Fix information",
+          "properties": {
+            "suggested_fix": {
+              "type": ["string", "null"],
+              "description": "Quick suggested fix"
+            },
+            "remediation": {
+              "type": ["string", "null"],
+              "description": "Detailed remediation steps"
+            }
+          }
+        },
+        "security": {
+          "type": "object",
+          "description": "Security references (for T4 security rules)",
+          "properties": {
+            "cwe_id": {
+              "type": ["string", "null"],
+              "description": "CWE identifier (e.g., CWE-78)"
+            },
+            "owasp_id": {
+              "type": ["string", "null"],
+              "description": "OWASP identifier (e.g., A03:2021)"
+            }
+          }
+        },
+        "governance": {
+          "type": "object",
+          "description": "Governance information (for T5 governance gaps)",
+          "properties": {
+            "missing_control": {
+              "type": ["string", "null"],
+              "description": "Description of the missing control"
+            },
+            "recommended_control": {
+              "type": ["string", "null"],
+              "description": "Recommended control to implement"
+            }
+          }
+        },
+        "evidence_refs": {
+          "type": "array",
+          "description": "Evidence references (T6 Hard Constraint: At least one required)",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions/evidence_ref"
+          }
+        },
+        "detected_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 timestamp when finding was detected"
+        }
+      }
+    },
+    "evidence_ref": {
+      "type": "object",
+      "description": "Reference to evidence supporting a finding",
+      "required": ["kind", "locator"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["FILE", "LOG", "DIFF", "SNIPPET", "URL", "CODE_LOCATION"],
+          "description": "Kind of evidence reference"
+        },
+        "locator": {
+          "type": "string",
+          "description": "Path or URL to evidence (e.g., 'skill.py:42' or 'run/T3_evidence/validation_report.json')"
+        },
+        "note": {
+          "type": ["string", "null"],
+          "description": "Additional context about the evidence"
+        }
+      }
+    }
+  }
+}

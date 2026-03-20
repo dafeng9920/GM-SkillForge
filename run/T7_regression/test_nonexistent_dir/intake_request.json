@@ -1,0 +1,8 @@
+{
+  "intent_id": "AUDIT_REPO_SKILL",
+  "repo_url": "https://github.com/test/test",
+  "commit_sha": "abc1234",
+  "at_time": "2026-03-15T15:35:16Z",
+  "issue_key": "REQ-20260315153516",
+  "options": {}
+}

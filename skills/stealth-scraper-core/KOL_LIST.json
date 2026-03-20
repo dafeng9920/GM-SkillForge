@@ -1,0 +1,44 @@
+[
+    {
+        "handle": "karpathy",
+        "name": "Andrej Karpathy",
+        "category": "AI Architecture",
+        "priority": 1
+    },
+    {
+        "handle": "AndrewYNg",
+        "name": "Andrew Ng",
+        "category": "AI Agentic Workflow",
+        "priority": 1
+    },
+    {
+        "handle": "DrJimFan",
+        "name": "Jim Fan",
+        "category": "Embodied AI / Robotics",
+        "priority": 2
+    },
+    {
+        "handle": "levelsio",
+        "name": "Pieter Levels",
+        "category": "Indie Hacking / SaaS",
+        "priority": 1
+    },
+    {
+        "handle": "gregisenberg",
+        "name": "Greg Isenberg",
+        "category": "Niche Market / SEO",
+        "priority": 2
+    },
+    {
+        "handle": "tibo_maker",
+        "name": "Tibo",
+        "category": "Automation / X Growth",
+        "priority": 2
+    },
+    {
+        "handle": "yoheinakajima",
+        "name": "Yohei Nakajima",
+        "category": "Autonomous Agents",
+        "priority": 1
+    }
+]

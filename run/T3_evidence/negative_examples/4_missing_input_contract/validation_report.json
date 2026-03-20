@@ -1,0 +1,28 @@
+{
+  "is_valid": false,
+  "failures": [
+    {
+      "code": "E302_REQUIRED_FIELD_MISSING",
+      "message": "Required field 'input_contract' is missing",
+      "field_path": "input_contract",
+      "severity": "ERROR",
+      "suggested_fix": "Add 'input_contract' to the skill spec",
+      "actual_value": null,
+      "expected_value": null
+    },
+    {
+      "code": "E311_INPUT_CONTRACT_MISSING",
+      "message": "Input contract is missing",
+      "field_path": "input_contract",
+      "severity": "ERROR",
+      "suggested_fix": "Add input_contract to the skill spec with schema_type, properties, and required fields",
+      "actual_value": null,
+      "expected_value": null
+    }
+  ],
+  "warnings": [],
+  "validated_at": "2026-03-15T13:00:40.009858+00:00",
+  "validator_version": "1.0.0-t3",
+  "failure_count": 2,
+  "warning_count": 0
+}

@@ -1,0 +1,84 @@
+{
+  "meta": {
+    "pack_id": "PACK-8d0decf28ded",
+    "run_id": "test_run",
+    "created_at": "2026-03-16T15:36:50.700095+00:00",
+    "t14_version": "1.0.0-t14",
+    "skill_id": "test_skill-1.0.0-abc123",
+    "skill_name": "test_skill",
+    "pack_context": "exit_gate"
+  },
+  "pack_type": "STANDARD",
+  "artifacts": {
+    "discovery": {
+      "intake_request": null,
+      "normalized_skill_spec": null,
+      "validation_report": null,
+      "rule_scan_report": null,
+      "pattern_detection_report": null,
+      "findings_report": "D:\\GM-SkillForge\\.pytest_tmp\\pytest-of-Aorus\\pytest-0\\test_save_load_round_trip0\\test_run\\findings.json"
+    },
+    "adjudication": {
+      "adjudication_report": "D:\\GM-SkillForge\\.pytest_tmp\\pytest-of-Aorus\\pytest-0\\test_save_load_round_trip0\\test_run\\adjudication_report.json",
+      "coverage_statement": null
+    },
+    "delivery": {
+      "judgment_overrides": null,
+      "residual_risks": null,
+      "release_decision": "D:\\GM-SkillForge\\.pytest_tmp\\pytest-of-Aorus\\pytest-0\\test_save_load_round_trip0\\test_run\\release_decision.json",
+      "owner_review": null,
+      "issue_records": null,
+      "fix_recommendations": null
+    }
+  },
+  "evidence_manifest": {
+    "total_evidence_refs": 2,
+    "by_kind": {
+      "FILE": 1,
+      "CODE_LOCATION": 1
+    },
+    "evidence_digest": "32400f7d95b0d95a07733a94c16777811f1ca83035e8f46d1ed413fa37300b18",
+    "findings_with_evidence": 2,
+    "findings_without_evidence": 0
+  },
+  "summary": {
+    "total_findings": 1,
+    "findings_by_severity": {
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 0,
+      "LOW": 1,
+      "INFO": 0
+    },
+    "total_decisions": 1,
+    "decisions_by_outcome": {
+      "PASS": 1,
+      "FAIL": 0,
+      "WAIVE": 0,
+      "DEFER": 0
+    },
+    "release_outcome": "RELEASE",
+    "has_overrides": false,
+    "override_count": 0,
+    "has_residual_risks": false,
+    "residual_risk_count": 0,
+    "blocking_findings_count": 0,
+    "issues_created": 0,
+    "fix_recommendations": 0,
+    "coverage_percentage": 0.0
+  },
+  "compliance": {
+    "antigravity_compliant": true,
+    "closed_loop_complete": true,
+    "evidence_ref_complete": true,
+    "governance_gaps_identified": 0,
+    "security_findings_count": 1
+  },
+  "chain_of_custody": [
+    {
+      "timestamp": "2026-03-16T15:36:50.701100+00:00",
+      "event": "PACK_CREATED",
+      "actor": "T14-AuditPackBuilder"
+    }
+  ]
+}

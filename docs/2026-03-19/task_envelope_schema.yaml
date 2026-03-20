@@ -1,0 +1,112 @@
+version: "v1"
+kind: "task_envelope_schema"
+description: "AI 军团任务投递信封的最小协议定义"
+
+required:
+  - task_id
+  - module
+  - role
+  - assignee
+  - depends_on
+  - parallel_group
+  - source_of_truth
+  - writeback
+  - acceptance_criteria
+  - hard_constraints
+  - escalation_trigger
+
+properties:
+  task_id:
+    type: string
+    pattern: "^[A-Z][A-Z0-9_-]*$"
+    description: "唯一任务编号，例如 X1、F3、R5"
+
+  module:
+    type: string
+    description: "所属模块名，例如 external_execution_and_integration_minimal_landing"
+
+  role:
+    type: string
+    enum:
+      - execution
+      - review
+      - compliance
+      - final_gate
+    description: "当前信封的目标角色"
+
+  assignee:
+    type: string
+    description: "执行该信封的 AI 单元"
+
+  depends_on:
+    type: array
+    items:
+      type: string
+    description: "前置任务 ID 列表；无依赖时为空数组"
+
+  parallel_group:
+    type: string
+    description: "并行组标识；同组可并行，不同组按依赖放行"
+
+  source_of_truth:
+    type: array
+    items:
+      type: string
+    description: "唯一事实源文档路径"
+
+  writeback:
+    type: object
+    required:
+      - execution_report
+      - review_report
+      - compliance_attestation
+    properties:
+      execution_report:
+        type: string
+      review_report:
+        type: string
+      compliance_attestation:
+        type: string
+      final_gate:
+        type: string
+        nullable: true
+
+  acceptance_criteria:
+    type: array
+    items:
+      type: string
+    description: "该任务通过所需满足的条件"
+
+  hard_constraints:
+    type: array
+    items:
+      type: string
+    description: "禁止越界的硬约束"
+
+  escalation_trigger:
+    type: array
+    items:
+      type: string
+      enum:
+        - scope_violation
+        - blocking_dependency
+        - ambiguous_spec
+        - review_deny
+        - compliance_fail
+        - state_timeout
+    description: "允许升级到主控官的触发条件"
+
+  next_hop:
+    type: string
+    enum:
+      - review
+      - compliance
+      - final_gate
+      - none
+    description: "当前任务完成后的默认下一跳"
+
+notes:
+  - "任何缺少 required 字段的信封，AI 军团可直接拒收。"
+  - "writeback 路径缺失视为任务书不完整。"
+  - "role=review/compliance 时不得改写 execution 内容本身。"
+

@@ -3,13 +3,16 @@ GateIntakeRepo - validates repository intake request and produces intake manifes
 
 Implements the gate contract for intake_repo with fail-closed rules.
 
+T1 Compliance: This gate enforces intent_id + repo_url + commit_sha requirements.
+
 Input Contract (Intake Request)
 -------------------------------
 {
-    "repo_url": str,       # URI format, required
-    "commit_sha": str,     # 40-char hex, required
-    "at_time": str,        # ISO-8601, optional
-    "issue_key": str       # optional, auto-generated if not provided
+    "intent_id": str,     # Required, must be in approved whitelist
+    "repo_url": str,      # URI format, required
+    "commit_sha": str,    # 7-40 char hex, required
+    "at_time": str,       # ISO-8601, optional
+    "issue_key": str      # optional, auto-generated if not provided
 }
 
 Output Contract (Gate Result)
@@ -22,10 +25,12 @@ Output Contract (Gate Result)
     "evidence_refs": [EvidenceRef]
 }
 
-Fail-Closed Rules
------------------
-FC-INTAKE-1: commit_sha is null or empty -> REJECTED
-FC-INTAKE-2: repo_url is null or empty -> REJECTED
+Fail-Closed Rules (T1)
+----------------------
+FC-INTAKE-1: intent_id missing or not approved -> REJECTED
+FC-INTAKE-2: commit_sha is null or empty -> REJECTED
+FC-INTAKE-3: repo_url is null or empty -> REJECTED
+FC-INTAKE-4: branch-only input (branch without commit_sha) -> REJECTED
 """
 
 from __future__ import annotations
@@ -43,9 +48,18 @@ from typing import Any, Optional, List
 import copy
 from ..experience_capture import FixKind, capture_gate_event
 
-# Commit SHA pattern: 40-char hex
-COMMIT_SHA_PATTERN = re.compile(r"^[0-9a-f]{40}$", re.IGNORECASE)
+# Patterns
+COMMIT_SHA_PATTERN = re.compile(r"^[0-9a-fA-F]{7,40}$")  # Allow 7-40 chars
+INTENT_ID_PATTERN = re.compile(r"^[A-Z]+_[A-Z0-9_]+$")
 ISSUE_KEY_PATTERN = re.compile(r"^[A-Z]+-[A-Z0-9]+$")
+
+# T1: Approved intent_id whitelist (FC-INTAKE-1)
+APPROVED_INTENTS: set[str] = {
+    "AUDIT_REPO_SKILL",
+    "AUDIT_CONTRACT_COMPLIANCE",
+    "AUDIT_SECURITY_SCAN",
+    "AUDIT_PERFORMANCE_ANALYSIS",
+}
 
 
 @dataclass
@@ -64,11 +78,17 @@ class GateIntakeRepo:
 
     node_id: str = "intake_repo"
     gate_group: str = "entrance"
-    tool_revision: str = "v1.0.0"
+    tool_revision: str = "v1.1.0-t1"  # Updated for T1 compliance
 
-    # Error codes
-    ERROR_COMMIT_SHA_MISSING = "ERR_COMMIT_SHA_MISSING"
-    ERROR_REPO_URL_INVALID = "ERR_REPO_URL_INVALID"
+    # Error codes (T1)
+    ERROR_INTENT_ID_MISSING = "E001_INTENT_ID_MISSING"
+    ERROR_INTENT_ID_INVALID = "E002_INTENT_ID_INVALID"
+    ERROR_INTENT_ID_NOT_APPROVED = "E003_INTENT_ID_NOT_APPROVED"
+    ERROR_COMMIT_SHA_MISSING = "E004_COMMIT_SHA_MISSING"
+    ERROR_COMMIT_SHA_INVALID = "E005_COMMIT_SHA_INVALID"
+    ERROR_REPO_URL_MISSING = "E006_REPO_URL_MISSING"
+    ERROR_REPO_URL_INVALID = "E007_REPO_URL_INVALID"
+    ERROR_BRANCH_ONLY_INPUT = "E008_BRANCH_ONLY_INPUT"
 
     # Evidence storage path (can be overridden for testing)
     evidence_base_path: str = "AuditPack/evidence"
@@ -79,7 +99,7 @@ class GateIntakeRepo:
 
     def validate_input(self, input_data: dict[str, Any]) -> list[str]:
         """
-        Validate intake request against fail-closed rules.
+        Validate intake request against fail-closed rules (T1).
 
         Returns list of validation error strings. Empty list = valid.
         """
@@ -89,23 +109,58 @@ class GateIntakeRepo:
             errors.append("SCHEMA_INVALID: input must be a dict")
             return errors
 
-        # FC-INTAKE-1: commit_sha is required
+        # T1: FC-INTAKE-4 - Check for branch-only input first
+        if "branch" in input_data and "commit_sha" not in input_data:
+            errors.append(
+                f"{self.ERROR_BRANCH_ONLY_INPUT}: "
+                "Branch-only input is not allowed. commit_sha is required."
+            )
+            return errors
+
+        # T1: FC-INTAKE-1 - intent_id validation
+        intent_id = input_data.get("intent_id")
+        if intent_id is None or intent_id == "":
+            errors.append(f"{self.ERROR_INTENT_ID_MISSING}: intent_id is required")
+        elif not isinstance(intent_id, str):
+            errors.append(f"{self.ERROR_INTENT_ID_INVALID}: intent_id must be a string")
+        elif not INTENT_ID_PATTERN.match(intent_id):
+            errors.append(
+                f"{self.ERROR_INTENT_ID_INVALID}: "
+                "intent_id must match pattern ^[A-Z]+_[A-Z0-9_]+$"
+            )
+        elif intent_id not in APPROVED_INTENTS:
+            errors.append(
+                f"{self.ERROR_INTENT_ID_NOT_APPROVED}: "
+                f"intent_id '{intent_id}' is not in approved whitelist. "
+                f"Approved: {sorted(APPROVED_INTENTS)}"
+            )
+
+        # T1: FC-INTAKE-2 - commit_sha validation
         commit_sha = input_data.get("commit_sha")
         if commit_sha is None or commit_sha == "":
-            errors.append("FC-INTAKE-1: commit_sha is required")
+            errors.append(
+                f"{self.ERROR_COMMIT_SHA_MISSING}: "
+                "commit_sha is required for reproducible audit"
+            )
         elif not isinstance(commit_sha, str):
-            errors.append("FC-INTAKE-1: commit_sha must be a string")
+            errors.append(f"{self.ERROR_COMMIT_SHA_INVALID}: commit_sha must be a string")
         elif not COMMIT_SHA_PATTERN.match(commit_sha):
-            # Allow shorter SHAs for testing, but warn
-            if len(commit_sha) < 7:
-                errors.append("FC-INTAKE-1: commit_sha must be at least 7 characters")
+            errors.append(
+                f"{self.ERROR_COMMIT_SHA_INVALID}: "
+                "commit_sha must be 7-40 character hex string"
+            )
 
-        # FC-INTAKE-2: repo_url is required
+        # T1: FC-INTAKE-3 - repo_url validation
         repo_url = input_data.get("repo_url")
         if repo_url is None or repo_url == "":
-            errors.append("FC-INTAKE-2: repo_url is required")
+            errors.append(f"{self.ERROR_REPO_URL_MISSING}: repo_url is required")
         elif not isinstance(repo_url, str):
-            errors.append("FC-INTAKE-2: repo_url must be a string")
+            errors.append(f"{self.ERROR_REPO_URL_INVALID}: repo_url must be a string")
+        elif not (repo_url.startswith("https://") or repo_url.startswith("git://")):
+            errors.append(
+                f"{self.ERROR_REPO_URL_INVALID}: "
+                "repo_url must start with 'https://' or 'git://'"
+            )
 
         # at_time is optional, but if provided must be ISO-8601
         at_time = input_data.get("at_time")
@@ -127,7 +182,7 @@ class GateIntakeRepo:
 
     def execute(self, input_data: dict[str, Any]) -> dict[str, Any]:
         """
-        Execute intake gate: validate and produce intake manifest.
+        Execute intake gate: validate and produce intake manifest (T1).
 
         Args:
             input_data: Validated input payload.
@@ -135,6 +190,7 @@ class GateIntakeRepo:
         Returns:
             Gate result conforming to gate_interface_v1.yaml.
         """
+        intent_id = input_data.get("intent_id", "")
         repo_url = input_data.get("repo_url", "")
         commit_sha = input_data.get("commit_sha", "")
         at_time = input_data.get("at_time")
@@ -149,8 +205,9 @@ class GateIntakeRepo:
         if at_time is None:
             at_time = timestamp
 
-        # Create intake manifest
+        # Create intake manifest (T1: includes intent_id)
         manifest = {
+            "intent_id": intent_id,
             "repo_url": repo_url,
             "commit_sha": commit_sha,
             "at_time": at_time,
@@ -290,21 +347,29 @@ class GateIntakeRepo:
 
 # Convenience function for module-level usage
 def intake_repo(
+    intent_id: Optional[str],
     repo_url: Optional[str],
     commit_sha: Optional[str],
     at_time: Optional[str] = None,
     issue_key: Optional[str] = None,
 ) -> dict[str, Any]:
     """
-    Convenience function to run intake gate.
+    Convenience function to run intake gate (T1 compliant).
 
-    Matches gate_interface_v1.yaml signature:
-        inputs: [repo_url, commit_sha, at_time]
-        outputs: [GateResult]
+    Args:
+        intent_id: Approved intent identifier (required).
+        repo_url: Git repository URL (required).
+        commit_sha: Git commit SHA (required).
+        at_time: Optional point-in-time checkout.
+        issue_key: Optional unique request ID.
+
+    Returns:
+        Gate result with PASSED/REJECTED decision.
     """
     gate = GateIntakeRepo()
 
     input_data = {
+        "intent_id": intent_id,
         "repo_url": repo_url,
         "commit_sha": commit_sha,
         "at_time": at_time,
@@ -315,11 +380,27 @@ def intake_repo(
     # Validate input
     errors = gate.validate_input(input_data)
     if errors:
+        # Determine primary error code
+        error_code = gate.ERROR_INTENT_ID_MISSING
+        for err in errors:
+            if "intent_id" in err:
+                error_code = gate.ERROR_INTENT_ID_MISSING
+                break
+            elif "commit_sha" in err:
+                error_code = gate.ERROR_COMMIT_SHA_MISSING
+                break
+            elif "repo_url" in err:
+                error_code = gate.ERROR_REPO_URL_MISSING
+                break
+            elif "branch" in err:
+                error_code = gate.ERROR_BRANCH_ONLY_INPUT
+                break
+
         result = {
             "gate_name": gate.node_id,
             "gate_decision": "REJECTED",
             "next_action": "halt",
-            "error_code": gate.ERROR_COMMIT_SHA_MISSING if "commit_sha" in errors[0] else gate.ERROR_REPO_URL_INVALID,
+            "error_code": error_code,
             "evidence_refs": [],
         }
         capture_gate_event(
@@ -341,10 +422,17 @@ IntakeGate = GateIntakeRepo
 
 # CLI entry point
 def main():
-    """CLI entry point for Intake Gate."""
+    """CLI entry point for Intake Gate (T1 compliant)."""
     import argparse
 
-    parser = argparse.ArgumentParser(description="Gate: Intake Repo")
+    parser = argparse.ArgumentParser(
+        description="Gate: Intake Repo (T1 - intent_id + repo_url + commit_sha)"
+    )
+    parser.add_argument(
+        "--intent-id",
+        required=True,
+        help="Intent identifier (e.g., AUDIT_REPO_SKILL)",
+    )
     parser.add_argument("--repo-url", required=True, help="Repository URL")
     parser.add_argument("--commit-sha", required=True, help="Git commit SHA")
     parser.add_argument("--at-time", help="Point-in-time checkout (ISO-8601)")
@@ -353,13 +441,14 @@ def main():
     parser.add_argument(
         "--evidence-path",
         default="AuditPack/evidence",
-        help="Base path for evidence storage"
+        help="Base path for evidence storage",
     )
     args = parser.parse_args()
 
     gate = GateIntakeRepo(evidence_base_path=args.evidence_path)
 
     input_data = {
+        "intent_id": args.intent_id,
         "repo_url": args.repo_url,
         "commit_sha": args.commit_sha,
         "at_time": args.at_time,
@@ -369,12 +458,29 @@ def main():
     # Validate input
     validation_errors = gate.validate_input(input_data)
     if validation_errors:
+        # Determine error code
+        error_code = gate.ERROR_INTENT_ID_MISSING
+        for err in validation_errors:
+            if "intent_id" in err:
+                error_code = gate.ERROR_INTENT_ID_MISSING
+                break
+            elif "commit_sha" in err:
+                error_code = gate.ERROR_COMMIT_SHA_MISSING
+                break
+            elif "repo_url" in err:
+                error_code = gate.ERROR_REPO_URL_MISSING
+                break
+            elif "branch" in err:
+                error_code = gate.ERROR_BRANCH_ONLY_INPUT
+                break
+
         error_result = {
             "gate_name": gate.node_id,
             "gate_decision": "REJECTED",
             "next_action": "halt",
-            "error_code": gate.ERROR_COMMIT_SHA_MISSING if "commit_sha" in validation_errors[0] else gate.ERROR_REPO_URL_INVALID,
+            "error_code": error_code,
             "evidence_refs": [],
+            "validation_errors": validation_errors,
         }
         if args.output:
             with open(args.output, "w", encoding="utf-8") as f:

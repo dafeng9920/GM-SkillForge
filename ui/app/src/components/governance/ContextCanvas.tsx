@@ -1,5 +1,5 @@
 import React from 'react';
-import type { InteractionDecision } from '../../features/governanceInteraction/orchestrator';
+import type { InteractionDecision } from '../../features/governanceInteraction/interactionDecision';
 import {
   buildContextCanvasModel,
   type CanvasIntentKey,

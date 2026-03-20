@@ -88,6 +88,14 @@ def _load_json(path: Path) -> dict | None:
     return None
 
 
+def _glob_existing(*patterns: str) -> list[Path]:
+    found: list[Path] = []
+    for pattern in patterns:
+        found.extend(ROOT.glob(pattern))
+    uniq = sorted({p.resolve() for p in found if p.exists()})
+    return [Path(p) for p in uniq]
+
+
 def check_guard_skill_docs() -> CheckResult:
     a = ROOT / "docs" / "EXECUTION_GUARD_A_PROPOSAL_SKILL_v1.md"
     b = ROOT / "docs" / "EXECUTION_GUARD_B_EXECUTION_SKILL_v1.md"
@@ -548,6 +556,161 @@ def check_t3a_state_alignment() -> CheckResult:
     )
 
 
+def check_five_layer_frozen_chain() -> CheckResult:
+    required = [
+        ROOT / "docs" / "2026-03-18" / "BRIDGE_MINIMAL_IMPLEMENTATION_V0_FROZEN_REPORT.md",
+        ROOT / "docs" / "2026-03-18" / "GOVERNANCE_INTAKE_MINIMAL_IMPLEMENTATION_V0_FROZEN_REPORT.md",
+        ROOT / "docs" / "2026-03-18" / "GATE_MINIMAL_IMPLEMENTATION_V0_FROZEN_REPORT.md",
+        ROOT / "docs" / "2026-03-18" / "REVIEW_MINIMAL_IMPLEMENTATION_V0_FROZEN_REPORT.md",
+        ROOT / "docs" / "2026-03-18" / "RELEASE_MINIMAL_IMPLEMENTATION_V0_FROZEN_REPORT.md",
+        ROOT / "docs" / "2026-03-18" / "AUDIT_MINIMAL_IMPLEMENTATION_V0_FROZEN_REPORT.md",
+    ]
+    missing = [str(p) for p in required if not p.exists()]
+    ok = not missing
+    return CheckResult(
+        check_id="CR-018",
+        severity="HIGH",
+        passed=ok,
+        summary="Five-layer frozen chain documents are present",
+        evidence=json.dumps({"missing_files": missing}, ensure_ascii=False),
+        required_change="Restore all five-layer frozen reports before treating the mainline as structurally closed",
+        location=str(ROOT / "docs" / "2026-03-18"),
+    )
+
+
+def check_five_layer_tri_separation_records() -> CheckResult:
+    path = ROOT / "docs" / "2026-03-19" / "FIVE_LAYER_TRI_SEPARATION_RECORDS_V1.md"
+    required_patterns = [
+        r"主控权",
+        r"执行权",
+        r"验收权",
+        r"合规权",
+        r"不得.*绕过三权分立",
+    ]
+    missing = [p for p in required_patterns if not path.exists() or not _contains(path, p)]
+    ok = not missing
+    return CheckResult(
+        check_id="CR-019",
+        severity="HIGH",
+        passed=ok,
+        summary="Five-layer mainline has formal tri-separation records",
+        evidence="missing_patterns=" + json.dumps(missing, ensure_ascii=False),
+        required_change="Add formal tri-separation records for controller/execution/review/compliance before entering system execution preparation",
+        location=_loc(path, _find_line(path, r"主控权")),
+    )
+
+
+def check_five_layer_permit_entry_conditions() -> CheckResult:
+    path = ROOT / "docs" / "2026-03-19" / "FIVE_LAYER_SYSTEM_ENTRY_CONDITIONS_V1.md"
+    required_patterns = [
+        r"permit=VALID",
+        r"无 `permit=VALID` 时",
+        r"不得进入副作用执行",
+        r"有条件进入",
+    ]
+    missing = [p for p in required_patterns if not path.exists() or not _contains(path, p)]
+    ok = not missing
+    return CheckResult(
+        check_id="CR-020",
+        severity="CRITICAL",
+        passed=ok,
+        summary="Five-layer mainline has fail-closed permit entry conditions",
+        evidence="missing_patterns=" + json.dumps(missing, ensure_ascii=False),
+        required_change="Add explicit fail-closed permit=VALID entry conditions before any system execution preparation",
+        location=_loc(path, _find_line(path, r"permit=VALID")),
+    )
+
+
+def check_five_layer_evidence_bridge() -> CheckResult:
+    path = ROOT / "docs" / "2026-03-19" / "FIVE_LAYER_AUDITPACK_EVIDENCE_BRIDGE_V1.md"
+    required_patterns = [
+        r"AuditPack/evidence",
+        r"EvidenceRef",
+        r"evidence_ref",
+        r"不得用口头结论替代",
+    ]
+    missing = [p for p in required_patterns if not path.exists() or not _contains(path, p)]
+    evidence_dir = ROOT / "AuditPack" / "evidence"
+    ok = not missing and evidence_dir.exists()
+    return CheckResult(
+        check_id="CR-021",
+        severity="HIGH",
+        passed=ok,
+        summary="Five-layer mainline has AuditPack/EvidenceRef bridge",
+        evidence=json.dumps(
+            {
+                "missing_patterns": missing,
+                "evidence_dir_exists": evidence_dir.exists(),
+            },
+            ensure_ascii=False,
+        ),
+        required_change="Add formal AuditPack/EvidenceRef bridge and bind it to the five-layer compliance materials",
+        location=_loc(path, _find_line(path, r"AuditPack/evidence")),
+    )
+
+
+def check_five_layer_component_inventory() -> CheckResult:
+    categories = {
+        "five_layer_contracts": _glob_existing(
+            "contracts/governance_bridge/*",
+            "contracts/governance_intake/*",
+            "contracts/gate/*",
+            "contracts/review/*",
+            "contracts/release/*",
+            "contracts/audit/*",
+        ),
+        "frozen_and_validation_docs": _glob_existing(
+            "docs/2026-03-18/*FROZEN_REPORT*.md",
+            "docs/2026-03-18/*VALIDATION*.md",
+            "docs/2026-03-18/*CHANGE_CONTROL_RULES*.md",
+        ),
+        "compliance_bridge_docs": _glob_existing(
+            "docs/2026-03-19/FIVE_LAYER_*.md",
+        ),
+        "governance_and_evidence_assets": _glob_existing(
+            "configs/*audit*.json",
+            "configs/*dispatch*.json",
+            "skillforge/src/contracts/audit_pack*",
+            "skillforge/src/contracts/evidence_level*",
+            "skillforge/src/skills/gates/*",
+            "skillforge/src/storage/audit_pack_store.py",
+            "skills/*governance*/*",
+            "skills/*evidence*/*",
+            "skills/*permit*/*",
+            "skills/*dispatch*/*",
+            "skills/*orchestrator*/*",
+            "skills/*compliance*/*",
+        ),
+        "system_execution_preparation_assets": _glob_existing(
+            "docs/2026-03-18/《系统执行层准备模块任务包 v1》.md",
+        ),
+    }
+    missing_categories = [name for name, files in categories.items() if len(files) == 0]
+    evidence = {
+        name: {
+            "count": len(files),
+            "sample": [str(p.relative_to(ROOT)).replace("\\", "/") for p in files[:10]],
+        }
+        for name, files in categories.items()
+    }
+    ok = not missing_categories
+    return CheckResult(
+        check_id="CR-022",
+        severity="HIGH",
+        passed=ok,
+        summary="Compliance review inventories existing governance/evidence/execution-preparation components",
+        evidence=json.dumps(
+            {
+                "missing_categories": missing_categories,
+                "inventory": evidence,
+            },
+            ensure_ascii=False,
+        ),
+        required_change="Expand compliance review inventory until all existing governance, evidence, and system-execution-preparation component groups are included",
+        location=str(ROOT),
+    )
+
+
 def check_3day_cadence(report_dir: Path, max_gap_days: int) -> CheckResult:
     now = datetime.now(timezone.utc)
     today = now.date()
@@ -644,6 +807,11 @@ def collect_checks(report_dir: Path, max_gap_days: int, run_tests: bool) -> list
         check_t3a_p2_governor_alignment(),
         check_t3a_p3_wave_split(),
         check_t3a_state_alignment(),
+        check_five_layer_frozen_chain(),
+        check_five_layer_tri_separation_records(),
+        check_five_layer_permit_entry_conditions(),
+        check_five_layer_evidence_bridge(),
+        check_five_layer_component_inventory(),
         check_3day_cadence(report_dir, max_gap_days),
     ]
     if run_tests:

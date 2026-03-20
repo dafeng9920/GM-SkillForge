@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DeliveryReviewInputPayloadDraft",
+  "type": "object",
+  "required": [
+    "payload_type",
+    "source_object",
+    "delivery_id",
+    "candidate_id",
+    "validation_report_id",
+    "package_input_root",
+    "handoff_target",
+    "package_manifest",
+    "delivery_status"
+  ],
+  "properties": {
+    "payload_type": { "const": "DeliveryReviewInputPayload" },
+    "source_object": { "const": "PrePackagingGateInput" },
+    "delivery_id": { "type": "string" },
+    "candidate_id": { "type": "string" },
+    "validation_report_id": { "type": "string" },
+    "delivery_name": { "type": "string" },
+    "package_input_root": { "type": "string" },
+    "handoff_target": { "type": "string" },
+    "package_manifest": { "type": "object" },
+    "integrity_checks": { "type": "array", "items": { "type": "object" } },
+    "handoff_payload": { "type": "object" },
+    "delivery_status": { "type": "string" },
+    "boundary_note": { "type": "string" }
+  },
+  "additionalProperties": false
+}

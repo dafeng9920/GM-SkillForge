@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import type { IntentState } from './orchestrator';
+import type { IntentState } from './interactionDecision';
 import { useGovernanceInteraction } from './interaction';
 
 interface UseGovernancePromptQuerySyncOptions {

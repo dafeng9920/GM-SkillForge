@@ -1,0 +1,220 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://gm-os.dev/contracts/coverage_statement.schema.json",
+  "title": "CoverageStatement",
+  "description": "T9 deliverable: Explicit coverage declaration for test artifacts. Defines what is tested, what is NOT tested, and the boundary between covered and uncovered items. Enforces 'no default full coverage' principle.",
+  "type": "object",
+  "required": [
+    "statement_id",
+    "artifact_id",
+    "artifact_type",
+    "declared_at",
+    "declared_by",
+    "covered_items",
+    "uncovered_items",
+    "exclusions",
+    "coverage_summary"
+  ],
+  "properties": {
+    "statement_id": {
+      "type": "string",
+      "description": "Unique coverage statement identifier (format: COV-{artifact_id}-{short_hash})",
+      "pattern": "^COV-[A-Z0-9]+-[a-f0-9]{8}$"
+    },
+    "artifact_id": {
+      "type": "string",
+      "description": "Identifier of the artifact being covered (e.g., 'T3_validation', 'T4_rule_scan')"
+    },
+    "artifact_type": {
+      "type": "string",
+      "enum": ["task", "contract", "module", "function", "schema", "pipeline"],
+      "description": "Type of artifact being covered"
+    },
+    "declared_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp when coverage was declared"
+    },
+    "declared_by": {
+      "type": "string",
+      "description": "Entity declaring coverage (e.g., 'vs--cc1', 'automation')"
+    },
+    "covered_items": {
+      "type": "array",
+      "description": "Items that ARE covered by tests (explicit list, no defaults)",
+      "minItems": 0,
+      "items": {
+        "$ref": "#/definitions/covered_item"
+      }
+    },
+    "uncovered_items": {
+      "type": "array",
+      "description": "Items that are NOT covered (explicit list required - 'silence = not covered')",
+      "minItems": 0,
+      "items": {
+        "$ref": "#/definitions/uncovered_item"
+      }
+    },
+    "exclusions": {
+      "type": "array",
+      "description": "Items explicitly excluded from coverage requirements",
+      "minItems": 0,
+      "items": {
+        "$ref": "#/definitions/excluded_item"
+      }
+    },
+    "coverage_summary": {
+      "type": "object",
+      "description": "Summary statistics (computed, not declared)",
+      "required": ["total_items", "covered_count", "uncovered_count", "coverage_percent"],
+      "properties": {
+        "total_items": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total count of coverable items"
+        },
+        "covered_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Count of covered items"
+        },
+        "uncovered_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Count of uncovered items"
+        },
+        "coverage_percent": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 100.0,
+          "description": "Coverage percentage (covered / total_items * 100)"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata about the coverage statement",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "enum": ["unit", "integration", "e2e", "smoke", "regression"],
+          "description": "Test scope level"
+        },
+        "boundary_note": {
+          "type": ["string", "null"],
+          "description": "Notes on coverage boundaries and decisions"
+        },
+        "known_gaps": {
+          "type": ["array", "null"],
+          "description": "Known gaps in coverage",
+          "items": {"type": "string"}
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "covered_item": {
+      "type": "object",
+      "description": "An item that IS covered by tests",
+      "required": ["item_id", "item_type", "evidence_level", "evidence_refs"],
+      "properties": {
+        "item_id": {
+          "type": "string",
+          "description": "Identifier of the covered item (e.g., 'validate_intent_id', 'schema_validation')"
+        },
+        "item_type": {
+          "type": "string",
+          "enum": ["function", "method", "class", "schema_field", "rule", "pattern", "path", "endpoint"],
+          "description": "Type of the covered item"
+        },
+        "evidence_level": {
+          "type": "string",
+          "enum": ["E1", "E2", "E3", "E4", "E5"],
+          "description": "Evidence level (see evidence_level.json)"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "description": "References to evidence files",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions/evidence_ref"
+          }
+        },
+        "note": {
+          "type": ["string", "null"],
+          "description": "Additional context about coverage"
+        }
+      }
+    },
+    "uncovered_item": {
+      "type": "object",
+      "description": "An item that is NOT covered (explicitly declared)",
+      "required": ["item_id", "item_type", "reason"],
+      "properties": {
+        "item_id": {
+          "type": "string",
+          "description": "Identifier of the uncovered item"
+        },
+        "item_type": {
+          "type": "string",
+          "enum": ["function", "method", "class", "schema_field", "rule", "pattern", "path", "endpoint", "edge_case", "integration"],
+          "description": "Type of the uncovered item"
+        },
+        "reason": {
+          "type": "string",
+          "enum": ["not_implemented", "out_of_scope", "deferred", "requires_fixture", "unknown", "deprecated"],
+          "description": "Reason why this item is not covered"
+        },
+        "planned": {
+          "type": ["boolean", "null"],
+          "description": "Whether coverage is planned for future"
+        },
+        "ticket_ref": {
+          "type": ["string", "null"],
+          "description": "Reference to tracking ticket if planned"
+        }
+      }
+    },
+    "excluded_item": {
+      "type": "object",
+      "description": "An item explicitly excluded from coverage requirements",
+      "required": ["item_id", "exclusion_reason"],
+      "properties": {
+        "item_id": {
+          "type": "string",
+          "description": "Identifier of the excluded item"
+        },
+        "exclusion_reason": {
+          "type": "string",
+          "enum": ["internal_only", "generated_code", "third_party", "trivial", "configuration_only"],
+          "description": "Reason for exclusion"
+        },
+        "approved_by": {
+          "type": ["string", "null"],
+          "description": "Who approved this exclusion"
+        }
+      }
+    },
+    "evidence_ref": {
+      "type": "object",
+      "description": "Reference to evidence supporting coverage claim",
+      "required": ["kind", "locator"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["TEST_FILE", "LOG", "GATE_DECISION", "SNIPPET", "RUN_ID", "CODE_LOCATION"],
+          "description": "Kind of evidence reference"
+        },
+        "locator": {
+          "type": "string",
+          "description": "Path or identifier to evidence (e.g., 'tests/test_intake.py::test_validate_intent_id', 'run/20260316_120000')"
+        },
+        "note": {
+          "type": ["string", "null"],
+          "description": "Additional context about the evidence"
+        }
+      }
+    }
+  }
+}

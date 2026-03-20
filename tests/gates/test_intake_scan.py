@@ -27,8 +27,9 @@ from skillforge.src.skills.gates import (
 
 @pytest.fixture
 def valid_intake_input():
-    """Valid input for intake gate."""
+    """Valid input for intake gate (T1 适配: 添加 intent_id)."""
     return {
+        "intent_id": "AUDIT_REPO_SKILL",  # T1 新增：必须是白名单中的 intent_id
         "repo_url": "https://github.com/example/repo.git",
         "commit_sha": "abc123def456789012345678901234567890abcd",  # 40-char SHA
         "at_time": "2026-02-18T00:00:00Z",
@@ -60,6 +61,7 @@ class TestIntakeGate:
     def test_intake_with_valid_input(self, valid_intake_input):
         """Test intake gate with valid input passes."""
         result = intake_repo(
+            intent_id=valid_intake_input["intent_id"],  # T1 新增
             repo_url=valid_intake_input["repo_url"],
             commit_sha=valid_intake_input["commit_sha"],
             at_time=valid_intake_input["at_time"],
@@ -74,6 +76,7 @@ class TestIntakeGate:
     def test_missing_commit_sha_triggers_rejected(self):
         """Fail-Closed: Missing commit_sha MUST trigger REJECTED."""
         result = intake_repo(
+            intent_id="AUDIT_REPO_SKILL",  # T1 新增
             repo_url="https://github.com/example/repo.git",
             commit_sha=None,  # Missing
             at_time="2026-02-18T00:00:00Z",
@@ -87,6 +90,7 @@ class TestIntakeGate:
     def test_empty_commit_sha_triggers_rejected(self):
         """Fail-Closed: Empty commit_sha MUST trigger REJECTED."""
         result = intake_repo(
+            intent_id="AUDIT_REPO_SKILL",  # T1 新增
             repo_url="https://github.com/example/repo.git",
             commit_sha="",  # Empty
             at_time="2026-02-18T00:00:00Z",
@@ -98,17 +102,20 @@ class TestIntakeGate:
     def test_missing_repo_url_triggers_rejected(self):
         """Missing repo_url MUST trigger REJECTED."""
         result = intake_repo(
+            intent_id="AUDIT_REPO_SKILL",  # T1 新增
             repo_url=None,
             commit_sha="abc123def456789012345678901234567890abcd",
             at_time="2026-02-18T00:00:00Z",
         )
 
         assert result["gate_decision"] == "REJECTED"
-        assert result["error_code"] == GateIntakeRepo.ERROR_REPO_URL_INVALID
+        # T1 实现：repo_url=None 返回 ERROR_REPO_URL_MISSING
+        assert result["error_code"] == GateIntakeRepo.ERROR_REPO_URL_MISSING
 
     def test_intake_produces_evidence_ref(self, valid_intake_input):
         """Valid input MUST produce EvidenceRef."""
         result = intake_repo(
+            intent_id=valid_intake_input["intent_id"],  # T1 新增
             repo_url=valid_intake_input["repo_url"],
             commit_sha=valid_intake_input["commit_sha"],
             at_time=valid_intake_input["at_time"],
@@ -121,7 +128,8 @@ class TestIntakeGate:
         assert evidence["issue_key"] == "REQ-TEST001"
         assert evidence["source_locator"].startswith("file://")
         assert len(evidence["content_hash"]) == 64  # SHA-256 hex length
-        assert evidence["tool_revision"] == "v1.0.0"
+        # T1 实现：tool_revision 是 v1.1.0-t1 而非 v1.0.0
+        assert evidence["tool_revision"] == "v1.1.0-t1"
         assert "T" in evidence["timestamp"]  # ISO8601 format
 
     def test_intake_class_interface(self, valid_intake_input):
@@ -129,6 +137,7 @@ class TestIntakeGate:
         gate = GateIntakeRepo()
 
         input_data = {
+            "intent_id": valid_intake_input["intent_id"],  # T1 新增
             "repo_url": valid_intake_input["repo_url"],
             "commit_sha": valid_intake_input["commit_sha"],
             "at_time": valid_intake_input["at_time"],
@@ -232,6 +241,7 @@ class TestEntranceGateIntegration:
         """Test full pipeline with valid inputs."""
         # Step 1: Intake
         intake_result = intake_repo(
+            intent_id="AUDIT_REPO_SKILL",  # T1 新增
             repo_url="https://github.com/example/repo.git",
             commit_sha="abc123def456789012345678901234567890abcd",
             at_time="2026-02-18T00:00:00Z",
@@ -259,6 +269,7 @@ class TestEntranceGateIntegration:
     def test_pipeline_halt_at_intake(self):
         """Test pipeline halts at intake when commit_sha missing."""
         result = intake_repo(
+            intent_id="AUDIT_REPO_SKILL",  # T1 新增
             repo_url="https://github.com/example/repo.git",
             commit_sha=None,  # Missing - Fail-Closed
             at_time="2026-02-18T00:00:00Z",
@@ -271,6 +282,7 @@ class TestEntranceGateIntegration:
         """Test pipeline halts at scan when fit score too low."""
         # Intake passes
         intake_result = intake_repo(
+            intent_id="AUDIT_REPO_SKILL",  # T1 新增
             repo_url="https://github.com/example/repo.git",
             commit_sha="abc123def456789012345678901234567890abcd",
             at_time="2026-02-18T00:00:00Z",
@@ -295,6 +307,7 @@ class TestGateResultSchema:
     def test_intake_gate_result_schema(self, valid_intake_input):
         """Verify intake result follows gate_interface_v1.yaml."""
         result = intake_repo(
+            intent_id=valid_intake_input["intent_id"],  # T1 新增
             repo_url=valid_intake_input["repo_url"],
             commit_sha=valid_intake_input["commit_sha"],
             at_time=valid_intake_input["at_time"],
@@ -331,6 +344,7 @@ class TestGateResultSchema:
     def test_evidence_ref_schema(self, valid_intake_input):
         """Verify EvidenceRef follows gate_interface_v1.yaml."""
         result = intake_repo(
+            intent_id=valid_intake_input["intent_id"],  # T1 新增
             repo_url=valid_intake_input["repo_url"],
             commit_sha=valid_intake_input["commit_sha"],
             at_time=valid_intake_input["at_time"],

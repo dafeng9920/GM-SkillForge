@@ -1,0 +1,148 @@
+{
+  "meta": {
+    "run_id": "20260316_120000",
+    "skill_id": "quant-1.0.0-abc12345",
+    "skill_name": "quant",
+    "decision_timestamp": "2026-03-16T12:00:00Z",
+    "t10_version": "1.0.0-t10",
+    "decision_context": "exit_gate",
+    "gate_type": "release"
+  },
+  "decision": {
+    "outcome": "CONDITIONAL_RELEASE",
+    "rationale_code": "OVERRIDE_APPROVED",
+    "rationale_detail": {
+      "blocking_findings_count": 0,
+      "overrides_count": 2,
+      "residual_risks_count": 3,
+      "escalation_reason": null
+    },
+    "is_final": true,
+    "valid_until": "2026-04-15T00:00:00Z",
+    "conditions": [
+      {
+        "type": "remediation_deadline",
+        "description": "SQL injection parameterized query migration must be completed",
+        "deadline": "2026-04-15T00:00:00Z",
+        "verification_method": "Security scan review"
+      },
+      {
+        "type": "monitoring_required",
+        "description": "Weekly security scans until all risks are mitigated",
+        "verification_method": "Automated scan reports"
+      },
+      {
+        "type": "scope_limitation",
+        "description": "Limited to development and staging environments until remediation complete",
+        "verification_method": "Environment configuration"
+      }
+    ],
+    "scope": {
+      "allowed_environments": ["development", "staging"],
+      "allowed_users": null,
+      "usage_limits": {
+        "max_calls_per_day": 1000,
+        "feature_restrictions": ["external_api_calls"]
+      }
+    }
+  },
+  "findings_summary": {
+    "total_findings": 5,
+    "by_severity": {
+      "CRITICAL": 0,
+      "HIGH": 1,
+      "MEDIUM": 2,
+      "LOW": 2,
+      "INFO": 0
+    },
+    "by_source": {
+      "validation": 2,
+      "rule_scan": 1,
+      "pattern_match": 2
+    },
+    "blocking_findings": [],
+    "overridden_findings": [
+      "F-rule_scan-E420-abc12345",
+      "F-pattern_match-E501-def45678"
+    ]
+  },
+  "overrides_applied": [
+    {
+      "override_id": "O-20260316_120000-1",
+      "finding_id": "F-rule_scan-E420-abc12345",
+      "justification_code": "COMPENSATING_CONTROL_EXISTS",
+      "approver": "user_tech_lead"
+    },
+    {
+      "override_id": "O-20260316_120000-2",
+      "finding_id": "F-pattern_match-E501-def45678",
+      "justification_code": "BUSINESS_JUSTIFICATION",
+      "approver": "user_principal_engineer"
+    }
+  ],
+  "residual_risks": {
+    "total_risks": 3,
+    "risk_ids": [
+      "R-20260316_120000-1",
+      "R-20260316_120000-2",
+      "R-20260316_120000-3"
+    ],
+    "by_level": {
+      "CRITICAL": 0,
+      "HIGH": 1,
+      "MEDIUM": 1,
+      "LOW": 1
+    },
+    "unacceptable_count": 0
+  },
+  "escalation_gate": null,
+  "decision_chain": [
+    {
+      "timestamp": "2026-03-16T11:00:00Z",
+      "stage": "validation",
+      "outcome": "2 findings",
+      "decision_maker": "system"
+    },
+    {
+      "timestamp": "2026-03-16T11:15:00Z",
+      "stage": "rule_scan",
+      "outcome": "1 finding",
+      "decision_maker": "system"
+    },
+    {
+      "timestamp": "2026-03-16T11:30:00Z",
+      "stage": "pattern_match",
+      "outcome": "2 findings",
+      "decision_maker": "system"
+    },
+    {
+      "timestamp": "2026-03-16T11:45:00Z",
+      "stage": "findings",
+      "outcome": "5 findings",
+      "decision_maker": "system"
+    },
+    {
+      "timestamp": "2026-03-16T12:00:00Z",
+      "stage": "final",
+      "outcome": "CONDITIONAL_RELEASE",
+      "decision_maker": "release_gate"
+    }
+  ],
+  "evidence_refs": [
+    {
+      "kind": "REPORT",
+      "locator": "run/T8_evidence/adjudication_report.json",
+      "note": "T8 adjudication with rule decisions"
+    },
+    {
+      "kind": "REPORT",
+      "locator": "run/T10_evidence/judgment_overrides.json",
+      "note": "Judgment overrides applied"
+    },
+    {
+      "kind": "REPORT",
+      "locator": "run/T10_evidence/residual_risks.json",
+      "note": "Residual risks from overrides"
+    }
+  ]
+}

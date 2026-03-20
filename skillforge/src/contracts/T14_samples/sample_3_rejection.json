@@ -1,0 +1,91 @@
+{
+  "meta": {
+    "pack_id": "PACK-20260316_140000-c4d5e6f7a8b9",
+    "run_id": "20260316_140000",
+    "created_at": "2026-03-16T14:10:00Z",
+    "t14_version": "1.0.0-t14",
+    "skill_id": "code_executor-0.5.0-bad1dea",
+    "skill_name": "code_executor",
+    "pack_context": "exit_gate"
+  },
+  "pack_type": "STANDARD",
+  "artifacts": {
+    "discovery": {
+      "intake_request": "run/20260316_140000/intake_request.json",
+      "normalized_skill_spec": "run/20260316_140000/normalized_skill_spec.json",
+      "validation_report": "run/20260316_140000/validation_report.json",
+      "rule_scan_report": "run/20260316_140000/rule_scan_report.json",
+      "pattern_detection_report": "run/20260316_140000/pattern_detection_report.json",
+      "findings_report": "run/20260316_140000/findings.json"
+    },
+    "adjudication": {
+      "adjudication_report": "run/20260316_140000/adjudication_report.json",
+      "coverage_statement": null
+    },
+    "delivery": {
+      "judgment_overrides": null,
+      "residual_risks": null,
+      "release_decision": "run/20260316_140000/release_decision.json",
+      "owner_review": null,
+      "issue_records": "run/20260316_140000/issue_records.json",
+      "fix_recommendations": "run/20260316_140000/fix_recommendations.json"
+    }
+  },
+  "evidence_manifest": {
+    "total_evidence_refs": 3,
+    "by_kind": {
+      "FILE": 2,
+      "CODE_LOCATION": 1
+    },
+    "evidence_digest": "d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6",
+    "findings_with_evidence": 4,
+    "findings_without_evidence": 1
+  },
+  "summary": {
+    "total_findings": 5,
+    "findings_by_severity": {
+      "CRITICAL": 1,
+      "HIGH": 2,
+      "MEDIUM": 1,
+      "LOW": 1,
+      "INFO": 0
+    },
+    "total_decisions": 5,
+    "decisions_by_outcome": {
+      "PASS": 1,
+      "FAIL": 2,
+      "WAIVE": 0,
+      "DEFER": 2
+    },
+    "release_outcome": "REJECT",
+    "has_overrides": false,
+    "override_count": 0,
+    "has_residual_risks": false,
+    "residual_risk_count": 0,
+    "blocking_findings_count": 1,
+    "issues_created": 2,
+    "fix_recommendations": 2,
+    "coverage_percentage": 0.0
+  },
+  "compliance": {
+    "antigravity_compliant": false,
+    "closed_loop_complete": false,
+    "evidence_ref_complete": false,
+    "governance_gaps_identified": 0,
+    "security_findings_count": 3
+  },
+  "chain_of_custody": [
+    {
+      "timestamp": "2026-03-16T14:10:00Z",
+      "event": "PACK_CREATED",
+      "actor": "T14-AuditPackBuilder",
+      "note": "Package created but validation failed"
+    },
+    {
+      "timestamp": "2026-03-16T14:15:00Z",
+      "event": "VALIDATED",
+      "actor": "T14-AuditPackBuilder",
+      "note": "T14 Hard Constraint Violation: 1 finding without evidence refs"
+    }
+  ]
+}

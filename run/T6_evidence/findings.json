@@ -1,0 +1,223 @@
+{
+  "meta": {
+    "skill_id": "sample-1.0.0-00000000",
+    "skill_name": "sample",
+    "generated_at": "2026-03-15T14:47:24.739981+00:00",
+    "t6_version": "1.0.0-t6",
+    "run_id": "20260315_t6_sample"
+  },
+  "input_sources": {
+    "validation_report": "D:\\GM-SkillForge\\run\\T3_evidence\\positive_examples\\validation_report.json",
+    "rule_scan_report": "D:\\GM-SkillForge\\run\\T4_evidence\\rule_samples\\eval_usage\\rule_scan_report.json",
+    "pattern_detection_report": "D:\\GM-SkillForge\\run\\T5_evidence\\pattern_samples\\e501_external_without_stop_rule\\pattern_detection_report.json"
+  },
+  "findings": [
+    {
+      "finding_id": "F-rule_scan-E421-ddc2a75b",
+      "source": {
+        "type": "rule_scan",
+        "code": "E421_EVAL_OR_EXEC_USED"
+      },
+      "what": {
+        "title": "eval or exec Function Used",
+        "description": "Use of eval() or exec() functions detected",
+        "category": "dangerous_pattern",
+        "severity": "CRITICAL",
+        "confidence": 1.0
+      },
+      "where": {
+        "file_path": "eval_usage.py",
+        "line_number": 8,
+        "column_number": 12,
+        "function_name": null
+      },
+      "context": {
+        "snippet": "return eval(user_input)",
+        "context_lines": null,
+        "field_path": null,
+        "actual_value": null,
+        "expected_value": null
+      },
+      "fix": {
+        "suggested_fix": "Replace eval/exec with safer alternatives",
+        "remediation": "Replace eval/exec with safer alternatives"
+      },
+      "security": {
+        "cwe_id": null,
+        "owasp_id": null
+      },
+      "governance": {
+        "missing_control": null,
+        "recommended_control": null
+      },
+      "evidence_refs": [
+        {
+          "kind": "FILE",
+          "locator": "D:\\GM-SkillForge\\run\\T4_evidence\\rule_samples\\eval_usage\\rule_scan_report.json",
+          "note": "T4 rule scan report (rule set v1.0.0-t4)"
+        },
+        {
+          "kind": "CODE_LOCATION",
+          "locator": "eval_usage.py:8:12",
+          "note": "Source location of rule violation"
+        }
+      ],
+      "detected_at": "2026-03-15T14:47:24.739981+00:00"
+    },
+    {
+      "finding_id": "F-pattern_match-E501-a8702d33",
+      "source": {
+        "type": "pattern_match",
+        "code": "E501_EXTERNAL_WITHOUT_STOP_RULE"
+      },
+      "what": {
+        "title": "External Action Without Stop Rule",
+        "description": "External action (HTTP request, file write, subprocess) executed without preceding governance stop rule (permission check, authorization, permit validation)",
+        "category": "governance_gap",
+        "severity": "CRITICAL",
+        "confidence": 0.85
+      },
+      "where": {
+        "file_path": "skill.py",
+        "line_number": 10,
+        "column_number": null,
+        "function_name": "fetch_user_data"
+      },
+      "context": {
+        "snippet": "def fetch_user_data(user_id: str) -> dict:",
+        "context_lines": [
+          "import requests",
+          "",
+          "",
+          "def fetch_user_data(user_id: str) -> dict:",
+          "    \"\"\"",
+          "    Fetch user data from external API.",
+          ""
+        ],
+        "field_path": null,
+        "actual_value": null,
+        "expected_value": null
+      },
+      "fix": {
+        "suggested_fix": "Add stop rule before external action: @require_permission decorator or explicit permission check",
+        "remediation": "Add stop rule before external action: @require_permission decorator or explicit permission check"
+      },
+      "security": {
+        "cwe_id": null,
+        "owasp_id": null
+      },
+      "governance": {
+        "missing_control": null,
+        "recommended_control": null
+      },
+      "evidence_refs": [
+        {
+          "kind": "FILE",
+          "locator": "D:\\GM-SkillForge\\run\\T5_evidence\\pattern_samples\\e501_external_without_stop_rule\\pattern_detection_report.json",
+          "note": "T5 pattern detection report (pattern set v1.0.0-t5)"
+        },
+        {
+          "kind": "CODE_LOCATION",
+          "locator": "skill.py:10",
+          "note": "Pattern detected in function: fetch_user_data"
+        },
+        {
+          "kind": "FILE",
+          "locator": "run/T5_evidence/pattern_samples/e501_external_without_stop_rule/skill.py",
+          "note": "Pattern definition source (sample code where pattern was identified)"
+        }
+      ],
+      "detected_at": "2026-03-15T14:47:24.739981+00:00"
+    },
+    {
+      "finding_id": "F-pattern_match-E501-5560c2ae",
+      "source": {
+        "type": "pattern_match",
+        "code": "E501_EXTERNAL_WITHOUT_STOP_RULE"
+      },
+      "what": {
+        "title": "External Action Without Stop Rule",
+        "description": "External action (HTTP request, file write, subprocess) executed without preceding governance stop rule (permission check, authorization, permit validation)",
+        "category": "governance_gap",
+        "severity": "CRITICAL",
+        "confidence": 0.85
+      },
+      "where": {
+        "file_path": "skill.py",
+        "line_number": 25,
+        "column_number": null,
+        "function_name": "sync_with_external_service"
+      },
+      "context": {
+        "snippet": "def sync_with_external_service():",
+        "context_lines": [
+          "    return response.json()",
+          "",
+          "",
+          "def sync_with_external_service():",
+          "    \"\"\"",
+          "    Sync data with external service.",
+          ""
+        ],
+        "field_path": null,
+        "actual_value": null,
+        "expected_value": null
+      },
+      "fix": {
+        "suggested_fix": "Add stop rule before external action: @require_permission decorator or explicit permission check",
+        "remediation": "Add stop rule before external action: @require_permission decorator or explicit permission check"
+      },
+      "security": {
+        "cwe_id": null,
+        "owasp_id": null
+      },
+      "governance": {
+        "missing_control": null,
+        "recommended_control": null
+      },
+      "evidence_refs": [
+        {
+          "kind": "FILE",
+          "locator": "D:\\GM-SkillForge\\run\\T5_evidence\\pattern_samples\\e501_external_without_stop_rule\\pattern_detection_report.json",
+          "note": "T5 pattern detection report (pattern set v1.0.0-t5)"
+        },
+        {
+          "kind": "CODE_LOCATION",
+          "locator": "skill.py:25",
+          "note": "Pattern detected in function: sync_with_external_service"
+        },
+        {
+          "kind": "FILE",
+          "locator": "run/T5_evidence/pattern_samples/e501_external_without_stop_rule/skill.py",
+          "note": "Pattern definition source (sample code where pattern was identified)"
+        }
+      ],
+      "detected_at": "2026-03-15T14:47:24.739981+00:00"
+    }
+  ],
+  "summary": {
+    "total_findings": 3,
+    "by_severity": {
+      "CRITICAL": 3,
+      "HIGH": 0,
+      "MEDIUM": 0,
+      "LOW": 0,
+      "INFO": 0
+    },
+    "by_category": {
+      "dangerous_pattern": 1,
+      "governance_gap": 2
+    },
+    "by_source": {
+      "validation": 0,
+      "rule_scan": 1,
+      "pattern_match": 2
+    },
+    "by_confidence": {
+      "very_high (0.95-1.0)": 1,
+      "high (0.85-0.95)": 2,
+      "medium (0.70-0.85)": 0,
+      "low (<0.70)": 0
+    }
+  }
+}

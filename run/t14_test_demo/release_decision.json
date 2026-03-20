@@ -1,0 +1,62 @@
+{
+  "meta": {
+    "run_id": "t14_test_demo",
+    "skill_id": "test_skill-1.0.0-abc123",
+    "skill_name": "test_skill",
+    "decision_timestamp": "2026-03-16T12:10:00Z",
+    "t10_version": "1.0.0-t10",
+    "decision_context": "exit_gate",
+    "gate_type": "release"
+  },
+  "decision": {
+    "outcome": "RELEASE",
+    "rationale_code": "ALL_CHECKS_PASSED",
+    "rationale_detail": {
+      "blocking_findings_count": 0,
+      "overrides_count": 0,
+      "residual_risks_count": 0
+    },
+    "is_final": true
+  },
+  "findings_summary": {
+    "total_findings": 1,
+    "by_severity": {
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 0,
+      "LOW": 1,
+      "INFO": 0
+    },
+    "by_source": {
+      "validation": 0,
+      "rule_scan": 1,
+      "pattern_match": 0
+    },
+    "blocking_findings": [],
+    "overridden_findings": []
+  },
+  "overrides_applied": [],
+  "residual_risks": {
+    "total_risks": 0,
+    "risk_ids": [],
+    "by_level": {
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 0,
+      "LOW": 0
+    },
+    "unacceptable_count": 0
+  },
+  "escalation_gate": null,
+  "decision_chain": [],
+  "evidence_refs": [
+    {
+      "kind": "FILE",
+      "locator": "run/t14_test_demo/findings.json"
+    },
+    {
+      "kind": "FILE",
+      "locator": "run/t14_test_demo/adjudication_report.json"
+    }
+  ]
+}

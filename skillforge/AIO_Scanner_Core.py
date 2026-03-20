@@ -3,6 +3,10 @@ import random
 import datetime
 import requests
 import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 class AIOScannerCore:
     """
@@ -14,9 +18,14 @@ class AIOScannerCore:
         self.domain = domain
         self.timestamp = datetime.datetime.utcnow().isoformat() + "Z"
         self.report_id = f"AIO-PATHOLOGY-{random.randint(1000, 9999)}"
-        # API Config
-        self.api_key = os.getenv("CLOUD_LLM_API_KEY", "sk-t4A0ixA3RFky4ZQ7EqwPcibMgvJEWD4mmBosqmxq3xUkjgkT")
-        self.base_url = os.getenv("CLOUD_LLM_BASE_URL", "https://www.dmxapi.cn/v1")
+        # API Config - Secrets must be loaded from environment variables only
+        self.api_key = os.getenv("DMX_API_KEY")
+        self.base_url = os.getenv("DMX_API_BASE", "https://www.dmxapi.cn/v1")
+        
+        if not self.api_key:
+            # Note: In a production environment, this should raise a clear ConfigurationError
+            # For now, we allow initialization but _probe_engine will handle the missing key
+            pass
         
     def _probe_engine(self, engine_model, prompt):
         headers = {

@@ -1,0 +1,74 @@
+{
+  "meta": {
+    "skill_id": "test_skill-1.0.0-abc123",
+    "skill_name": "test_skill",
+    "generated_at": "2026-03-16T12:05:00Z",
+    "t8_version": "1.0.0-t8",
+    "run_id": "t14_test_demo"
+  },
+  "input_sources": {
+    "findings_report": "run/t14_test_demo/findings.json",
+    "validation_report": null,
+    "rule_scan_report": null,
+    "pattern_detection_report": null
+  },
+  "rule_decisions": [
+    {
+      "finding_id": "F-rule_scan-E401-12345678",
+      "decision": "PASS",
+      "truth_assessment": "LIKELY_TRUE",
+      "impact_level": "LOW",
+      "evidence_strength": "MODERATE",
+      "primary_basis": "CODE_ANALYSIS",
+      "largest_uncertainty": "NONE",
+      "recommended_action": "CONSIDER_FIX",
+      "adjudicated_at": "2026-03-16T12:05:00Z",
+      "confidence": 0.85,
+      "evidence_summary": {
+        "evidence_count": 2,
+        "evidence_kinds": [
+          "FILE",
+          "CODE_LOCATION"
+        ],
+        "has_strong_evidence": true
+      },
+      "severity_adjustment": "UNCHANGED"
+    }
+  ],
+  "summary": {
+    "total_decisions": 1,
+    "by_decision": {
+      "PASS": 1,
+      "FAIL": 0,
+      "WAIVE": 0,
+      "DEFER": 0
+    },
+    "by_truth_assessment": {
+      "CONFIRMED": 0,
+      "LIKELY_TRUE": 1,
+      "UNCERTAIN": 0,
+      "LIKELY_FALSE": 0,
+      "FALSE_POSITIVE": 0
+    },
+    "by_impact_level": {
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 0,
+      "LOW": 1,
+      "NEGLIGIBLE": 0
+    },
+    "by_evidence_strength": {
+      "CONCLUSIVE": 0,
+      "STRONG": 0,
+      "MODERATE": 1,
+      "WEAK": 0,
+      "INSUFFICIENT": 0
+    },
+    "findings_requiring_attention": [],
+    "evidence_coverage": {
+      "findings_with_evidence": 1,
+      "findings_without_evidence": 0,
+      "coverage_percentage": 100.0
+    }
+  }
+}

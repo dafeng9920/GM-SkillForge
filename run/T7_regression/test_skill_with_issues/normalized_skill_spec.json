@@ -1,0 +1,56 @@
+{
+  "skill_id": "test_skill-0.1.0-3dd621c7",
+  "skill_name": "test_skill",
+  "version": "0.1.0",
+  "description": "Test skill with known issues.  SKILL_NAME = \"test_skill\"",
+  "entry_point": "__init__.py",
+  "skill_dir": "C:\\Users\\Aorus\\AppData\\Local\\Temp\\tmprrxl4o1t\\test_skill",
+  "file_list": [
+    "__init__.py"
+  ],
+  "dependencies": {
+    "direct_dependencies": [
+      {
+        "name": "requests",
+        "version": null,
+        "source": "import"
+      }
+    ],
+    "transitive_dependencies": [],
+    "dependency_count": 1
+  },
+  "input_contract": {
+    "schema_type": "object",
+    "properties": {},
+    "required": [],
+    "description": "No input contract defined"
+  },
+  "output_contract": {
+    "schema_type": "object",
+    "properties": {
+      "result": {
+        "type": "string",
+        "description": "Operation result"
+      }
+    },
+    "required": [
+      "result"
+    ],
+    "description": "Default output contract"
+  },
+  "manifest_snapshot": {
+    "exists": true,
+    "content_hash": "b5313aef196b9b306810d8b2732a4067c0cac28213688360a639987bb0fa6209",
+    "raw_data": {
+      "skill_name": "test_skill",
+      "skill_version": "0.1.0",
+      "description": "Test skill with issues",
+      "author": "test"
+    }
+  },
+  "capabilities": [],
+  "constraints": [],
+  "parsed_at": "2026-03-15T15:35:15Z",
+  "parser_version": "1.0.0-t2",
+  "spec_hash": "5a0492c312011ff78e04e77e4f1ea40b5bd15cc02e53fc2c4591f52bdb7be909"
+}

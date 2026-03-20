@@ -1,0 +1,246 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://gm-os.dev/contracts/normalized_skill_spec.schema.json",
+  "title": "NormalizedSkillSpec",
+  "description": "Unified skill specification for SkillForge audit pipeline (T2 deliverable). Provides standardized representation of skill metadata, dependencies, and contracts.",
+  "type": "object",
+  "required": [
+    "skill_id",
+    "skill_name",
+    "version",
+    "description",
+    "entry_point",
+    "skill_dir",
+    "file_list",
+    "dependencies",
+    "input_contract",
+    "output_contract",
+    "manifest_snapshot",
+    "capabilities",
+    "constraints",
+    "parsed_at",
+    "parser_version",
+    "spec_hash"
+  ],
+  "properties": {
+    "skill_id": {
+      "type": "string",
+      "description": "Unique identifier for this skill spec (auto-generated)",
+      "pattern": "^[a-z0-9_]+-\\d+\\.\\d+\\.\\d+-[a-f0-9]{8}$"
+    },
+    "skill_name": {
+      "type": "string",
+      "description": "Name of the skill (extracted from SKILL_NAME constant)",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "version": {
+      "type": "string",
+      "description": "Semantic version (extracted from SKILL_VERSION constant)",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9.]+)?$"
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of the skill",
+      "minLength": 0
+    },
+    "entry_point": {
+      "type": "string",
+      "description": "Relative path to main skill file from skill_dir"
+    },
+    "skill_dir": {
+      "type": "string",
+      "description": "Absolute path to skill directory"
+    },
+    "file_list": {
+      "type": "array",
+      "description": "List of all Python files in skill (relative paths)",
+      "items": {
+        "type": "string"
+      }
+    },
+    "dependencies": {
+      "type": "object",
+      "description": "Dependency graph for the skill",
+      "required": ["direct_dependencies", "transitive_dependencies", "dependency_count"],
+      "properties": {
+        "direct_dependencies": {
+          "type": "array",
+          "description": "Direct dependencies extracted from imports",
+          "items": {
+            "type": "object",
+            "required": ["name", "source"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Dependency package/module name"
+              },
+              "version": {
+                "type": ["string", "null"],
+                "description": "Version constraint if available (null if not specified)"
+              },
+              "source": {
+                "type": "string",
+                "enum": ["import", "from_import", "requirements.txt", "manifest"],
+                "description": "Source of dependency declaration"
+              }
+            }
+          }
+        },
+        "transitive_dependencies": {
+          "type": "array",
+          "description": "Transitive dependencies (T2 MVP: empty array)",
+          "items": {
+            "type": "object"
+          }
+        },
+        "dependency_count": {
+          "type": "integer",
+          "description": "Total number of direct dependencies",
+          "minimum": 0
+        }
+      }
+    },
+    "input_contract": {
+      "type": "object",
+      "description": "Input contract (schema) for the skill",
+      "required": ["schema_type", "properties", "required"],
+      "properties": {
+        "schema_type": {
+          "type": "string",
+          "description": "JSON Schema type (object, array, string, etc.)"
+        },
+        "properties": {
+          "type": "object",
+          "description": "Properties for object type schemas"
+        },
+        "required": {
+          "type": "array",
+          "description": "Required property names",
+          "items": {
+            "type": "string"
+          }
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable contract description"
+        }
+      }
+    },
+    "output_contract": {
+      "type": "object",
+      "description": "Output contract (schema) for the skill",
+      "required": ["schema_type", "properties", "required"],
+      "properties": {
+        "schema_type": {
+          "type": "string",
+          "description": "JSON Schema type (object, array, string, etc.)"
+        },
+        "properties": {
+          "type": "object",
+          "description": "Properties for object type schemas"
+        },
+        "required": {
+          "type": "array",
+          "description": "Required property names",
+          "items": {
+            "type": "string"
+          }
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable contract description"
+        }
+      }
+    },
+    "manifest_snapshot": {
+      "type": "object",
+      "description": "Snapshot of manifest.json if present",
+      "required": ["exists"],
+      "properties": {
+        "exists": {
+          "type": "boolean",
+          "description": "Whether manifest.json exists in skill directory"
+        },
+        "content_hash": {
+          "type": ["string", "null"],
+          "description": "SHA-256 hash of manifest content if exists",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "raw_data": {
+          "type": "object",
+          "description": "Raw parsed manifest data"
+        }
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "description": "List of capabilities (derived from dependencies/code analysis)",
+      "items": {
+        "type": "string"
+      }
+    },
+    "constraints": {
+      "type": "array",
+      "description": "List of constraints extracted from skill",
+      "items": {
+        "type": "string"
+      }
+    },
+    "parsed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp when spec was parsed"
+    },
+    "parser_version": {
+      "type": "string",
+      "description": "Version of the parser that produced this spec",
+      "pattern": "^\\d+\\.\\d+\\.\\d+.*"
+    },
+    "spec_hash": {
+      "type": "string",
+      "description": "SHA-256 hash of canonical spec (for deduplication)",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "dependency": {
+      "type": "object",
+      "required": ["name", "source"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": ["string", "null"]
+        },
+        "source": {
+          "type": "string",
+          "enum": ["import", "from_import", "requirements.txt", "manifest"]
+        }
+      }
+    },
+    "contract": {
+      "type": "object",
+      "required": ["schema_type", "properties", "required"],
+      "properties": {
+        "schema_type": {
+          "type": "string"
+        },
+        "properties": {
+          "type": "object"
+        },
+        "required": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

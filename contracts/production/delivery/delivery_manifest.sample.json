@@ -1,0 +1,37 @@
+{
+  "delivery_id": "delivery-generate-skill-v1",
+  "candidate_id": "cand-generate-skill-v1",
+  "validation_report_id": "bvr-generate-skill-v1",
+  "delivery_name": "generate_skill_delivery",
+  "package_input_root": "artifacts/verified/generate_skill_candidate",
+  "handoff_target": "skill_creator",
+  "package_manifest": {
+    "root_dir": "artifacts/verified/generate_skill_candidate",
+    "required_files": [
+      "SKILL.md",
+      "scripts/main.py"
+    ],
+    "optional_files": [
+      "references/usage.md"
+    ],
+    "excluded_files": []
+  },
+  "integrity_checks": [
+    {
+      "name": "manifest_match",
+      "status": "PASS",
+      "details": "required files present"
+    },
+    {
+      "name": "skill_md_consistency",
+      "status": "PASS",
+      "details": "SKILL.md matches package manifest"
+    }
+  ],
+  "handoff_payload": {
+    "skill_md_path": "artifacts/verified/generate_skill_candidate/SKILL.md",
+    "scripts_dir": "artifacts/verified/generate_skill_candidate/scripts/",
+    "references_dir": "artifacts/verified/generate_skill_candidate/references/"
+  },
+  "status": "prepared"
+}

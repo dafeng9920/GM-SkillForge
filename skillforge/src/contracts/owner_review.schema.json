@@ -1,0 +1,290 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/genesismind-bot/GM-SkillForge/skillforge/src/contracts/owner_review.schema.json",
+  "title": "OwnerReview",
+  "description": "T11 Deliverable: Two-layer report for owners. Converts technical findings and adjudication into business-readable owner cards with summary. NOT a dashboard - structured JSON/MD output only.",
+  "type": "object",
+  "required": [
+    "meta",
+    "input_sources",
+    "decision_summary",
+    "owner_cards",
+    "action_items"
+  ],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "description": "Metadata about the owner review",
+      "required": ["run_id", "skill_id", "skill_name", "generated_at", "t11_version"],
+      "properties": {
+        "run_id": {
+          "type": "string",
+          "description": "Run identifier linking to T3-T14"
+        },
+        "skill_id": {
+          "type": "string",
+          "description": "Skill identifier being reviewed"
+        },
+        "skill_name": {
+          "type": "string",
+          "description": "Skill name"
+        },
+        "generated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 timestamp when owner review was generated"
+        },
+        "t11_version": {
+          "type": "string",
+          "description": "Version of the T11 owner review builder (e.g., 1.0.0-t11)",
+          "pattern": "^\\d+\\.\\d+\\.\\d+.*"
+        },
+        "reviewer": {
+          "type": "string",
+          "description": "Who this owner review is for (e.g., 'Tech Lead', 'Security Council')"
+        }
+      }
+    },
+    "input_sources": {
+      "type": "object",
+      "description": "References to input reports for traceability",
+      "required": ["findings_report", "adjudication_report", "release_decision"],
+      "properties": {
+        "findings_report": {
+          "type": "string",
+          "description": "Path to T6 findings_report.json"
+        },
+        "adjudication_report": {
+          "type": "string",
+          "description": "Path to T8 adjudication_report.json"
+        },
+        "release_decision": {
+          "type": "string",
+          "description": "Path to T10 release_decision.json"
+        },
+        "coverage_statement": {
+          "type": ["string", "null"],
+          "description": "Path to T9 coverage_statement.json (if available)"
+        }
+      }
+    },
+    "decision_summary": {
+      "type": "object",
+      "description": "High-level summary for owner decision-making",
+      "required": ["outcome", "can_release", "blocking_issues", "risk_assessment"],
+      "properties": {
+        "outcome": {
+          "type": "string",
+          "enum": ["APPROVE", "CONDITIONAL", "ESCALATE", "REJECT"],
+          "description": "Simplified outcome for owner consumption"
+        },
+        "can_release": {
+          "type": "boolean",
+          "description": "Whether the skill can be released (conditional releases return true)"
+        },
+        "blocking_issues": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Count of issues that block release"
+        },
+        "risk_assessment": {
+          "type": "string",
+          "enum": ["LOW_RISK", "MEDIUM_RISK", "HIGH_RISK", "CRITICAL_RISK"],
+          "description": "Overall risk assessment for owner context"
+        },
+        "recommendation": {
+          "type": "string",
+          "enum": [
+            "APPROVE_RELEASE",
+            "APPROVE_WITH_MONITORING",
+            "REQUEST_CHANGES",
+            "ESCALATE_TO_SECURITY",
+            "REJECT"
+          ],
+          "description": "Actionable recommendation"
+        },
+        "summary_text": {
+          "type": "string",
+          "description": "One-sentence executive summary (NO technical jargon)"
+        }
+      }
+    },
+    "owner_cards": {
+      "type": "array",
+      "description": "Owner cards - one per significant finding. 7 fixed fields per card.",
+      "items": {
+        "$ref": "#/definitions/owner_card"
+      }
+    },
+    "coverage_note": {
+      "type": "object",
+      "description": "What was and wasn't covered (owner-readable)",
+      "required": ["covered_areas", "not_covered"],
+      "properties": {
+        "covered_areas": {
+          "type": "array",
+          "description": "Areas that were checked (business language)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "not_covered": {
+          "type": "array",
+          "description": "Areas NOT checked (important for owner awareness)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "confidence_level": {
+          "type": "string",
+          "enum": ["HIGH", "MEDIUM", "LOW"],
+          "description": "How confident are we in this review coverage"
+        }
+      }
+    },
+    "action_items": {
+      "type": "array",
+      "description": "Actionable items for owner or team",
+      "items": {
+        "$ref": "#/definitions/action_item"
+      }
+    },
+    "overrides_summary": {
+      "type": ["object", "null"],
+      "description": "Summary of any judgment overrides applied (owner transparency)",
+      "properties": {
+        "total_overrides": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "override_reasons": {
+          "type": "array",
+          "description": "Reasons for overrides in business language",
+          "items": {
+            "type": "string",
+            "enum": [
+              "FALSE_POSITIVE_CONFIRMED",
+              "ACCEPTABLE_BUSINESS_RISK",
+              "COMPENSATING_CONTROLS_EXIST",
+              "OUT_OF_SCOPE",
+              "LEGACY_SYSTEM"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "owner_card": {
+      "type": "object",
+      "description": "Owner Card - 7 fixed fields. NOT technical finding dump. Business-readable format.",
+      "required": [
+        "card_id",
+        "title",
+        "business_impact",
+        "what_it_means",
+        "severity",
+        "action_required",
+        "why_this_matters",
+        "next_steps"
+      ],
+      "properties": {
+        "card_id": {
+          "type": "string",
+          "description": "Card identifier (links back to finding_id)",
+          "pattern": "^C-[0-9]{8}$"
+        },
+        "finding_id": {
+          "type": "string",
+          "description": "Reference to original finding for traceability",
+          "pattern": "^F-[a-z_]+-[A-Z0-9]+-[a-f0-9]{8}$"
+        },
+        "title": {
+          "type": "string",
+          "description": "Short, non-technical title (e.g., 'Password security issue' not 'E401_MISSING_PASSWORD_VALIDATION')"
+        },
+        "business_impact": {
+          "type": "string",
+          "enum": ["BLOCKS_RELEASE", "REQUIRES_FIX", "SHOULD_FIX", "NICE_TO_HAVE", "ACKNOWLEDGE_ONLY"],
+          "description": "Business impact category - what this means for release"
+        },
+        "what_it_means": {
+          "type": "string",
+          "description": "What this issue means in plain language (NO technical jargon)"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"],
+          "description": "Severity level (from adjudication)"
+        },
+        "action_required": {
+          "type": "boolean",
+          "description": "Is action required before release?"
+        },
+        "why_this_matters": {
+          "type": "string",
+          "description": "Business context: why should the owner care?"
+        },
+        "next_steps": {
+          "type": "string",
+          "enum": [
+            "MUST_FIX_BEFORE_RELEASE",
+            "FIX_BEFORE_PRODUCTION",
+            "DOCUMENT_AND_MONITOR",
+            "SCHEDULE_FIX",
+            "ACCEPT_RISK",
+            "ESCALATE_FOR_DECISION"
+          ],
+          "description": "Clear next steps for owner/team"
+        },
+        "technical_note": {
+          "type": ["string", "null"],
+          "description": "Optional: brief technical context for developer (NOT for owner consumption)"
+        },
+        "location": {
+          "type": ["string", "null"],
+          "description": "Where in the code (for developer action)"
+        }
+      }
+    },
+    "action_item": {
+      "type": "object",
+      "description": "Actionable item derived from findings",
+      "required": ["item_id", "description", "priority", "assignee_type"],
+      "properties": {
+        "item_id": {
+          "type": "string",
+          "pattern": "^A-[0-9]{8}$"
+        },
+        "description": {
+          "type": "string",
+          "description": "What needs to be done (actionable, specific)"
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["P0_BLOCKING", "P1_HIGH", "P2_MEDIUM", "P3_LOW"],
+          "description": "Priority level"
+        },
+        "assignee_type": {
+          "type": "string",
+          "enum": ["DEVELOPER", "SECURITY_TEAM", "OWNER", "ARCHITECT", "EXTERNAL"],
+          "description": "Type of assignee"
+        },
+        "linked_cards": {
+          "type": "array",
+          "description": "Owner cards this action relates to",
+          "items": {
+            "type": "string",
+            "pattern": "^C-[0-9]{8}$"
+          }
+        },
+        "deadline": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "Deadline for this action"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,425 @@
+{
+  "_comment": "Sample 2: Conditional Release - With judgment overrides and residual risks",
+  "meta": {
+    "run_id": "20260316_130000",
+    "created_at": "2026-03-16T13:00:00Z",
+    "t10_version": "1.0.0-t10",
+    "sample_scenario": "CONDITIONAL_RELEASE_WITH_OVERRIDES"
+  },
+  "judgment_overrides": {
+    "meta": {
+      "run_id": "20260316_130000",
+      "created_at": "2026-03-16T13:00:00Z",
+      "t10_version": "1.0.0-t10",
+      "decision_context": "exit_gate"
+    },
+    "overrides": [
+      {
+        "override_id": "O-20260316_130000-1",
+        "finding_id": "F-rule_scan-E42-1a2b3c4d",
+        "finding_summary": "Use of subprocess without shell=False - detected in network_client.py:42",
+        "original_decision": "REJECT",
+        "override_decision": "CONDITIONAL_RELEASE",
+        "justification_code": "COMPENSATING_CONTROL_EXISTS",
+        "justification_detail": {
+          "category": "mitigation_provided",
+          "compensating_control": "INPUT_VALIDATION_MIDDLEWARE",
+          "validated_artifact": "security/input_validator.py"
+        },
+        "severity": "HIGH",
+        "source_type": "rule_scan",
+        "approver": {
+          "approver_id": "arch_jane_doe",
+          "approver_role": "SECURITY_ARCHITECT",
+          "approval_scope": "single_finding",
+          "delegation_chain": null
+        },
+        "approved_at": "2026-03-16T13:05:00Z",
+        "expiry": "2026-06-16T13:05:00Z",
+        "conditions": [
+          {
+            "type": "monitoring",
+            "description": "All subprocess calls logged to SIEM",
+            "evidence_path": "monitoring/subprocess_audit.log"
+          },
+          {
+            "type": "remediation_deadline",
+            "description": "Refactor to use subprocess.run with shell=False",
+            "evidence_path": "tickets/SEC-123"
+          }
+        ],
+        "residual_risk_created": "R-20260316_130000-1",
+        "evidence_refs": [
+          {
+            "kind": "FILE",
+            "locator": "run/20260316_130000/rule_scan_report.json",
+            "note": "Original finding evidence"
+          },
+          {
+            "kind": "TICKET",
+            "locator": "SEC-123",
+            "note": "Remediation ticket"
+          },
+          {
+            "kind": "REVIEW",
+            "locator": "PR-456",
+            "note": "Security review approval"
+          }
+        ]
+      },
+      {
+        "override_id": "O-20260316_130000-2",
+        "finding_id": "F-pattern_match-E51-2b3c4d5e",
+        "finding_summary": "Missing error handling in external API call - api_client.py:78",
+        "original_decision": "REJECT",
+        "override_decision": "CONDITIONAL_RELEASE",
+        "justification_code": "TEST_COVERAGE_VERIFIED",
+        "justification_detail": {
+          "category": "mitigation_provided",
+          "validated_artifact": "tests/test_api_client.py"
+        },
+        "severity": "MEDIUM",
+        "source_type": "pattern_match",
+        "approver": {
+          "approver_id": "tl_john_smith",
+          "approver_role": "TECHNICAL_LEAD",
+          "approval_scope": "single_finding",
+          "delegation_chain": null
+        },
+        "approved_at": "2026-03-16T13:06:00Z",
+        "expiry": "2026-04-16T13:06:00Z",
+        "conditions": [
+          {
+            "type": "testing",
+            "description": "Unit tests cover error scenarios with 95% coverage",
+            "evidence_path": "coverage/api_client_coverage.html"
+          },
+          {
+            "type": "remediation_deadline",
+            "description": "Add retry logic with exponential backoff",
+            "evidence_path": "tickets/TECH-456"
+          }
+        ],
+        "residual_risk_created": "R-20260316_130000-2",
+        "evidence_refs": [
+          {
+            "kind": "FILE",
+            "locator": "run/20260316_130000/pattern_detection_report.json",
+            "note": "Original pattern finding"
+          },
+          {
+            "kind": "FILE",
+            "locator": "tests/test_api_client.py",
+            "note": "Test coverage evidence"
+          }
+        ]
+      }
+    ],
+    "summary": {
+      "total_overrides": 2,
+      "by_severity": {
+        "CRITICAL": 0,
+        "HIGH": 1,
+        "MEDIUM": 1,
+        "LOW": 0
+      },
+      "by_justification": {
+        "COMPENSATING_CONTROL_EXISTS": 1,
+        "TEST_COVERAGE_VERIFIED": 1
+      }
+    }
+  },
+  "residual_risks": {
+    "meta": {
+      "run_id": "20260316_130000",
+      "created_at": "2026-03-16T13:00:00Z",
+      "t10_version": "1.0.0-t10",
+      "assessment_methodology": "semi_quantitative"
+    },
+    "risks": [
+      {
+        "risk_id": "R-20260316_130000-1",
+        "source_finding_id": "F-rule_scan-E42-1a2b3c4d",
+        "source_override_id": "O-20260316_130000-1",
+        "title": "Command injection risk in subprocess usage",
+        "description": "The skill uses subprocess without explicit shell=False, creating potential command injection risk. Mitigated by input validation middleware but requires monitoring.",
+        "risk_level": "MEDIUM",
+        "original_severity": "HIGH",
+        "risk_category": "security",
+        "likelihood": "UNLIKELY",
+        "impact": "HIGH",
+        "calculated_score": 6.0,
+        "status": "mitigating",
+        "mitigation_strategy": "mitigate",
+        "mitigation_plan": {
+          "actions": [
+            {
+              "action": "Refactor subprocess calls to use subprocess.run with shell=False",
+              "owner": "team_backend",
+              "target_date": "2026-06-16T00:00:00Z",
+              "status": "pending"
+            },
+            {
+              "action": "Enable SIEM logging for all subprocess executions",
+              "owner": "team_security",
+              "target_date": "2026-03-20T00:00:00Z",
+              "status": "in_progress"
+            }
+          ],
+          "estimated_completion": "2026-06-16T00:00:00Z"
+        },
+        "monitoring_plan": {
+          "metrics": ["subprocess_call_count", "subprocess_error_rate", "suspicious_command_attempts"],
+          "review_frequency": "weekly",
+          "escalation_threshold": "If suspicious_command_attempts > 0, escalate immediately"
+        },
+        "related_ticket": "SEC-123",
+        "evidence_refs": [
+          {
+            "kind": "FILE",
+            "locator": "security/input_validator.py",
+            "note": "Compensating control implementation"
+          },
+          {
+            "kind": "TICKET",
+            "locator": "SEC-123",
+            "note": "Remediation tracking"
+          }
+        ],
+        "created_at": "2026-03-16T13:05:00Z",
+        "updated_at": "2026-03-16T13:05:00Z",
+        "closed_at": null
+      },
+      {
+        "risk_id": "R-20260316_130000-2",
+        "source_finding_id": "F-pattern_match-E51-2b3c4d5e",
+        "source_override_id": "O-20260316_130000-2",
+        "title": "API reliability risk from missing error handling",
+        "description": "External API calls lack comprehensive error handling. High test coverage provides some mitigation but production behavior may differ.",
+        "risk_level": "LOW",
+        "original_severity": "MEDIUM",
+        "risk_category": "reliability",
+        "likelihood": "POSSIBLE",
+        "impact": "MEDIUM",
+        "calculated_score": 4.0,
+        "status": "monitoring",
+        "mitigation_strategy": "monitor",
+        "monitoring_plan": {
+          "metrics": ["api_failure_rate", "api_latency_p95", "api_timeout_count"],
+          "review_frequency": "weekly",
+          "escalation_threshold": "If api_failure_rate > 5%, escalate to tech lead"
+        },
+        "related_ticket": "TECH-456",
+        "evidence_refs": [
+          {
+            "kind": "FILE",
+            "locator": "tests/test_api_client.py",
+            "note": "Test coverage evidence"
+          }
+        ],
+        "created_at": "2026-03-16T13:06:00Z",
+        "updated_at": "2026-03-16T13:06:00Z",
+        "closed_at": null
+      }
+    ],
+    "summary": {
+      "total_risks": 2,
+      "by_level": {
+        "CRITICAL": 0,
+        "HIGH": 0,
+        "MEDIUM": 1,
+        "LOW": 1
+      },
+      "by_status": {
+        "open": 0,
+        "mitigating": 1,
+        "monitoring": 1,
+        "accepted": 0,
+        "closed": 0
+      },
+      "mitigation_coverage": {
+        "with_mitigation": 1,
+        "with_monitoring": 1,
+        "accepted_without_mitigation": 0
+      }
+    }
+  },
+  "release_decision": {
+    "meta": {
+      "run_id": "20260316_130000",
+      "skill_id": "network_client-2.1.0-f3e4d5c6",
+      "skill_name": "network_client",
+      "decision_timestamp": "2026-03-16T13:10:00Z",
+      "t10_version": "1.0.0-t10",
+      "decision_context": "exit_gate",
+      "gate_type": "release"
+    },
+    "decision": {
+      "outcome": "CONDITIONAL_RELEASE",
+      "rationale_code": "OVERRIDE_APPROVED",
+      "rationale_detail": {
+        "blocking_findings_count": 2,
+        "overrides_count": 2,
+        "residual_risks_count": 2
+      },
+      "is_final": true,
+      "valid_until": "2026-06-16T13:10:00Z",
+      "conditions": [
+        {
+          "type": "monitoring_required",
+          "description": "All subprocess calls must be logged to SIEM",
+          "deadline": "2026-03-20T00:00:00Z",
+          "verification_method": "SIEM query confirmation"
+        },
+        {
+          "type": "remediation_deadline",
+          "description": "Refactor subprocess calls to use shell=False",
+          "deadline": "2026-06-16T00:00:00Z",
+          "verification_method": "Code review and unit tests"
+        },
+        {
+          "type": "usage_restriction",
+          "description": "Skill restricted to staging environment until subprocess refactoring complete",
+          "deadline": "2026-06-16T00:00:00Z",
+          "verification_method": "Infrastructure configuration check"
+        }
+      ],
+      "scope": {
+        "allowed_environments": ["staging"],
+        "allowed_users": ["team_backend", "team_data_science"],
+        "usage_limits": {
+          "max_calls_per_day": 10000,
+          "max_data_size": 104857600,
+          "feature_restrictions": []
+        }
+      }
+    },
+    "findings_summary": {
+      "total_findings": 8,
+      "by_severity": {
+        "CRITICAL": 0,
+        "HIGH": 2,
+        "MEDIUM": 3,
+        "LOW": 2,
+        "INFO": 1
+      },
+      "by_source": {
+        "validation": 1,
+        "rule_scan": 4,
+        "pattern_match": 3
+      },
+      "blocking_findings": [
+        "F-rule_scan-E42-1a2b3c4d",
+        "F-pattern_match-E51-2b3c4d5e"
+      ],
+      "overridden_findings": [
+        "F-rule_scan-E42-1a2b3c4d",
+        "F-pattern_match-E51-2b3c4d5e"
+      ]
+    },
+    "overrides_applied": [
+      {
+        "override_id": "O-20260316_130000-1",
+        "finding_id": "F-rule_scan-E42-1a2b3c4d",
+        "justification_code": "COMPENSATING_CONTROL_EXISTS",
+        "approver": "arch_jane_doe"
+      },
+      {
+        "override_id": "O-20260316_130000-2",
+        "finding_id": "F-pattern_match-E51-2b3c4d5e",
+        "justification_code": "TEST_COVERAGE_VERIFIED",
+        "approver": "tl_john_smith"
+      }
+    ],
+    "residual_risks": {
+      "total_risks": 2,
+      "risk_ids": [
+        "R-20260316_130000-1",
+        "R-20260316_130000-2"
+      ],
+      "by_level": {
+        "CRITICAL": 0,
+        "HIGH": 0,
+        "MEDIUM": 1,
+        "LOW": 1
+      },
+      "unacceptable_count": 0
+    },
+    "escalation_gate": null,
+    "decision_chain": [
+      {
+        "timestamp": "2026-03-16T12:55:00Z",
+        "stage": "validation",
+        "outcome": "PASSED",
+        "decision_maker": "T3_SkillContractValidator"
+      },
+      {
+        "timestamp": "2026-03-16T12:57:00Z",
+        "stage": "rule_scan",
+        "outcome": "2_HIGH_FINDINGS",
+        "decision_maker": "T4_RuleScanner"
+      },
+      {
+        "timestamp": "2026-03-16T12:59:00Z",
+        "stage": "pattern_match",
+        "outcome": "1_MEDIUM_FINDING",
+        "decision_maker": "T5_PatternMatcher"
+      },
+      {
+        "timestamp": "2026-03-16T13:00:00Z",
+        "stage": "findings",
+        "outcome": "3_BLOCKING_FINDINGS",
+        "decision_maker": "T6_FindingBuilder"
+      },
+      {
+        "timestamp": "2026-03-16T13:05:00Z",
+        "stage": "override",
+        "outcome": "2_OVERRIDES_APPROVED",
+        "decision_maker": "SECURITY_ARCHITECT, TECHNICAL_LEAD"
+      },
+      {
+        "timestamp": "2026-03-16T13:10:00Z",
+        "stage": "final",
+        "outcome": "CONDITIONAL_RELEASE",
+        "decision_maker": "T10_ReleaseGate"
+      }
+    ],
+    "evidence_refs": [
+      {
+        "kind": "FILE",
+        "locator": "run/20260316_130000/validation_report.json",
+        "note": "T3 validation report"
+      },
+      {
+        "kind": "FILE",
+        "locator": "run/20260316_130000/rule_scan_report.json",
+        "note": "T4 rule scan report"
+      },
+      {
+        "kind": "FILE",
+        "locator": "run/20260316_130000/pattern_detection_report.json",
+        "note": "T5 pattern detection report"
+      },
+      {
+        "kind": "FILE",
+        "locator": "run/20260316_130000/findings.json",
+        "note": "T6 findings report"
+      },
+      {
+        "kind": "TICKET",
+        "locator": "SEC-123",
+        "note": "Security remediation ticket"
+      },
+      {
+        "kind": "TICKET",
+        "locator": "TECH-456",
+        "note": "Technical debt ticket"
+      },
+      {
+        "kind": "REVIEW",
+        "locator": "PR-456",
+        "note": "Security review approval"
+      }
+    ]
+  }
+}

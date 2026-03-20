@@ -1,0 +1,49 @@
+{
+  "generated_at": "2026-03-15T00:00:00Z",
+  "pattern_set_version": "1.0.0-t5",
+  "samples": [
+    {
+      "pattern_code": "E501_EXTERNAL_WITHOUT_STOP_RULE",
+      "name": "External Action Without Stop Rule",
+      "directory": "e501_external_without_stop_rule/",
+      "expected_findings": [
+        "E501_EXTERNAL_WITHOUT_STOP_RULE"
+      ],
+      "severity": "CRITICAL"
+    },
+    {
+      "pattern_code": "E502_RETRY_WITHOUT_IDEMPOTENCY",
+      "name": "Retry Without Idempotency Protection",
+      "directory": "e502_retry_without_idempotency/",
+      "expected_findings": [
+        "E502_RETRY_WITHOUT_IDEMPOTENCY"
+      ],
+      "severity": "HIGH"
+    },
+    {
+      "pattern_code": "E503_HIGH_PRIV_WITHOUT_BOUNDARY",
+      "name": "High-Privilege Call Without Boundary",
+      "directory": "e503_high_priv_without_boundary/",
+      "expected_findings": [
+        "E503_HIGH_PRIV_WITHOUT_BOUNDARY"
+      ],
+      "severity": "CRITICAL"
+    },
+    {
+      "pattern_code": "E504_MISSING_AUDITABLE_EXIT",
+      "name": "Missing Auditable Exit",
+      "directory": "e504_missing_auditable_exit/",
+      "expected_findings": [
+        "E504_MISSING_AUDITABLE_EXIT"
+      ],
+      "severity": "HIGH"
+    },
+    {
+      "pattern_code": "CLEAN_SAMPLE",
+      "name": "Clean Sample (No Patterns)",
+      "directory": "../clean_sample/",
+      "expected_findings": [],
+      "severity": "N/A"
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://gm-os.dev/contracts/intake_request.schema.json",
+  "title": "IntakeRequest",
+  "description": "Unified intake request for SkillForge audit pipeline. Enforces intent_id + repo_url + commit_sha for deterministic, reproducible audits.",
+  "type": "object",
+  "required": ["intent_id", "repo_url", "commit_sha"],
+  "properties": {
+    "intent_id": {
+      "type": "string",
+      "description": "Intent identifier - must be in approved whitelist",
+      "pattern": "^[A-Z]+_[A-Z0-9_]+$",
+      "minLength": 3
+    },
+    "repo_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Git repository URL (must be https:// or git://)",
+      "pattern": "^https://.*|git://.*"
+    },
+    "commit_sha": {
+      "type": "string",
+      "description": "Exact git commit SHA (40-char hex for full SHA, min 7 for short SHA)",
+      "pattern": "^[0-9a-fA-F]{7,40}$",
+      "minLength": 7,
+      "maxLength": 40
+    },
+    "at_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Point-in-time checkout (ISO-8601), optional",
+      "examples": ["2026-03-15T10:30:00Z"]
+    },
+    "issue_key": {
+      "type": "string",
+      "description": "Unique request ID (auto-generated if not provided)",
+      "pattern": "^[A-Z]+-[A-Z0-9]+$",
+      "examples": ["REQ-20260315103000"]
+    },
+    "options": {
+      "type": "object",
+      "description": "Optional execution parameters",
+      "properties": {
+        "target_environment": {
+          "type": "string",
+          "enum": ["python", "node", "docker"],
+          "default": "python"
+        },
+        "intended_use": {
+          "type": "string",
+          "enum": ["automation", "data", "web", "ops"],
+          "default": "automation"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "approvedIntents": {
+      "description": "Whitelist of approved intent_id values",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "AUDIT_REPO_SKILL",
+        "AUDIT_CONTRACT_COMPLIANCE",
+        "AUDIT_SECURITY_SCAN",
+        "AUDIT_PERFORMANCE_ANALYSIS"
+      ]
+    }
+  }
+}

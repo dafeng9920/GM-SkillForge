@@ -1,0 +1,21 @@
+services:
+  stealth-scraper:
+    build: .
+    container_name: stealth-scraper-v1
+    restart: always
+    ports:
+      - "8000:8000"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    volumes:
+      - ./logs:/app/logs
+      - ./.env:/app/.env
+    environment:
+      - DMX_API_KEY=${DMX_API_KEY}
+      - DMX_API_BASE=${DMX_API_BASE}
+    shm_size: '2gb' # Playwright/Chromium needs enough shared memory

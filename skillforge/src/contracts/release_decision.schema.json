@@ -1,0 +1,391 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/genesismind-bot/GM-SkillForge/skillforge/src/contracts/release_decision.schema.json",
+  "title": "ReleaseDecision",
+  "description": "T10 Deliverable: Schema for final release decision. Defines the gate decision with structured evidence binding and escalation paths.",
+  "type": "object",
+  "required": [
+    "meta",
+    "decision",
+    "findings_summary",
+    "overrides_applied",
+    "residual_risks",
+    "evidence_refs",
+    "decision_chain"
+  ],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "description": "Metadata about the release decision",
+      "required": ["run_id", "skill_id", "decision_timestamp", "t10_version", "decision_context"],
+      "properties": {
+        "run_id": {
+          "type": "string",
+          "description": "Run identifier linking to T3/T4/T5/T6/T10"
+        },
+        "skill_id": {
+          "type": "string",
+          "description": "Skill identifier being evaluated"
+        },
+        "skill_name": {
+          "type": "string",
+          "description": "Skill name"
+        },
+        "decision_timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 timestamp of the decision"
+        },
+        "t10_version": {
+          "type": "string",
+          "description": "Version of the T10 schema",
+          "pattern": "^\\d+\\.\\d+\\.\\d+.*"
+        },
+        "decision_context": {
+          "type": "string",
+          "enum": ["entry_gate", "exit_gate", "escalation_review"],
+          "description": "Context of this decision"
+        },
+        "gate_type": {
+          "type": "string",
+          "enum": ["intake", "validation", "adjudication", "release"],
+          "description": "Type of gate making this decision"
+        }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "description": "The release decision",
+      "required": ["outcome", "rationale_code", "is_final"],
+      "properties": {
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "REJECT",
+            "ESCALATE",
+            "CONDITIONAL_RELEASE",
+            "LIMITED_RELEASE",
+            "RELEASE"
+          ],
+          "description": "Final decision outcome"
+        },
+        "rationale_code": {
+          "type": "string",
+          "enum": [
+            "ALL_CHECKS_PASSED",
+            "CRITICAL_FINDINGS_UNRESOLVED",
+            "HIGH_RISK_THRESHOLD_EXCEEDED",
+            "EVIDENCE_INCOMPLETE",
+            "OVERRIDE_APPROVED",
+            "CONDITIONAL_ACCEPTANCE",
+            "LIMITED_SCOPE_APPROVED",
+            "ESCALATION_REQUIRED",
+            "REMEDIATION_REQUIRED",
+            "DEFERRED_DECISION"
+          ],
+          "description": "Structured rationale code (NO free-form text)"
+        },
+        "rationale_detail": {
+          "type": "object",
+          "description": "Structured detail for rationale",
+          "properties": {
+            "blocking_findings_count": {
+              "type": ["integer", "null"],
+              "minimum": 0,
+              "description": "Number of blocking findings"
+            },
+            "overrides_count": {
+              "type": ["integer", "null"],
+              "minimum": 0,
+              "description": "Number of overrides applied"
+            },
+            "residual_risks_count": {
+              "type": ["integer", "null"],
+              "minimum": 0,
+              "description": "Number of residual risks"
+            },
+            "escalation_reason": {
+              "type": ["string", "null"],
+              "enum": ["EXCEEDS_AUTHORITY", "NO_CONSENSUS", "NOVEL_RISK", "BUSINESS_IMPACT"],
+              "description": "Reason for escalation"
+            }
+          }
+        },
+        "is_final": {
+          "type": "boolean",
+          "description": "Whether this is a final decision or subject to escalation"
+        },
+        "valid_until": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "For conditional/limited releases, when the decision expires"
+        },
+        "conditions": {
+          "type": ["array", "null"],
+          "description": "Conditions for release",
+          "items": {
+            "type": "object",
+            "required": ["type", "description"],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "monitoring_required",
+                  "usage_restriction",
+                  "remediation_deadline",
+                  "additional_testing",
+                  "documentation_required",
+                  "approval_required",
+                  "scope_limitation"
+                ]
+              },
+              "description": {
+                "type": "string",
+                "description": "Structured condition description"
+              },
+              "deadline": {
+                "type": ["string", "null"],
+                "format": "date-time",
+                "description": "Deadline for condition"
+              },
+              "verification_method": {
+                "type": ["string", "null"],
+                "description": "How condition will be verified"
+              }
+            }
+          }
+        },
+        "scope": {
+          "type": ["object", "null"],
+          "description": "Scope limitation for limited releases",
+          "properties": {
+            "allowed_environments": {
+              "type": ["array", "null"],
+              "description": "Environments where release is allowed",
+              "items": {
+                "type": "string",
+                "enum": ["development", "staging", "production", "sandbox"]
+              }
+            },
+            "allowed_users": {
+              "type": ["array", "null"],
+              "description": "Users/groups allowed to use the skill",
+              "items": {
+                "type": "string"
+              }
+            },
+            "usage_limits": {
+              "type": ["object", "null"],
+              "properties": {
+                "max_calls_per_day": {
+                  "type": ["integer", "null"],
+                  "minimum": 0
+                },
+                "max_data_size": {
+                  "type": ["integer", "null"],
+                  "minimum": 0
+                },
+                "feature_restrictions": {
+                  "type": ["array", "null"],
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "findings_summary": {
+      "type": "object",
+      "description": "Summary of findings that informed the decision",
+      "required": ["total_findings", "by_severity", "blocking_findings"],
+      "properties": {
+        "total_findings": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "by_severity": {
+          "type": "object",
+          "properties": {
+            "CRITICAL": {"type": "integer", "minimum": 0},
+            "HIGH": {"type": "integer", "minimum": 0},
+            "MEDIUM": {"type": "integer", "minimum": 0},
+            "LOW": {"type": "integer", "minimum": 0},
+            "INFO": {"type": "integer", "minimum": 0}
+          }
+        },
+        "by_source": {
+          "type": "object",
+          "properties": {
+            "validation": {"type": "integer", "minimum": 0},
+            "rule_scan": {"type": "integer", "minimum": 0},
+            "pattern_match": {"type": "integer", "minimum": 0}
+          }
+        },
+        "blocking_findings": {
+          "type": "array",
+          "description": "Findings that would block release without override",
+          "items": {
+            "type": "string",
+            "pattern": "^F-[a-z_]+-[A-Z0-9]+-[a-f0-9]{8}$"
+          }
+        },
+        "overridden_findings": {
+          "type": "array",
+          "description": "Findings that were overridden",
+          "items": {
+            "type": "string",
+            "pattern": "^F-[a-z_]+-[A-Z0-9]+-[a-f0-9]{8}$"
+          }
+        }
+      }
+    },
+    "overrides_applied": {
+      "type": "array",
+      "description": "References to judgment overrides applied",
+      "items": {
+        "type": "object",
+        "required": ["override_id", "finding_id", "justification_code"],
+        "properties": {
+          "override_id": {
+            "type": "string",
+            "pattern": "^O-[0-9]{8}_[0-9]{6}-[0-9]+$"
+          },
+          "finding_id": {
+            "type": "string",
+            "pattern": "^F-[a-z_]+-[A-Z0-9]+-[a-f0-9]{8}$"
+          },
+          "justification_code": {
+            "type": "string"
+          },
+          "approver": {
+            "type": "string",
+            "description": "Approver ID"
+          }
+        }
+      }
+    },
+    "residual_risks": {
+      "type": "object",
+      "description": "Residual risks from this release decision",
+      "required": ["total_risks", "risk_ids", "by_level"],
+      "properties": {
+        "total_risks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "risk_ids": {
+          "type": "array",
+          "description": "References to residual risk records",
+          "items": {
+            "type": "string",
+            "pattern": "^R-[0-9]{8}_[0-9]{6}-[0-9]+$"
+          }
+        },
+        "by_level": {
+          "type": "object",
+          "properties": {
+            "CRITICAL": {"type": "integer", "minimum": 0},
+            "HIGH": {"type": "integer", "minimum": 0},
+            "MEDIUM": {"type": "integer", "minimum": 0},
+            "LOW": {"type": "integer", "minimum": 0}
+          }
+        },
+        "unacceptable_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of CRITICAL/HIGH risks (should be 0 for release)"
+        }
+      }
+    },
+    "escalation_gate": {
+      "type": ["object", "null"],
+      "description": "Escalation information (if escalated)",
+      "properties": {
+        "escalated_to": {
+          "type": "string",
+          "enum": ["TECHNICAL_LEAD", "ARCHITECTURE_BOARD", "SECURITY_COUNCIL", "CTO_OFFICE"],
+          "description": "Who this was escalated to"
+        },
+        "escalation_reason_code": {
+          "type": "string",
+          "enum": [
+            "EXCEEDS_DELEGATED_AUTHORITY",
+            "NOVEL_ATTACK_VECTOR",
+            "SIGNATURE_DISAGREEMENT",
+            "BUSINESS_CRITICALITY",
+            "REGULATORY_IMPLICATION"
+          ],
+          "description": "Reason for escalation"
+        },
+        "escalated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When escalation was initiated"
+        },
+        "response_deadline": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "Expected response deadline"
+        }
+      }
+    },
+    "decision_chain": {
+      "type": "array",
+      "description": "Chain of decisions leading to this final decision",
+      "items": {
+        "type": "object",
+        "required": ["timestamp", "stage", "outcome", "decision_maker"],
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "stage": {
+            "type": "string",
+            "enum": ["validation", "rule_scan", "pattern_match", "findings", "adjudication", "override", "final"]
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "decision_maker": {
+            "type": "string",
+            "description": "Who or what made the decision (system or role)"
+          }
+        }
+      }
+    },
+    "evidence_refs": {
+      "type": "array",
+      "description": "Evidence supporting this release decision",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/evidence_ref"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "evidence_ref": {
+      "type": "object",
+      "description": "Evidence reference for release decision",
+      "required": ["kind", "locator"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["FILE", "LOG", "REPORT", "REVIEW", "TICKET", "DOCUMENTATION"]
+        },
+        "locator": {
+          "type": "string",
+          "description": "Path or URL to evidence"
+        },
+        "note": {
+          "type": ["string", "null"],
+          "description": "Additional context"
+        }
+      }
+    }
+  }
+}

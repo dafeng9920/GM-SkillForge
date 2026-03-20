@@ -1,0 +1,49 @@
+{
+  "contract_id": "contract-generate-skill-v1",
+  "intent_id": "generate_skill_from_requirement",
+  "summary": "生成线最小合同包",
+  "version": "v1",
+  "input_schema": {
+    "type": "object",
+    "required": ["requirement_text"],
+    "properties": {
+      "requirement_text": { "type": "string" }
+    }
+  },
+  "output_schema": {
+    "type": "object",
+    "required": ["candidate_skill_path"],
+    "properties": {
+      "candidate_skill_path": { "type": "string" }
+    }
+  },
+  "state_schema": {
+    "type": "object",
+    "properties": {
+      "stage": { "type": "string" },
+      "run_id": { "type": "string" }
+    }
+  },
+  "error_schema": {
+    "type": "object",
+    "properties": {
+      "code": { "type": "string" },
+      "message": { "type": "string" }
+    }
+  },
+  "trigger_spec": {
+    "mode": "passive",
+    "supported_triggers": ["manual"]
+  },
+  "evidence_spec": {
+    "required_evidence": [
+      { "kind": "contract", "required": true, "description": "合同本体" }
+    ]
+  },
+  "required_gates": [
+    "draft_skill_spec",
+    "constitution_risk_gate",
+    "pack_audit_and_publish"
+  ],
+  "status": "draft"
+}

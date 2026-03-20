@@ -1,0 +1,16 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-9.0.2, pluggy-1.6.0 -- D:\GM-SkillForge\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: D:\GM-SkillForge
+configfile: pyproject.toml
+collecting ... collected 7 items
+
+tests/discovery/test_t7_full_pipeline_regression.py::TestT7FullPipelineRegression::test_regression_sample_1_normal_skill_passes_all_steps PASSED [ 14%]
+tests/discovery/test_t7_full_pipeline_regression.py::TestT7FullPipelineRegression::test_regression_sample_2_fail_closed_on_missing_manifest PASSED [ 28%]
+tests/discovery/test_t7_full_pipeline_regression.py::TestT7FullPipelineRegression::test_regression_sample_3_skill_with_issues_produces_findings PASSED [ 42%]
+tests/discovery/test_t7_full_pipeline_regression.py::TestT7FullPipelineRegression::test_run_directory_structure_is_fixed PASSED [ 57%]
+tests/discovery/test_t7_full_pipeline_regression.py::TestT7FullPipelineRegression::test_regression_fail_closed_when_skill_dir_not_exists PASSED [ 71%]
+tests/discovery/test_t7_full_pipeline_regression.py::TestT7CLIInterface::test_run_discovery_pipeline_function_exists PASSED [ 85%]
+tests/discovery/test_t7_full_pipeline_regression.py::TestT7CLIInterface::test_discovery_pipeline_module_has_main PASSED [100%]
+
+============================== 7 passed in 0.32s ==============================

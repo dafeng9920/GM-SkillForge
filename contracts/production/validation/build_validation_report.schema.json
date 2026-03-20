@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BuildValidationReport",
+  "type": "object",
+  "required": [
+    "report_id",
+    "candidate_id",
+    "checks",
+    "summary",
+    "handoff_ready",
+    "status"
+  ],
+  "properties": {
+    "report_id": { "type": "string" },
+    "candidate_id": { "type": "string" },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "status"],
+        "properties": {
+          "name": { "type": "string" },
+          "status": { "type": "string", "enum": ["PASS", "FAIL", "WARN", "SKIP"] },
+          "severity": { "type": "string" },
+          "summary": { "type": "string" }
+        }
+      }
+    },
+    "summary": { "type": "object" },
+    "missing_artifacts": { "type": "array", "items": { "type": "string" } },
+    "broken_references": { "type": "array", "items": { "type": "string" } },
+    "smoke_test_result": { "type": "object" },
+    "trace_result": { "type": "object" },
+    "handoff_ready": { "type": "boolean" },
+    "status": {
+      "type": "string",
+      "enum": ["verified_candidate", "validation_failed", "partially_verified"]
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,19 @@
+{
+  "skill_name": "test_skill",
+  "skill_dir": "C:\\Users\\Aorus\\AppData\\Local\\Temp\\tmplxbncl9e\\test_skill",
+  "scanned_at": "2026-03-15T15:35:15Z",
+  "rule_set_version": "1.0.0-t4",
+  "scan_statistics": {
+    "files_scanned": 1,
+    "total_lines_scanned": 7,
+    "total_hits": 0,
+    "by_category": {},
+    "by_severity": {}
+  },
+  "findings": {
+    "critical": [],
+    "high": [],
+    "medium": [],
+    "low": []
+  }
+}

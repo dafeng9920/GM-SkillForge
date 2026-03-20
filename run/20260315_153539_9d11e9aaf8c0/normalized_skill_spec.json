@@ -1,0 +1,67 @@
+{
+  "skill_id": "execute-1.0.0-7fe8b401",
+  "skill_name": "execute",
+  "version": "1.0.0",
+  "description": "Execute Skill - 交易执行  Skill 类型: 执行层",
+  "entry_point": "execute.py",
+  "skill_dir": "D:\\GM-SkillForge\\skillforge\\src\\skills\\quant",
+  "file_list": [
+    "__init__.py",
+    "drawdown_limiter.py",
+    "execute.py",
+    "order_router.py",
+    "risk_guard.py",
+    "test_adapter_integration.py",
+    "test_e2e.py"
+  ],
+  "dependencies": {
+    "direct_dependencies": [
+      {
+        "name": "__future__",
+        "version": null,
+        "source": "from_import"
+      },
+      {
+        "name": "contracts",
+        "version": null,
+        "source": "from_import"
+      },
+      {
+        "name": "traceback",
+        "version": null,
+        "source": "import"
+      }
+    ],
+    "transitive_dependencies": [],
+    "dependency_count": 3
+  },
+  "input_contract": {
+    "schema_type": "object",
+    "properties": {},
+    "required": [],
+    "description": "No input contract defined"
+  },
+  "output_contract": {
+    "schema_type": "object",
+    "properties": {
+      "result": {
+        "type": "string",
+        "description": "Operation result"
+      }
+    },
+    "required": [
+      "result"
+    ],
+    "description": "Default output contract"
+  },
+  "manifest_snapshot": {
+    "exists": false,
+    "content_hash": null,
+    "raw_data": {}
+  },
+  "capabilities": [],
+  "constraints": [],
+  "parsed_at": "2026-03-15T15:35:39Z",
+  "parser_version": "1.0.0-t2",
+  "spec_hash": "b19f75a1b84fe6a98e4479005716452e850b699c078cf09a3b775b8a981c7bf6"
+}

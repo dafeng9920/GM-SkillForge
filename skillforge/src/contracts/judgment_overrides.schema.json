@@ -1,0 +1,271 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/genesismind-bot/GM-SkillForge/skillforge/src/contracts/judgment_overrides.schema.json",
+  "title": "JudgmentOverrides",
+  "description": "T10 Deliverable: Schema for judgment override records. Defines when and how human judgment can override automated gate decisions, with strict traceability and no free-form text.",
+  "type": "object",
+  "required": [
+    "meta",
+    "overrides",
+    "summary"
+  ],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "description": "Metadata about the overrides record",
+      "required": ["run_id", "created_at", "t10_version", "decision_context"],
+      "properties": {
+        "run_id": {
+          "type": "string",
+          "description": "Run identifier linking to T6 findings"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 timestamp when overrides were recorded"
+        },
+        "t10_version": {
+          "type": "string",
+          "description": "Version of the T10 schema (e.g., 1.0.0-t10)",
+          "pattern": "^\\d+\\.\\d+\\.\\d+.*"
+        },
+        "decision_context": {
+          "type": "string",
+          "enum": ["entry_gate", "exit_gate", "escalation_review"],
+          "description": "Context where override decision was made"
+        }
+      }
+    },
+    "overrides": {
+      "type": "array",
+      "description": "List of judgment override records",
+      "items": {
+        "$ref": "#/definitions/override_record"
+      }
+    },
+    "summary": {
+      "type": "object",
+      "description": "Summary statistics",
+      "required": ["total_overrides", "by_severity", "by_justification"],
+      "properties": {
+        "total_overrides": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "by_severity": {
+          "type": "object",
+          "properties": {
+            "CRITICAL": {"type": "integer", "minimum": 0},
+            "HIGH": {"type": "integer", "minimum": 0},
+            "MEDIUM": {"type": "integer", "minimum": 0},
+            "LOW": {"type": "integer", "minimum": 0}
+          }
+        },
+        "by_justification": {
+          "type": "object",
+          "description": "Count by justification code",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "override_record": {
+      "type": "object",
+      "description": "A single judgment override record",
+      "required": [
+        "override_id",
+        "finding_id",
+        "original_decision",
+        "override_decision",
+        "justification_code",
+        "approver",
+        "approved_at",
+        "evidence_refs"
+      ],
+      "properties": {
+        "override_id": {
+          "type": "string",
+          "description": "Unique override identifier (format: O-{run_id}-{seq})",
+          "pattern": "^O-[0-9]{8}_[0-9]{6}-[0-9]+$"
+        },
+        "finding_id": {
+          "type": "string",
+          "description": "Reference to the finding being overridden (from T6 findings)",
+          "pattern": "^F-[a-z_]+-[A-Z0-9]+-[a-f0-9]{8}$"
+        },
+        "finding_summary": {
+          "type": "string",
+          "description": "Brief summary of the finding being overridden (for audit trail)"
+        },
+        "original_decision": {
+          "type": "string",
+          "enum": ["REJECT", "ESCALATE", "CONDITIONAL_RELEASE", "LIMITED_RELEASE"],
+          "description": "The automated decision that was overridden"
+        },
+        "override_decision": {
+          "type": "string",
+          "enum": ["RELEASE", "CONDITIONAL_RELEASE", "LIMITED_RELEASE", "ESCALATE", "REJECT"],
+          "description": "The new decision after judgment override. NOTE: Cannot upgrade REJECT to RELEASE directly; must use intermediate steps."
+        },
+        "justification_code": {
+          "type": "string",
+          "enum": [
+            "FALSE_POSITIVE_DETECTED",
+            "COMPENSATING_CONTROL_EXISTS",
+            "ACCEPTANCE_WINDOW_ACTIVE",
+            "BUSINESS_JUSTIFICATION",
+            "TECHNICAL_DEBT_ACCEPTED",
+            "TRANSIENT_CONDITION",
+            "DEPENDENCY_VALIDATED",
+            "DOCUMENTATION_ACCEPTED",
+            "TEST_COVERAGE_VERIFIED",
+            "RISK_ACCEPTED_PENDING_FIX"
+          ],
+          "description": "Structured justification code (NO free-form text)"
+        },
+        "justification_detail": {
+          "type": "object",
+          "description": "Structured detail for the justification (not free-form text)",
+          "required": ["category"],
+          "properties": {
+            "category": {
+              "type": "string",
+              "enum": [
+                "detection_artifact",
+                "mitigation_provided",
+                "temporal_exception",
+                "dependency_trust"
+              ]
+            },
+            "compensating_control": {
+              "type": ["string", "null"],
+              "description": "Reference to compensating control (if applicable)",
+              "pattern": "^[A-Z]+_[A-Z0-9_]+$"
+            },
+            "acceptance_expiry": {
+              "type": ["string", "null"],
+              "description": "ISO-8601 date when acceptance expires",
+              "format": "date-time"
+            },
+            "related_ticket": {
+              "type": ["string", "null"],
+              "description": "Ticket tracking the remediation",
+              "pattern": "^[A-Z]+-[0-9]+$"
+            },
+            "validated_artifact": {
+              "type": ["string", "null"],
+              "description": "Path to validated artifact or evidence"
+            }
+          }
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"],
+          "description": "Severity of the overridden finding"
+        },
+        "source_type": {
+          "type": "string",
+          "enum": ["validation", "rule_scan", "pattern_match"],
+          "description": "Source type of the overridden finding"
+        },
+        "approver": {
+          "type": "object",
+          "description": "Approver identity",
+          "required": ["approver_id", "approver_role", "approval_scope"],
+          "properties": {
+            "approver_id": {
+              "type": "string",
+              "description": "Unique identifier of the approver"
+            },
+            "approver_role": {
+              "type": "string",
+              "enum": ["TECHNICAL_LEAD", "SECURITY_ARCHITECT", "ENGINEERING_MANAGER", "PRINCIPAL_ENGINEER"],
+              "description": "Role of the approver"
+            },
+            "approval_scope": {
+              "type": "string",
+              "enum": ["single_finding", "skill_level", "project_level"],
+              "description": "Scope of this approval"
+            },
+            "delegation_chain": {
+              "type": ["array", "null"],
+              "description": "If delegated, chain of original approvers",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "approved_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 timestamp when override was approved"
+        },
+        "expiry": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "Optional expiry for the override (for temporary exceptions)"
+        },
+        "conditions": {
+          "type": ["array", "null"],
+          "description": "Conditions attached to this override",
+          "items": {
+            "type": "object",
+            "required": ["type", "description"],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": ["monitoring", "remediation_deadline", "usage_limit", "documentation", "testing"]
+              },
+              "description": {
+                "type": "string",
+                "description": "Structured condition description"
+              },
+              "evidence_path": {
+                "type": ["string", "null"],
+                "description": "Path to evidence that condition is met"
+              }
+            }
+          }
+        },
+        "residual_risk_created": {
+          "type": ["string", "null"],
+          "description": "ID of the residual risk record created from this override",
+          "pattern": "^R-[0-9]{8}_[0-9]{6}-[0-9]+$"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "description": "Evidence supporting this override decision",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions/evidence_ref"
+          }
+        }
+      }
+    },
+    "evidence_ref": {
+      "type": "object",
+      "description": "Evidence reference for override justification",
+      "required": ["kind", "locator"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["FILE", "LOG", "DIFF", "TICKET", "REVIEW", "CODE_LOCATION", "DOCUMENTATION"]
+        },
+        "locator": {
+          "type": "string",
+          "description": "Path or URL to evidence"
+        },
+        "note": {
+          "type": ["string", "null"],
+          "description": "Additional context"
+        }
+      }
+    }
+  }
+}

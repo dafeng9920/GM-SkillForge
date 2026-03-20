@@ -1,0 +1,49 @@
+{
+  "skill_id": "t6test-0.1.0-83a250ce",
+  "skill_name": "t6test",
+  "version": "0.1.0",
+  "description": "Test. SKILL_NAME = \"t6test\" SKILL_VERSION = \"0.1.0\"",
+  "entry_point": "__init__.py",
+  "skill_dir": "C:\\Users\\Aorus\\AppData\\Local\\Temp\\tmp1v0xyf3y\\test_skill",
+  "file_list": [
+    "__init__.py"
+  ],
+  "dependencies": {
+    "direct_dependencies": [],
+    "transitive_dependencies": [],
+    "dependency_count": 0
+  },
+  "input_contract": {
+    "schema_type": "object",
+    "properties": {},
+    "required": [],
+    "description": "No input contract defined"
+  },
+  "output_contract": {
+    "schema_type": "object",
+    "properties": {
+      "result": {
+        "type": "string",
+        "description": "Operation result"
+      }
+    },
+    "required": [
+      "result"
+    ],
+    "description": "Default output contract"
+  },
+  "manifest_snapshot": {
+    "exists": true,
+    "content_hash": "1e181a538220c816c2e3f5d60677486246da3d133daf4dbb57c32b8a9b2589c9",
+    "raw_data": {
+      "skill_name": "t6test",
+      "skill_version": "0.1.0",
+      "author": "test"
+    }
+  },
+  "capabilities": [],
+  "constraints": [],
+  "parsed_at": "2026-03-15T15:35:16Z",
+  "parser_version": "1.0.0-t2",
+  "spec_hash": "a2897740e802829d0680338b4535303b2d95e0c4a27f6e62171576c88e5509e0"
+}

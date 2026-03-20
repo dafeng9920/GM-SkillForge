@@ -1,0 +1,214 @@
+{
+  "version": "1.0.0-t9",
+  "description": "Evidence level definitions for SkillForge T9 - '测了什么、没测什么、证据有多强'",
+  "generated_at": "2026-03-16T12:00:00Z",
+  "levels": [
+    {
+      "level_id": "E1",
+      "level_name": "Declaration (Weakest)",
+      "strength": 1,
+      "requirements": {
+        "description": "A claim or assertion that something exists or works, with no supporting artifact. The weakest form of evidence. NOT RECOMMENDED for production use.",
+        "minimum_artifacts": "claim only (assertion in code or comment)",
+        "replayable": false,
+        "automated": false,
+        "gate_required": false
+      },
+      "acceptable_kinds": ["SNIPPET", "CODE_LOCATION"],
+      "validation_criteria": {
+        "must_have": ["item_id", "claim"],
+        "must_not_have": ["test_file", "log", "gate_decision"]
+      },
+      "examples": [
+        {
+          "description": "Comment in code claiming function works",
+          "evidence_refs": [
+            {
+              "kind": "CODE_LOCATION",
+              "locator": "skill.py:42"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level_id": "E2",
+      "level_name": "Log Output",
+      "strength": 2,
+      "requirements": {
+        "description": "Structured log output showing test execution occurred. Provides timestamp and execution trace but no structured output. Weak evidence - logs can be faked.",
+        "minimum_artifacts": "log file with timestamp",
+        "replayable": false,
+        "automated": true,
+        "gate_required": false
+      },
+      "acceptable_kinds": ["LOG", "SNIPPET"],
+      "validation_criteria": {
+        "must_have": ["log_file", "timestamp", "execution_trace"],
+        "must_not_have": ["structured_output", "gate_decision"]
+      },
+      "examples": [
+        {
+          "description": "Console output from test run",
+          "evidence_refs": [
+            {
+              "kind": "LOG",
+              "locator": "run/20260316_120000/test.log"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level_id": "E3",
+      "level_name": "Structured Artifact",
+      "strength": 3,
+      "requirements": {
+        "description": "Structured output file (JSON, report, etc.) that can be parsed and validated. Provides machine-readable evidence. Medium strength - artifact may be generated but not independently verified.",
+        "minimum_artifacts": "structured file (JSON, YAML, etc.)",
+        "replayable": false,
+        "automated": true,
+        "gate_required": false
+      },
+      "acceptable_kinds": ["TEST_FILE", "LOG", "SNIPPET", "RUN_ID"],
+      "validation_criteria": {
+        "must_have": ["structured_file", "schema_validation"],
+        "must_not_have": ["executable_test", "gate_decision"]
+      },
+      "examples": [
+        {
+          "description": "validation_report.json from T3",
+          "evidence_refs": [
+            {
+              "kind": "TEST_FILE",
+              "locator": "run/T3_evidence/validation_report.json"
+            }
+          ]
+        },
+        {
+          "description": "rule_scan_report.json from T4",
+          "evidence_refs": [
+            {
+              "kind": "TEST_FILE",
+              "locator": "run/T4_evidence/rule_scan_report.json"
+            }
+          ]
+        },
+        {
+          "description": "pattern_detection_report.json from T5",
+          "evidence_refs": [
+            {
+              "kind": "TEST_FILE",
+              "locator": "run/T5_evidence/pattern_detection_report.json"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level_id": "E4",
+      "level_name": "Replayable Test",
+      "strength": 4,
+      "requirements": {
+        "description": "Executable test that can be rerun with the same inputs to produce the same outputs. Provides verifiable evidence. Strong evidence - can be independently verified.",
+        "minimum_artifacts": "test file + assertion + execution capability",
+        "replayable": true,
+        "automated": true,
+        "gate_required": false
+      },
+      "acceptable_kinds": ["TEST_FILE", "CODE_LOCATION", "RUN_ID"],
+      "validation_criteria": {
+        "must_have": ["test_file", "assertion", "can_replay"],
+        "must_not_have": ["gate_decision"]
+      },
+      "examples": [
+        {
+          "description": "Unit test that can be rerun",
+          "evidence_refs": [
+            {
+              "kind": "TEST_FILE",
+              "locator": "tests/test_intake.py::test_validate_intent_id"
+            },
+            {
+              "kind": "CODE_LOCATION",
+              "locator": "tests/test_intake.py:42"
+            }
+          ]
+        },
+        {
+          "description": "Integration test with fixtures",
+          "evidence_refs": [
+            {
+              "kind": "TEST_FILE",
+              "locator": "tests/integration/test_full_pipeline.py::test_e2e_audit"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level_id": "E5",
+      "level_name": "Gate Decision (Strongest)",
+      "strength": 5,
+      "requirements": {
+        "description": "Gate decision with entry/exit挂载 per Antigravity-1 standards. Provides strongest evidence with closed-loop contract compliance. Required for production deployment.",
+        "minimum_artifacts": "entry_gate_decision.json + exit_gate_decision.json + receipt",
+        "replayable": true,
+        "automated": true,
+        "gate_required": true
+      },
+      "acceptable_kinds": ["GATE_DECISION", "RUN_ID", "TEST_FILE"],
+      "validation_criteria": {
+        "must_have": ["entry_gate_decision", "exit_gate_decision", "receipt"],
+        "must_not_have": []
+      },
+      "examples": [
+        {
+          "description": "Gate decision with complete dual-gate + receipt compliance (Antigravity-1)",
+          "evidence_refs": [
+            {
+              "kind": "GATE_DECISION",
+              "locator": "run/20260316_120000/entry_gate_decision.json"
+            },
+            {
+              "kind": "GATE_DECISION",
+              "locator": "run/20260316_120000/exit_gate_decision.json"
+            },
+            {
+              "kind": "RUN_ID",
+              "locator": "run/20260316_120000"
+            }
+          ]
+        },
+        {
+          "description": "Closed-loop contract with receipt",
+          "evidence_refs": [
+            {
+              "kind": "GATE_DECISION",
+              "locator": "run/20260316_120000/gate_decision.json"
+            },
+            {
+              "kind": "RUN_ID",
+              "locator": "run/20260316_120000"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "principles": [
+      "No default full coverage - silence = not covered",
+      "No default evidence strength - must be explicitly declared",
+      "Evidence level must match actual artifacts provided",
+      "E5 required for production deployment (Antigravity-1)"
+    ],
+    "version_history": [
+      {
+        "version": "1.0.0-t9",
+        "date": "2026-03-16",
+        "changes": "Initial definition for T9 deliverable"
+      }
+    ]
+  }
+}

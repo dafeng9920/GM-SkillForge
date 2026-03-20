@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-03-11T16:53:57Z",
+  "generated_at": "2026-03-19T08:23:52Z",
   "summary": {
-    "total": 19,
-    "passed": 19,
+    "total": 24,
+    "passed": 24,
     "failed": 0,
     "critical_or_high_failed": 0,
     "overall": "PASS"
@@ -153,11 +153,56 @@
       "location": "D:\\GM-SkillForge\\docs\\2026-03-08\\checkpoint\\state.yaml"
     },
     {
+      "check_id": "CR-018",
+      "severity": "HIGH",
+      "passed": true,
+      "summary": "Five-layer frozen chain documents are present",
+      "evidence": "{\"missing_files\": []}",
+      "required_change": "Restore all five-layer frozen reports before treating the mainline as structurally closed",
+      "location": "D:\\GM-SkillForge\\docs\\2026-03-18"
+    },
+    {
+      "check_id": "CR-019",
+      "severity": "HIGH",
+      "passed": true,
+      "summary": "Five-layer mainline has formal tri-separation records",
+      "evidence": "missing_patterns=[]",
+      "required_change": "Add formal tri-separation records for controller/execution/review/compliance before entering system execution preparation",
+      "location": "D:\\GM-SkillForge\\docs\\2026-03-19\\FIVE_LAYER_TRI_SEPARATION_RECORDS_V1.md:17"
+    },
+    {
+      "check_id": "CR-020",
+      "severity": "CRITICAL",
+      "passed": true,
+      "summary": "Five-layer mainline has fail-closed permit entry conditions",
+      "evidence": "missing_patterns=[]",
+      "required_change": "Add explicit fail-closed permit=VALID entry conditions before any system execution preparation",
+      "location": "D:\\GM-SkillForge\\docs\\2026-03-19\\FIVE_LAYER_SYSTEM_ENTRY_CONDITIONS_V1.md:21"
+    },
+    {
+      "check_id": "CR-021",
+      "severity": "HIGH",
+      "passed": true,
+      "summary": "Five-layer mainline has AuditPack/EvidenceRef bridge",
+      "evidence": "{\"missing_patterns\": [], \"evidence_dir_exists\": true}",
+      "required_change": "Add formal AuditPack/EvidenceRef bridge and bind it to the five-layer compliance materials",
+      "location": "D:\\GM-SkillForge\\docs\\2026-03-19\\FIVE_LAYER_AUDITPACK_EVIDENCE_BRIDGE_V1.md:4"
+    },
+    {
+      "check_id": "CR-022",
+      "severity": "HIGH",
+      "passed": true,
+      "summary": "Compliance review inventories existing governance/evidence/execution-preparation components",
+      "evidence": "{\"missing_categories\": [], \"inventory\": {\"five_layer_contracts\": {\"count\": 69, \"sample\": [\"contracts/audit/__pycache__\", \"contracts/audit/audit_candidate_input.interface.md\", \"contracts/audit/audit_candidate_input.payload.json\", \"contracts/audit/audit_candidate_input.schema.json\", \"contracts/audit/audit_candidate_input_types.py\", \"contracts/audit/audit_validation_input.interface.md\", \"contracts/audit/audit_validation_input.payload.json\", \"contracts/audit/audit_validation_input.schema.json\", \"contracts/audit/audit_validation_input_types.py\", \"contracts/audit/delivery_audit_input.interface.md\"]}, \"frozen_and_validation_docs\": {\"count\": 28, \"sample\": [\"docs/2026-03-18/AUDIT_MINIMAL_IMPLEMENTATION_V0_CHANGE_CONTROL_RULES.md\", \"docs/2026-03-18/AUDIT_MINIMAL_IMPLEMENTATION_V0_FROZEN_REPORT.md\", \"docs/2026-03-18/AUDIT_MINIMAL_VALIDATION_V0_CHANGE_CONTROL_RULES.md\", \"docs/2026-03-18/AUDIT_MINIMAL_VALIDATION_V0_REPORT.md\", \"docs/2026-03-18/BRIDGE_DRAFT_V0_CHANGE_CONTROL_RULES.md\", \"docs/2026-03-18/BRIDGE_DRAFT_V0_FROZEN_REPORT.md\", \"docs/2026-03-18/BRIDGE_MINIMAL_IMPLEMENTATION_V0_CHANGE_CONTROL_RULES.md\", \"docs/2026-03-18/BRIDGE_MINIMAL_IMPLEMENTATION_V0_FROZEN_REPORT.md\", \"docs/2026-03-18/BRIDGE_MINIMAL_VALIDATION_STAGE_REPORT_v1.md\", \"docs/2026-03-18/GATE_MINIMAL_IMPLEMENTATION_V0_CHANGE_CONTROL_RULES.md\"]}, \"compliance_bridge_docs\": {\"count\": 5, \"sample\": [\"docs/2026-03-19/FIVE_LAYER_AUDITPACK_EVIDENCE_BRIDGE_V1.md\", \"docs/2026-03-19/FIVE_LAYER_COMPLIANCE_AUDIT_REPORT_v1.md\", \"docs/2026-03-19/FIVE_LAYER_COMPLIANCE_CHANGE_REQUIREMENTS_v1.md\", \"docs/2026-03-19/FIVE_LAYER_SYSTEM_ENTRY_CONDITIONS_V1.md\", \"docs/2026-03-19/FIVE_LAYER_TRI_SEPARATION_RECORDS_V1.md\"]}, \"governance_and_evidence_assets\": {\"count\": 59, \"sample\": [\"configs/audit_policy_v1.json\", \"configs/dispatch_skill_registry.json\", \"skillforge/src/contracts/audit_pack.py\", \"skillforge/src/contracts/audit_pack.schema.json\", \"skillforge/src/contracts/evidence_level.py\", \"skillforge/src/contracts/evidence_level.schema.json\", \"skillforge/src/skills/gates/__init__.py\", \"skillforge/src/skills/gates/__pycache__\", \"skillforge/src/skills/gates/batch_permit_issuer.py\", \"skillforge/src/skills/gates/gate_draft_spec.py\"]}, \"system_execution_preparation_assets\": {\"count\": 1, \"sample\": [\"docs/2026-03-18/《系统执行层准备模块任务包 v1》.md\"]}}}",
+      "required_change": "Expand compliance review inventory until all existing governance, evidence, and system-execution-preparation component groups are included",
+      "location": "D:\\GM-SkillForge"
+    },
+    {
       "check_id": "CR-007",
       "severity": "MEDIUM",
       "passed": true,
       "summary": "Compliance review cadence is within target window",
-      "evidence": "latest_report_date=2026-03-08, gap_days=3, max_gap_days=3",
+      "evidence": "latest_report_date=2026-03-19, gap_days=0, max_gap_days=3",
       "required_change": "Run review now and keep cadence <= 3 days",
       "location": "D:\\GM-SkillForge\\docs\\compliance_reviews"
     },
@@ -166,7 +211,7 @@
       "severity": "HIGH",
       "passed": true,
       "summary": "Regression test: skillforge/tests/test_n8n_run_intent_internal_permit.py",
-      "evidence": "....                                                                     [100%]\n4 passed in 0.74s",
+      "evidence": "....                                                                     [100%]\n4 passed in 0.33s",
       "required_change": "Fix failing test and restore fail-closed guard behavior in skillforge/tests/test_n8n_run_intent_internal_permit.py",
       "location": "skillforge/tests/test_n8n_run_intent_internal_permit.py"
     },

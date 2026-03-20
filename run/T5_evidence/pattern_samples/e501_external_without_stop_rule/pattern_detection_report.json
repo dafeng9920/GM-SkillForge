@@ -1,0 +1,68 @@
+{
+  "skill_name": "e501_external_without_stop_rule",
+  "skill_dir": "D:\\GM-SkillForge\\run\\T5_evidence\\pattern_samples\\e501_external_without_stop_rule",
+  "analyzed_at": "2026-03-15T14:30:20Z",
+  "pattern_set_version": "1.0.0-t5",
+  "analysis_statistics": {
+    "files_analyzed": 1,
+    "functions_analyzed": 2,
+    "total_matches": 2,
+    "by_pattern": {
+      "E501_EXTERNAL_WITHOUT_STOP_RULE": 2
+    },
+    "by_category": {
+      "governance_gap": 2
+    }
+  },
+  "pattern_matches": {
+    "critical": [
+      {
+        "pattern_code": "E501_EXTERNAL_WITHOUT_STOP_RULE",
+        "pattern_name": "External Action Without Stop Rule",
+        "file_path": "skill.py",
+        "line_number": 10,
+        "function_name": "fetch_user_data",
+        "category": "governance_gap",
+        "severity": "CRITICAL",
+        "message": "External action (HTTP request, file write, subprocess) executed without preceding governance stop rule (permission check, authorization, permit validation)",
+        "snippet": "def fetch_user_data(user_id: str) -> dict:",
+        "context_lines": [
+          "import requests",
+          "",
+          "",
+          "def fetch_user_data(user_id: str) -> dict:",
+          "    \"\"\"",
+          "    Fetch user data from external API.",
+          ""
+        ],
+        "suggested_fix": "Add stop rule before external action: @require_permission decorator or explicit permission check",
+        "evidence_source": "run/T5_evidence/pattern_samples/e501_external_without_stop_rule/skill.py"
+      },
+      {
+        "pattern_code": "E501_EXTERNAL_WITHOUT_STOP_RULE",
+        "pattern_name": "External Action Without Stop Rule",
+        "file_path": "skill.py",
+        "line_number": 25,
+        "function_name": "sync_with_external_service",
+        "category": "governance_gap",
+        "severity": "CRITICAL",
+        "message": "External action (HTTP request, file write, subprocess) executed without preceding governance stop rule (permission check, authorization, permit validation)",
+        "snippet": "def sync_with_external_service():",
+        "context_lines": [
+          "    return response.json()",
+          "",
+          "",
+          "def sync_with_external_service():",
+          "    \"\"\"",
+          "    Sync data with external service.",
+          ""
+        ],
+        "suggested_fix": "Add stop rule before external action: @require_permission decorator or explicit permission check",
+        "evidence_source": "run/T5_evidence/pattern_samples/e501_external_without_stop_rule/skill.py"
+      }
+    ],
+    "high": [],
+    "medium": []
+  },
+  "governance_gaps": []
+}

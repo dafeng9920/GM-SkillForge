@@ -1,0 +1,126 @@
+{
+  "statement_id": "COV-T3_intake_validation-a1b2c3d4",
+  "artifact_id": "T3_intake_validation",
+  "artifact_type": "task",
+  "declared_at": "2026-03-16T12:00:00Z",
+  "declared_by": "vs--cc1",
+  "covered_items": [
+    {
+      "item_id": "validate_intent_id",
+      "item_type": "function",
+      "evidence_level": "E4",
+      "evidence_refs": [
+        {
+          "kind": "TEST_FILE",
+          "locator": "tests/contracts/test_intake_request.py::test_validate_intent_id_approved",
+          "note": "Unit test with assertion, can be replayed"
+        },
+        {
+          "kind": "CODE_LOCATION",
+          "locator": "skillforge/src/contracts/intake_request.py:148-164"
+        }
+      ],
+      "note": "Tests approved intent whitelist validation"
+    },
+    {
+      "item_id": "validate_repo_url",
+      "item_type": "function",
+      "evidence_level": "E4",
+      "evidence_refs": [
+        {
+          "kind": "TEST_FILE",
+          "locator": "tests/contracts/test_intake_request.py::test_validate_repo_url_valid",
+          "note": "Unit test with assertion, can be replayed"
+        }
+      ]
+    },
+    {
+      "item_id": "validate_commit_sha",
+      "item_type": "function",
+      "evidence_level": "E4",
+      "evidence_refs": [
+        {
+          "kind": "TEST_FILE",
+          "locator": "tests/contracts/test_intake_request.py::test_validate_commit_sha_length"
+        }
+      ]
+    },
+    {
+      "item_id": "intake_request_schema",
+      "item_type": "schema",
+      "evidence_level": "E3",
+      "evidence_refs": [
+        {
+          "kind": "TEST_FILE",
+          "locator": "skillforge/src/contracts/intake_request.schema.json"
+        }
+      ],
+      "note": "Structured artifact validates JSON structure"
+    },
+    {
+      "item_id": "branch_only_rejection",
+      "item_type": "function",
+      "evidence_level": "E3",
+      "evidence_refs": [
+        {
+          "kind": "TEST_FILE",
+          "locator": "tests/contracts/test_intake_request.py::test_branch_only_input_rejected"
+        }
+      ]
+    }
+  ],
+  "uncovered_items": [
+    {
+      "item_id": "validate_at_time_format",
+      "item_type": "function",
+      "reason": "not_implemented",
+      "planned": true,
+      "ticket_ref": "TBD"
+    },
+    {
+      "item_id": "validate_issue_key_pattern",
+      "item_type": "function",
+      "reason": "not_implemented",
+      "planned": false
+    },
+    {
+      "item_id": "validate_target_environment",
+      "item_type": "function",
+      "reason": "out_of_scope",
+      "planned": false,
+      "ticket_ref": null
+    },
+    {
+      "item_id": "intake_request_to_dict_edge_cases",
+      "item_type": "integration",
+      "reason": "deferred",
+      "planned": true
+    }
+  ],
+  "exclusions": [
+    {
+      "item_id": "compute_hash",
+      "exclusion_reason": "internal_only",
+      "approved_by": "vs--cc1"
+    },
+    {
+      "item_id": "save_atomically",
+      "exclusion_reason": "trivial",
+      "approved_by": "vs--cc1"
+    }
+  ],
+  "coverage_summary": {
+    "total_items": 9,
+    "covered_count": 5,
+    "uncovered_count": 4,
+    "coverage_percent": 55.56
+  },
+  "metadata": {
+    "scope": "unit",
+    "boundary_note": "Coverage limited to T3 intake validation task. Integration tests deferred.",
+    "known_gaps": [
+      "No tests for options.validation edge cases",
+      "No tests for at_time timezone handling"
+    ]
+  }
+}

@@ -1,0 +1,250 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/genesismind-bot/GM-SkillForge/skillforge/src/contracts/pattern_detection_report.schema.json",
+  "title": "Pattern Detection Report",
+  "description": "Schema for T5 pattern detection report - anti-pattern and governance gap findings",
+  "type": "object",
+  "required": [
+    "skill_name",
+    "skill_dir",
+    "analyzed_at",
+    "pattern_set_version",
+    "analysis_statistics",
+    "pattern_matches",
+    "governance_gaps"
+  ],
+  "properties": {
+    "skill_name": {
+      "type": "string",
+      "description": "Name of the skill being analyzed"
+    },
+    "skill_dir": {
+      "type": "string",
+      "description": "Full path to the skill directory"
+    },
+    "analyzed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp of analysis"
+    },
+    "pattern_set_version": {
+      "type": "string",
+      "description": "Version of pattern set used for analysis (e.g., 1.0.0-t5)"
+    },
+    "analysis_statistics": {
+      "type": "object",
+      "description": "Summary statistics of the analysis",
+      "required": ["files_analyzed", "functions_analyzed", "total_matches", "by_pattern", "by_category"],
+      "properties": {
+        "files_analyzed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of Python files analyzed"
+        },
+        "functions_analyzed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of functions analyzed"
+        },
+        "total_matches": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of pattern matches found"
+        },
+        "by_pattern": {
+          "type": "object",
+          "description": "Count of matches by pattern code",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "by_category": {
+          "type": "object",
+          "description": "Count of matches by category (governance_gap, anti_pattern)",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "pattern_matches": {
+      "type": "object",
+      "description": "Pattern matches grouped by severity",
+      "required": ["critical", "high", "medium"],
+      "properties": {
+        "critical": {
+          "type": "array",
+          "description": "CRITICAL severity pattern matches",
+          "items": {
+            "$ref": "#/definitions/pattern_match"
+          }
+        },
+        "high": {
+          "type": "array",
+          "description": "HIGH severity pattern matches",
+          "items": {
+            "$ref": "#/definitions/pattern_match"
+          }
+        },
+        "medium": {
+          "type": "array",
+          "description": "MEDIUM severity pattern matches",
+          "items": {
+            "$ref": "#/definitions/pattern_match"
+          }
+        }
+      }
+    },
+    "governance_gaps": {
+      "type": "array",
+      "description": "Governance gaps found during analysis",
+      "items": {
+        "$ref": "#/definitions/governance_gap"
+      }
+    }
+  },
+  "definitions": {
+    "pattern_match": {
+      "type": "object",
+      "description": "A single pattern match finding",
+      "required": [
+        "pattern_code",
+        "pattern_name",
+        "file_path",
+        "line_number",
+        "function_name",
+        "category",
+        "severity",
+        "message",
+        "snippet",
+        "context_lines",
+        "suggested_fix",
+        "evidence_source"
+      ],
+      "properties": {
+        "pattern_code": {
+          "type": "string",
+          "description": "Pattern code (E5xx series)",
+          "enum": [
+            "E501_EXTERNAL_WITHOUT_STOP_RULE",
+            "E502_RETRY_WITHOUT_IDEMPOTENCY",
+            "E503_HIGH_PRIV_WITHOUT_BOUNDARY",
+            "E504_MISSING_AUDITABLE_EXIT"
+          ]
+        },
+        "pattern_name": {
+          "type": "string",
+          "description": "Human-readable pattern name"
+        },
+        "file_path": {
+          "type": "string",
+          "description": "Relative path to the file containing the match"
+        },
+        "line_number": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Line number where pattern was detected"
+        },
+        "function_name": {
+          "type": "string",
+          "description": "Name of the function containing the pattern"
+        },
+        "category": {
+          "type": "string",
+          "description": "Pattern category",
+          "enum": ["governance_gap", "anti_pattern"]
+        },
+        "severity": {
+          "type": "string",
+          "description": "Severity level",
+          "enum": ["CRITICAL", "HIGH", "MEDIUM"]
+        },
+        "message": {
+          "type": "string",
+          "description": "Detailed description of the pattern match"
+        },
+        "snippet": {
+          "type": "string",
+          "description": "The matching code line"
+        },
+        "context_lines": {
+          "type": "array",
+          "description": "Surrounding lines for context",
+          "items": {
+            "type": "string"
+          }
+        },
+        "suggested_fix": {
+          "type": "string",
+          "description": "Suggested remediation for the pattern"
+        },
+        "evidence_source": {
+          "type": "string",
+          "description": "Original source file where pattern was defined (for traceability)"
+        }
+      }
+    },
+    "governance_gap": {
+      "type": "object",
+      "description": "A governance gap finding",
+      "required": [
+        "gap_code",
+        "gap_name",
+        "file_path",
+        "line_number",
+        "function_name",
+        "description",
+        "severity",
+        "missing_control",
+        "recommended_control",
+        "snippet"
+      ],
+      "properties": {
+        "gap_code": {
+          "type": "string",
+          "description": "Gap code (E5xx series)"
+        },
+        "gap_name": {
+          "type": "string",
+          "description": "Human-readable gap name"
+        },
+        "file_path": {
+          "type": "string",
+          "description": "Relative path to the file containing the gap"
+        },
+        "line_number": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Line number where gap was detected"
+        },
+        "function_name": {
+          "type": "string",
+          "description": "Name of the function containing the gap"
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description of the governance gap"
+        },
+        "severity": {
+          "type": "string",
+          "description": "Severity level",
+          "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"]
+        },
+        "missing_control": {
+          "type": "string",
+          "description": "Description of the missing control"
+        },
+        "recommended_control": {
+          "type": "string",
+          "description": "Recommended control to implement"
+        },
+        "snippet": {
+          "type": "string",
+          "description": "The relevant code line"
+        }
+      }
+    }
+  }
+}

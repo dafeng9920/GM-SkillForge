@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DeliveryManifest",
+  "type": "object",
+  "required": [
+    "delivery_id",
+    "candidate_id",
+    "validation_report_id",
+    "package_input_root",
+    "handoff_target",
+    "package_manifest",
+    "status"
+  ],
+  "properties": {
+    "delivery_id": { "type": "string" },
+    "candidate_id": { "type": "string" },
+    "validation_report_id": { "type": "string" },
+    "delivery_name": { "type": "string" },
+    "package_input_root": { "type": "string" },
+    "handoff_target": { "type": "string", "enum": ["skill_creator", "internal_packer"] },
+    "package_manifest": { "type": "object" },
+    "integrity_checks": { "type": "array", "items": { "type": "object" } },
+    "handoff_payload": { "type": "object" },
+    "status": {
+      "type": "string",
+      "enum": ["prepared", "handed_off", "package_failed", "delivered"]
+    }
+  },
+  "additionalProperties": true
+}

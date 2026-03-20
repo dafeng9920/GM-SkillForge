@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import homeStyles from '../../pages/governance/HomePage.module.css';
-import type { IntentState } from '../../features/governanceInteraction/orchestrator';
+import type { IntentState } from '../../features/governanceInteraction/interactionDecision';
 
 export interface ComposerAction {
   label: string;

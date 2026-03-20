@@ -1,0 +1,36 @@
+{
+  "skill_name": "sql_injection",
+  "skill_dir": "D:\\GM-SkillForge\\run\\T4_evidence\\rule_samples\\sql_injection",
+  "scanned_at": "2026-03-15T13:07:22Z",
+  "rule_set_version": "1.0.0-t4",
+  "scan_statistics": {
+    "files_scanned": 1,
+    "total_lines_scanned": 8,
+    "total_hits": 1,
+    "by_category": {
+      "external_action": 1
+    },
+    "by_severity": {
+      "CRITICAL": 1
+    }
+  },
+  "findings": {
+    "critical": [
+      {
+        "rule_code": "E413_DATABASE_QUERY_without_PARAMETERIZATION",
+        "rule_name": "Database Query Without Parameterization",
+        "file_path": "sql_injection.py",
+        "line_number": 8,
+        "column_number": 12,
+        "snippet": "return execute(\"SELECT * FROM users WHERE id=%s\" % user_id)",
+        "category": "external_action",
+        "severity": "CRITICAL",
+        "message": "Database query with string formatting (SQL injection risk)",
+        "suggested_fix": "Use parameterized queries with placeholders"
+      }
+    ],
+    "high": [],
+    "medium": [],
+    "low": []
+  }
+}
