@@ -27,6 +27,7 @@ services:
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - NODE_ENV=production
+      - OPENCLAW_GATEWAY_PORT=18793
       - ZAI_API_KEY=${OPENAI_API_KEY}
       - DISCORD_TOKEN=${DISCORD_TOKEN}
       - LARK_APP_ID=${LARK_APP_ID}
@@ -36,7 +37,7 @@ services:
       - OPENAI_API_BASE=${OPENAI_API_BASE}
       - OPENAI_BASE_URL=${OPENAI_API_BASE}
     ports:
-      - "18789:18789" # OpenClaw Dashboard
+      - "17893:18793" # OpenClaw Dashboard
     volumes:
       - ./data:/root/.openclaw # Persist Agent configuration and local files
       - ./data/logs:/tmp/openclaw # Expose logs for SkillForge monitoring

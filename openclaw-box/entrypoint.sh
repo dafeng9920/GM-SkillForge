@@ -10,4 +10,5 @@ openclaw plugins install @xzq-xu/feishu
 
 # Start OpenClaw
 echo "Starting OpenClaw..."
-openclaw gateway run --port 18789 --allow-unconfigured --bind lan
+OPENCLAW_GATEWAY_PORT="${OPENCLAW_GATEWAY_PORT:-18793}"
+openclaw gateway run --port "${OPENCLAW_GATEWAY_PORT}" --allow-unconfigured --bind lan

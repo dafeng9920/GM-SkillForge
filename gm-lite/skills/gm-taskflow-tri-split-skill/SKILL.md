@@ -22,6 +22,27 @@
 
 ---
 
+## GM-LITE 权威路径纪律
+
+在 `GM-LITE` 项目中，默认遵守以下规则：
+
+- `D:\gm-lite` = 权威项目树
+- `D:\GM-SkillForge\gm-lite` = 主控文档镜像树
+
+凡 execution / review / compliance / `.gm_bus` / runtime artifacts 的真实写回：
+
+- 默认写入 `D:\gm-lite`
+
+凡 scope / boundary / task board / report / prompts / 制度件：
+
+- 可位于 `D:\GM-SkillForge\gm-lite`
+
+若两棵树口径冲突：
+
+- 一律以 `D:\gm-lite` 为准
+
+---
+
 ## 适用场景
 
 当任务属于以下任一类型时，应优先使用本 skill：
