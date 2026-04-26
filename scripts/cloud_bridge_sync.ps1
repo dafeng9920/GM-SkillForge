@@ -1,8 +1,6 @@
 # cloud_bridge_sync.ps1 - GM-SkillForge Cloud-Local Bridge Automation (V3)
 # -------------------------------------------------------------------
-# 功能：本地抓取行情 -> Git 推送 -> 云端直连 -> 自动化验收
-# 架构：Bridge of the Sea (Feeder + Sync + Adjudicator)
-# -------------------------------------------------------------------
+# Fix: Removed non-ASCII characters to avoid PowerShell encoding errors
 
 param (
     [string]$commitMessage = "Market Snapshot & Skill Sync: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')",
@@ -10,54 +8,53 @@ param (
     [switch]$SkipMarket = $false
 )
 
-$STABLE_URL = "https://mom-cocktail-characterization-consideration.trycloudflare.com"
+$STABLE_URL = "https://detailed-newsletters-departure-patricia.trycloudflare.com"
 $GATEWAY_TOKEN = "3a6d798bca0857a6548a8842f5295fcb41f66d92dbe7d1ee"
 $AUTH_URL = "$STABLE_URL/#token=$GATEWAY_TOKEN"
 
 Clear-Host
 Write-Host "==========================================" -ForegroundColor Cyan
-Write-Host "   GM-SkillForge: 跨海大桥同步程序 (V3)" -ForegroundColor Cyan
+Write-Host "   GM-SkillForge: Cloud Bridge Sync (V3)" -ForegroundColor Cyan
 Write-Host "==========================================" -ForegroundColor Cyan
 
-# 0. A 股行情抓取 (Architecture A: Local Feeder)
+# 0. A-Share Data Fetch
 if (-not $SkipMarket) {
-    Write-Host "`n[0/4] 🔭 正在执行本地行情侦察 (akshare)..." -ForegroundColor Yellow
+    Write-Host "`n[0/4] 🔭 Fetching local market data (akshare)..." -ForegroundColor Yellow
     python ./scripts/fetch_ashare_data.py
     if ($LASTEXITCODE -ne 0) {
-        Write-Host "⚠️ 行情抓取出现异常，将继续尝试推送其余文件。" -ForegroundColor Magenta
+        Write-Host "Warning: Market data fetch encountered issues." -ForegroundColor Magenta
     } else {
-        Write-Host "✅ 行情快照已捕获。" -ForegroundColor Green
+        Write-Host "OK: Market snapshot captured." -ForegroundColor Green
     }
 }
 
-# 1. 本地 Git 同步
-Write-Host "`n[1/4] 📦 正在同步本地 Skill 与 Intelligence 到 Git..." -ForegroundColor Yellow
+# 1. Git Sync
+Write-Host "`n[1/4] 📦 Syncing local Skills and Intelligence to Git..." -ForegroundColor Yellow
 git add .
 git commit -m $commitMessage --allow-empty
 git push origin main
 
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "❌ Git 推送失败，请检查网络或配置。" -ForegroundColor Red
+    Write-Host "Error: Git push failed. Check network or credentials." -ForegroundColor Red
     exit $LASTEXITCODE
 }
-Write-Host "✅ 全量同步已完成。" -ForegroundColor Green
+Write-Host "OK: Full sync complete." -ForegroundColor Green
 
-# 2. 自动化信号
-Write-Host "`n[2/4] 🔔 请留意：云端 Adjudicator 正在监听行情更新..." -ForegroundColor Yellow
-Write-Host "      !market status - 查看最新同步的情报" -ForegroundColor Gray
+# 2. Automation Signal
+Write-Host "`n[2/4] 🔔 Note: Cloud Adjudicator is listening for updates..." -ForegroundColor Yellow
+Write-Host "      !market status - to check latest intelligence" -ForegroundColor Gray
 
-# 3. 开启或刷新管理后台
+# 3. Open Dashboard
 if ($OpenDashboard) {
-    Write-Host "`n[3/4] 🌉 正在刷新云端直连大桥..." -ForegroundColor Yellow
-    Write-Host "      正在跳转至：$STABLE_URL" -ForegroundColor Gray
+    Write-Host "`n[3/4] 🌉 Refreshing Cloud Bridge..." -ForegroundColor Yellow
+    Write-Host "      Navigating to: $STABLE_URL" -ForegroundColor Gray
     Start-Process $AUTH_URL
 }
 
 Write-Host "`n==========================================" -ForegroundColor Cyan
-Write-Host "   ✅ V3 同步完成，行情已跨海，大桥运行中！" -ForegroundColor Green
+Write-Host "   SUCCESS: Bridge V3 running, data sent!" -ForegroundColor Green
 Write-Host "==========================================" -ForegroundColor Cyan
 
-Write-Host "`n[💡 重要提醒] 别忘了让云端“收货”：" -ForegroundColor Magenta
-Write-Host "请在 Discord 频道（或云端终端）发送：" -ForegroundColor Gray
-Write-Host ">>> !shell git pull" -ForegroundColor Cyan
-Write-Host "然后小龙虾就能读取到最新的行情快照了！" -ForegroundColor Gray
+Write-Host "`n[REMINDER] Don't forget to 'PULL' on the cloud host:" -ForegroundColor Magenta
+Write-Host "Run this on your Cloud Terminal:" -ForegroundColor Gray
+Write-Host ">>> cd /root/gm-skillforge && git pull" -ForegroundColor Cyan

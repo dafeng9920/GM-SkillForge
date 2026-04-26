@@ -1,0 +1,13 @@
+{
+  "clusters": [
+    {
+      "id": "singapore-tencent",
+      "host": "43.153.199.229",
+      "port": 18793,
+      "internal_port": 18789,
+      "ssh_user": "root",
+      "description": "OpenClaw 2026.x Legion on Singapore Tencent Cloud"
+    }
+  ],
+  "active_cluster": "singapore-tencent"
+}

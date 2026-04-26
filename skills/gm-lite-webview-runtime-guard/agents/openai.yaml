@@ -1,0 +1,4 @@
+interface:
+  display_name: "GM-Lite Webview Guard"
+  short_description: "Guard GM-Lite webview runtime."
+  default_prompt: "Use this skill to diagnose, repair, or harden the GM-Lite main workbench webview runtime across boot, snapshot delivery, and render-layer failures."

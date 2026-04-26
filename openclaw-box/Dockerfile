@@ -12,11 +12,10 @@ RUN apt-get update && apt-get install -y \
     libheif-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Set npm mirror
-RUN npm config set registry https://registry.npmmirror.com
+# Skip registry config, use official registry for Singapore server
 
 # Install OpenClaw globally
-RUN npm install -g openclaw@latest
+RUN npm install -g openclaw@2026.3.31 --no-audit --no-fund --verbose
 
 # Set working directory
 WORKDIR /app

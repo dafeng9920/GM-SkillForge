@@ -28,16 +28,19 @@ services:
       - DATABASE_URL=${DATABASE_URL}
       - NODE_ENV=production
       - OPENCLAW_GATEWAY_PORT=18793
-      - ZAI_API_KEY=${OPENAI_API_KEY}
+      - ZAI_API_KEY=${GLM_API_KEY}
       - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - DISCORD_APP_ID=1475461889336279114
       - LARK_APP_ID=${LARK_APP_ID}
       - LARK_APP_SECRET=${LARK_APP_SECRET}
       - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - OPENAI_API_BASE=${OPENAI_API_BASE}
       - OPENAI_BASE_URL=${OPENAI_API_BASE}
+      - SEARCH_BACKEND=${SEARCH_BACKEND}
+      - TAVILY_API_KEY=${TAVILY_API_KEY}
     ports:
-      - "17893:18793" # OpenClaw Dashboard
+      - "0.0.0.0:18793:18793" # OpenClaw Dashboard (LAN + Token Auth; aligned with internal port)
     volumes:
       - ./data:/root/.openclaw # Persist Agent configuration and local files
       - ./data/logs:/tmp/openclaw # Expose logs for SkillForge monitoring

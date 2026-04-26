@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# Repair permissions for plugins
+echo "Repairing plugin permissions..."
+chmod -R 755 /root/.openclaw/extensions
+
 # Ensure OpenClaw config is repaired
 echo "Repairing OpenClaw config..."
 openclaw doctor --fix
